@@ -44,6 +44,7 @@ public class GWTServerPlugin implements PluginDescriptor<ServerServiceContainer>
         if ( !config.getAttributeAsBoolean("enabled", GWTPlugin.ENABLE_BY_DEFAULT) )
         	return;
         container.addContainerProvidedComponent( RaplaServerExtensionPoints.HTML_MAIN_MENU_EXTENSION_POINT, GWTMenuEntry.class);
+        //container.addRemoteJsonFactory( RaplaJsonService.class, RaplaJsonServiceFactory.class, config);
     }
 
 }

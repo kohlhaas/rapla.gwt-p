@@ -16,7 +16,6 @@ import org.rapla.entities.RaplaType;
 import org.rapla.entities.configuration.RaplaConfiguration;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.AppointmentFormater;
-import org.rapla.entities.storage.internal.SimpleIdentifier;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.RaplaComponent;
 import org.rapla.facade.internal.FacadeImpl;
@@ -33,6 +32,7 @@ import org.rapla.storage.dbrm.RemoteOperator;
 import org.rapla.storage.dbrm.RemoteServer;
 import org.rapla.storage.dbrm.RemoteStorage;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 
@@ -82,6 +82,11 @@ public class RaplaGWTClient {
 			@Override
 			public String format(String key, Object obj1)
 					throws MissingResourceException {
+				return key;
+			}
+
+			@Override
+			public String getString(String key, Locale locale) {
 				return key;
 			}
 		};
@@ -152,133 +157,7 @@ public class RaplaGWTClient {
 			}
 			
 		};
-		final RemoteStorage remoteStorage = new RemoteStorage() {
-			public Object call(String methodName,Class<?>[] parameterTypes, Class<?> returnType ,Object[] args) throws RaplaException
-			{
-				RemoteMethodCaller remoteMethodCaller = callerProvider.get();
-				return remoteMethodCaller.call(RemoteStorage.class, methodName, parameterTypes, returnType, args);
-			}
-			
-			public void restartServer() throws RaplaException {
-				call("restartServer",null,null, null);
-			}
-			
-			@Override
-			public UpdateEvent refresh(String clientRepoVersion) throws RaplaException {
-				return (UpdateEvent) call("refresh", new Class[] {String.class}, UpdateEvent.class, new Object[] {clientRepoVersion});
-			}
-			
-			@Override
-			public String getServerTime() throws RaplaException {
-				return (String) call("getServerTime", null, String.class, null);
-				
-			}
-			
-			@Override
-			public EntityList getResources() throws RaplaException {
-				return (EntityList) call("getResources", null, EntityList.class, null);
-			}
-			
-			@Override
-			public EntityList getReservations(SimpleIdentifier[] allocatableIds,
-					Date start, Date end) throws RaplaException {
-				return (EntityList) call("getReservations", new Class[] { SimpleIdentifier[].class, Date.class, Date.class}, EntityList.class, new Object[] { allocatableIds, start, end});
-			}
-			
-			@Override
-			public Integer[][] getFirstAllocatableBindings(
-					SimpleIdentifier[] allocatables, Appointment[] appointments, SimpleIdentifier[] reservationIds)
-					throws RaplaException {
-				return (Integer[][]) call("getFirstAllocatableBindings", new Class[] { SimpleIdentifier[].class, Appointment[].class,SimpleIdentifier[].class}, Integer[][].class, new Object[] { allocatables, appointments, reservationIds});
-			}
-			
-			@Override
-			public EntityList getEntityRecursive(SimpleIdentifier... id)
-					throws RaplaException {
-				return (EntityList) call("getEntityRecursive", new Class[] { SimpleIdentifier[].class}, EntityList.class, new Object[] { id});
-			}
-			
-			@Override
-			public EntityList getConflicts() throws RaplaException {
-				return (EntityList) call("getConflicts", null, EntityList.class, null);
-			}
-			
-			@Override
-			public EntityList getAllAllocatableBindings(
-					SimpleIdentifier[] allocatables, Appointment[] appointments, SimpleIdentifier[] reservationIds)
-					throws RaplaException {
-				return (EntityList) call("getAllAllocatableBindings", new Class[] { SimpleIdentifier[].class, Appointment[].class, SimpleIdentifier[].class}, EntityList.class, new Object[] { allocatables, appointments, reservationIds});
-	
-			}
-			
-			@Override
-			public UpdateEvent dispatch(UpdateEvent event) throws RaplaException {
-				return (UpdateEvent) call("dispatch", new Class[] {UpdateEvent.class}, UpdateEvent.class, new Object[] {event});
-			}
-			
-			@Override
-			public SimpleIdentifier[] createIdentifier(RaplaType raplaType, int count)
-					throws RaplaException {
-				return (SimpleIdentifier[]) call("createIdentifier", new Class[] {RaplaType.class,int.class}, SimpleIdentifier[].class, new Object[] {raplaType, count});
-			}
-			
-			@Override
-			public void confirmEmail(String username, String newEmail)
-					throws RaplaException {
-				call("confirmEmail", new Class[] {String.class, String.class}, null, new Object[] {username, newEmail});
-							
-			}
-			
-			@Override
-			public void changePassword(String username, String oldPassword,
-					String newPassword) throws RaplaException {
-				call("changePassword", new Class[] {String.class, String.class, String.class}, null, new Object[] {username, oldPassword, newPassword});
-	
-			}
-			
-			@Override
-			public void changeName(String username, String newTitle,
-					String newSurename, String newLastname) throws RaplaException {
-				call("changeName", new Class[] {String.class, String.class, String.class, String.class}, null, new Object[] {username, newTitle, newSurename,newLastname});
-			}
-			
-			@Override
-			public void changeEmail(String username, String newEmail)
-					throws RaplaException {
-				call("changeEmail", new Class[] {String.class, String.class}, null, new Object[] {username, newEmail});
-				
-			}
-			
-			@Override
-			public boolean canChangePassword() throws RaplaException {
-				return 	(Boolean) call("canChangePassword", null, null, null);
-			}
-			
-			@Override
-			public void authenticate(String username, String password)
-					throws RaplaException {
-				call("authenticate", new Class[] {String.class, String.class}, null, new Object[] {username, password});
-				
-			}
-
-			@Override
-			public void logEntityNotFound(String logMessage,SimpleIdentifier... referencedIds) throws RaplaException 
-			{
-				call("logEntityNotFound", new Class[] {String.class, SimpleIdentifier[].class}, null, new Object[] {logMessage, referencedIds});
-			}
-
-			@Override
-			public Date getNextAllocatableDate(
-					SimpleIdentifier[] allocatableIds, Appointment appointment,
-					SimpleIdentifier[] reservationIds,
-					Integer worktimeStartMinutes, Integer worktimeEndMinutes,
-					Integer[] excludedDays, Integer rowsPerHour)
-					throws RaplaException {
-				return (Date) call("getNextAllocatableDate", new Class[] {SimpleIdentifier[].class, Appointment.class,SimpleIdentifier[].class,
-						Integer.class, Integer.class,
-						Integer[].class, Integer.class}, Date.class, new Object[] {allocatableIds, appointment,reservationIds, worktimeStartMinutes, worktimeEndMinutes, excludedDays, rowsPerHour});
-			}
-		};
+		final RemoteStorage remoteStorage = GWT.create(RemoteStorage.class);
 		final RemoteOperator remoteOperator = new RemoteOperator(context, logger, config, remoteServer, remoteStorage);
 		callerProvider.setValue( remoteOperator);
 		FacadeImpl facade = new FacadeImpl(context, remoteOperator, logger);

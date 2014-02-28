@@ -9,6 +9,7 @@ import org.rapla.framework.RaplaException;
 import org.rapla.storage.dbrm.Connector;
 import org.rapla.storage.dbrm.RemoteMethodSerialization;
 
+import com.google.gwt.thirdparty.guava.common.annotations.GwtIncompatible;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class GWTConnector implements Connector {
@@ -38,47 +39,48 @@ public class GWTConnector implements Connector {
     }
 	
 	@Override
-	public Object call(Class<?> service, String methodName, Class<?>[] parameterTypes,	Class<?> returnType, Object[] args,	RemoteMethodSerialization remoteMethodSerialization) throws IOException, RaplaException 
+	public Object call(Class<?> service, String methodName, Class<?>[] parameterTypes,	Class<?> returnType, Object[] args) throws IOException, RaplaException 
 	{
-	    if ( service != null)
-	    {
-	        methodName = service.getName() +"/" + methodName; 
-	    }
-	    Map<String, String> argMap = remoteMethodSerialization.serializeArguments(parameterTypes, args);
-	    
-		//XMLHttpRequest request = XMLHttpRequest.create();
-		SynchronousXHR request = (SynchronousXHR) SynchronousXHR.create();
-		String url = getInfo() + "rapla/rpc/" + methodName; 
-		url = addSessionId(url);
-		String httpMethod = "POST";
-		request.synchronousOpen(httpMethod, url);
-		//request.open(httpMethod, url);
-		//open(request, "post", url);
-		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-	    if ( sessionId != null)
-	    {
-	    	request.setRequestHeader("Cookie","JSESSIONID=" + sessionId);
-	    }
-		StringBuilder builder = new StringBuilder();
-		addParams(builder, argMap);
-		String requestData = builder.toString();
-		request.send(requestData);
-		
-    	String message = request.getResponseHeader("X-Error-Stacktrace");
-        if ( message != null)
-        {
-        	String classname = request.getResponseHeader("X-Error-Classname");
-        	String param = request.getResponseHeader("X-Error-Param");
-        	RaplaException ex = remoteMethodSerialization.deserializeException( classname, message, param);
-        	throw ex;
-        }
-		String resultString = request.getResponseText();
-        Object result = remoteMethodSerialization.deserializeReturnValue(returnType, resultString);
-		
-		String cookies = request.getResponseHeader("Set-Cookie");
-		updateSession( cookies);
-		//String responseHeaders = request.getAllResponseHeaders();
-		return result;
+//	    if ( service != null)
+//	    {
+//	        methodName = service.getName() +"/" + methodName; 
+//	    }
+//	    Map<String, String> argMap = remoteMethodSerialization.serializeArguments(parameterTypes, args);
+//	    
+//		//XMLHttpRequest request = XMLHttpRequest.create();
+//		SynchronousXHR request = (SynchronousXHR) SynchronousXHR.create();
+//		String url = getInfo() + "rapla/rpc/" + methodName; 
+//		url = addSessionId(url);
+//		String httpMethod = "POST";
+//		request.synchronousOpen(httpMethod, url);
+//		//request.open(httpMethod, url);
+//		//open(request, "post", url);
+//		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+//	    if ( sessionId != null)
+//	    {
+//	    	request.setRequestHeader("Cookie","JSESSIONID=" + sessionId);
+//	    }
+//		StringBuilder builder = new StringBuilder();
+//		addParams(builder, argMap);
+//		String requestData = builder.toString();
+//		request.send(requestData);
+//		
+//    	String message = request.getResponseHeader("X-Error-Stacktrace");
+//        if ( message != null)
+//        {
+//        	String classname = request.getResponseHeader("X-Error-Classname");
+//        	String param = request.getResponseHeader("X-Error-Param");
+//        	RaplaException ex = remoteMethodSerialization.deserializeException( classname, message, param);
+//        	throw ex;
+//        }
+//		String resultString = request.getResponseText();
+//        Object result = remoteMethodSerialization.deserializeReturnValue(returnType, resultString);
+//		
+//		String cookies = request.getResponseHeader("Set-Cookie");
+//		updateSession( cookies);
+//		//String responseHeaders = request.getAllResponseHeaders();
+//		return result;
+		return null;
 	}
 	
     private void updateSession( String entry )

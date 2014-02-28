@@ -24,6 +24,10 @@ public class Locale {
     	return country;
     }
      
+    public static Locale getDefault()
+    {
+    	return ENGLISH;
+    }
     
     private static Locale createConstants(String lang, String country)
     {

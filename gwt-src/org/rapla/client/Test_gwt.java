@@ -1,26 +1,29 @@
 package org.rapla.client;
 
-import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rapla.ConnectInfo;
-import org.rapla.components.util.DateTools;
-import org.rapla.entities.domain.Allocatable;
-import org.rapla.entities.domain.Appointment;
-import org.rapla.entities.domain.AppointmentFormater;
-import org.rapla.entities.domain.Reservation;
-import org.rapla.facade.ClientFacade;
+import org.rapla.entities.domain.internal.AllocatableImpl;
+import org.rapla.entities.internal.CategoryImpl;
+import org.rapla.entities.internal.UserImpl;
+import org.rapla.facade.internal.ConflictImpl;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
+import org.rapla.storage.UpdateEvent;
+import org.rapla.storage.dbrm.FutureResult;
+import org.rapla.storage.dbrm.RemoteJsonStorage;
+import org.rapla.storage.dbrm.RemoteStorage;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -29,13 +32,18 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwtjsonrpc.common.AsyncCallback;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Test_gwt implements EntryPoint {
 
-	
+	RemoteStorage service = GWT.create(RemoteStorage.class);
+	{
+		String address = GWT.getModuleBaseURL() + "../rapla/json/org.rapla.storage.dbrm.RemoteStorage";
+		((ServiceDefTarget) service).setServiceEntryPoint(address);
+	}
 	/**
 	 * This is the entry point method.
 	 */
@@ -142,70 +150,146 @@ public class Test_gwt implements EntryPoint {
 				sendButton.setEnabled(false);
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
-				try
-				{
-					ConnectInfo connectInfo = new ConnectInfo(textToServer, password.toCharArray());
-					ClientFacade facade = context.lookup(ClientFacade.class);
-					AppointmentFormater formater = context.lookup(AppointmentFormater.class);
-					facade.login(connectInfo);
-					Allocatable[] allocatables = facade.getAllocatables();
-					StringBuilder builder = new StringBuilder();
-					builder.append( "<h2>Ressources</h2>");
-					for ( Allocatable alloc:allocatables)
-					{
-						builder.append( alloc.getName( Locale.GERMANY));
-						builder.append( "<br/>");
-					}
-					builder.append( "<h2>Reservations</h2>");
-					
-					Reservation[] reservations = facade.getReservations( allocatables, new Date(), DateTools.addDays( new Date(), 5));
-					for (Reservation r: reservations)
-					{
-						builder.append( r.getName( Locale.GERMANY));
-						builder.append( "[");
-						for ( Appointment app:r.getAppointments())
-						{
-							String summary = formater.getSummary( app);
-							builder.append(summary);
-						}
-						builder.append( "]");
-						builder.append( "<br/>");
-					}
-					String result = builder.toString();
-					serverResponseLabel.setHTML(result);
-					
-				}
-				catch (Throwable ex) {
-					logger.log(Level.SEVERE, "hallo",ex);
-				}
+//				try
+//				{
+//					ConnectInfo connectInfo = new ConnectInfo(textToServer, password.toCharArray());
+//					ClientFacade facade = context.lookup(ClientFacade.class);
+//					AppointmentFormater formater = context.lookup(AppointmentFormater.class);
+//					facade.login(connectInfo);
+//					Allocatable[] allocatables = facade.getAllocatables();
+//					StringBuilder builder = new StringBuilder();
+//					builder.append( "<h2>Ressources</h2>");
+//					for ( Allocatable alloc:allocatables)
+//					{
+//						builder.append( alloc.getName( Locale.GERMANY));
+//						builder.append( "<br/>");
+//					}
+//					builder.append( "<h2>Reservations</h2>");
+//					
+//					Reservation[] reservations = facade.getReservations( allocatables, new Date(), DateTools.addDays( new Date(), 5));
+//					for (Reservation r: reservations)
+//					{
+//						builder.append( r.getName( Locale.GERMANY));
+//						builder.append( "[");
+//						for ( Appointment app:r.getAppointments())
+//						{
+//							String summary = formater.getSummary( app);
+//							builder.append(summary);
+//						}
+//						builder.append( "]");
+//						builder.append( "<br/>");
+//					}
+//					String result = builder.toString();
+//					serverResponseLabel.setHTML(result);
+//					
+//				}
+//				catch (Throwable ex) {
+//					logger.log(Level.SEVERE, "hallo",ex);
+//				}
 				dialogBox.setText("Remote Procedure Call");
 				serverResponseLabel
 						.removeStyleName("serverResponseLabelError");
 				dialogBox.center();
 				closeButton.setFocus(true);
 				
-//				greetingService.greetServer(textToServer,
-//						new AsyncCallback<String>() {
+				FutureResult<UpdateEvent> resources = service.getResources();
+				FutureResult<List<ConflictImpl>> conflicts = service.getConflicts();
+				try {
+					resources.get();
+					conflicts.get();
+				} catch (RaplaException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//				AsyncCallback<UserImpl> asyncCallback = new AsyncCallback<UserImpl>() {
+//					public void onFailure(Throwable caught) {
+//						// Show the RPC error message to the user
+//						dialogBox
+//								.setText("Remote Procedure Call - Failure");
+//						serverResponseLabel
+//								.addStyleName("serverResponseLabelError");
+//						serverResponseLabel.setHTML(caught.getMessage());
+//						dialogBox.center();
+//						closeButton.setFocus(true);
+//					}
+//
+//					public void onSuccess(UserImpl user) {
+//						dialogBox.setText("Remote Procedure Call");
+//						serverResponseLabel
+//								.removeStyleName("serverResponseLabelError");
+//						StringBuilder builder = new StringBuilder();
+//						builder.append( "<h2>Ressources</h2>");
+//						builder.append( user.getName( Locale.GERMANY));
+//						builder.append( "<br/>");
+//						serverResponseLabel.setHTML(builder.toString());
+//						user.setEmail("christopher.kohlhaas@googlemail.com");
+//						AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+//
 //							public void onFailure(Throwable caught) {
 //								// Show the RPC error message to the user
 //								dialogBox
 //										.setText("Remote Procedure Call - Failure");
 //								serverResponseLabel
 //										.addStyleName("serverResponseLabelError");
-//								serverResponseLabel.setHTML(SERVER_ERROR);
+//								serverResponseLabel.setHTML(caught.getMessage());
 //								dialogBox.center();
 //								closeButton.setFocus(true);
 //							}
 //
-//							public void onSuccess(String result) {
-//								dialogBox.setText("Remote Procedure Call");
-//								serverResponseLabel
-//										.removeStyleName("serverResponseLabelError");
-//								serverResponseLabel.setHTML(result);
-//								dialogBox.center();
-//								closeButton.setFocus(true);
+//							@Override
+//							public void onSuccess(Boolean result) {
+//								
 //							}
-//						});
+//						};
+//						service.storeUser(user, callback);
+//						
+//					}
+//				};
+//				service.getUser("admin",asyncCallback);
+				
+//				AsyncCallback<CategoryImpl> callback2 = new AsyncCallback<CategoryImpl>() {
+//
+//					public void onFailure(Throwable caught) {
+//						// Show the RPC error message to the user
+//						dialogBox
+//								.setText("Remote Procedure Call - Failure");
+//						serverResponseLabel
+//								.addStyleName("serverResponseLabelError");
+//						serverResponseLabel.setHTML(caught.getMessage());
+//						dialogBox.center();
+//						closeButton.setFocus(true);
+//					}
+//
+//					@Override
+//					public void onSuccess(CategoryImpl result) {
+//						System.out.println( result );
+//						
+//					}
+//				};
+//				service.getCategory( callback2);
+				
+//				AsyncCallback<List<AllocatableImpl>> callback2 = new AsyncCallback<List<AllocatableImpl>>() {
+//
+//					public void onFailure(Throwable caught) {
+//						// Show the RPC error message to the user
+//						dialogBox
+//								.setText("Remote Procedure Call - Failure");
+//						serverResponseLabel
+//								.addStyleName("serverResponseLabelError");
+//						serverResponseLabel.setHTML(caught.getMessage());
+//						dialogBox.center();
+//						closeButton.setFocus(true);
+//					}
+//
+//					@Override
+//					public void onSuccess(List<AllocatableImpl> result) {
+//						
+//					}
+//				};
+//				service.getResources( callback2);
+				dialogBox.center();
+				closeButton.setFocus(true);
+
 			}
 		}
 
