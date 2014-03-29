@@ -1,19 +1,15 @@
 package org.rapla.client;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rapla.entities.domain.internal.AllocatableImpl;
-import org.rapla.entities.internal.CategoryImpl;
-import org.rapla.entities.internal.UserImpl;
-import org.rapla.facade.internal.ConflictImpl;
-import org.rapla.framework.RaplaContext;
-import org.rapla.framework.RaplaException;
-import org.rapla.storage.UpdateEvent;
-import org.rapla.storage.dbrm.FutureResult;
-import org.rapla.storage.dbrm.RemoteJsonStorage;
+import org.rapla.entities.domain.internal.ReservationImpl;
+import org.rapla.rest.gwtjsonrpc.client.impl.AbstractJsonProxy;
+import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
+import org.rapla.rest.gwtjsonrpc.common.FutureResult;
+import org.rapla.storage.dbrm.LoginTokens;
+import org.rapla.storage.dbrm.RemoteServer;
 import org.rapla.storage.dbrm.RemoteStorage;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -32,7 +28,6 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwtjsonrpc.common.AsyncCallback;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -41,21 +36,27 @@ public class Test_gwt implements EntryPoint {
 
 	RemoteStorage service = GWT.create(RemoteStorage.class);
 	{
-		String address = GWT.getModuleBaseURL() + "../rapla/json/org.rapla.storage.dbrm.RemoteStorage";
+		String address = GWT.getModuleBaseURL() + "../rapla/json/" + RemoteStorage.class.getName();
 		((ServiceDefTarget) service).setServiceEntryPoint(address);
 	}
+	
+	RemoteServer loginService = GWT.create(RemoteServer.class);
+    {
+        String address = GWT.getModuleBaseURL() + "../rapla/json/" + RemoteServer.class.getName();
+        ((ServiceDefTarget) loginService).setServiceEntryPoint(address);
+    }
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		RaplaGWTClient raplaGWTClient; 
-		try {
-			raplaGWTClient = new RaplaGWTClient();
-		} catch (RaplaException e) {
-			e.printStackTrace();
-			return;
-		}
-		final RaplaContext context = raplaGWTClient.getContext();
+//		RaplaGWTClient raplaGWTClient; 
+//		try {
+//			raplaGWTClient = new RaplaGWTClient();
+//		} catch (RaplaException e) {
+//			e.printStackTrace();
+//			return;
+//		}
+		//final RaplaContext context = raplaGWTClient.getContext();
 
 		final Button sendButton = new Button("Send");
 		final TextBox nameField = new TextBox();
@@ -187,20 +188,37 @@ public class Test_gwt implements EntryPoint {
 //					logger.log(Level.SEVERE, "hallo",ex);
 //				}
 				dialogBox.setText("Remote Procedure Call");
-				serverResponseLabel
-						.removeStyleName("serverResponseLabelError");
+				serverResponseLabel.removeStyleName("serverResponseLabelError");
 				dialogBox.center();
 				closeButton.setFocus(true);
-				
-				FutureResult<UpdateEvent> resources = service.getResources();
-				FutureResult<List<ConflictImpl>> conflicts = service.getConflicts();
-				try {
-					resources.get();
-					conflicts.get();
-				} catch (RaplaException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				 logger.info( "Calling login  " );
+				loginService.login(textToServer, password, null).get(new AsyncCallback<LoginTokens>() {
+                    
+                    public void onSuccess(LoginTokens result) {
+                        logger.info( "Login successfull  " );
+                        ((AbstractJsonProxy)service).setAuthThoken(result.getAccessToken());
+                        FutureResult<List<ReservationImpl>> reservations = service.getReservations(null, null, null, null);
+                        final long start = System.currentTimeMillis();
+                        logger.info( "Calling getReservations  " );
+                        reservations.get(new AsyncCallback<List<ReservationImpl>>() {
+
+                            public void onFailure(Throwable caught) {
+                                logger.log(Level.SEVERE, "get Reservation failed:" + caught.getMessage(),caught);
+                            }
+
+                            @Override
+                            public void onSuccess(List<ReservationImpl> result) {
+                                logger.info(   result.size()+ " Reservations loaded. It took " + (System.currentTimeMillis()- start ) + "ms");
+                                
+                            }
+                        });
+                    }
+                    
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        logger.log(Level.SEVERE, "Login failed " + caught.getMessage(),caught);
+                    }
+                });
 //				AsyncCallback<UserImpl> asyncCallback = new AsyncCallback<UserImpl>() {
 //					public void onFailure(Throwable caught) {
 //						// Show the RPC error message to the user

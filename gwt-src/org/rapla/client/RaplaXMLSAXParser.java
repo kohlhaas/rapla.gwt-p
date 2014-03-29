@@ -18,9 +18,9 @@ import java.util.Map;
 import org.rapla.components.util.xml.RaplaNonValidatedInput;
 import org.rapla.components.util.xml.RaplaSAXAttributes;
 import org.rapla.components.util.xml.RaplaSAXHandler;
+import org.rapla.components.util.xml.RaplaSAXParseException;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.logger.Logger;
-import org.rapla.storage.xml.RaplaSAXParseException;
 
 import com.google.gwt.xml.client.NamedNodeMap;
 import com.google.gwt.xml.client.Node;

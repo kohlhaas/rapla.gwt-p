@@ -1,6 +1,5 @@
 package org.rapla.client;
 
-import java.util.Date;
 import java.util.Locale;
 import java.util.MissingResourceException;
 
@@ -12,9 +11,7 @@ import org.rapla.components.util.Command;
 import org.rapla.components.util.CommandScheduler;
 import org.rapla.components.util.xml.RaplaNonValidatedInput;
 import org.rapla.components.xmlbundle.I18nBundle;
-import org.rapla.entities.RaplaType;
 import org.rapla.entities.configuration.RaplaConfiguration;
-import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.AppointmentFormater;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.RaplaComponent;
@@ -22,12 +19,8 @@ import org.rapla.facade.internal.FacadeImpl;
 import org.rapla.framework.RaplaDefaultContext;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
-import org.rapla.framework.SimpleProvider;
 import org.rapla.framework.logger.NullLogger;
-import org.rapla.storage.UpdateEvent;
-import org.rapla.storage.dbrm.ConnectorFactory;
-import org.rapla.storage.dbrm.EntityList;
-import org.rapla.storage.dbrm.RemoteMethodCaller;
+import org.rapla.storage.dbrm.RemoteConnectionInfo;
 import org.rapla.storage.dbrm.RemoteOperator;
 import org.rapla.storage.dbrm.RemoteServer;
 import org.rapla.storage.dbrm.RemoteStorage;
@@ -39,7 +32,7 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 public class RaplaGWTClient {
 
 	final RaplaDefaultContext context = new RaplaDefaultContext();
-	
+	RemoteConnectionInfo connectionInfo = new RemoteConnectionInfo();
 	public RaplaGWTClient() throws RaplaException {
 		final org.rapla.framework.logger.Logger logger = new NullLogger();
 		final RaplaConfiguration config = new RaplaConfiguration("remote");
@@ -133,34 +126,13 @@ public class RaplaGWTClient {
 		context.put( org.rapla.framework.logger.Logger.class, logger);
 		context.put( RaplaLocale.class, raplaLocale);
 		context.put( RaplaNonValidatedInput.class, raplaParser);
-		context.put( ConnectorFactory.class, new GWTConnectorFactory("@doc.version@"));
+		//context.put( ConnectorFactory.class, new GWTConnectorFactory("@doc.version@"));
 		context.put( CommandScheduler.class, commandQueue);
 		context.put( RaplaComponent.RAPLA_RESOURCES, i18n);
-		final SimpleProvider<RemoteMethodCaller> callerProvider = new SimpleProvider<RemoteMethodCaller>();
-		final RemoteServer remoteServer = new RemoteServer() {
-			public Object call(String methodName,Class<?>[] parameterTypes, Class<?> returnType ,Object[] args) throws RaplaException
-			{
-				RemoteMethodCaller remoteMethodCaller = callerProvider.get();
-				return remoteMethodCaller.call(RemoteServer.class, methodName, parameterTypes, returnType, args);
-			}
-			
-			@Override
-			public void logout() throws RaplaException {
-				call("logout", null, null, null);
-			}
-			
-			@Override
-			public String login(String username, String password, String connectAs)
-					throws RaplaException {
-				String result = (String) call("login", new Class[] {String.class, String.class, String.class}, null, new Object[] {username, password, connectAs});
-				return result;
-			}
-			
-		};
+		final RemoteServer remoteServer = GWT.create( RemoteServer.class);
 		final RemoteStorage remoteStorage = GWT.create(RemoteStorage.class);
-		final RemoteOperator remoteOperator = new RemoteOperator(context, logger, config, remoteServer, remoteStorage);
-		callerProvider.setValue( remoteOperator);
-		FacadeImpl facade = new FacadeImpl(context, remoteOperator, logger);
+		final RemoteOperator remoteOperator = new RemoteOperator(context, logger, config, remoteServer, remoteStorage, connectionInfo);
+		FacadeImpl facade = FacadeImpl.create(context, remoteOperator, logger);
 		context.put(ClientFacade.class, facade);
 		AppointmentFormater appointmentFormater = new AppointmentFormaterImpl(context);
 		context.put( AppointmentFormater.class, appointmentFormater);

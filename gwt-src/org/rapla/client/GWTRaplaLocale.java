@@ -101,6 +101,11 @@ public class GWTRaplaLocale extends AbstractRaplaLocale {
 		return Locale.GERMANY;
 	}
 
+    @Override
+    public Date fromUTCTimestamp(Date timestamp) {
+       throw new UnsupportedOperationException();
+    }
+
 
 
 }
