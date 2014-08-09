@@ -16,9 +16,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -49,14 +46,6 @@ public class Test_gwt implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-//		RaplaGWTClient raplaGWTClient; 
-//		try {
-//			raplaGWTClient = new RaplaGWTClient();
-//		} catch (RaplaException e) {
-//			e.printStackTrace();
-//			return;
-//		}
-		//final RaplaContext context = raplaGWTClient.getContext();
 
 		final Button sendButton = new Button("Send");
 		final TextBox nameField = new TextBox();
@@ -65,10 +54,6 @@ public class Test_gwt implements EntryPoint {
 		passwordField.setText("");
 		
 		final Label errorLabel = new Label();
-//		Container c = new TestContainer();
-//		provide(c);
-//		Test hallo = c.getContext().get( Test.class);
-//		hallo.message();
 		// We can add style names to widgets
 		sendButton.addStyleName("sendButton");
 
@@ -113,10 +98,9 @@ public class Test_gwt implements EntryPoint {
 			}
 		});
 		
-		
 
-		// Create a handler for the sendButton and nameField
-		class MyHandler implements ClickHandler, KeyUpHandler {
+		// Create a handler for the sendButton 
+		class MyHandler implements ClickHandler {
 			/**
 			 * Fired when the user clicks on the sendButton.
 			 */
@@ -125,16 +109,6 @@ public class Test_gwt implements EntryPoint {
 				//Logger logger = Logger.getLogger("componentClass");
 				//logger.log(Level.SEVERE, "hallo",new Exception("hallo"));
 				
-			}
-
-			/**
-			 * Fired when the user types in the nameField.
-			 */
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					sendNameToServer();
-					
-				}
 			}
 
 			/**
@@ -151,47 +125,11 @@ public class Test_gwt implements EntryPoint {
 				sendButton.setEnabled(false);
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
-//				try
-//				{
-//					ConnectInfo connectInfo = new ConnectInfo(textToServer, password.toCharArray());
-//					ClientFacade facade = context.lookup(ClientFacade.class);
-//					AppointmentFormater formater = context.lookup(AppointmentFormater.class);
-//					facade.login(connectInfo);
-//					Allocatable[] allocatables = facade.getAllocatables();
-//					StringBuilder builder = new StringBuilder();
-//					builder.append( "<h2>Ressources</h2>");
-//					for ( Allocatable alloc:allocatables)
-//					{
-//						builder.append( alloc.getName( Locale.GERMANY));
-//						builder.append( "<br/>");
-//					}
-//					builder.append( "<h2>Reservations</h2>");
-//					
-//					Reservation[] reservations = facade.getReservations( allocatables, new Date(), DateTools.addDays( new Date(), 5));
-//					for (Reservation r: reservations)
-//					{
-//						builder.append( r.getName( Locale.GERMANY));
-//						builder.append( "[");
-//						for ( Appointment app:r.getAppointments())
-//						{
-//							String summary = formater.getSummary( app);
-//							builder.append(summary);
-//						}
-//						builder.append( "]");
-//						builder.append( "<br/>");
-//					}
-//					String result = builder.toString();
-//					serverResponseLabel.setHTML(result);
-//					
-//				}
-//				catch (Throwable ex) {
-//					logger.log(Level.SEVERE, "hallo",ex);
-//				}
 				dialogBox.setText("Remote Procedure Call");
 				serverResponseLabel.removeStyleName("serverResponseLabelError");
 				dialogBox.center();
 				closeButton.setFocus(true);
-				 logger.info( "Calling login  " );
+				logger.info( "Calling login  " );
 				loginService.login(textToServer, password, null).get(new AsyncCallback<LoginTokens>() {
                     
                     public void onSuccess(LoginTokens result) {
@@ -314,8 +252,22 @@ public class Test_gwt implements EntryPoint {
 		// Add a handler to send the name to the server
 		MyHandler handler = new MyHandler();
 		sendButton.addClickHandler(handler);
-		nameField.addKeyUpHandler(handler);
+//		nameField.addKeyUpHandler(handler);
 	}
+
+//  RaplaGWTClient raplaGWTClient; 
+//  try {
+//      raplaGWTClient = new RaplaGWTClient();
+//  } catch (RaplaException e) {
+//      e.printStackTrace();
+//      return;
+//  }
+    //final RaplaContext context = raplaGWTClient.getContext();
+
+    //      Container c = new TestContainer();
+//  provide(c);
+//  Test hallo = c.getContext().get( Test.class);
+//  hallo.message();
 
 	
 //    private void provide(Container c) {

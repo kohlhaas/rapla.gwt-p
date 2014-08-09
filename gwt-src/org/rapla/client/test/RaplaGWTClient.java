@@ -1,4 +1,4 @@
-package org.rapla.client;
+package org.rapla.client.test;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -32,7 +32,7 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 public class RaplaGWTClient {
 
 	final RaplaDefaultContext context = new RaplaDefaultContext();
-	RemoteConnectionInfo connectionInfo = new RemoteConnectionInfo();
+	//RemoteConnectionInfo connectionInfo = new RemoteConnectionInfo();
 	public RaplaGWTClient() throws RaplaException {
 		final org.rapla.framework.logger.Logger logger = new NullLogger();
 		final RaplaConfiguration config = new RaplaConfiguration("remote");
@@ -131,7 +131,7 @@ public class RaplaGWTClient {
 		context.put( RaplaComponent.RAPLA_RESOURCES, i18n);
 		final RemoteServer remoteServer = GWT.create( RemoteServer.class);
 		final RemoteStorage remoteStorage = GWT.create(RemoteStorage.class);
-		final RemoteOperator remoteOperator = new RemoteOperator(context, logger, config, remoteServer, remoteStorage, connectionInfo);
+		final RemoteOperator remoteOperator = new RemoteOperator(context, logger, config, remoteServer, remoteStorage);
 		FacadeImpl facade = FacadeImpl.create(context, remoteOperator, logger);
 		context.put(ClientFacade.class, facade);
 		AppointmentFormater appointmentFormater = new AppointmentFormaterImpl(context);
