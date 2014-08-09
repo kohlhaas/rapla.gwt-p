@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class Test_gwt implements EntryPoint {
+public class Rapla implements EntryPoint {
 
 	RemoteStorage service = GWT.create(RemoteStorage.class);
 	{
@@ -59,10 +59,10 @@ public class Test_gwt implements EntryPoint {
 
 		// Add the nameField and sendButton to the RootPanel
 		// Use RootPanel.get() to get the entire body element
-		RootPanel.get("nameFieldContainer").add(nameField);
-		RootPanel.get("passwordFieldContainer").add(passwordField);
-		RootPanel.get("sendButtonContainer").add(sendButton);
-		RootPanel.get("errorLabelContainer").add(errorLabel);
+//		RootPanel.get("nameFieldContainer").add(nameField);
+//		RootPanel.get("passwordFieldContainer").add(passwordField);
+//		RootPanel.get("sendButtonContainer").add(sendButton);
+//		RootPanel.get("errorLabelContainer").add(errorLabel);
 
 		// Focus the cursor on the name field when the app loads
 		nameField.setFocus(true);
