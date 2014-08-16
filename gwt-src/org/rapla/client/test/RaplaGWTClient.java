@@ -9,7 +9,6 @@ import org.rapla.AppointmentFormaterImpl;
 import org.rapla.components.util.Cancelable;
 import org.rapla.components.util.Command;
 import org.rapla.components.util.CommandScheduler;
-import org.rapla.components.util.xml.RaplaNonValidatedInput;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.configuration.RaplaConfiguration;
 import org.rapla.entities.domain.AppointmentFormater;
@@ -20,7 +19,6 @@ import org.rapla.framework.RaplaDefaultContext;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.NullLogger;
-import org.rapla.storage.dbrm.RemoteConnectionInfo;
 import org.rapla.storage.dbrm.RemoteOperator;
 import org.rapla.storage.dbrm.RemoteServer;
 import org.rapla.storage.dbrm.RemoteStorage;
@@ -61,7 +59,7 @@ public class RaplaGWTClient {
 			}
 			
 			@Override
-			public String format(String key, Object[] obj)
+			public String format(String key, Object... obj)
 					throws MissingResourceException {
 				return key;
 			}
@@ -122,11 +120,8 @@ public class RaplaGWTClient {
 			}
 			
 		};
-		RaplaNonValidatedInput raplaParser = new RaplaXMLSAXParser();
 		context.put( org.rapla.framework.logger.Logger.class, logger);
 		context.put( RaplaLocale.class, raplaLocale);
-		context.put( RaplaNonValidatedInput.class, raplaParser);
-		//context.put( ConnectorFactory.class, new GWTConnectorFactory("@doc.version@"));
 		context.put( CommandScheduler.class, commandQueue);
 		context.put( RaplaComponent.RAPLA_RESOURCES, i18n);
 		final RemoteServer remoteServer = GWT.create( RemoteServer.class);
