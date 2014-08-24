@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import sun.security.krb5.internal.crypto.CksumType;
-
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
@@ -45,9 +43,9 @@ public class ViewListGenerator extends Generator {
 			SourceWriter src = getSourceWriter(classType, context, logger);
 			if (src == null)
 				return null;
-			src.println("public List<View> getViews() {");
+			src.println("public List<ViewPlugin> getViews() {");
 			src.indent();
-			src.println("List<View> plugins = new ArrayList<>();");
+			src.println("List<ViewPlugin> plugins = new ArrayList<>();");
 			for (String plugin : plugins) {
 				src.println("plugins.add(new " + plugin + "());");
 			}
@@ -75,7 +73,7 @@ public class ViewListGenerator extends Generator {
 		// Need to add whatever imports your generated class needs.
 		composer.addImport("java.util.List");
 		composer.addImport("java.util.ArrayList");
-		composer.addImport("org.rapla.client.plugin.view.View");
+		composer.addImport("org.rapla.client.plugin.view.ViewPlugin");
 		PrintWriter printWriter = context.tryCreate(logger, packageName,
 				simpleName);
 		if (printWriter == null) {

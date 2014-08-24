@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ViewPlugins {
 
-	public List<View> getViews() {
+	public List<ViewPlugin> getViews() {
 		return new ArrayList<>();
 	}
 
