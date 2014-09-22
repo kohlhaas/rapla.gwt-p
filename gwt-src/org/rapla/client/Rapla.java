@@ -123,7 +123,7 @@ public class Rapla implements EntryPoint {
 
             @Override
             public void onSuccess() {
-                Window.alert("Code downloaded BLUBS2");
+                //Window.alert("Code downloaded BLUBS2");
                 Application app = GWT.create(Application.class);
                 app.createApplication();
                 FutureResult<List<ReservationImpl>> reservations =  service.getReservations(null, null, null, null);
