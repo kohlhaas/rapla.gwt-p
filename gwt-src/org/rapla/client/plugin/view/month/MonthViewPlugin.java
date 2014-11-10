@@ -29,7 +29,6 @@ public class MonthViewPlugin implements ViewPlugin {
 
 	@Override
 	public void enable() {
-		// TODO Auto-generated method stub
 
 	}
 

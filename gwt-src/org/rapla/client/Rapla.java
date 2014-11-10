@@ -1,16 +1,12 @@
 package org.rapla.client;
 
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rapla.entities.domain.internal.ReservationImpl;
-import org.rapla.rest.gwtjsonrpc.client.impl.AbstractJsonProxy;
-import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
+import org.rapla.client.data.MainInjector;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 import org.rapla.storage.dbrm.LoginTokens;
 import org.rapla.storage.dbrm.RemoteServer;
-import org.rapla.storage.dbrm.RemoteStorage;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -29,20 +25,11 @@ import com.google.gwt.user.client.ui.TextBox;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Rapla implements EntryPoint {
+    private final MainInjector injector = GWT.create(MainInjector.class);
     final Logger logger = Logger.getLogger("componentClass");
     public static final String LOGIN_COOKIE = "raplaLoginToken";
 
-    RemoteStorage service = GWT.create(RemoteStorage.class);
-    {
-        String address = GWT.getModuleBaseURL() + "../rapla/json/" + RemoteStorage.class.getName();
-        ((ServiceDefTarget) service).setServiceEntryPoint(address);
-    }
-
-    RemoteServer loginService = GWT.create(RemoteServer.class);
-    {
-        String address = GWT.getModuleBaseURL() + "../rapla/json/" + RemoteServer.class.getName();
-        ((ServiceDefTarget) loginService).setServiceEntryPoint(address);
-    }
+    
 
     /**
      * This is the entry point method.
@@ -81,22 +68,27 @@ public class Rapla implements EntryPoint {
 
                     // Then, we send the input to the server.
                     sendButton.setEnabled(false);
+                    logger.info("heir");
+                    final RemoteServer loginService = injector.getLoginService();
+                    logger.info("got "+loginService);
+                    String address = GWT.getModuleBaseURL() + "../rapla/json/" + RemoteServer.class.getName();
+                    ((ServiceDefTarget) loginService).setServiceEntryPoint(address);
                     FutureResult<LoginTokens> login = loginService.login(textToServer, password, null);
-                    login.get(new
-                            AsyncCallback<LoginTokens>() {
-
-                                public void onSuccess(LoginTokens result) {
-                                    logger.info("Login successfull  ");
-                                    Cookies.setCookie(LOGIN_COOKIE, result.toString());
-                                    ((AbstractJsonProxy) service).setAuthThoken(result.getAccessToken());
-                                    goToWizard();
-                                }
-
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    sendButton.setEnabled(true);
-                                }
-                            });
+//                    login.get(new
+//                            AsyncCallback<LoginTokens>() {
+//
+//                                public void onSuccess(LoginTokens result) {
+//                                    logger.info("Login successfull  ");
+//                                    Cookies.setCookie(LOGIN_COOKIE, result.toString());
+//                                    AbstractJsonProxy.setAuthThoken(result.getAccessToken());
+//                                    goToWizard();
+//                                }
+//
+//                                @Override
+//                                public void onFailure(Throwable caught) {
+//                                    sendButton.setEnabled(true);
+//                                }
+//                            });
 
                 }
             });
@@ -123,22 +115,9 @@ public class Rapla implements EntryPoint {
             @Override
             public void onSuccess() {
                 //Window.alert("Code downloaded BLUBS2");
-                Application app = GWT.create(Application.class);
-                app.createApplication();
-                FutureResult<List<ReservationImpl>> reservations =  service.getReservations(null, null, null, null);
-                reservations.get(new AsyncCallback<List<ReservationImpl>>() {
-                    
-                     public void onFailure(Throwable caught) {
-                         logger.log(Level.SEVERE, "get Reservation failed:" +
-                                 caught.getMessage(),caught);
-                     }
-                    
-                     @Override
-                     public void onSuccess(List<ReservationImpl> result) {
-                         logger.info( result.size()+ " Reservations loaded."                                 );
-                    
-                     }
-                });
+//                Application app = injector.getApplication();
+//                app.createApplication();
+                
 
             }
 

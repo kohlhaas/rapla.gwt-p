@@ -1,6 +1,10 @@
 package org.rapla.client.plugin.view;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.rapla.client.content.ContentDrawer;
 import org.rapla.client.event.RaplaEventBus;
@@ -18,10 +22,14 @@ public class ViewController implements ContentDrawer {
 	private ListBox listBox;
 
 	private List<ViewPlugin> views;
+	
+	@Inject
+	public void setViews(Set<ViewPlugin> views)
+	{
+	    this.views = new ArrayList<ViewPlugin>(views);
+	}
 
 	public ViewController() {
-		ViewPlugins plugins = GWT.create(ViewPlugins.class);
-		views = plugins.getViews();
 		listBox = new ListBox();
 		listBox.setSelectedIndex(0);
 		listBox.addChangeHandler(new ChangeHandler() {
