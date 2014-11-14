@@ -38,24 +38,33 @@ public class ListDrawer implements ContentDrawer {
 
 	@Override
 	public Widget createContent() {
-        
-      FutureResult<List<ReservationImpl>> reservations =  service.getReservations(null, null, null, null);
+        logger.info("Service " + service);
+	    FutureResult<List<ReservationImpl>> reservations =  service.getReservations(null, null, null, null);
         reservations.get(new AsyncCallback<List<ReservationImpl>>() {
             
              public void onFailure(Throwable caught) {
                  logger.log(Level.SEVERE, "get Reservation failed:" + caught.getMessage(),caught);
+                 for (int i = 0; i < 100; i++)
+                 {
+                     data.getList().add("Test" + i);
+                 }
+                 list.setPageSize(data.getList().size());
              }
             
              @Override
              public void onSuccess(List<ReservationImpl> result) {
                  logger.info( result.size()+ " Reservations loaded.");
+                 for ( ReservationImpl event:result)
+                 {
+                     data.getList().add(event.toString());
+                 }
+                 list.setPageSize(data.getList().size());
              }
         });
         
         
-        for (int i = 0; i < 100; i++)
-            data.getList().add("Test" + i);
-        list.setPageSize(data.getList().size());
+        
+        
         final SingleSelectionModel<String> singleSelectionModel = new SingleSelectionModel<>();
         list.setSelectionModel(singleSelectionModel);
         singleSelectionModel.addSelectionChangeHandler(new Handler() {

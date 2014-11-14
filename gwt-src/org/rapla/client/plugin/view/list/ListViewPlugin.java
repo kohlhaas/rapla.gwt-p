@@ -1,16 +1,16 @@
 package org.rapla.client.plugin.view.list;
 
+import javax.inject.Inject;
+
 import org.rapla.client.content.ContentDrawer;
 import org.rapla.client.plugin.view.ViewPlugin;
 
-import com.google.gwt.core.shared.GWT;
-
 public class ListViewPlugin implements ViewPlugin {
 
+    @Inject
 	private ListDrawer ld;
 
 	public ListViewPlugin() {
-		ld = GWT.create(ListDrawer.class);
 	}
 
 	@Override

@@ -4,6 +4,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.rapla.client.data.MainInjector;
+import org.rapla.rest.gwtjsonrpc.client.impl.AbstractJsonProxy;
+import org.rapla.rest.gwtjsonrpc.client.impl.EntryPointFactory;
+import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 import org.rapla.storage.dbrm.LoginTokens;
 import org.rapla.storage.dbrm.RemoteServer;
@@ -14,7 +17,6 @@ import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -35,9 +37,20 @@ public class Rapla implements EntryPoint {
      * This is the entry point method.
      */
     public void onModuleLoad() {
-
-        if (alreadyLoggedIn())
+        AbstractJsonProxy.setServiceEntryPointFactory( new EntryPointFactory() {
+            
+            @Override
+            public String getEntryPoint(Class serviceClass) {
+                String name = serviceClass.getName().replaceAll("_JsonProxy", "");
+                
+                logger.info("Setting entry point to " + name);
+                return  GWT.getModuleBaseURL() + "../rapla/json/" + name;
+            }
+        });
+        LoginTokens token = getValidToken();
+        if (token != null)
         {
+            AbstractJsonProxy.setAuthThoken(token.getAccessToken());
             goToWizard();
         } else
         {
@@ -71,31 +84,32 @@ public class Rapla implements EntryPoint {
                     logger.info("heir");
                     final RemoteServer loginService = injector.getLoginService();
                     logger.info("got "+loginService);
-                    String address = GWT.getModuleBaseURL() + "../rapla/json/" + RemoteServer.class.getName();
-                    ((ServiceDefTarget) loginService).setServiceEntryPoint(address);
+                    //String address = GWT.getModuleBaseURL() + "../rapla/json/" + RemoteServer.class.getName();
+                    //((ServiceDefTarget) loginService).setServiceEntryPoint(address);
                     FutureResult<LoginTokens> login = loginService.login(textToServer, password, null);
-//                    login.get(new
-//                            AsyncCallback<LoginTokens>() {
-//
-//                                public void onSuccess(LoginTokens result) {
-//                                    logger.info("Login successfull  ");
-//                                    Cookies.setCookie(LOGIN_COOKIE, result.toString());
-//                                    AbstractJsonProxy.setAuthThoken(result.getAccessToken());
-//                                    goToWizard();
-//                                }
-//
-//                                @Override
-//                                public void onFailure(Throwable caught) {
-//                                    sendButton.setEnabled(true);
-//                                }
-//                            });
+                    login.get(new
+                            AsyncCallback<LoginTokens>() {
+
+                                public void onSuccess(LoginTokens result) {
+                                    logger.info("Login successfull  ");
+                                    Cookies.setCookie(LOGIN_COOKIE, result.toString());
+                                    AbstractJsonProxy.setAuthThoken(result.getAccessToken());
+                                    goToWizard();
+                                }
+
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    logger.log(Level.SEVERE, caught.getMessage(), caught);
+                                    sendButton.setEnabled(true);
+                                }
+                            });
 
                 }
             });
         }
     }
 
-    private boolean alreadyLoggedIn() {
+    private LoginTokens getValidToken() {
         logger.log(Level.INFO, "Looking for cookie");
         String cookie = Cookies.getCookie(LOGIN_COOKIE);
         if (cookie != null)
@@ -103,9 +117,13 @@ public class Rapla implements EntryPoint {
             LoginTokens token = LoginTokens.fromString(cookie);
             boolean valid = token.isValid();
             logger.log(Level.INFO, "found cookie: " + valid);
-            return valid;
+            if ( !valid)
+            {
+                return null;
+            }
+            return token;
         }
-        return false;
+        return null;
     }
 
     private void goToWizard() {
@@ -115,8 +133,8 @@ public class Rapla implements EntryPoint {
             @Override
             public void onSuccess() {
                 //Window.alert("Code downloaded BLUBS2");
-//                Application app = injector.getApplication();
-//                app.createApplication();
+                Application app = injector.getApplication();
+                app.createApplication();
                 
 
             }

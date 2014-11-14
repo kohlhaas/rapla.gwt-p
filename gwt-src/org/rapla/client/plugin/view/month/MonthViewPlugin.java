@@ -1,15 +1,15 @@
 package org.rapla.client.plugin.view.month;
 
+import javax.inject.Inject;
+
 import org.rapla.client.content.ContentDrawer;
 import org.rapla.client.plugin.view.ViewPlugin;
 
-import com.google.gwt.core.shared.GWT;
-
 public class MonthViewPlugin implements ViewPlugin {
-	private MonthDrawer md;
+	@Inject
+    private MonthDrawer md;
 
 	public MonthViewPlugin() {
-		md = GWT.create(MonthDrawer.class);
 	}
 
 	@Override
