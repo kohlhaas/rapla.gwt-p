@@ -3,6 +3,8 @@ package org.rapla.client.test;
 import java.util.Locale;
 import java.util.MissingResourceException;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.ImageIcon;
 
 import org.rapla.AppointmentFormaterImpl;
@@ -10,11 +12,8 @@ import org.rapla.components.util.Cancelable;
 import org.rapla.components.util.Command;
 import org.rapla.components.util.CommandScheduler;
 import org.rapla.components.xmlbundle.I18nBundle;
-import org.rapla.entities.configuration.RaplaConfiguration;
 import org.rapla.entities.domain.AppointmentFormater;
-import org.rapla.facade.ClientFacade;
 import org.rapla.facade.RaplaComponent;
-import org.rapla.facade.internal.FacadeImpl;
 import org.rapla.framework.RaplaDefaultContext;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
@@ -23,17 +22,23 @@ import org.rapla.storage.dbrm.RemoteOperator;
 import org.rapla.storage.dbrm.RemoteServer;
 import org.rapla.storage.dbrm.RemoteStorage;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 
+@Singleton
 public class RaplaGWTClient {
-
+    @Inject 
+    RemoteServer remoteServer;
+    @Inject 
+    RemoteStorage remoteStorage;
+    
+    RemoteOperator remoteOperator;
+    
 	final RaplaDefaultContext context = new RaplaDefaultContext();
 	//RemoteConnectionInfo connectionInfo = new RemoteConnectionInfo();
 	public RaplaGWTClient() throws RaplaException {
 		final org.rapla.framework.logger.Logger logger = new NullLogger();
-		final RaplaConfiguration config = new RaplaConfiguration("remote");
+		//final RaplaConfiguration config = new RaplaConfiguration("remote");
 		final GWTRaplaLocale raplaLocale = new GWTRaplaLocale();
 		I18nBundle i18n = new I18nBundle() {
 			
@@ -124,18 +129,28 @@ public class RaplaGWTClient {
 		context.put( RaplaLocale.class, raplaLocale);
 		context.put( CommandScheduler.class, commandQueue);
 		context.put( RaplaComponent.RAPLA_RESOURCES, i18n);
-		final RemoteServer remoteServer = GWT.create( RemoteServer.class);
-		final RemoteStorage remoteStorage = GWT.create(RemoteStorage.class);
-		final RemoteOperator remoteOperator = new RemoteOperator(context, logger, config, remoteServer, remoteStorage);
-		FacadeImpl facade = FacadeImpl.create(context, remoteOperator, logger);
-		context.put(ClientFacade.class, facade);
-		AppointmentFormater appointmentFormater = new AppointmentFormaterImpl(context);
-		context.put( AppointmentFormater.class, appointmentFormater);
+        AppointmentFormater appointmentFormater = new AppointmentFormaterImpl(context);
+        context.put( AppointmentFormater.class, appointmentFormater);
+		//final RemoteOperator remoteOperator = new RemoteOperator(context, logger, config, remoteServer, remoteStorage);
+//		FacadeImpl facade = FacadeImpl.create(context, remoteOperator, logger);
+//		context.put(ClientFacade.class, facade);
+	}
+	
+	@Inject
+	private void init() throws RaplaException
+	{      
+	    org.rapla.framework.logger.Logger logger = context.lookup( org.rapla.framework.logger.Logger.class);
+	    remoteOperator = new RemoteOperator(context, logger, null, remoteServer, remoteStorage);
 	}
 	
 	public RaplaDefaultContext getContext() 
 	{
 		return context;
+	}
+	
+	public RemoteOperator getOperator()
+	{
+	    return remoteOperator;
 	}
 
 }

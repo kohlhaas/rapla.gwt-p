@@ -39,6 +39,7 @@ public class ListDrawer implements ContentDrawer {
 	@Override
 	public Widget createContent() {
         logger.info("Service " + service);
+        data.getList().clear();
 	    FutureResult<List<ReservationImpl>> reservations =  service.getReservations(null, null, null, null);
         reservations.get(new AsyncCallback<List<ReservationImpl>>() {
             

@@ -1,19 +1,24 @@
 package org.rapla.client;
 
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.rapla.client.data.MainInjector;
+import org.rapla.client.test.RaplaGWTClient;
+import org.rapla.entities.domain.Allocatable;
+import org.rapla.framework.RaplaException;
 import org.rapla.rest.gwtjsonrpc.client.impl.AbstractJsonProxy;
 import org.rapla.rest.gwtjsonrpc.client.impl.EntryPointFactory;
 import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
+import org.rapla.storage.UpdateEvent;
 import org.rapla.storage.dbrm.LoginTokens;
+import org.rapla.storage.dbrm.RemoteOperator;
 import org.rapla.storage.dbrm.RemoteServer;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Cookies;
@@ -114,6 +119,7 @@ public class Rapla implements EntryPoint {
         String cookie = Cookies.getCookie(LOGIN_COOKIE);
         if (cookie != null)
         {
+            // re request the server for refresh token
             LoginTokens token = LoginTokens.fromString(cookie);
             boolean valid = token.isValid();
             logger.log(Level.INFO, "found cookie: " + valid);
@@ -128,22 +134,37 @@ public class Rapla implements EntryPoint {
 
     private void goToWizard() {
         logger.log(Level.INFO, "GWT Applet started BLUBS1");
-        GWT.runAsync(new RunAsyncCallback() {
-
-            @Override
-            public void onSuccess() {
-                //Window.alert("Code downloaded BLUBS2");
-                Application app = injector.getApplication();
-                app.createApplication();
-                
-
-            }
-
-            @Override
-            public void onFailure(Throwable reason) {
-
-            }
-        });
+        RaplaGWTClient client = injector.getClient();
+        RemoteOperator operator = client.getOperator();
+        try {
+            operator.loadData(null);
+            Collection<Allocatable> allocatables = operator.getAllocatables(null);
+            logger.info("loaded " + allocatables.size() + " resources.");
+        } catch (RaplaException e) {
+            logger.log( Level.SEVERE, e.getMessage(), e);
+            return;
+        }
+        //Window.alert("Code downloaded BLUBS2");
+//        AsyncCallback<UpdateEvent> callback = new AsyncCallback<UpdateEvent>() {
+//
+//            @Override
+//            public void onFailure(Throwable caught) {
+//                logger.log( Level.SEVERE, caught.getMessage(), caught);
+//            }
+//
+//            @Override
+//            public void onSuccess(UpdateEvent result) {
+//                logger.info(result.toString());
+//            }
+//        };
+//        try {
+//            injector.getStorageService().getResources().get(callback);
+//        } catch (RaplaException caught) {
+//            logger.log( Level.SEVERE, caught.getMessage(), caught);
+//        }
+        Application app = injector.getApplication();
+        app.createApplication();
+      
     }
     // final Button sendButton = new Button("Send");
     // final TextBox nameField = new TextBox();
