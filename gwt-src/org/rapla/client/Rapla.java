@@ -12,13 +12,13 @@ import org.rapla.rest.gwtjsonrpc.client.impl.AbstractJsonProxy;
 import org.rapla.rest.gwtjsonrpc.client.impl.EntryPointFactory;
 import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
-import org.rapla.storage.UpdateEvent;
 import org.rapla.storage.dbrm.LoginTokens;
 import org.rapla.storage.dbrm.RemoteOperator;
 import org.rapla.storage.dbrm.RemoteServer;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Cookies;
@@ -42,6 +42,7 @@ public class Rapla implements EntryPoint {
      * This is the entry point method.
      */
     public void onModuleLoad() {
+    	StyleInjector.inject("Rapla.css", true);
         AbstractJsonProxy.setServiceEntryPointFactory( new EntryPointFactory() {
             
             @Override

@@ -32,3 +32,17 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+/* ADD BUTTON for new event */
+.addButton {
+	float: right;
+	width: 28px;
+	background-color: rgb(153, 184, 252);
+	border-radius: 50px;
+	color: white;
+	cursor: pointer;
+	height: 28px;
+	text-align: center;
+	margin-right: 50px;
+	font-size: 20px;
+}

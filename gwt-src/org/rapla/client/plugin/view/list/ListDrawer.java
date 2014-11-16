@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.rapla.client.content.ContentDrawer;
-import org.rapla.client.content.DetailSelectEvent;
+import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.event.RaplaEventBus;
 import org.rapla.entities.domain.internal.ReservationImpl;
 import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;

@@ -1,6 +1,6 @@
-package org.rapla.client.content;
+package org.rapla.client.event;
 
-import org.rapla.client.content.DetailSelectEvent.DetailSelectEventHandler;
+import org.rapla.client.event.DetailSelectEvent.DetailSelectEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
