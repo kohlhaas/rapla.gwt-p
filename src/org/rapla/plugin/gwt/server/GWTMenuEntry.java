@@ -15,7 +15,7 @@ public class GWTMenuEntry extends DefaultHTMLMenuEntry
 	}
 	@Override
 	public String getLinkName() {
-		return "Test_gwt.html";
+		return "rapla.html";
 	}
 		
 }
