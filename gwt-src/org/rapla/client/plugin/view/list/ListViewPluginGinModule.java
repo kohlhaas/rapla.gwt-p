@@ -11,7 +11,7 @@ public class ListViewPluginGinModule implements GinModule {
     @Override
     public void configure(GinBinder binder) {
         GinMultibinder<ViewPlugin> uriBinder = GinMultibinder.newSetBinder(binder, ViewPlugin.class);
-        uriBinder.addBinding().to(ListViewPlugin.class);
+        uriBinder.addBinding().to(ListView.class);
     }
 
 }

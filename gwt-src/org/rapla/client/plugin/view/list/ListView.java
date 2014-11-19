@@ -2,15 +2,15 @@ package org.rapla.client.plugin.view.list;
 
 import javax.inject.Inject;
 
-import org.rapla.client.content.ContentDrawer;
+import org.rapla.client.plugin.view.ContentDrawer;
 import org.rapla.client.plugin.view.ViewPlugin;
 
-public class ListViewPlugin implements ViewPlugin {
+public class ListView implements ViewPlugin {
 
     @Inject
 	private ListDrawer ld;
 
-	public ListViewPlugin() {
+	public ListView() {
 	}
 
 	@Override

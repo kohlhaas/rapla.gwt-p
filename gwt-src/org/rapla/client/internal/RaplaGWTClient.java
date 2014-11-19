@@ -1,4 +1,4 @@
-package org.rapla.client.test;
+package org.rapla.client.internal;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -13,11 +13,15 @@ import org.rapla.components.util.Command;
 import org.rapla.components.util.CommandScheduler;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.domain.AppointmentFormater;
+import org.rapla.facade.ClientFacade;
 import org.rapla.facade.RaplaComponent;
+import org.rapla.facade.internal.FacadeImpl;
+import org.rapla.framework.DefaultConfiguration;
 import org.rapla.framework.RaplaDefaultContext;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.NullLogger;
+import org.rapla.storage.StorageOperator;
 import org.rapla.storage.dbrm.RemoteOperator;
 import org.rapla.storage.dbrm.RemoteServer;
 import org.rapla.storage.dbrm.RemoteStorage;
@@ -34,12 +38,16 @@ public class RaplaGWTClient {
     
     RemoteOperator remoteOperator;
     
+    ClientFacade clientFacace;
+
+    final GWTRaplaLocale raplaLocale;
+    
 	final RaplaDefaultContext context = new RaplaDefaultContext();
 	//RemoteConnectionInfo connectionInfo = new RemoteConnectionInfo();
 	public RaplaGWTClient() throws RaplaException {
 		final org.rapla.framework.logger.Logger logger = new NullLogger();
 		//final RaplaConfiguration config = new RaplaConfiguration("remote");
-		final GWTRaplaLocale raplaLocale = new GWTRaplaLocale();
+		raplaLocale = new GWTRaplaLocale();
 		I18nBundle i18n = new I18nBundle() {
 			
 			@Override
@@ -131,9 +139,6 @@ public class RaplaGWTClient {
 		context.put( RaplaComponent.RAPLA_RESOURCES, i18n);
         AppointmentFormater appointmentFormater = new AppointmentFormaterImpl(context);
         context.put( AppointmentFormater.class, appointmentFormater);
-		//final RemoteOperator remoteOperator = new RemoteOperator(context, logger, config, remoteServer, remoteStorage);
-//		FacadeImpl facade = FacadeImpl.create(context, remoteOperator, logger);
-//		context.put(ClientFacade.class, facade);
 	}
 	
 	@Inject
@@ -141,16 +146,26 @@ public class RaplaGWTClient {
 	{      
 	    org.rapla.framework.logger.Logger logger = context.lookup( org.rapla.framework.logger.Logger.class);
 	    remoteOperator = new RemoteOperator(context, logger, null, remoteServer, remoteStorage);
+	    context.put( StorageOperator.class, remoteOperator);
+	    clientFacace = FacadeImpl.create(context, remoteOperator, logger);
 	}
 	
 	public RaplaDefaultContext getContext() 
 	{
-		return context;
+	    return context;
 	}
 	
 	public RemoteOperator getOperator()
 	{
 	    return remoteOperator;
 	}
+	
+	public ClientFacade getFacade()
+	{
+        return clientFacace;
+	}
 
+    public RaplaLocale getRaplaLocale() {
+        return raplaLocale;
+    }
 }

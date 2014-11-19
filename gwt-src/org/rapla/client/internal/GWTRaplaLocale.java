@@ -1,4 +1,4 @@
-package org.rapla.client.test;
+package org.rapla.client.internal;
 
 import java.util.Calendar;
 import java.util.Date;

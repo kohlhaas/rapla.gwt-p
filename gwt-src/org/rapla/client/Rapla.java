@@ -1,12 +1,13 @@
 package org.rapla.client;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rapla.client.data.MainInjector;
-import org.rapla.client.test.RaplaGWTClient;
+import org.rapla.client.internal.RaplaGWTClient;
 import org.rapla.entities.domain.Allocatable;
+import org.rapla.facade.internal.FacadeImpl;
 import org.rapla.framework.RaplaException;
 import org.rapla.rest.gwtjsonrpc.client.impl.AbstractJsonProxy;
 import org.rapla.rest.gwtjsonrpc.client.impl.EntryPointFactory;
@@ -35,8 +36,6 @@ public class Rapla implements EntryPoint {
     private final MainInjector injector = GWT.create(MainInjector.class);
     final Logger logger = Logger.getLogger("componentClass");
     public static final String LOGIN_COOKIE = "raplaLoginToken";
-
-    
 
     /**
      * This is the entry point method.
@@ -82,23 +81,20 @@ public class Rapla implements EntryPoint {
                 @Override
                 public void onClick(ClickEvent event) {
                     errorLabel.setText("");
-                    String textToServer = nameField.getText();
+                    final String username = nameField.getText();
                     String password = passwordField.getText();
-
                     // Then, we send the input to the server.
                     sendButton.setEnabled(false);
-                    logger.info("heir");
                     final RemoteServer loginService = injector.getLoginService();
-                    logger.info("got "+loginService);
-                    //String address = GWT.getModuleBaseURL() + "../rapla/json/" + RemoteServer.class.getName();
-                    //((ServiceDefTarget) loginService).setServiceEntryPoint(address);
-                    FutureResult<LoginTokens> login = loginService.login(textToServer, password, null);
+                    FutureResult<LoginTokens> login = loginService.login(username, password, null);
                     login.get(new
                             AsyncCallback<LoginTokens>() {
 
                                 public void onSuccess(LoginTokens result) {
                                     logger.info("Login successfull  ");
-                                    Cookies.setCookie(LOGIN_COOKIE, result.toString());
+                                    // we store the token in a cookie for future login
+                                    Cookies.setCookie(LOGIN_COOKIE, username+ ":" +result.toString());
+                                    // then we set the token for the remote proxies
                                     AbstractJsonProxy.setAuthThoken(result.getAccessToken());
                                     goToWizard();
                                 }
@@ -121,7 +117,12 @@ public class Rapla implements EntryPoint {
         if (cookie != null)
         {
             // re request the server for refresh token
-            LoginTokens token = LoginTokens.fromString(cookie);
+            int indexOf = cookie.indexOf(":");
+            String username = cookie.substring(0,indexOf);
+            String tokenString = cookie.substring(indexOf +1);
+            logger.log(Level.INFO, "found cookie: " +cookie +" parsed " + username +":"+ tokenString);
+            
+            LoginTokens token = LoginTokens.fromString(tokenString);
             boolean valid = token.isValid();
             logger.log(Level.INFO, "found cookie: " + valid);
             if ( !valid)
@@ -138,277 +139,53 @@ public class Rapla implements EntryPoint {
         RaplaGWTClient client = injector.getClient();
         RemoteOperator operator = client.getOperator();
         try {
+            String cookie = Cookies.getCookie(LOGIN_COOKIE);
+            int indexOf = cookie.indexOf(":");
+            String username = cookie.substring(0,indexOf);
             operator.loadData(null);
-            Collection<Allocatable> allocatables = operator.getAllocatables(null);
+            FacadeImpl facadeImpl = (FacadeImpl)client.getFacade();
+            facadeImpl.setUsernameInternal(null, username);
+            facadeImpl.setCachingEnabled( false );
+            // Test for the resources
+            Collection<Allocatable> allocatables = Arrays.asList(facadeImpl.getAllocatables());
+            //Collection<Allocatable> allocatables = operator.getAllocatables(null);
             logger.info("loaded " + allocatables.size() + " resources.");
+            
         } catch (RaplaException e) {
             logger.log( Level.SEVERE, e.getMessage(), e);
             return;
         }
-        //Window.alert("Code downloaded BLUBS2");
-//        AsyncCallback<UpdateEvent> callback = new AsyncCallback<UpdateEvent>() {
-//
-//            @Override
-//            public void onFailure(Throwable caught) {
-//                logger.log( Level.SEVERE, caught.getMessage(), caught);
-//            }
-//
-//            @Override
-//            public void onSuccess(UpdateEvent result) {
-//                logger.info(result.toString());
-//            }
-//        };
-//        try {
-//            injector.getStorageService().getResources().get(callback);
-//        } catch (RaplaException caught) {
-//            logger.log( Level.SEVERE, caught.getMessage(), caught);
-//        }
         Application app = injector.getApplication();
         app.createApplication();
-      
+
     }
-    // final Button sendButton = new Button("Send");
-    // final TextBox nameField = new TextBox();
-    // nameField.setText("admin");
-    // final TextBox passwordField = new PasswordTextBox();
-    // passwordField.setText("");
-    //
-    // final Label errorLabel = new Label();
-    // // We can add style names to widgets
-    // sendButton.addStyleName("sendButton");
-    //
-    // // Add the nameField and sendButton to the RootPanel
-    // // Use RootPanel.get() to get the entire body element
-    // RootPanel.get("nameFieldContainer").add(nameField);
-    // RootPanel.get("passwordFieldContainer").add(passwordField);
-    // RootPanel.get("sendButtonContainer").add(sendButton);
-    // RootPanel.get("errorLabelContainer").add(errorLabel);
-    //
-    // // Focus the cursor on the name field when the app loads
-    // nameField.setFocus(true);
-    // nameField.selectAll();
-    //
-    // // Create the popup dialog box
-    // final DialogBox dialogBox = new DialogBox();
-    // dialogBox.setText("Remote Procedure Call");
-    // dialogBox.setAnimationEnabled(true);
-    // final Button closeButton = new Button("Close");
-    // // We can set the id of a widget by accessing its Element
-    // closeButton.getElement().setId("closeButton");
-    // final Label textToServerLabel = new Label();
-    // final HTML serverResponseLabel = new HTML();
-    // VerticalPanel dialogVPanel = new VerticalPanel();
-    // dialogVPanel.addStyleName("dialogVPanel");
-    // dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
-    // dialogVPanel.add(textToServerLabel);
-    // dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-    // dialogVPanel.add(serverResponseLabel);
-    // dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-    // dialogVPanel.add(closeButton);
-    // dialogBox.setWidget(dialogVPanel);
-    // final Logger logger = Logger.getLogger("componentClass");
-    // logger.log(Level.INFO, "GWT Applet started");
-    //
-    // // Add a handler to close the DialogBox
-    // closeButton.addClickHandler(new ClickHandler() {
-    // public void onClick(ClickEvent event) {
-    // dialogBox.hide();
-    // sendButton.setEnabled(true);
-    // sendButton.setFocus(true);
-    // }
-    // });
-    //
-    //
-    // // Create a handler for the sendButton
-    // class MyHandler implements ClickHandler {
-    // /**
-    // * Fired when the user clicks on the sendButton.
-    // */
-    // public void onClick(ClickEvent event) {
-    // sendNameToServer();
-    // //Logger logger = Logger.getLogger("componentClass");
-    // //logger.log(Level.SEVERE, "hallo",new Exception("hallo"));
-    //
-    // }
-    //
-    // /**
-    // * Send the name from the nameField to the server and wait for a response.
-    // */
-    // private void sendNameToServer() {
-    // // First, we validate the input.
-    // errorLabel.setText("");
-    // String textToServer = nameField.getText();
-    // String password = passwordField.getText();
-    //
-    //
-    // // Then, we send the input to the server.
-    // sendButton.setEnabled(false);
-    // textToServerLabel.setText(textToServer);
-    // serverResponseLabel.setText("");
-    // dialogBox.setText("Remote Procedure Call");
-    // serverResponseLabel.removeStyleName("serverResponseLabelError");
-    // dialogBox.center();
-    // closeButton.setFocus(true);
-    // logger.info( "Calling login  " );
-    // loginService.login(textToServer, password, null).get(new
-    // AsyncCallback<LoginTokens>() {
-    //
-    // public void onSuccess(LoginTokens result) {
-    // logger.info( "Login successfull  " );
-    // ((AbstractJsonProxy)service).setAuthThoken(result.getAccessToken());
-    // FutureResult<List<ReservationImpl>> reservations =
-    // service.getReservations(null, null, null, null);
-    // final long start = System.currentTimeMillis();
-    // logger.info( "Calling getReservations  " );
-    // reservations.get(new AsyncCallback<List<ReservationImpl>>() {
-    //
-    // public void onFailure(Throwable caught) {
-    // logger.log(Level.SEVERE, "get Reservation failed:" +
-    // caught.getMessage(),caught);
-    // }
-    //
-    // @Override
-    // public void onSuccess(List<ReservationImpl> result) {
-    // logger.info( result.size()+ " Reservations loaded. It took " +
-    // (System.currentTimeMillis()- start ) + "ms");
-    //
-    // }
-    // });
-    // }
-    //
-    // @Override
-    // public void onFailure(Throwable caught) {
-    // logger.log(Level.SEVERE, "Login failed " + caught.getMessage(),caught);
-    // }
-    // });
-    // AsyncCallback<UserImpl> asyncCallback = new AsyncCallback<UserImpl>() {
-    // public void onFailure(Throwable caught) {
-    // // Show the RPC error message to the user
-    // dialogBox
-    // .setText("Remote Procedure Call - Failure");
-    // serverResponseLabel
-    // .addStyleName("serverResponseLabelError");
-    // serverResponseLabel.setHTML(caught.getMessage());
-    // dialogBox.center();
-    // closeButton.setFocus(true);
-    // }
-    //
-    // public void onSuccess(UserImpl user) {
-    // dialogBox.setText("Remote Procedure Call");
-    // serverResponseLabel
-    // .removeStyleName("serverResponseLabelError");
-    // StringBuilder builder = new StringBuilder();
-    // builder.append( "<h2>Ressources</h2>");
-    // builder.append( user.getName( Locale.GERMANY));
-    // builder.append( "<br/>");
-    // serverResponseLabel.setHTML(builder.toString());
-    // user.setEmail("christopher.kohlhaas@googlemail.com");
-    // AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-    //
-    // public void onFailure(Throwable caught) {
-    // // Show the RPC error message to the user
-    // dialogBox
-    // .setText("Remote Procedure Call - Failure");
-    // serverResponseLabel
-    // .addStyleName("serverResponseLabelError");
-    // serverResponseLabel.setHTML(caught.getMessage());
-    // dialogBox.center();
-    // closeButton.setFocus(true);
-    // }
-    //
-    // @Override
-    // public void onSuccess(Boolean result) {
-    //
-    // }
-    // };
-    // service.storeUser(user, callback);
-    //
-    // }
-    // };
-    // service.getUser("admin",asyncCallback);
 
-    // AsyncCallback<CategoryImpl> callback2 = new AsyncCallback<CategoryImpl>()
-    // {
-    //
-    // public void onFailure(Throwable caught) {
-    // // Show the RPC error message to the user
-    // dialogBox
-    // .setText("Remote Procedure Call - Failure");
-    // serverResponseLabel
-    // .addStyleName("serverResponseLabelError");
-    // serverResponseLabel.setHTML(caught.getMessage());
-    // dialogBox.center();
-    // closeButton.setFocus(true);
-    // }
-    //
-    // @Override
-    // public void onSuccess(CategoryImpl result) {
-    // System.out.println( result );
-    //
-    // }
-    // };
-    // service.getCategory( callback2);
+    static class RaplaLoginCookie {
+        final Logger logger = Logger.getLogger("RaplaLoginCookie");
+        public static final String LOGIN_COOKIE = "raplaLoginToken";
 
-    // AsyncCallback<List<AllocatableImpl>> callback2 = new
-    // AsyncCallback<List<AllocatableImpl>>() {
-    //
-    // public void onFailure(Throwable caught) {
-    // // Show the RPC error message to the user
-    // dialogBox
-    // .setText("Remote Procedure Call - Failure");
-    // serverResponseLabel
-    // .addStyleName("serverResponseLabelError");
-    // serverResponseLabel.setHTML(caught.getMessage());
-    // dialogBox.center();
-    // closeButton.setFocus(true);
-    // }
-    //
-    // @Override
-    // public void onSuccess(List<AllocatableImpl> result) {
-    //
-    // }
-    // };
-    // service.getResources( callback2);
-    // dialogBox.center();
-    // closeButton.setFocus(true);
-    //
-    // }
-    // }
-    //
-    // Add a handler to send the name to the server
-    // MyHandler handler = new MyHandler();
-    // sendButton.addClickHandler(handler);
-    // nameField.addKeyUpHandler(handler);
-    // }
+        private static final RaplaLoginCookie INSTANCE = new RaplaLoginCookie();
 
-    // RaplaGWTClient raplaGWTClient;
-    // try {
-    // raplaGWTClient = new RaplaGWTClient();
-    // } catch (RaplaException e) {
-    // e.printStackTrace();
-    // return;
-    // }
-    // final RaplaContext context = raplaGWTClient.getContext();
+        public static RaplaLoginCookie getCookie() {
+            return INSTANCE;
+        }
 
-    // Container c = new TestContainer();
-    // provide(c);
-    // Test hallo = c.getContext().get( Test.class);
-    // hallo.message();
+        public void updateLogin(LoginTokens result) {
+            Cookies.setCookie(LOGIN_COOKIE, result.toString());
+        }
 
-    // private void provide(Container c) {
-    // Injector<Test> test = GWT.create(TestImpl.class);
-    // c.provide(Test.class, test);
-    // }
-    //
-    //
-    // private Injector<Test> GWT_create(Class<TestImpl> class1) {
-    // return new Injector<Test>()
-    // {
-    // public Test create(Container cont) {
-    // return new TestImpl( cont.getContext());
-    // }
-    //
-    // };
-    // }
+        public boolean isAlreadyLoggedIn() {
+            logger.log(Level.INFO, "Looking for cookie");
+            String cookie = Cookies.getCookie(LOGIN_COOKIE);
+            if (cookie != null) {
+                LoginTokens token = LoginTokens.fromString(cookie);
+                boolean valid = token.isValid();
+                logger.log(Level.INFO, "found cookie: " + valid);
+                return valid;
+            }
+            return false;
+        }
+
+    }
+
 }
-

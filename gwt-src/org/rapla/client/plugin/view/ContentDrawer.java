@@ -1,4 +1,4 @@
-package org.rapla.client.content;
+package org.rapla.client.plugin.view;
 
 import com.google.gwt.user.client.ui.Widget;
 

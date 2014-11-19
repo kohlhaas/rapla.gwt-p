@@ -1,6 +1,7 @@
 package org.rapla.client;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.rapla.client.event.AddEvent;
 import org.rapla.client.event.DetailSelectEvent;
@@ -14,7 +15,7 @@ import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChang
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-
+@Singleton
 public class Application implements ViewSelectionChangedHandler,
 		DetailSelectEventHandler, AddEventHandler {
 
@@ -34,23 +35,6 @@ public class Application implements ViewSelectionChangedHandler,
 	public void createApplication() {
 		RootPanel root = RootPanel.get("raplaRoot");
 		root.clear();
-		// {
-		// Data data = injector.getData();
-		// root.add(new HTML("Here i am at " + data.getLong()));
-		// }
-		// {
-		// Data data = injector.getData();
-		// root.add(new HTML("Here i am at " + data.getLong()));
-		// }
-		// {
-		// ModuleA data = injector.getModule();
-		// root.add(new HTML("Here i am at " + data.doSomething()));
-		// }
-		// {
-		// ModuleB data = injector.getModuleB();
-		// root.add(new HTML("Here i am at " + data.doSomething()));
-		// }
-
 		root.add(viewController.createContent());
 		root.add(drawingContent);
 		viewChanged();

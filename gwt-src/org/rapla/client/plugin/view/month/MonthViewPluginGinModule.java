@@ -11,7 +11,7 @@ public class MonthViewPluginGinModule implements GinModule {
     @Override
     public void configure(GinBinder binder) {
         GinMultibinder<ViewPlugin> uriBinder = GinMultibinder.newSetBinder(binder, ViewPlugin.class);
-        uriBinder.addBinding().to(MonthViewPlugin.class);
+        uriBinder.addBinding().to(MonthView.class);
     }
 
 }

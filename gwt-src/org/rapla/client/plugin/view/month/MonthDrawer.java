@@ -1,6 +1,6 @@
 package org.rapla.client.plugin.view.month;
 
-import org.rapla.client.content.ContentDrawer;
+import org.rapla.client.plugin.view.ContentDrawer;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;

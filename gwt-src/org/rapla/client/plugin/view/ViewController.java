@@ -7,10 +7,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.rapla.client.content.ContentDrawer;
 import org.rapla.client.event.AddEvent;
 import org.rapla.client.event.RaplaEventBus;
-import org.rapla.client.labels.RaplaLabels;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -75,9 +73,7 @@ public class ViewController implements ContentDrawer {
 			index++;
 		}
 		content.add(listBox);
-		RaplaLabels labels = GWT.create(RaplaLabels.class);
 		Label add = new Label("+");
-		add.setTitle(labels.addEventTitle());
 		add.setStyleName("addButton");
 		add.addClickHandler(new ClickHandler() {
 			@Override
