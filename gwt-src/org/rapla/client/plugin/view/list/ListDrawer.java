@@ -23,32 +23,47 @@ import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
 import sun.security.action.GetLongAction;
 
+import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class ListDrawer implements ContentDrawer {
-    private final Logger logger = Logger.getLogger(ListDrawer.class.getSimpleName());
+    private final Logger logger = Logger.getLogger("componentClass");
     @Inject
     private RaplaGWTClient service;
-	private CellList<String> list;
-	private ListDataProvider<String> data;
+	
+	
+	private static class ReservationCell extends AbstractCell<Reservation>
+	{
 
+        @Override
+        public void render(com.google.gwt.cell.client.Cell.Context context, Reservation value, SafeHtmlBuilder sb) {
+            String name = value.getName( Locale.GERMANY);
+            sb.appendEscaped( name);
+        }
+	    
+	}
 	public ListDrawer() {
-        list = new CellList<>(new TextCell());
-        list.setStyleName("RaplaListDrawerList");
-        data = new ListDataProvider<>();
-        data.addDataDisplay(list);
+	    
+        
+        
 	}
 
 	@Override
 	public Widget createContent() {
+	    final CellList<Reservation> list = new CellList<Reservation>(new ReservationCell());
+	    list.setStyleName("RaplaListDrawerList");
+        final ListDataProvider<Reservation> data = new ListDataProvider<>();
         logger.info("Service " + service);
         data.getList().clear();
+        data.addDataDisplay(list);
         ClientFacade facade = service.getFacade();
         Locale locale = service.getRaplaLocale().getLocale();
         Allocatable[] allocatables = null;
@@ -59,8 +74,7 @@ public class ListDrawer implements ContentDrawer {
             logger.info( result.size()+ " Reservations loaded.");
             for ( Reservation event:result)
             {
-                
-                data.getList().add(event.getName(locale));
+                data.getList().add(event);
             }
             list.setPageSize(data.getList().size());
         } catch (RaplaException e) {
@@ -93,22 +107,25 @@ public class ListDrawer implements ContentDrawer {
         
         
         
-        final SingleSelectionModel<String> singleSelectionModel = new SingleSelectionModel<>();
+        final SingleSelectionModel<Reservation> singleSelectionModel = new SingleSelectionModel<>();
         list.setSelectionModel(singleSelectionModel);
         singleSelectionModel.addSelectionChangeHandler(new Handler() {
 
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                RaplaEventBus.getInstance().fireEvent(
-                        new DetailSelectEvent(singleSelectionModel
-                                .getSelectedObject()));
+                Reservation selectedObject = singleSelectionModel.getSelectedObject();
+                DetailSelectEvent event2 = new DetailSelectEvent(selectedObject);
+                RaplaEventBus instance = RaplaEventBus.getInstance();
+                instance.fireEvent(event2);
+                logger.info("selection changed");
             }
-        });		return list;
+        });		
+        return list;
 	}
 
 	@Override
 	public void updateContent() {
-
+	    
 	}
 
 }

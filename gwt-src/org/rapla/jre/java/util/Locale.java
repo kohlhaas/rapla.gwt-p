@@ -4,6 +4,7 @@ import java.util.Locale;
 
 public class Locale {
     static public final Locale GERMANY = createConstants("de", "DE");
+    static public final Locale GERMAN = createConstants("de", "");
     static public final Locale ENGLISH = createConstants("en", "");
     String lang;
     String country;

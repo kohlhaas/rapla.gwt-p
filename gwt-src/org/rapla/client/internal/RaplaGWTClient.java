@@ -2,6 +2,7 @@ package org.rapla.client.internal;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,7 +17,6 @@ import org.rapla.entities.domain.AppointmentFormater;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.RaplaComponent;
 import org.rapla.facade.internal.FacadeImpl;
-import org.rapla.framework.DefaultConfiguration;
 import org.rapla.framework.RaplaDefaultContext;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
@@ -28,6 +28,7 @@ import org.rapla.storage.dbrm.RemoteStorage;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 
 @Singleton
 public class RaplaGWTClient {
@@ -41,11 +42,12 @@ public class RaplaGWTClient {
     ClientFacade clientFacace;
 
     final GWTRaplaLocale raplaLocale;
-    
+    AppointmentFormater appointmentFormater;
 	final RaplaDefaultContext context = new RaplaDefaultContext();
 	//RemoteConnectionInfo connectionInfo = new RemoteConnectionInfo();
 	public RaplaGWTClient() throws RaplaException {
-		final org.rapla.framework.logger.Logger logger = new NullLogger();
+		final Logger gwtLogger = Logger.getLogger("componentClass");
+	    final org.rapla.framework.logger.Logger logger = new NullLogger();
 		//final RaplaConfiguration config = new RaplaConfiguration("remote");
 		raplaLocale = new GWTRaplaLocale();
 		I18nBundle i18n = new I18nBundle() {
@@ -97,27 +99,46 @@ public class RaplaGWTClient {
 		final CommandScheduler commandQueue = new CommandScheduler() {
 			
 			@Override
-			public Cancelable schedule(final Command command, long delay, long period) {
-				RepeatingCommand cmd = new RepeatingCommand() {
-	
-				    @Override
-				    public boolean execute() {
-				        try {
-							//command.execute();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-				        return true;
-				    }
-				};
-				if ( period > 0)
+			public Cancelable schedule(final Command command, long delay, final long period) {
+			    if ( period > 0)
 				{
+			        RepeatingCommand cmd = new RepeatingCommand() {
+				        
+	                    @Override
+	                    public boolean execute() {
+	                        try {
+	                            gwtLogger.info("Refreshing client with period " + period);
+	                            command.execute();
+	                        } catch (Exception e) {
+	                            // TODO Auto-generated catch block
+	                            e.printStackTrace();
+	                        }
+	                        return true;
+	                    }
+	                };
+	                //Scheduler.get().scheduleEntry( cmd);
+				    //Scheduler.get().scheduleFixedDelay(cmd, (int)delay);
 					Scheduler.get().scheduleFixedPeriod(cmd, (int)period);
 				}
 				else
 				{
-					Scheduler.get().scheduleFixedDelay(cmd, (int)delay);
+				    ScheduledCommand entry = new ScheduledCommand() {
+	                    
+	                    @Override
+	                    public void execute() {
+	                        try {
+	                            gwtLogger.info("Refreshing client without period ");
+	                            command.execute();
+	                        } catch (Exception e) {
+	                            // TODO Auto-generated catch block
+	                            e.printStackTrace();
+	                        }
+	                        
+	                    }
+	                };
+	                Scheduler.get().scheduleEntry( entry);
+				    //Scheduler.get().scheduleEntry(cmd);
+					//Scheduler.get().scheduleFixedDelay(cmd, (int)delay);
 				}
 				
 				return new Cancelable() {
@@ -135,9 +156,10 @@ public class RaplaGWTClient {
 		};
 		context.put( org.rapla.framework.logger.Logger.class, logger);
 		context.put( RaplaLocale.class, raplaLocale);
+
 		context.put( CommandScheduler.class, commandQueue);
 		context.put( RaplaComponent.RAPLA_RESOURCES, i18n);
-        AppointmentFormater appointmentFormater = new AppointmentFormaterImpl(context);
+        appointmentFormater = new AppointmentFormaterImpl(context);
         context.put( AppointmentFormater.class, appointmentFormater);
 	}
 	
@@ -148,11 +170,18 @@ public class RaplaGWTClient {
 	    remoteOperator = new RemoteOperator(context, logger, null, remoteServer, remoteStorage);
 	    context.put( StorageOperator.class, remoteOperator);
 	    clientFacace = FacadeImpl.create(context, remoteOperator, logger);
+	    context.put( ClientFacade.class, clientFacace );
 	}
 	
 	public RaplaDefaultContext getContext() 
 	{
 	    return context;
+	}
+	
+	
+	public AppointmentFormater getAppointmentFormate()
+	{
+	    return appointmentFormater;
 	}
 	
 	public RemoteOperator getOperator()

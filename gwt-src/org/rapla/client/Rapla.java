@@ -59,7 +59,7 @@ public class Rapla implements EntryPoint {
             goToWizard();
         } else
         {
-            final Button sendButton = new Button("Send");
+            final Button sendButton = new Button("login");
             final TextBox nameField = new TextBox();
             nameField.setText("admin");
             final TextBox passwordField = new PasswordTextBox();
@@ -143,6 +143,7 @@ public class Rapla implements EntryPoint {
             int indexOf = cookie.indexOf(":");
             String username = cookie.substring(0,indexOf);
             operator.loadData(null);
+            operator.initRefresh();
             FacadeImpl facadeImpl = (FacadeImpl)client.getFacade();
             facadeImpl.setUsernameInternal(null, username);
             facadeImpl.setCachingEnabled( false );
