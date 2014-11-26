@@ -1,4 +1,4 @@
-package org.rapla.client;
+package org.rapla.client.edit.reservation;
 
 import org.rapla.entities.domain.Reservation;
 import org.rapla.framework.RaplaException;

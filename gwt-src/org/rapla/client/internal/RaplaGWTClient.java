@@ -42,7 +42,6 @@ public class RaplaGWTClient {
     ClientFacade clientFacace;
 
     final GWTRaplaLocale raplaLocale;
-    AppointmentFormater appointmentFormater;
 	final RaplaDefaultContext context = new RaplaDefaultContext();
 	//RemoteConnectionInfo connectionInfo = new RemoteConnectionInfo();
 	public RaplaGWTClient() throws RaplaException {
@@ -159,7 +158,7 @@ public class RaplaGWTClient {
 
 		context.put( CommandScheduler.class, commandQueue);
 		context.put( RaplaComponent.RAPLA_RESOURCES, i18n);
-        appointmentFormater = new AppointmentFormaterImpl(context);
+	    AppointmentFormater appointmentFormater = new AppointmentFormaterImpl(context);
         context.put( AppointmentFormater.class, appointmentFormater);
 	}
 	
@@ -176,12 +175,6 @@ public class RaplaGWTClient {
 	public RaplaDefaultContext getContext() 
 	{
 	    return context;
-	}
-	
-	
-	public AppointmentFormater getAppointmentFormate()
-	{
-	    return appointmentFormater;
 	}
 	
 	public RemoteOperator getOperator()

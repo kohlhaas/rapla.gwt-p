@@ -1,4 +1,4 @@
-package org.rapla.client;
+package org.rapla.client.edit.reservation.impl;
 
 import java.util.Locale;
 import java.util.logging.Level;
@@ -6,13 +6,15 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.rapla.client.internal.RaplaGWTClient;
+import org.rapla.client.edit.reservation.GWTReservationController;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
 import org.rapla.facade.ClientFacade;
+import org.rapla.facade.RaplaComponent;
+import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,15 +25,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class SampleGWTReservationController implements GWTReservationController {
+public class SampleReservationController extends RaplaComponent implements GWTReservationController {
 
-    RaplaGWTClient client;
     Logger logger = Logger.getLogger("reservationController");
 
-    public @Inject SampleGWTReservationController(RaplaGWTClient client)
+    public @Inject SampleReservationController(RaplaContext context)
     {
-        this.client = client;
+        super(context);
     }
+    
     @Override
     public void edit(final Reservation event, boolean isNew) {
         final TextBox tb = new TextBox();
@@ -40,7 +42,7 @@ public class SampleGWTReservationController implements GWTReservationController 
         popup.add(content);
         content.add(new Label("Veranstaltung bearbeiten/anlegen"));
         content.add(tb);
-        Locale locale = Locale.GERMANY;
+        Locale locale = getRaplaLocale().getLocale();
         tb.setText( event.getName( locale));
         Allocatable[] resources = event.getAllocatables();
         Appointment[] appointments = event.getAppointments();
@@ -57,7 +59,7 @@ public class SampleGWTReservationController implements GWTReservationController 
             StringBuilder builder = new StringBuilder();
             for ( Appointment app:appointments)
             {
-                String shortSummary = client.getAppointmentFormate().getShortSummary(app);
+                String shortSummary = getAppointmentFormater().getShortSummary(app);
                 builder.append( shortSummary);
             }
             content.add(new Label("Termine: " +builder.toString() ));
@@ -82,7 +84,7 @@ public class SampleGWTReservationController implements GWTReservationController 
                 @Override
                 public void onClick(ClickEvent e) {
                     try {
-                        ClientFacade facade = client.getFacade();
+                        ClientFacade facade = getClientFacade();
                         facade.remove( event);
                     } catch (RaplaException e1) {
                         //TODO add exception handling
@@ -104,7 +106,7 @@ public class SampleGWTReservationController implements GWTReservationController 
                     String text = tb.getValue();
                     classification.setValue(first, text);
                     try {
-                        ClientFacade facade = client.getFacade();
+                        ClientFacade facade = getClientFacade();
                         facade.store( event);
                     } catch (RaplaException e1) {
                         //TODO add exception handling

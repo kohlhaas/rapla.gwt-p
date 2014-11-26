@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.rapla.client.edit.reservation.GWTReservationController;
+import org.rapla.client.edit.reservation.impl.SampleReservationController;
 import org.rapla.client.event.AddEvent;
 import org.rapla.client.event.AddEvent.AddEventHandler;
 import org.rapla.client.event.DetailSelectEvent;
@@ -49,17 +51,14 @@ public class Application implements ViewSelectionChangedHandler,
 	
 	public Application() {
 		drawingContent.setStyleName("raplaDrawingContent");
-		RaplaEventBus.getInstance().addHandler(ViewSelectionChangedEvent.TYPE,
-				this);
+		RaplaEventBus.getInstance().addHandler(ViewSelectionChangedEvent.TYPE, this);
 		RaplaEventBus.getInstance().addHandler(DetailSelectEvent.TYPE, this);
 		RaplaEventBus.getInstance().addHandler(AddEvent.TYPE, this);
-
-		
 	}
 
 	// private final DataInjector injector2 = GWT.create(DataInjector.class);
 	public void createApplication() {
-	    controller = new SampleGWTReservationController(service);
+	    controller = new SampleReservationController(service.getContext());
 	    root = RootPanel.get("raplaRoot");
 		root.clear();
 		root.add(viewController.createContent());
@@ -119,9 +118,6 @@ public class Application implements ViewSelectionChangedHandler,
                 Date selectedDate =facade.today();
                 Date time = new Date (DateTools.MILLISECONDS_PER_MINUTE * getCalendarOptions().getWorktimeStartMinutes());
                 Date startDate = getRaplaLocale().toDate(selectedDate,time);
-                
-                
-                //startDate = new Date( startDate.getTime() + offset  * DateTools.MILLISECONDS_PER_HOUR);
                 Classification classification = event.getClassification();
                 Attribute first = classification.getType().getAttributes()[0];
                 classification.setValue(first, "Test");
