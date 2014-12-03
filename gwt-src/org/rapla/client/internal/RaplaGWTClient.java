@@ -2,6 +2,7 @@ package org.rapla.client.internal;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -106,11 +107,10 @@ public class RaplaGWTClient {
 	                    @Override
 	                    public boolean execute() {
 	                        try {
-	                            gwtLogger.info("Refreshing client with period " + period);
+	                            //gwtLogger.info("Refreshing client with period " + period);
 	                            command.execute();
 	                        } catch (Exception e) {
-	                            // TODO Auto-generated catch block
-	                            e.printStackTrace();
+	                            gwtLogger.log(Level.WARNING,e.getMessage(), e);
 	                        }
 	                        return true;
 	                    }
@@ -126,11 +126,10 @@ public class RaplaGWTClient {
 	                    @Override
 	                    public void execute() {
 	                        try {
-	                            gwtLogger.info("Refreshing client without period ");
+	                            //gwtLogger.info("Refreshing client without period ");
 	                            command.execute();
 	                        } catch (Exception e) {
-	                            // TODO Auto-generated catch block
-	                            e.printStackTrace();
+                                gwtLogger.log(Level.WARNING,e.getMessage(), e);
 	                        }
 	                        
 	                    }
