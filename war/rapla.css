@@ -46,3 +46,12 @@ h1 {
 	margin-right: 50px;
 	font-size: 20px;
 }
+
+
+.gwt-TabBar .gwt-TabBarItem-wrapper { 
+	width: 33%%; 
+}
+.gwt-TabBar .gwt-TabBarItem { 
+	font-size: 12pt;
+}
+

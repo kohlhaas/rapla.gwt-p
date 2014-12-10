@@ -59,7 +59,6 @@ public class Rapla implements EntryPoint {
             goToWizard();
         } else
         {
-        	final Label test = new Label("TestLabel");
             final Button sendButton = new Button("login");
             final TextBox nameField = new TextBox();
             nameField.setText("admin");
@@ -77,7 +76,6 @@ public class Rapla implements EntryPoint {
             panel.add(passwordField);
             panel.add(sendButton);
             panel.add(errorLabel);
-            panel.add(test);
             sendButton.addClickHandler(new ClickHandler() {
 
                 @Override

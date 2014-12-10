@@ -14,11 +14,14 @@ import org.rapla.client.event.AddEvent.AddEventHandler;
 import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.event.DetailSelectEvent.DetailSelectEventHandler;
 import org.rapla.client.event.RaplaEventBus;
+import org.rapla.client.event.ViewChangedEvent;
+import org.rapla.client.event.ViewChangedEvent.ViewChangedEventHandler;
 import org.rapla.client.internal.RaplaGWTClient;
 import org.rapla.client.plugin.view.ContentDrawer;
 import org.rapla.client.plugin.view.ViewController;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
+import org.rapla.client.plugin.view.infos.InfoController;
 import org.rapla.components.util.DateTools;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
@@ -37,7 +40,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 @Singleton
 public class Application implements ViewSelectionChangedHandler,
-		DetailSelectEventHandler, AddEventHandler {
+		DetailSelectEventHandler, AddEventHandler, ViewChangedEventHandler {
 
     final Logger logger = Logger.getLogger("Application");
     
@@ -48,12 +51,15 @@ public class Application implements ViewSelectionChangedHandler,
     private RaplaGWTClient service;
 	RootPanel root;
 	GWTReservationController controller;
+	@Inject
+	InfoController infoController;
 	
 	public Application() {
 		drawingContent.setStyleName("raplaDrawingContent");
 		RaplaEventBus.getInstance().addHandler(ViewSelectionChangedEvent.TYPE, this);
 		RaplaEventBus.getInstance().addHandler(DetailSelectEvent.TYPE, this);
 		RaplaEventBus.getInstance().addHandler(AddEvent.TYPE, this);
+		RaplaEventBus.getInstance().addHandler(ViewChangedEvent.TYPE, this);
 	}
 
 	// private final DataInjector injector2 = GWT.create(DataInjector.class);
@@ -74,7 +80,10 @@ public class Application implements ViewSelectionChangedHandler,
 
 	@Override
 	public void viewChanged() {
-	    if (drawingContent != null)
+		
+		//drawingContent.add(infoController.createContent());
+	    
+		if (drawingContent != null)
 	    {
 	        root.remove( drawingContent);
 	    }
@@ -83,6 +92,7 @@ public class Application implements ViewSelectionChangedHandler,
         Widget createContent = selectedContentDrawer.createContent();
         drawingContent.add(createContent);
         root.add(drawingContent);
+        
 	}
 
 	@Override
@@ -135,11 +145,31 @@ public class Application implements ViewSelectionChangedHandler,
     
         }
 	}
+	
+	class ViewChangedHandler extends RaplaComponent{
+
+		public ViewChangedHandler(RaplaContext context) {
+			super(context);
+		}
+		
+        public void handle()
+        {
+    		
+        	root.clear();
+        	root.add(infoController.createContent());
+        }
+		
+	}
 
 	@Override
 	public void addRequested(AddEvent e) {
 	    TestHandler testHandler = new TestHandler( service.getContext());
 	    testHandler.handle();
 	}
+	
+	public void addRequested(ViewChangedEvent e) {
+	    ViewChangedHandler vcHandler = new ViewChangedHandler( service.getContext());
+	    vcHandler.handle();
+	}	
 
 }

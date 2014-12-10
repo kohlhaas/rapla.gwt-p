@@ -7,8 +7,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.rapla.client.Application;
 import org.rapla.client.event.AddEvent;
 import org.rapla.client.event.RaplaEventBus;
+import org.rapla.client.event.ViewChangedEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -78,7 +80,8 @@ public class ViewController implements ContentDrawer {
 		add.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				RaplaEventBus.getInstance().fireEvent(new AddEvent());
+				RaplaEventBus.getInstance().fireEvent(new ViewChangedEvent());
+
 			}
 		});
 		content.add(add);

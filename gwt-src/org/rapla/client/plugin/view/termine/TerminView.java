@@ -1,14 +1,22 @@
 package org.rapla.client.plugin.view.termine;
 
+import javax.inject.Inject;
+
 import org.rapla.client.plugin.view.ContentDrawer;
 import org.rapla.client.plugin.view.ViewPlugin;
 
 public class TerminView implements ViewPlugin {
 
+	@Inject
+	private TerminDrawer td;
+	
+	public TerminView(){	
+	}	
+	
 	@Override
 	public ContentDrawer getContentDrawer() {
 		// TODO Auto-generated method stub
-		return null;
+		return td;
 	}
 
 	@Override
@@ -20,7 +28,7 @@ public class TerminView implements ViewPlugin {
 	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
