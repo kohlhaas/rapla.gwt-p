@@ -33,7 +33,8 @@ public class InfoController implements ContentDrawer {
 	    bar.addTab("Veranstaltungsinfos");
 	    bar.addTab("Resourcen");
 	    bar.addTab("Termine");
-	    
+	    //bar.setTabEnabled(0, false);
+	    bar.selectTab(0);
 	    
 
    
