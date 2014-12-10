@@ -3,34 +3,41 @@ package org.rapla.client.edit.reservation.impl;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.mockito.Mockito;
 import org.rapla.components.util.DateTools;
 import org.rapla.entities.domain.Appointment;
+import org.rapla.entities.domain.internal.AppointmentImpl;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaContext;
+import org.rapla.framework.RaplaException;
 
 import java.util.Date;
 
-import javax.inject.Inject;
+import static org.mockito.Mockito.when;
 
 public class ReservationControllerTest extends TestCase {
 
 
   ReservationController reservationController;
-
-  @Inject
-  RaplaContext context;
-
   ClientFacade facade;
 
   public void setUp() {
-    reservationController = new ReservationController(context);
+    RaplaContext mockedContext = Mockito.mock(RaplaContext.class);
+    facade = Mockito.mock(ClientFacade.class);
+
+    reservationController = new ReservationController(mockedContext);
+
   }
 
-  public void testCreateAppointment() {
+  public void testCreateAppointment() throws RaplaException {
 
-    Date startDate = facade.today();
+    Date startDate = new Date();
     Date endDate = new Date(startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
-    Appointment appointment = reservationController.createAppointment(startDate, endDate);
+    when(facade.newAppointment(startDate, endDate)).thenReturn(new AppointmentImpl(startDate, endDate));
+    reservationController.setFacade(facade);
+
+    reservationController.createAppointment(startDate, endDate);
+    Appointment appointment = reservationController.getAppointment();
     Assert.assertEquals(startDate, appointment.getStart());
     Assert.assertEquals(endDate, appointment.getEnd());
 

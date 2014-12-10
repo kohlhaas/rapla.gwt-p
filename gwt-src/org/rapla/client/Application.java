@@ -1,11 +1,8 @@
 package org.rapla.client;
 
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import org.rapla.client.edit.reservation.GWTReservationController;
 import org.rapla.client.edit.reservation.impl.SampleReservationController;
@@ -32,9 +29,12 @@ import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 @Singleton
 public class Application implements ViewSelectionChangedHandler,
 		DetailSelectEventHandler, AddEventHandler {
@@ -58,7 +58,7 @@ public class Application implements ViewSelectionChangedHandler,
 
 	// private final DataInjector injector2 = GWT.create(DataInjector.class);
 	public void createApplication() {
-	    controller = new SampleReservationController(service.getContext());
+	    controller = new SampleReservationController(service.getContext());  //sets the controller for gwt (
 	    root = RootPanel.get("raplaRoot");
 		root.clear();
 		root.add(viewController.createContent());
