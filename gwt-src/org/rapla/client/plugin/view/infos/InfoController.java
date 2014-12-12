@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class InfoController implements ContentDrawer {
 
+	
 	@Override
 	public Widget createContent() {
 		// TODO Auto-generated method stub

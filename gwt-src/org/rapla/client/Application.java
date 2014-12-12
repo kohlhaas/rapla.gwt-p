@@ -14,8 +14,8 @@ import org.rapla.client.event.AddEvent.AddEventHandler;
 import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.event.DetailSelectEvent.DetailSelectEventHandler;
 import org.rapla.client.event.RaplaEventBus;
-import org.rapla.client.event.ViewChangedEvent;
-import org.rapla.client.event.ViewChangedEvent.ViewChangedEventHandler;
+import org.rapla.client.event.AddReservationEvent;
+import org.rapla.client.event.AddReservationEvent.AddReservationEventHandler;
 import org.rapla.client.internal.RaplaGWTClient;
 import org.rapla.client.plugin.view.ContentDrawer;
 import org.rapla.client.plugin.view.ViewController;
@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 @Singleton
 public class Application implements ViewSelectionChangedHandler,
-		DetailSelectEventHandler, AddEventHandler, ViewChangedEventHandler {
+		DetailSelectEventHandler, AddEventHandler, AddReservationEventHandler {
 
     final Logger logger = Logger.getLogger("Application");
     
@@ -61,7 +61,7 @@ public class Application implements ViewSelectionChangedHandler,
 		RaplaEventBus.getInstance().addHandler(ViewSelectionChangedEvent.TYPE, this);
 		RaplaEventBus.getInstance().addHandler(DetailSelectEvent.TYPE, this);
 		RaplaEventBus.getInstance().addHandler(AddEvent.TYPE, this);
-		RaplaEventBus.getInstance().addHandler(ViewChangedEvent.TYPE, this);
+		RaplaEventBus.getInstance().addHandler(AddReservationEvent.TYPE, this);
 	}
 
 	// private final DataInjector injector2 = GWT.create(DataInjector.class);
@@ -148,9 +148,9 @@ public class Application implements ViewSelectionChangedHandler,
         }
 	}
 	
-	class ViewChangedHandler extends RaplaComponent{
+	class AddReservationHandler extends RaplaComponent{
 
-		public ViewChangedHandler(RaplaContext context) {
+		public AddReservationHandler(RaplaContext context) {
 			super(context);
 		}
 		
@@ -163,12 +163,7 @@ public class Application implements ViewSelectionChangedHandler,
             popupContent.add(createContent);
             popupContent.center();
     		
-        	
 
-            
-            
-        	//root.clear();
-        	//root.add(infoController.createContent());
         }
 		
 	}
@@ -179,8 +174,8 @@ public class Application implements ViewSelectionChangedHandler,
 	    testHandler.handle();
 	}
 	
-	public void addRequested(ViewChangedEvent e) {
-	    ViewChangedHandler vcHandler = new ViewChangedHandler( service.getContext());
+	public void addRequested(AddReservationEvent e) {
+	    AddReservationHandler vcHandler = new AddReservationHandler( service.getContext());
 	    vcHandler.handle();
 	}	
 
