@@ -35,6 +35,7 @@ import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -158,6 +159,13 @@ public class Application implements ViewSelectionChangedHandler,
         {
         	
     	    popupContent = new PopupPanel();
+    	    Integer height = (int) (Window.getClientHeight()* 0.95);
+    	    Integer width = (int) (Window.getClientWidth() * 0.95);
+    	    popupContent.setHeight(height.toString() + "px");
+    	    popupContent.setWidth(width.toString() + "px");
+    	    popupContent.setAnimationEnabled(true);
+    	    popupContent.setAnimationType(PopupPanel.AnimationType.ROLL_DOWN);
+    	    
             Widget createContent = reservationController.createContent();
             root.add(popupContent);
             popupContent.add(createContent);
