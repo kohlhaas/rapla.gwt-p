@@ -1,10 +1,10 @@
-package org.rapla.client.plugin.view.resources;
+package org.rapla.client.plugin.view.resoursedates;
 
 import org.rapla.client.plugin.view.ContentDrawer;
 
 import com.google.gwt.user.client.ui.Widget;
 
-public class ResourceDrawer implements ContentDrawer {
+public class ResourceDatesDrawer implements ContentDrawer {
 
 	@Override
 	public Widget createContent() {

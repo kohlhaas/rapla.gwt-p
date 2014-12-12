@@ -47,9 +47,30 @@ h1 {
 	font-size: 20px;
 }
 
+.cancelButton, .deleteButton, .saveButton{
+	float: left;
+	width: auto;
+	background-color: rgb(153, 184, 252);
+	color: white;
+	border-radius: 3px;
+	text-align: center;
+	font-size: 14px;
+	text-transform: uppercase;
+	cursor: pointer;
+	margin: 5px;
+	padding: 3px;
+}
+
+.cancelButton:hover, .deleteButton:hover, .saveButton:hover{
+	background-color: white;
+	color: rgb(153, 184, 252);
+	border: 1px solid rgb(153, 184, 252);
+	padding: 2px;
+}
+
 
 .gwt-TabBar .gwt-TabBarItem-wrapper { 
-	width: 33%; 
+	width: 50%; 
 }
 .gwt-TabBar .gwt-TabBarItem { 
 	font-size: 12pt;

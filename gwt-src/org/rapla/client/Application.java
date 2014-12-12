@@ -21,7 +21,7 @@ import org.rapla.client.plugin.view.ContentDrawer;
 import org.rapla.client.plugin.view.ViewController;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
-import org.rapla.client.plugin.view.infos.InfoController;
+import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.components.util.DateTools;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
@@ -36,6 +36,7 @@ import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
 
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 @Singleton
@@ -45,6 +46,7 @@ public class Application implements ViewSelectionChangedHandler,
     final Logger logger = Logger.getLogger("Application");
     
 	FlowPanel drawingContent = new FlowPanel();
+	PopupPanel popupContent = new PopupPanel();
 	@Inject
 	ViewController viewController;
 	@Inject
@@ -52,7 +54,7 @@ public class Application implements ViewSelectionChangedHandler,
 	RootPanel root;
 	GWTReservationController controller;
 	@Inject
-	InfoController infoController;
+	ReservationController reservationController;
 	
 	public Application() {
 		drawingContent.setStyleName("raplaDrawingContent");
@@ -154,9 +156,19 @@ public class Application implements ViewSelectionChangedHandler,
 		
         public void handle()
         {
+        	
+    	    popupContent = new PopupPanel();
+            Widget createContent = reservationController.createContent();
+            root.add(popupContent);
+            popupContent.add(createContent);
+            popupContent.center();
     		
-        	root.clear();
-        	root.add(infoController.createContent());
+        	
+
+            
+            
+        	//root.clear();
+        	//root.add(infoController.createContent());
         }
 		
 	}

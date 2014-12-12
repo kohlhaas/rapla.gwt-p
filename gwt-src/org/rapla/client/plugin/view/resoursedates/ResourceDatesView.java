@@ -1,28 +1,28 @@
-package org.rapla.client.plugin.view.resources;
+package org.rapla.client.plugin.view.resoursedates;
 
 import javax.inject.Inject;
 
 import org.rapla.client.plugin.view.ContentDrawer;
 import org.rapla.client.plugin.view.ViewPlugin;
 
-public class ResourceView implements ViewPlugin {
-    
+public class ResourceDatesView implements ViewPlugin {
+
 	@Inject
-	private ResourceDrawer rd;
+	private ResourceDatesDrawer td;
 	
-	public ResourceView(){	
-	}
+	public ResourceDatesView(){	
+	}	
 	
 	@Override
 	public ContentDrawer getContentDrawer() {
 		// TODO Auto-generated method stub
-		return rd;
+		return td;
 	}
 
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return "Resourcen";
+		return "Termine";
 	}
 
 	@Override
