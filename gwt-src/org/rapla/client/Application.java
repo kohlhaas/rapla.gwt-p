@@ -157,7 +157,7 @@ public class Application implements ViewSelectionChangedHandler,
 		
         public void handle()
         {
-        	
+        	// need to be able to dynamic repositioning if the size of the browserwindow changes (maybe popupContent.setPopupPositionAndShow())
     	    popupContent = new PopupPanel();
     	    Integer height = (int) (Window.getClientHeight()* 0.95);
     	    Integer width = (int) (Window.getClientWidth() * 0.95);
@@ -176,6 +176,7 @@ public class Application implements ViewSelectionChangedHandler,
 		
 	}
 
+
 	@Override
 	public void addRequested(AddEvent e) {
 	    TestHandler testHandler = new TestHandler( service.getContext());
@@ -185,6 +186,6 @@ public class Application implements ViewSelectionChangedHandler,
 	public void addRequested(AddReservationEvent e) {
 	    AddReservationHandler vcHandler = new AddReservationHandler( service.getContext());
 	    vcHandler.handle();
-	}	
+	}
 
 }

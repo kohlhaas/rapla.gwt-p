@@ -1,8 +1,14 @@
 package org.rapla.client.edit.reservation.impl;
 
 
+import java.awt.GridLayout;
+
+import javax.inject.Inject;
+
 import org.rapla.client.plugin.view.ContentDrawer;
-import org.rapla.client.plugin.view.infos.InfoDrawer;
+import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
+import org.rapla.client.plugin.view.infos.InfoController;
+import org.rapla.client.plugin.view.resoursedates.ResourceDatesController;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -11,16 +17,21 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabBar;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ReservationController implements ContentDrawer {
+public class ReservationController implements ContentDrawer, ViewSelectionChangedHandler{
 
 //	private ContentDrawer infoDrawer;
 	
-	private DockPanel mainPanel;
+	@Inject
+	InfoController infoController;
+	@Inject
+	ResourceDatesController resourceDatesController;
+	
+	private DockPanel layout;
 	private FlowPanel tabBarPanel;
 	private FlowPanel contentPanel;
 	private FlowPanel buttonsPanel;
@@ -30,8 +41,6 @@ public class ReservationController implements ContentDrawer {
 	private Label cancel;
 	private Label save;
 	private Label delete;
-		
-	private ListBox listBox;	
 	
 	@Override
 	public Widget createContent() {
@@ -67,7 +76,7 @@ public class ReservationController implements ContentDrawer {
 	    	
 	    });	    
 	    
-	    delete = new Label("loeschen");
+	    delete = new Label("l\u00F6schen");
 	    delete.setStyleName("deleteButton");
 	    delete.addClickHandler(new ClickHandler(){
 
@@ -78,44 +87,39 @@ public class ReservationController implements ContentDrawer {
 			}
 	    	
 	    });
-
-	    mainPanel = new DockPanel();
+	    
+	    //layout = new Grid(0,3);
+	   // Integer heightBar = (int) ((Window.getClientHeight() * 0.95) * 0.1);
+	    //Integer heightContent = (int) ((Window.getClientHeight() * 0.95) * 0.8);
+	   // layout.getCellFormatter().setHeight(0, 0, (heightBar).toString());
+	    //layout.getCellFormatter().setHeight(0, 1, (heightBar).toString());
+	    //layout.getCellFormatter().setHeight(0, 1, (heightContent).toString());
+	    layout = new DockPanel();
 	    tabBarPanel = new FlowPanel();
 		contentPanel = new FlowPanel();
 		buttonsPanel = new FlowPanel();
+
 		
 		bar.addSelectionHandler(new SelectionHandler<Integer>() {
 	        public void onSelection(SelectionEvent<Integer> event) {
 	          // Let the user know what they just did.
-	          Window.alert("You clicked tab " + event.getSelectedItem());
-	          
-	          // add all three different views here 
+	          //Window.alert("You clicked tab " + event.getSelectedItem());
+	        	 contentPanel.clear();
+	        	 contentPanel.add(event.getSelectedItem() == 0 ? infoController.createContent() : resourceDatesController.createContent());
 	        }});
 		 
 		tabBarPanel.add(bar);
 	
 		
-		listBox = new ListBox();
-        
-	    // add the Event Types from data.xml here
-	    listBox.addItem("Lehrveranstaltung");
-	    listBox.addItem("Püfung");
-	    listBox.addItem("Sonstige Veranstaltung");
-	    
-		
-		contentPanel.add(listBox);
-		//Hier wird je nach dem, welcher Tab ausgewählt, der InfoView oder der ResourceDatesView in den ContentPanel geladen. 
-		//(Bzw. InfoDrawer und ResourceDateDrawer? ist das nicht das gleiche?)
-		
 		buttonsPanel.add(cancel);
 		buttonsPanel.add(save);
 		buttonsPanel.add(delete);
 		
-		mainPanel.add(tabBarPanel, DockPanel.NORTH);
-		mainPanel.add(buttonsPanel, DockPanel.SOUTH);
-		mainPanel.add(contentPanel, DockPanel.CENTER);
-		
-		return mainPanel;
+	    layout.add(buttonsPanel, DockPanel.SOUTH);
+	    layout.add(tabBarPanel, DockPanel.NORTH);
+	    layout.add(contentPanel, DockPanel.CENTER);
+	    
+		return layout;
 	}
 
 	@Override
@@ -126,6 +130,14 @@ public class ReservationController implements ContentDrawer {
 	
 	public ContentDrawer getSelectedContentDrawer() {		
 		return this;
-	}	
+	}
+
+	@Override
+	public void viewChanged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 }
