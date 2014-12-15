@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabBar;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,7 +35,7 @@ public class ReservationController implements ContentDrawer, ViewSelectionChange
 	
 	private VerticalPanel layout;
 	private FlowPanel tabBarPanel;
-	private FlowPanel contentPanel;
+	private SimplePanel contentPanel;
 	private FlowPanel buttonsPanel;
 	
 	private TabBar bar;
@@ -91,7 +92,7 @@ public class ReservationController implements ContentDrawer, ViewSelectionChange
 
 	    layout = new VerticalPanel();
 	    tabBarPanel = new FlowPanel();
-		contentPanel = new FlowPanel();
+		contentPanel = new SimplePanel();
 		buttonsPanel = new FlowPanel();
 		
 		tabBarPanel.add(bar);

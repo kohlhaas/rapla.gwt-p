@@ -12,7 +12,7 @@ public class ResourceDatesDrawer implements ContentDrawer {
 
 	@Override
 	public Widget createContent() {
-	    Integer height = (int) (Window.getClientHeight() * 0.95 * 0.8);
+	    Integer height = (int) (Window.getClientHeight() * 0.90 * 0.80);
 		
 		FlowPanel mainContent = new FlowPanel();
 		
