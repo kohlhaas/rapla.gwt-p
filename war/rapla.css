@@ -1,36 +1,34 @@
 /** Add css rules here for your application. */
-
-
 /** Example rules used by the template application (remove for your app) */
 h1 {
-  font-size: 2em;
-  font-weight: bold;
-  color: #777777;
-  margin: 40px 0px 70px;
-  text-align: center;
+	font-size: 2em;
+	font-weight: bold;
+	color: #777777;
+	margin: 40px 0px 70px;
+	text-align: center;
 }
 
 .sendButton {
-  display: block;
-  font-size: 16pt;
+	display: block;
+	font-size: 16pt;
 }
 
 /** Most GWT widgets already have a style name defined */
 .gwt-DialogBox {
-  width: 400px;
+	width: 400px;
 }
 
 .dialogVPanel {
-  margin: 5px;
+	margin: 5px;
 }
 
 .serverResponseLabelError {
-  color: red;
+	color: red;
 }
 
 /** Set ids using widget.getElement().setId("idOfElement") */
 #closeButton {
-  margin: 15px 6px 6px;
+	margin: 15px 6px 6px;
 }
 
 /* ADD BUTTON for new event */
@@ -47,7 +45,7 @@ h1 {
 	font-size: 20px;
 }
 
-.cancelButton, .deleteButton, .saveButton{
+.cancelButton, .deleteButton, .saveButton {
 	float: left;
 	width: auto;
 	background-color: rgb(153, 184, 252);
@@ -61,18 +59,27 @@ h1 {
 	padding: 3px;
 }
 
-.cancelButton:hover, .deleteButton:hover, .saveButton:hover{
+.cancelButton:hover, .deleteButton:hover, .saveButton:hover {
 	background-color: white;
 	color: rgb(153, 184, 252);
 	border: 1px solid rgb(153, 184, 252);
 	padding: 2px;
 }
 
-
-.gwt-TabBar .gwt-TabBarItem-wrapper { 
-	width: 50%; 
+.gwt-TabBar .gwt-TabBarItem-wrapper {
+	width: 50%;
 }
-.gwt-TabBar .gwt-TabBarItem { 
+
+.gwt-TabBar .gwt-TabBarItem {
 	font-size: 12pt;
 }
 
+.gwt-PopupPanel {
+	border: 3px solid #828788;
+	
+}
+.gwt-PopupPanelGlass{
+	background-color: #000;
+    opacity: 0.3;
+    filter: alpha(opacity=30);
+}

@@ -38,6 +38,7 @@ import org.rapla.framework.RaplaException;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 @Singleton
@@ -159,8 +160,9 @@ public class Application implements ViewSelectionChangedHandler,
         {
         	// need to be able to dynamic repositioning if the size of the browserwindow changes (maybe popupContent.setPopupPositionAndShow())
     	    popupContent = new PopupPanel();
-    	    Integer height = (int) (Window.getClientHeight()* 0.95);
-    	    Integer width = (int) (Window.getClientWidth() * 0.95);
+    	    popupContent.setGlassEnabled(true);
+    	    Integer height = (int) (Window.getClientHeight()* 0.90);
+    	    Integer width = (int) (Window.getClientWidth() * 0.90);
     	    popupContent.setHeight(height.toString() + "px");
     	    popupContent.setWidth(width.toString() + "px");
     	    popupContent.setAnimationEnabled(true);
@@ -169,8 +171,8 @@ public class Application implements ViewSelectionChangedHandler,
             Widget createContent = reservationController.createContent();
             root.add(popupContent);
             popupContent.add(createContent);
-            popupContent.center();
-    		
+            popupContent.center();       
+            
 
         }
 		

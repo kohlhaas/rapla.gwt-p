@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabBar;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ReservationController implements ContentDrawer, ViewSelectionChangedHandler{
@@ -31,7 +32,7 @@ public class ReservationController implements ContentDrawer, ViewSelectionChange
 	@Inject
 	ResourceDatesController resourceDatesController;
 	
-	private DockPanel layout;
+	private VerticalPanel layout;
 	private FlowPanel tabBarPanel;
 	private FlowPanel contentPanel;
 	private FlowPanel buttonsPanel;
@@ -87,18 +88,13 @@ public class ReservationController implements ContentDrawer, ViewSelectionChange
 			}
 	    	
 	    });
-	    
-	    //layout = new Grid(0,3);
-	   // Integer heightBar = (int) ((Window.getClientHeight() * 0.95) * 0.1);
-	    //Integer heightContent = (int) ((Window.getClientHeight() * 0.95) * 0.8);
-	   // layout.getCellFormatter().setHeight(0, 0, (heightBar).toString());
-	    //layout.getCellFormatter().setHeight(0, 1, (heightBar).toString());
-	    //layout.getCellFormatter().setHeight(0, 1, (heightContent).toString());
-	    layout = new DockPanel();
+
+	    layout = new VerticalPanel();
 	    tabBarPanel = new FlowPanel();
 		contentPanel = new FlowPanel();
 		buttonsPanel = new FlowPanel();
-
+		
+		tabBarPanel.add(bar);
 		
 		bar.addSelectionHandler(new SelectionHandler<Integer>() {
 	        public void onSelection(SelectionEvent<Integer> event) {
@@ -108,16 +104,18 @@ public class ReservationController implements ContentDrawer, ViewSelectionChange
 	        	 contentPanel.add(event.getSelectedItem() == 0 ? infoController.createContent() : resourceDatesController.createContent());
 	        }});
 		 
-		tabBarPanel.add(bar);
-	
+		bar.selectTab(0);
 		
 		buttonsPanel.add(cancel);
 		buttonsPanel.add(save);
 		buttonsPanel.add(delete);
 		
-	    layout.add(buttonsPanel, DockPanel.SOUTH);
-	    layout.add(tabBarPanel, DockPanel.NORTH);
-	    layout.add(contentPanel, DockPanel.CENTER);
+	    layout.add(buttonsPanel);
+	    layout.add(tabBarPanel);
+	    layout.add(contentPanel);
+	    
+		layout.setCellHeight(buttonsPanel, "40px");
+		layout.setCellHeight(tabBarPanel, "50px");
 	    
 		return layout;
 	}
