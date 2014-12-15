@@ -2,8 +2,10 @@ package org.rapla.client.edit.reservation.impl;
 
 import org.rapla.client.edit.reservation.GWTReservationController;
 import org.rapla.entities.domain.Appointment;
+import org.rapla.entities.domain.RepeatingType;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.ClientFacade;
+import org.rapla.facade.Conflict;
 import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
@@ -33,20 +35,31 @@ public class ReservationController extends RaplaComponent implements GWTReservat
 
   }
 
-  public void createReservation(Date startDate, Date endDate, String title) {
+  public void createReservation(Date startDate, Date endDate, String title, RepeatingType repeatingType) {
+
+    try {
+      Reservation reservation = facade.newReservation();
+      this.createAppointment(startDate, endDate);
+      //set repeating type afterwards, cause newAppointement ist deprecated
+      reservation.addAppointment(appointment);
+      Conflict[] conflicts = facade.getConflicts(reservation);
+    } catch (RaplaException e) {
+      e.printStackTrace();
+    }
 
   }
 
   protected void createAppointment(Date startDate, Date endDate) {
 
     try {
-      appointment = facade.newAppointment(startDate, endDate);
+      this.appointment = facade.newAppointment(startDate, endDate);
     } catch (RaplaException e) {
       logger.log(Level.SEVERE, e.getMessage(), e);
     }
 
 
   }
+
 
   public Appointment getAppointment() {
     return this.appointment;
