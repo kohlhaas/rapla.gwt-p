@@ -20,6 +20,18 @@ public class ResourceDatesDrawer implements ContentDrawer {
 		dateList.setHeight(height + "px");
 		dateList.setStyleName("dateList");
 		
+		dateList.add(createSingleDate(
+						"01.01.2015", 
+						"16:30",
+						"17:45",
+						"1.75 Vorlesungsstunden"
+					));
+		dateList.add(createSingleDate(
+				"02.01.2015", 
+				"16:30",
+				"17:45",
+				"4 Vorlesungsstunden"
+			));
 		
 		Label test = new Label("Test");
 		dateList.add(test);
@@ -59,6 +71,31 @@ public class ResourceDatesDrawer implements ContentDrawer {
 		mainContent.add(dateInfos);
 		
 		return mainContent;
+	}
+
+	private Widget createSingleDate(String date, String begin, String end,
+			String infoText) {
+		
+		FlowPanel main = new FlowPanel();
+		main.setStyleName("singleDate");
+		
+		FlowPanel times = new FlowPanel();
+		times.setStyleName("singleDateTimes");
+		times.add(new Label(begin));
+		times.add(new Label(end));
+		
+		FlowPanel infos = new FlowPanel();
+		Label dateLabel = new Label(date);
+		dateLabel.setStyleName("singleDateDateLabel");
+		Label infoLabel = new Label(infoText);
+		
+		infos.add(dateLabel);
+		infos.add(infoLabel);
+		
+		main.add(times);
+		main.add(infos);
+		
+		return main;
 	}
 
 	@Override

@@ -88,7 +88,7 @@ h1 {
 	width:  20%;
 	margin:	1%;
 	margin-left: 2px;
-	padding: 1%;
+	padding: 2px;
 	border: 1px solid #c2c2c2;
 	float: left;
 	overflow-y: scroll;
@@ -124,3 +124,32 @@ h1 {
 	margin-bottom: 3px;
 }
 
+.singleDate{	
+	width: 300px;
+	padding: 2px;
+	margin-bottom: 2px;
+	overflow-x: hidden;
+}
+
+.singleDate:hover{
+	padding: 1px;
+	border: 1px solid #c2c2c2;
+	cursor: pointer;
+}
+
+.singleDateTimes{
+	width: 40px;
+	float:left;
+	border-right: 1px solid #c2c2c2;
+	margin-right: 2px;
+}
+
+.singleDateInfos{
+	width: 225px;
+	float: right;	
+}
+
+.singleDateDateLabel{
+   font-size: 110%; 
+   font-weight: bold;
+}
