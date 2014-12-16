@@ -5,8 +5,13 @@ import org.rapla.client.plugin.view.ContentDrawer;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -25,79 +30,95 @@ public class InfoDrawer implements ContentDrawer {
 	private HorizontalPanel content;
 	private VerticalPanel contentLeft;
 	private VerticalPanel contentRight;
-	
-	private ListBox listBox;	
-  
+
+	private ListBox listBox;
+
 	
 	@Override
 	public Widget createContent() {
-		
-		Integer width = (int) (Window.getClientWidth() * 0.9) / 2 ;
-		
+
+		Integer width = (int) (Window.getClientWidth() * 0.9) / 2;
+
 		content = new HorizontalPanel();
-		//content.addStyleName("infoHorizontalPanel");
-		//content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		// content.addStyleName("infoHorizontalPanel");
+		// content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		contentLeft = new VerticalPanel();
 		contentRight = new VerticalPanel();
 		contentLeft.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		contentRight.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    
-	    
+		contentLeft.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		contentRight.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+
 		listBox = new ListBox();
-	        
-	     //add the Event Types from data.xml here
-	    listBox.addItem("Lehrveranstaltung");
-	    listBox.addItem("Pr\u00FCfung");
-	    listBox.addItem("Sonstige Veranstaltung");
-		
-	    listBox.addChangeHandler(new ChangeHandler() {
-			
+
+		// add the Event Types from data.xml here
+		listBox.addItem("Lehrveranstaltung");
+		listBox.addItem("Pr\u00FCfung");
+		listBox.addItem("Sonstige Veranstaltung");
+
+		listBox.addChangeHandler(new ChangeHandler() {
+
 			@Override
 			public void onChange(ChangeEvent event) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-	    
-	    contentLeft.add(listBox);
-	    
-	    final HorizontalPanel titelPanel = new HorizontalPanel();
-	    final Label titel = new Label("Vorlesungstitel");
-	    final TextBox titelInput = new TextBox();
-	    titelPanel.add(titel);
-	    titelPanel.add(titelInput);
-	   
-	    final Label vorlesungsStunden = new Label("Vorlesungsstunden");
-	    final Label vorlesungsStundenMessage = new Label("");
-	    final TextBox vorlesungsStundenInput = new TextBox();
-	    vorlesungsStundenInput.addKeyPressHandler(new KeyPressHandler() {
-	        @Override
-	        public void onKeyPress(KeyPressEvent event) {
-	            String input = vorlesungsStundenInput.getText();
-	            if (input.matches("[0-9]*")) {
-	            	double message = Integer.parseInt(input);
-	            	message = (message * 45) / 60;
-	            	vorlesungsStundenMessage.setText("= " + message + " Stunden");
-	            }else{
-	            	vorlesungsStundenMessage.setText("Keine korrekter Eingabe");
-	            }
-	            // do your thang
-	        }
-	    });
-	    final HorizontalPanel vorlesungsStundenPanel= new HorizontalPanel();
-	    vorlesungsStundenPanel.add(vorlesungsStunden);
-	    vorlesungsStundenPanel.add(vorlesungsStundenInput);
-	    vorlesungsStundenPanel.add(vorlesungsStundenMessage);
-	    
-	    contentRight.add(titelPanel);
-	    contentRight.add(vorlesungsStundenPanel);
-	    
+		final FlowPanel listPanel = new FlowPanel();
+		listPanel.add(listBox);
+		listPanel.setWidth(width + "px");
+		contentLeft.add(listPanel);
+
+		final InfoHorizontalPanel titelPanel = new InfoHorizontalPanel(width + "px");
+		final Label titel = new Label("Vorlesungstitel");
+		final TextBox titelInput = new TextBox();
+		titelPanel.add(titel, (width / 3) + "px" );
+		titelPanel.add(titelInput, (width / 3) + "px");
+		//titelPanel.setWidth(width + "px");
+
+		final Label vorlesungsStunden = new Label("Vorlesungsstunden");
+		final Label vorlesungsStundenMessage = new Label("");
+		final TextBox vorlesungsStundenInput = new TextBox();
+		vorlesungsStundenInput.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				String input = vorlesungsStundenInput.getText();
+				if (!input.isEmpty()) {
+					if (input.matches("[0-9]*")) {
+						double message = Integer.parseInt(input);
+						message = (message * 45) / 60;
+						vorlesungsStundenMessage.setText("= " + message
+								+ " Zeitstunden");
+					} else {
+						vorlesungsStundenMessage
+								.setText("Keine korrekter Eingabe");
+					}
+					// do your thang
+				} else {
+					vorlesungsStundenMessage.setText("");
+				}
+
+			}
+		});
+
+
+		final InfoHorizontalPanel vorlesungsStundenPanel = new InfoHorizontalPanel(width + "px");
+		vorlesungsStundenPanel.add(vorlesungsStunden, (width / 3 ) + "px");
+		vorlesungsStundenPanel.add(vorlesungsStundenInput, (width / 3 ) + "px");
+		vorlesungsStundenPanel.add(vorlesungsStundenMessage, (width / 3 ) + "px");
+
+		
+		vorlesungsStundenPanel.finalize(3);
+		titelPanel.finalize(3);
+		contentRight.add(titelPanel);
+		contentRight.add(vorlesungsStundenPanel);
+
 		content.add(contentLeft);
 		content.add(contentRight);
 		content.setCellWidth(contentLeft, width + "px");
 		content.setCellWidth(contentRight, width + "px");
-	    
-	    return content;
+
+		return content;
 	}
 
 	@Override
