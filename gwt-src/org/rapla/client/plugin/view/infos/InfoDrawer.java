@@ -106,12 +106,25 @@ public class InfoDrawer implements ContentDrawer {
 		vorlesungsStundenPanel.add(vorlesungsStunden, (width / 3 ) + "px");
 		vorlesungsStundenPanel.add(vorlesungsStundenInput, (width / 3 ) + "px");
 		vorlesungsStundenPanel.add(vorlesungsStundenMessage, (width / 3 ) + "px");
-
 		
+		final InfoHorizontalPanel studiengangPanel = new InfoHorizontalPanel(width + "px");
+		Label studiengang = new Label("Studiengang");
+		ListBox studiengangListBox = new ListBox();
+		studiengangListBox.addItem("WWI12B1");
+		studiengangListBox.addItem("WWI12B2");
+		studiengangListBox.addItem("WWI12B3");
+		// Hier den Handler / Listener für die Listbox einbinden
+		
+		studiengangPanel.add(studiengang, (width / 3 ) + "px");
+		studiengangPanel.add(studiengangListBox, (width / 3 ) + "px");
+
+		studiengangPanel.finalize(3);
 		vorlesungsStundenPanel.finalize(3);
 		titelPanel.finalize(3);
+		
 		contentRight.add(titelPanel);
 		contentRight.add(vorlesungsStundenPanel);
+		contentRight.add(studiengangPanel);
 
 		content.add(contentLeft);
 		content.add(contentRight);
