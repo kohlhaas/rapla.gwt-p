@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.rapla.client.edit.reservation.GWTReservationController;
 import org.rapla.client.factory.ViewEnumTypes;
 import org.rapla.client.factory.ViewFactory;
+import org.rapla.client.internal.GWTRaplaLocale;
 import org.rapla.client.internal.RaplaGWTClient;
 import org.rapla.client.plugin.view.ViewServiceProviderInterface;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
@@ -74,6 +75,9 @@ public class ReservationController implements GWTReservationController, ViewSele
     private RaplaContext context;
     
     private ClientFacade facade;
+    
+    @Inject 
+    GWTRaplaLocale GWTRaplaLocale; 
 	
 
     Logger logger = Logger.getLogger("reservationController");
@@ -105,7 +109,73 @@ public class ReservationController implements GWTReservationController, ViewSele
     
     @Override
     public void edit(final Reservation event, boolean isNew) throws RaplaException {
+    	reservation = event;
     	
+    	popupContent = new PopupPanel();
+		popupContent.setGlassEnabled(true);
+		popupContent.setAnimationEnabled(true);
+		popupContent.setAnimationType(PopupPanel.AnimationType.ROLL_DOWN);
+		Integer height = (int) (Window.getClientHeight() * 0.90);
+		Integer width = (int) (Window.getClientWidth() * 0.90);
+		popupContent.setHeight(height.toString() + "px");
+		popupContent.setWidth(width.toString() + "px");
+		
+		reservationName = new TextBox();
+		
+		buttonHandler = new BasicButtonHandler(context, this);
+		/////
+		
+	    bar = new TabBar();
+	    bar.addTab("Veranstaltungsinfos");
+	    bar.addTab("Termine und Resourcen");
+	    //bar.setTabEnabled(0, false);
+	    bar.selectTab(0);
+	    
+	    cancel = new Button("abbrechen");
+	    cancel.setStyleName("cancelButton");
+	    cancel.addClickHandler(buttonHandler);
+	    
+	    save = new Button("speichern");
+	    save.setStyleName("saveButton");
+	    save.addClickHandler(buttonHandler);	    
+	    
+	    delete = new Button("l\u00F6schen");
+	    delete.setStyleName("deleteButton");
+	    delete.addClickHandler(buttonHandler);
+
+	    layout = new VerticalPanel();
+	    tabBarPanel = new FlowPanel();
+		contentPanel = new SimplePanel();
+		buttonsPanel = new FlowPanel();
+		
+		tabBarPanel.add(bar);
+		
+		bar.addSelectionHandler(new SelectionHandler<Integer>() {
+	        public void onSelection(SelectionEvent<Integer> event) {
+	          // Let the user know what they just did.
+	          //Window.alert("You clicked tab " + event.getSelectedItem());
+	        	 contentPanel.clear();
+	        	 contentPanel.add(event.getSelectedItem() == 0 ? infoView.createContent() : resourceDatesView.createContent());
+	        }});
+		 
+		bar.selectTab(0);
+		
+		buttonsPanel.add(cancel);
+		buttonsPanel.add(save);
+		buttonsPanel.add(delete);
+		
+	    layout.add(buttonsPanel);
+	    layout.add(tabBarPanel);
+	    layout.add(contentPanel);
+	    
+		layout.setCellHeight(buttonsPanel, "40px");
+		layout.setCellHeight(tabBarPanel, "50px");
+	    
+		
+		////
+		popupContent.add(layout);
+		popupContent.center();
+		
     }
 	
 	
@@ -146,7 +216,7 @@ public class ReservationController implements GWTReservationController, ViewSele
 	    delete = new Button("l\u00F6schen");
 	    delete.setStyleName("deleteButton");
 	    delete.addClickHandler(buttonHandler);
-	    
+
 	    layout = new VerticalPanel();
 	    tabBarPanel = new FlowPanel();
 		contentPanel = new SimplePanel();
