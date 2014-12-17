@@ -1,5 +1,6 @@
 package org.rapla.client.plugin.view.infos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -67,17 +68,21 @@ public class InfoView implements ViewServiceProviderInterface {
 		contentRight.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
 		listBox = new ListBox();
-//		try {
-//			List eventTypes = reservationController.setEventTypes();
-//		} catch (RaplaException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		
+		List eventTypes = new ArrayList();
+		try {
+			 eventTypes = getReservationController().setEventTypes();
+		} catch (RaplaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		// add the Event Types from data.xml here
-		listBox.addItem("Lehrveranstaltung");
-		listBox.addItem("Pr\u00FCfung");
-		listBox.addItem("Sonstige Veranstaltung");
+		
+		for(int i = 0; i < eventTypes.size(); i++){
+			listBox.addItem((String) eventTypes.get(i).toString());
+			}
+		
 
 		listBox.addChangeHandler(new ChangeHandler() {
 

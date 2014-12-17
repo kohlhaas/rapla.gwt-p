@@ -180,7 +180,8 @@ public class Application implements ViewSelectionChangedHandler,
 //			popupContent.add(createContent);
 //			popupContent.center();
 		
-			
+
+			reservationController.setFacade(getClientFacade());
 			PopupPanel createContent = reservationController.createContent();
 			root.add(createContent);
 			createContent.center();

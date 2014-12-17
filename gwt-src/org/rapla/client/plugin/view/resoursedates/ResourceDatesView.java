@@ -1,5 +1,6 @@
 package org.rapla.client.plugin.view.resoursedates;
 
+import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.plugin.view.ViewServiceProviderInterface;
 
 import com.google.gwt.user.client.Window;
@@ -9,6 +10,16 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ResourceDatesView implements ViewServiceProviderInterface {
+	
+ReservationController reservationController;
+	
+	public ReservationController getReservationController() {
+		return reservationController;
+	}
+
+	public void setReservationController(ReservationController reservationController) {
+		this.reservationController = reservationController;
+	}
 
 	@Override
 	public Widget createContent() {

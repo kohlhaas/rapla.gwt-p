@@ -1,11 +1,12 @@
 package org.rapla.client.factory;
 
+import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.plugin.view.ViewServiceProviderInterface;
 import org.rapla.client.plugin.view.infos.InfoView;
 import org.rapla.client.plugin.view.resoursedates.ResourceDatesView;
 
 public class ViewFactory {
-	public static ViewServiceProviderInterface getInstance(ViewEnumTypes viewId){ //mit enum ersetzten
+	public static ViewServiceProviderInterface getInstance(ViewEnumTypes viewId, ReservationController controller){ //mit enum ersetzten
 		ViewServiceProviderInterface view;
 		
 	if (viewId.equals(ViewEnumTypes.INFOVIEW_DESKTOP)){
@@ -14,6 +15,7 @@ public class ViewFactory {
 	else {
 		 view = new ResourceDatesView();	
 	}
+	view.setReservationController(controller);
 	
 	 return view;
 	}

@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.event.RaplaEventBus;
 import org.rapla.client.internal.RaplaGWTClient;
@@ -38,7 +39,16 @@ public class ListDrawer implements ViewServiceProviderInterface {
     private final Logger logger = Logger.getLogger("componentClass");
     @Inject
     private RaplaGWTClient service;
+    
+ReservationController reservationController;
 	
+	public ReservationController getReservationController() {
+		return reservationController;
+	}
+
+	public void setReservationController(ReservationController reservationController) {
+		this.reservationController = reservationController;
+	}
 	
 	private static class ReservationCell extends AbstractCell<Reservation>
 	{

@@ -4,6 +4,7 @@ package org.rapla.client.edit.reservation.impl;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 import org.rapla.client.edit.reservation.GWTReservationController;
 import org.rapla.client.factory.ViewEnumTypes;
 import org.rapla.client.factory.ViewFactory;
+import org.rapla.client.internal.RaplaGWTClient;
 import org.rapla.client.plugin.view.ViewServiceProviderInterface;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
 import org.rapla.client.plugin.view.infos.InfoView;
@@ -159,8 +161,8 @@ public class ReservationController implements GWTReservationController, ViewSele
 	        	
 	        	 contentPanel.clear();
 	        //	 contentPanel.add(event.getSelectedItem() == 0 ? infoView.createContent() : resourceDatesView.createContent());
-	        	 contentPanel.add(ViewFactory.getInstance((event.getSelectedItem() == 0 ? ViewEnumTypes.INFOVIEW_DESKTOP : ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP)).createContent());
-	   	      
+	        	 contentPanel.add(ViewFactory.getInstance((event.getSelectedItem() == 0 ? ViewEnumTypes.INFOVIEW_DESKTOP : ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP), ReservationController.this).createContent());
+	   	         
 	        }});
 		 
 		bar.selectTab(0);
@@ -198,23 +200,26 @@ public class ReservationController implements GWTReservationController, ViewSele
 		
 	}
 	
-	public List setEventTypes() throws RaplaException{
+	public List<String> setEventTypes() throws RaplaException{
+		
 		DynamicType[] types;
-		List items = null;
-		types = facade.getDynamicTypes( DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+		List<String> items = new ArrayList<String>();
+		types = getFacade().getDynamicTypes( DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
 		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
-		User user = facade.getUser();
+		User user = getFacade().getUser();
 		for ( DynamicType type: types)
 		{
 		if (PermissionContainer.Util.canCreate(type, user))
-		eventTypes.add( type );
+		eventTypes.add(type);
 		}
 
-		for ( DynamicType type:eventTypes)
+		for (int i = 0; i < eventTypes.size(); i++) 
 		{
-	//	String name = type.getName(getLocale());
-		//items.add(name);
+		String name = eventTypes.get(i).getName(GWTRaplaLocale.getLocale());
+		items.add(name);
 		} ;
+		
+		
 		return items;
 	}
 
