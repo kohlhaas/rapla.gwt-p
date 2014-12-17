@@ -10,11 +10,12 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.GWTReservationController;
+import org.rapla.client.factory.InfoViewInterface;
 import org.rapla.client.factory.ViewEnumTypes;
 import org.rapla.client.factory.ViewFactory;
+import org.rapla.client.factory.ViewServiceProviderInterface;
 import org.rapla.client.internal.GWTRaplaLocale;
 import org.rapla.client.internal.RaplaGWTClient;
-import org.rapla.client.plugin.view.ViewServiceProviderInterface;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
 import org.rapla.client.plugin.view.infos.InfoView;
 import org.rapla.client.plugin.view.resoursedates.ResourceDatesView;
@@ -231,8 +232,25 @@ public class ReservationController implements GWTReservationController, ViewSele
 	        	
 	        	 contentPanel.clear();
 	        //	 contentPanel.add(event.getSelectedItem() == 0 ? infoView.createContent() : resourceDatesView.createContent());
-	        	 contentPanel.add(ViewFactory.getInstance((event.getSelectedItem() == 0 ? ViewEnumTypes.INFOVIEW_DESKTOP : ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP), ReservationController.this).createContent());
-	   	         
+	        	 
+	        	 
+	        	 ViewServiceProviderInterface view = ViewFactory.getInstance((event.getSelectedItem() == 0 ? ViewEnumTypes.INFOVIEW_DESKTOP : ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP), ReservationController.this);
+	        	 contentPanel.add(view.createContent());
+
+	        	 
+	        	 if(view instanceof InfoViewInterface){
+	        	   view = (InfoViewInterface) view;
+	        	   try {
+					((InfoViewInterface) view).setEventTypes(ReservationController.this.getEventTypes());
+				} catch (RaplaException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        	 }else{
+	        		 
+	        	 }
+
+	        	 
 	        }});
 		 
 		bar.selectTab(0);
@@ -270,7 +288,7 @@ public class ReservationController implements GWTReservationController, ViewSele
 		
 	}
 	
-	public List<String> setEventTypes() throws RaplaException{
+	public List<String> getEventTypes() throws RaplaException{
 		
 		DynamicType[] types;
 		List<String> items = new ArrayList<String>();

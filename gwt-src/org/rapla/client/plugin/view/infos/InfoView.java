@@ -6,7 +6,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.impl.ReservationController;
-import org.rapla.client.plugin.view.ViewServiceProviderInterface;
+import org.rapla.client.factory.InfoViewInterface;
+import org.rapla.client.factory.ViewServiceProviderInterface;
 import org.rapla.framework.RaplaException;
 
 import com.google.gwt.dom.client.Style;
@@ -33,7 +34,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class InfoView implements ViewServiceProviderInterface {
+public class InfoView implements ViewServiceProviderInterface, InfoViewInterface {
 
 	private HorizontalPanel content;
 	private VerticalPanel contentLeft;
@@ -42,16 +43,8 @@ public class InfoView implements ViewServiceProviderInterface {
 	private ListBox listBox;
 	
 	
-	ReservationController reservationController;
+
 	
-	public ReservationController getReservationController() {
-		return reservationController;
-	}
-
-	public void setReservationController(ReservationController reservationController) {
-		this.reservationController = reservationController;
-	}
-
 	@Override
 	public Widget createContent() {
 
@@ -69,20 +62,10 @@ public class InfoView implements ViewServiceProviderInterface {
 
 		listBox = new ListBox();
 		
-		List eventTypes = new ArrayList();
-		try {
-			 eventTypes = getReservationController().setEventTypes();
-		} catch (RaplaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	
 		// add the Event Types from data.xml here
 		
-		for(int i = 0; i < eventTypes.size(); i++){
-			listBox.addItem((String) eventTypes.get(i).toString());
-			}
-		
+				
 
 		listBox.addChangeHandler(new ChangeHandler() {
 
@@ -167,6 +150,34 @@ public class InfoView implements ViewServiceProviderInterface {
 	public void updateContent() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void setEventTypes(List<String> eventTypes) {
+
+		for(int i = 0; i < eventTypes.size(); i++){
+			listBox.addItem((String) eventTypes.get(i).toString());
+			}
+
+	}
+
+	@Override
+	public String getSelectedEventType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setReservationController(
+			ReservationController reservationController) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ReservationController getReservationController() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

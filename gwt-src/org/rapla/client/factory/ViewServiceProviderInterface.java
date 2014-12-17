@@ -1,4 +1,4 @@
-package org.rapla.client.plugin.view;
+package org.rapla.client.factory;
 
 import org.rapla.client.edit.reservation.impl.ReservationController;
 
@@ -12,5 +12,7 @@ public interface ViewServiceProviderInterface {
 	public void setReservationController(ReservationController reservationController);
 
 	public ReservationController getReservationController();
+	
+	
 	
 }

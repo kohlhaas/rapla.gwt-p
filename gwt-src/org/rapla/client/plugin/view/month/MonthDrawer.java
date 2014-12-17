@@ -1,7 +1,7 @@
 package org.rapla.client.plugin.view.month;
 
 import org.rapla.client.edit.reservation.impl.ReservationController;
-import org.rapla.client.plugin.view.ViewServiceProviderInterface;
+import org.rapla.client.factory.ViewServiceProviderInterface;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;

@@ -1,7 +1,6 @@
 package org.rapla.client.factory;
 
 import org.rapla.client.edit.reservation.impl.ReservationController;
-import org.rapla.client.plugin.view.ViewServiceProviderInterface;
 import org.rapla.client.plugin.view.infos.InfoView;
 import org.rapla.client.plugin.view.resoursedates.ResourceDatesView;
 
