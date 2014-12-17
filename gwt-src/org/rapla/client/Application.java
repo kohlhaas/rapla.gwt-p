@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.rapla.client.edit.reservation.GWTReservationController;
-import org.rapla.client.edit.reservation.impl.SampleReservationController;
+import org.rapla.client.edit.reservation.controller.EditController;
 import org.rapla.client.event.AddEvent;
 import org.rapla.client.event.AddEvent.AddEventHandler;
 import org.rapla.client.event.DetailSelectEvent;
@@ -58,7 +58,8 @@ public class Application implements ViewSelectionChangedHandler,
 
 	// private final DataInjector injector2 = GWT.create(DataInjector.class);
 	public void createApplication() {
-	    controller = new SampleReservationController(service.getContext());  //sets the controller for gwt (
+	    //controller = new SampleReservationController(service.getContext());  //sets the controller for gwt (
+	    controller = new EditController(service.getContext());  //sets the controller for gwt (
 	    root = RootPanel.get("raplaRoot");
 		root.clear();
 		root.add(viewController.createContent());
