@@ -54,6 +54,7 @@ public class Application implements ViewSelectionChangedHandler,
 	@Inject
 	private RaplaGWTClient service;
 	RootPanel root;
+	
 	GWTReservationController controller;
 	@Inject
 	ReservationController reservationController;
@@ -70,6 +71,7 @@ public class Application implements ViewSelectionChangedHandler,
 	// private final DataInjector injector2 = GWT.create(DataInjector.class);
 	public void createApplication() {
 		controller = new SampleReservationController(service.getContext());
+		reservationController.setContext(service.getContext());
 		root = RootPanel.get("raplaRoot");
 		root.clear();
 		root.add(viewController.createContent());
@@ -164,19 +166,24 @@ public class Application implements ViewSelectionChangedHandler,
 			// need to be able to dynamic repositioning if the size of the
 			// browserwindow changes (maybe
 			// popupContent.setPopupPositionAndShow())
-			popupContent = new PopupPanel();
-			popupContent.setGlassEnabled(true);
-			popupContent.setAnimationEnabled(true);
-			popupContent.setAnimationType(PopupPanel.AnimationType.ROLL_DOWN);
-			Integer height = (int) (Window.getClientHeight() * 0.90);
-			Integer width = (int) (Window.getClientWidth() * 0.90);
-			popupContent.setHeight(height.toString() + "px");
-			popupContent.setWidth(width.toString() + "px");
-
-			Widget createContent = reservationController.createContent();
-			root.add(popupContent);
-			popupContent.add(createContent);
-			popupContent.center();
+//			popupContent = new PopupPanel();
+//			popupContent.setGlassEnabled(true);
+//			popupContent.setAnimationEnabled(true);
+//			popupContent.setAnimationType(PopupPanel.AnimationType.ROLL_DOWN);
+//			Integer height = (int) (Window.getClientHeight() * 0.90);
+//			Integer width = (int) (Window.getClientWidth() * 0.90);
+//			popupContent.setHeight(height.toString() + "px");
+//			popupContent.setWidth(width.toString() + "px");
+//
+//			Widget createContent = reservationController.createContent();
+//			root.add(popupContent);
+//			popupContent.add(createContent);
+//			popupContent.center();
+		
+			
+			PopupPanel createContent = reservationController.createContent();
+			root.add(createContent);
+			createContent.center();
 		}
 
 	}
