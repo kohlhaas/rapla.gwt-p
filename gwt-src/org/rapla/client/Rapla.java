@@ -42,6 +42,7 @@ public class Rapla implements EntryPoint {
      */
     public void onModuleLoad() {
     	StyleInjector.inject("Rapla.css", true);
+    	StyleInjector.inject("mwi.css", true);
         AbstractJsonProxy.setServiceEntryPointFactory( new EntryPointFactory() {
             
             @Override
