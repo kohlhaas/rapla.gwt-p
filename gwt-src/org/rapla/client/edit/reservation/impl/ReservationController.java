@@ -181,9 +181,7 @@ public class ReservationController implements GWTReservationController, ViewSele
 	
 	
 	public PopupPanel createContent() {
-		
-		infoView.setReservationController(this);
-		
+				
 		popupContent = new PopupPanel();
 		popupContent.setGlassEnabled(true);
 		popupContent.setAnimationEnabled(true);

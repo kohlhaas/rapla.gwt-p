@@ -167,17 +167,5 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		return null;
 	}
 
-	@Override
-	public void setReservationController(
-			ReservationController reservationController) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public ReservationController getReservationController() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

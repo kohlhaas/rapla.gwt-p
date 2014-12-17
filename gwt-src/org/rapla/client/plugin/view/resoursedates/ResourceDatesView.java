@@ -1,15 +1,15 @@
 package org.rapla.client.plugin.view.resoursedates;
 
 import org.rapla.client.edit.reservation.impl.ReservationController;
+import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ResourceDatesView implements ViewServiceProviderInterface {
+public class ResourceDatesView implements ViewServiceProviderInterface, ResourceDatesInterface{
 	
 ReservationController reservationController;
 	

@@ -14,7 +14,6 @@ public class ViewFactory {
 	else {
 		 view = new ResourceDatesView();	
 	}
-	view.setReservationController(controller);
 	
 	 return view;
 	}

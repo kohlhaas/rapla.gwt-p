@@ -28,16 +28,7 @@ public class ViewController implements ViewServiceProviderInterface {
 	private ListBox listBox;
 
 	private List<ViewPlugin> views;
-	
-ReservationController reservationController;
-	
-	public ReservationController getReservationController() {
-		return reservationController;
-	}
-
-	public void setReservationController(ReservationController reservationController) {
-		this.reservationController = reservationController;
-	}
+		
 	
 	@Inject
 	public void setViews(Set<ViewPlugin> views)
