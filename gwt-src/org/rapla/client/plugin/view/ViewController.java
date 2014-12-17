@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ViewController implements ContentDrawer {
+public class ViewController implements ViewServiceProviderInterface {
 
 	private ListBox listBox;
 
@@ -59,7 +59,7 @@ public class ViewController implements ContentDrawer {
 		});
 	}
 
-	public ContentDrawer getSelectedContentDrawer() {
+	public ViewServiceProviderInterface getSelectedContentDrawer() {
 		return views.get(listBox.getSelectedIndex()).getContentDrawer();
 	}
 

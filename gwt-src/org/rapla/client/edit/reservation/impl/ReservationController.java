@@ -2,16 +2,25 @@ package org.rapla.client.edit.reservation.impl;
 
 
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.GWTReservationController;
-import org.rapla.client.plugin.view.ContentDrawer;
+import org.rapla.client.factory.ViewEnumTypes;
+import org.rapla.client.factory.ViewFactory;
+import org.rapla.client.plugin.view.ViewServiceProviderInterface;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
-import org.rapla.client.plugin.view.infos.InfoController;
-import org.rapla.client.plugin.view.resoursedates.ResourceDatesController;
+import org.rapla.client.plugin.view.infos.InfoView;
+import org.rapla.client.plugin.view.resoursedates.ResourceDatesView;
+import org.rapla.components.xmlbundle.I18nBundle;
+import org.rapla.entities.User;
+import org.rapla.entities.domain.PermissionContainer;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.dynamictype.DynamicType;
+import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
 import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
@@ -25,6 +34,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabBar;
@@ -40,9 +50,9 @@ public class ReservationController implements GWTReservationController, ViewSele
 //	private ContentDrawer infoDrawer;
 	
 	@Inject
-	InfoController infoController;
+	InfoView infoView;
 	@Inject
-	ResourceDatesController resourceDatesController;
+	ResourceDatesView resourceDatesView;
 	
 	private VerticalPanel layout;
 	private FlowPanel tabBarPanel;
@@ -139,7 +149,7 @@ public class ReservationController implements GWTReservationController, ViewSele
 	          // Let the user know what they just did.
 	          //Window.alert("You clicked tab " + event.getSelectedItem());
 	        	 contentPanel.clear();
-	        	 contentPanel.add(event.getSelectedItem() == 0 ? infoController.createContent() : resourceDatesController.createContent());
+	        	 contentPanel.add(event.getSelectedItem() == 0 ? infoView.createContent() : resourceDatesView.createContent());
 	        }});
 		 
 		bar.selectTab(0);
@@ -164,6 +174,8 @@ public class ReservationController implements GWTReservationController, ViewSele
 	
 	
 	public PopupPanel createContent() {
+		
+		infoView.setReservationController(this);
 		
 		popupContent = new PopupPanel();
 		popupContent.setGlassEnabled(true);
@@ -210,8 +222,11 @@ public class ReservationController implements GWTReservationController, ViewSele
 	        public void onSelection(SelectionEvent<Integer> event) {
 	          // Let the user know what they just did.
 	          //Window.alert("You clicked tab " + event.getSelectedItem());
+	        	
 	        	 contentPanel.clear();
-	        	 contentPanel.add(event.getSelectedItem() == 0 ? infoController.createContent() : resourceDatesController.createContent());
+	        //	 contentPanel.add(event.getSelectedItem() == 0 ? infoView.createContent() : resourceDatesView.createContent());
+	        	 contentPanel.add(ViewFactory.getInstance((event.getSelectedItem() == 0 ? ViewEnumTypes.INFOVIEW_DESKTOP : ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP)).createContent());
+	   	      
 	        }});
 		 
 		bar.selectTab(0);
@@ -247,6 +262,26 @@ public class ReservationController implements GWTReservationController, ViewSele
 	public void viewChanged() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public List setEventTypes() throws RaplaException{
+		DynamicType[] types;
+		List items = null;
+		types = facade.getDynamicTypes( DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		User user = facade.getUser();
+		for ( DynamicType type: types)
+		{
+		if (PermissionContainer.Util.canCreate(type, user))
+		eventTypes.add( type );
+		}
+
+		for ( DynamicType type:eventTypes)
+		{
+	//	String name = type.getName(getLocale());
+		//items.add(name);
+		} ;
+		return items;
 	}
 
 	

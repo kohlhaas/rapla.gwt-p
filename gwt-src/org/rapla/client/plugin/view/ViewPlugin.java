@@ -3,7 +3,7 @@ package org.rapla.client.plugin.view;
 
 public interface ViewPlugin {
 
-	ContentDrawer getContentDrawer();
+	ViewServiceProviderInterface getContentDrawer();
 
 	String getName();
 	

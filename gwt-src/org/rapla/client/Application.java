@@ -17,7 +17,7 @@ import org.rapla.client.event.RaplaEventBus;
 import org.rapla.client.event.AddReservationEvent;
 import org.rapla.client.event.AddReservationEvent.AddReservationEventHandler;
 import org.rapla.client.internal.RaplaGWTClient;
-import org.rapla.client.plugin.view.ContentDrawer;
+import org.rapla.client.plugin.view.ViewServiceProviderInterface;
 import org.rapla.client.plugin.view.ViewController;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
@@ -97,7 +97,7 @@ public class Application implements ViewSelectionChangedHandler,
 			root.remove(drawingContent);
 		}
 		drawingContent = new FlowPanel();
-		ContentDrawer selectedContentDrawer = viewController
+		ViewServiceProviderInterface selectedContentDrawer = viewController
 				.getSelectedContentDrawer();
 		Widget createContent = selectedContentDrawer.createContent();
 		drawingContent.add(createContent);
