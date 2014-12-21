@@ -8,13 +8,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.rapla.client.edit.reservation.GWTReservationController;
-import org.rapla.client.edit.reservation.impl.SampleReservationController;
 import org.rapla.client.event.AddEvent;
 import org.rapla.client.event.AddEvent.AddEventHandler;
 import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.event.DetailSelectEvent.DetailSelectEventHandler;
 import org.rapla.client.event.RaplaEventBus;
-import org.rapla.client.internal.RaplaGWTClient;
 import org.rapla.client.plugin.view.ContentDrawer;
 import org.rapla.client.plugin.view.ViewController;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent;
@@ -25,12 +23,12 @@ import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
+import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.ModificationEvent;
 import org.rapla.facade.ModificationListener;
-import org.rapla.facade.RaplaComponent;
-import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
+import org.rapla.framework.RaplaLocale;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -45,9 +43,16 @@ public class Application implements ViewSelectionChangedHandler,
 	@Inject
 	ViewController viewController;
 	@Inject
-    private RaplaGWTClient service;
+    ClientFacade facade;
+	@Inject
+    RaplaLocale raplaLocale;
+	@Inject
+    CalendarOptions calendarOptions;
+	@Inject
+    GWTReservationController controller;
+	
 	RootPanel root;
-	GWTReservationController controller;
+	
 	
 	public Application() {
 		drawingContent.setStyleName("raplaDrawingContent");
@@ -58,12 +63,11 @@ public class Application implements ViewSelectionChangedHandler,
 
 	// private final DataInjector injector2 = GWT.create(DataInjector.class);
 	public void createApplication() {
-	    controller = new SampleReservationController(service.getContext());
 	    root = RootPanel.get("raplaRoot");
 		root.clear();
 		root.add(viewController.createContent());
 		viewChanged();
-		service.getFacade().addModificationListener( new ModificationListener() {
+		facade.addModificationListener( new ModificationListener() {
             
             @Override
             public void dataChanged(ModificationEvent evt) throws RaplaException {
@@ -92,7 +96,6 @@ public class Application implements ViewSelectionChangedHandler,
 	    {
 	        Reservation event = (Reservation) selectedObject;
 	        try {
-	            ClientFacade facade = service.getFacade();
 	            Reservation editableEvent = facade.edit( event);
 	            controller.edit( editableEvent, false );
 	        } catch (RaplaException e1) {
@@ -102,22 +105,21 @@ public class Application implements ViewSelectionChangedHandler,
 	    }
 	}
 	
-	class TestHandler extends RaplaComponent
+	class TestHandler 
 	{
 
-        public TestHandler(RaplaContext context) {
-            super(context);
+        public TestHandler() {
+            super();
         }
 
         public void handle()
         {
-            ClientFacade facade = getClientFacade();
             try {
                 final Reservation event = facade.newReservation();
          
                 Date selectedDate =facade.today();
-                Date time = new Date (DateTools.MILLISECONDS_PER_MINUTE * getCalendarOptions().getWorktimeStartMinutes());
-                Date startDate = getRaplaLocale().toDate(selectedDate,time);
+                Date time = new Date (DateTools.MILLISECONDS_PER_MINUTE * calendarOptions.getWorktimeStartMinutes());
+                Date startDate = raplaLocale.toDate(selectedDate,time);
                 Classification classification = event.getClassification();
                 Attribute first = classification.getType().getAttributes()[0];
                 classification.setValue(first, "Test");
@@ -138,7 +140,7 @@ public class Application implements ViewSelectionChangedHandler,
 
 	@Override
 	public void addRequested(AddEvent e) {
-	    TestHandler testHandler = new TestHandler( service.getContext());
+	    TestHandler testHandler = new TestHandler( );
 	    testHandler.handle();
 	}
 

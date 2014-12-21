@@ -1,13 +1,8 @@
 package org.rapla.client.plugin.view;
 
 
-public interface ViewPlugin {
-
-	ContentDrawer getContentDrawer();
+public interface ViewPlugin extends ContentDrawer {
 
 	String getName();
 	
-	boolean isEnabled();
-	
-	void enable();
 }

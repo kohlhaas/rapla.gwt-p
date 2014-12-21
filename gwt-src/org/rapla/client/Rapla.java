@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rapla.client.internal.RaplaGWTClient;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.facade.internal.FacadeImpl;
 import org.rapla.framework.RaplaException;
@@ -42,6 +41,7 @@ public class Rapla implements EntryPoint {
      */
     public void onModuleLoad() {
     	StyleInjector.inject("Rapla.css", true);
+    	//logger.info("Heute ist " + new GWTRaplaLocale().formatDateLong( new Date()));
         AbstractJsonProxy.setServiceEntryPointFactory( new EntryPointFactory() {
             
             @Override
@@ -55,60 +55,69 @@ public class Rapla implements EntryPoint {
         LoginTokens token = getValidToken();
         if (token != null)
         {
-            AbstractJsonProxy.setAuthThoken(token.getAccessToken());
-            goToWizard();
-        } else
+            
+            startApplication(token);
+        } 
+        else
         {
-            final Button sendButton = new Button("login");
-            final TextBox nameField = new TextBox();
-            nameField.setText("admin");
-            final TextBox passwordField = new PasswordTextBox();
-            passwordField.setText("");
-
-            final Label errorLabel = new Label();
-            // We can add style names to widgets
-            sendButton.addStyleName("sendButton");
-
-            // Add the nameField and sendButton to the RootPanel
-            // Use RootPanel.get() to get the entire body element
-            RootPanel panel = RootPanel.get("raplaRoot");
-            panel.add(nameField);
-            panel.add(passwordField);
-            panel.add(sendButton);
-            panel.add(errorLabel);
-            sendButton.addClickHandler(new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
-                    errorLabel.setText("");
-                    final String username = nameField.getText();
-                    String password = passwordField.getText();
-                    // Then, we send the input to the server.
-                    sendButton.setEnabled(false);
-                    final RemoteServer loginService = injector.getLoginService();
-                    FutureResult<LoginTokens> login = loginService.login(username, password, null);
-                    login.get(new
-                            AsyncCallback<LoginTokens>() {
-
-                                public void onSuccess(LoginTokens result) {
-                                    logger.info("Login successfull  ");
-                                    // we store the token in a cookie for future login
-                                    Cookies.setCookie(LOGIN_COOKIE, username+ ":" +result.toString());
-                                    // then we set the token for the remote proxies
-                                    AbstractJsonProxy.setAuthThoken(result.getAccessToken());
-                                    goToWizard();
-                                }
-
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    logger.log(Level.SEVERE, caught.getMessage(), caught);
-                                    sendButton.setEnabled(true);
-                                }
-                            });
-
-                }
-            });
+            showLogin();
         }
+    }
+
+    private void showLogin() {
+        final Button sendButton = new Button("login");
+        final TextBox nameField = new TextBox();
+        nameField.setText("admin");
+        final TextBox passwordField = new PasswordTextBox();
+        passwordField.setText("");
+
+        final Label errorLabel = new Label();
+        // We can add style names to widgets
+        sendButton.addStyleName("sendButton");
+
+        // Add the nameField and sendButton to the RootPanel
+        // Use RootPanel.get() to get the entire body element
+        RootPanel panel = RootPanel.get("raplaRoot");
+        panel.add(nameField);
+        panel.add(passwordField);
+        panel.add(sendButton);
+        panel.add(errorLabel);
+        sendButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                errorLabel.setText("");
+                final String username = nameField.getText();
+                String password = passwordField.getText();
+                // Then, we send the input to the server.
+                sendButton.setEnabled(false);
+                final RemoteServer loginService = injector.getLoginService();
+                FutureResult<LoginTokens> login = loginService.login(username, password, null);
+                login.get(new
+                        AsyncCallback<LoginTokens>() {
+
+                            public void onSuccess(LoginTokens token) {
+                                logger.info("Login successfull  ");
+                                // we store the token in a cookie for future login
+                                setValidToken(username, token);
+                                // then we set the token for the remote proxies
+                                startApplication( token);
+                            }
+
+                            @Override
+                            public void onFailure(Throwable caught) {
+                                logger.log(Level.SEVERE, caught.getMessage(), caught);
+                                sendButton.setEnabled(true);
+                            }
+                        });
+
+            }
+        });
+    }
+    private void setValidToken(String username, LoginTokens token)
+    {
+        Cookies.setCookie(LOGIN_COOKIE, username+ ":" +token.toString());
+        
     }
 
     private LoginTokens getValidToken() {
@@ -134,17 +143,19 @@ public class Rapla implements EntryPoint {
         return null;
     }
 
-    private void goToWizard() {
+    private void startApplication(LoginTokens token) {
+        AbstractJsonProxy.setAuthThoken(token.getAccessToken());
+        
         logger.log(Level.INFO, "GWT Applet started BLUBS1");
-        RaplaGWTClient client = injector.getClient();
-        RemoteOperator operator = client.getOperator();
+        RemoteOperator operator = (RemoteOperator)injector.getOperator();
+        operator.getRemoteConnectionInfo().setServerURL( "bla");
         try {
             String cookie = Cookies.getCookie(LOGIN_COOKIE);
             int indexOf = cookie.indexOf(":");
             String username = cookie.substring(0,indexOf);
             operator.loadData(null);
             operator.initRefresh();
-            FacadeImpl facadeImpl = (FacadeImpl)client.getFacade();
+            FacadeImpl facadeImpl = (FacadeImpl)injector.getFacade();
             facadeImpl.setUsernameInternal(null, username);
             facadeImpl.setCachingEnabled( false );
             // Test for the resources
@@ -161,32 +172,32 @@ public class Rapla implements EntryPoint {
 
     }
 
-    static class RaplaLoginCookie {
-        final Logger logger = Logger.getLogger("RaplaLoginCookie");
-        public static final String LOGIN_COOKIE = "raplaLoginToken";
-
-        private static final RaplaLoginCookie INSTANCE = new RaplaLoginCookie();
-
-        public static RaplaLoginCookie getCookie() {
-            return INSTANCE;
-        }
-
-        public void updateLogin(LoginTokens result) {
-            Cookies.setCookie(LOGIN_COOKIE, result.toString());
-        }
-
-        public boolean isAlreadyLoggedIn() {
-            logger.log(Level.INFO, "Looking for cookie");
-            String cookie = Cookies.getCookie(LOGIN_COOKIE);
-            if (cookie != null) {
-                LoginTokens token = LoginTokens.fromString(cookie);
-                boolean valid = token.isValid();
-                logger.log(Level.INFO, "found cookie: " + valid);
-                return valid;
-            }
-            return false;
-        }
-
-    }
+//    static class RaplaLoginCookie {
+//        final Logger logger = Logger.getLogger("RaplaLoginCookie");
+//        public static final String LOGIN_COOKIE = "raplaLoginToken";
+//
+//        private static final RaplaLoginCookie INSTANCE = new RaplaLoginCookie();
+//
+//        public static RaplaLoginCookie getCookie() {
+//            return INSTANCE;
+//        }
+//
+//        public void updateLogin(LoginTokens result) {
+//            Cookies.setCookie(LOGIN_COOKIE, result.toString());
+//        }
+//
+//        public boolean isAlreadyLoggedIn() {
+//            logger.log(Level.INFO, "Looking for cookie");
+//            String cookie = Cookies.getCookie(LOGIN_COOKIE);
+//            if (cookie != null) {
+//                LoginTokens token = LoginTokens.fromString(cookie);
+//                boolean valid = token.isValid();
+//                logger.log(Level.INFO, "found cookie: " + valid);
+//                return valid;
+//            }
+//            return false;
+//        }
+//
+//    }
 
 }
