@@ -3,6 +3,8 @@ package org.rapla.client.edit.reservation.impl;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -21,10 +23,14 @@ import org.rapla.client.plugin.view.infos.InfoView;
 import org.rapla.client.plugin.view.resoursedates.ResourceDatesView;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.User;
+import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.PermissionContainer;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.domain.internal.AllocatableImpl;
+import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
+import org.rapla.entities.dynamictype.internal.AttributeImpl;
 import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
@@ -48,6 +54,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.Button;
 
 import org.rapla.facade.ClientFacade;
+import org.rapla.gui.internal.TreeAllocatableSelection;
 
 public class ReservationController implements GWTReservationController, ViewSelectionChangedHandler{
 
@@ -240,6 +247,8 @@ public class ReservationController implements GWTReservationController, ViewSele
 	        	   view = (InfoViewInterface) view;
 	        	   try {
 					((InfoViewInterface) view).setEventTypes(ReservationController.this.getEventTypes());
+					((InfoViewInterface) view).setDynamicFields(ReservationController.this.getDynamicFields());
+
 				} catch (RaplaException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -307,6 +316,50 @@ public class ReservationController implements GWTReservationController, ViewSele
 		
 		
 		return items;
+	}
+	
+	public List<String> getDynamicFields() throws RaplaException{
+		
+       // Allocatable[] allocatables = getFacade().getAllocatables();
+     //   List<String> studiengang = new ArrayList<String>(); 
+//        for(int i = 0; i < allocatables.length; i ++){
+//        	String name = allocatables[i].getName(GWTRaplaLocale.getLocale());
+//    		studiengang.add(name);
+//        }
+//        
+//		TreeAllocatableSelection test = new TreeAllocatableSelection(context);
+//		Collection<Allocatable> studiengang2= test.getAllocatables();
+
+//        AllocatableImpl allocate = new AllocatableImpl(new Date(), new Date()); 
+//        String[] keys = allocate.getAnnotationKeys();
+
+		DynamicType[] types = getFacade().getDynamicTypes( DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+		List <String> test = new ArrayList<String>();
+		AttributeImpl attr = new AttributeImpl();
+		for(int i = 0; i < types.length; i++){
+		//	test.add(types[i].toString());
+		//	String key = types[i].getKey();
+			Attribute[] attributes = types[i].getAttributes();
+
+			for (int j=0; j < attributes.length; j++){
+				
+				//String constraints = (String) attributes[j].getConstraint(attributes[j].getKey());
+				String [] constraints = attributes[j].getConstraintKeys();
+
+			for(int k = 0; k < attributes[j].getConstraintKeys().length; k++){
+				test.add(constraints[k]);
+
+			}
+			
+			}
+			
+			//test.add(types[i].toString());
+		}
+		
+
+		
+		
+		return test;	
 	}
 
 	
