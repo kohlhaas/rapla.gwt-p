@@ -1,21 +1,20 @@
 .cancelButton, .deleteButton, .saveButton {
-	float: left;
-	width: auto;
-	background-color: rgb(153, 184, 252);
-	color: white;
-	border-radius: 3px;
-	text-align: center;
-	font-size: 14px;
-	text-transform: uppercase;
-	cursor: pointer;
-	margin: 5px;
-	padding: 3px;
+	float: left !important;
+	width: auto !important;
+	background-color: rgb(153, 184, 252) !important;
+	color: white !important;
+	border-radius: 3px !important;
+	text-align: center !important;
+	font-size: 14px !important;
+	text-transform: uppercase !important;
+	cursor: pointer !important;
+	margin: 5px !important;
+	padding: 3px !important;
 }
+
 
 .cancelButton:hover, .deleteButton:hover, .saveButton:hover {
 	background-color: white;
-	color: rgb(153, 184, 252);
-	border: 1px solid rgb(153, 184, 252);
 	padding: 2px;
 }
 
@@ -39,8 +38,6 @@
 
 .dateList {
 	width: 20%;
-	margin: 1%;
-	margin-left: 2px;
 	padding: 2px;
 	border: 1px solid #c2c2c2;
 	float: left;
@@ -49,18 +46,19 @@
 }
 
 .datesButtonBar {
+	padding: 2px;
 	width: 28px;
-	margin-top: 1%;
-	margin-bottom: 1%;
 	float: left;
+	margin-left: 5px;
 }
 
 .dateInfos {
-	width: 63%;
-	margin: 1%;
-	padding: 2px;
+	width: 70%;
+	margin-left: 5px;
+	padding-left: 3px;
 	border: 1px solid #c2c2c2;
 	float: left;
+	overflow-y: scroll;
 }
 
 .buttonsResourceDates {
@@ -132,4 +130,89 @@
 	width: 50px;
 	padding: 3px;
 	
+}
+
+.beschriftung{
+	margin-bottom: 2px;
+	font-weight: bold;
+	
+}
+.dateInfoLineLeft{
+	margin-top: 7px;
+	float: left;
+	width: 51%;
+	display: block;
+}
+
+.resourceContainer{
+	width: auto;
+	float: left;
+	border: 1px solid #c2c2c2;
+	padding: 2px;
+	height: auto;
+	min-height: 70px;
+	margin-right: 3px;
+	box-shadow: 1px 1px 2px grey;
+	display:block;
+	border-radius: 5px;
+}
+
+.dateInfoLineComplete{
+	margin-top: 7px;
+	float: left;
+	width: 100%;
+	display: block;
+	
+}
+
+.resource{
+	width: auto;
+	border: 1px solid #000000;
+	height: auto;
+	padding: 2px;
+	margin: 2px;
+	overflow: hidden;
+	clear: none;
+}
+
+.closeCross{
+	color: #FF0000;
+	font-weight: bold;
+	width: auto;
+	float: right;
+	text-align: center;
+	margin-left: 2px;
+	border: 0px;
+	cursor: pointer;
+	background: #FFFFFF;
+}
+
+.downArrowAddRes{
+	width: auto;
+	margin-left: 2px;
+	border: 0px;
+	cursor: pointer;
+	background: #FFFFFF;
+	float: left;
+	font-weight: bold;
+}
+
+.resourceTitel{
+	width: auto;
+	float: left;
+	text-align: center;
+}
+
+.headerRes{
+	margin-bottom: 2px;
+	font-weight: bold;
+	float: left;
+	clear: both;
+}
+
+.chooseContainer{
+	border: 1px solid #c2c2c2;
+	width: 100%;
+	height: auto;
+	clear: both;
 }

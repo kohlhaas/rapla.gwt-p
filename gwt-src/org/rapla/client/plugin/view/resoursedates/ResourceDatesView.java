@@ -3,11 +3,23 @@ package org.rapla.client.plugin.view.resoursedates;
 import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
-
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 public class ResourceDatesView implements ViewServiceProviderInterface, ResourceDatesInterface{
 	
@@ -24,6 +36,7 @@ ReservationController reservationController;
 	@Override
 	public Widget createContent() {
 	    Integer height = (int) (Window.getClientHeight() * 0.90 * 0.80);
+	    Integer width = (int) (Window.getClientWidth() * 0.90 * 0.80);
 		
 		FlowPanel mainContent = new FlowPanel();
 		
@@ -43,9 +56,6 @@ ReservationController reservationController;
 				"17:45",
 				"4 Vorlesungsstunden"
 			));
-		
-		Label test = new Label("Test");
-		dateList.add(test);
 		
 		
 		FlowPanel buttonBar = new FlowPanel();
@@ -74,7 +84,155 @@ ReservationController reservationController;
 		dateInfos.setHeight(height + "px");
 		dateInfos.setStyleName("dateInfos");
 		
-		dateInfos.add(test);
+		
+	    DateTimeFormat dateFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG);
+	    
+	    
+	    // Datum und Uhzreit BEGIN
+	    HorizontalPanel begin= new HorizontalPanel();
+	    begin.setSpacing(5);
+		begin.setStyleName("dateInfoLineComplete");
+		
+		
+		Label beginText = new Label("Begin: ");
+		beginText.setStyleName("beschriftung");
+		begin.add(beginText);
+		begin.setCellVerticalAlignment(beginText, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		DateBox dateBegin = new DateBox();
+		dateBegin.setFormat(new DateBox.DefaultFormat(dateFormat));
+		begin.add(dateBegin);
+		begin.setCellVerticalAlignment(dateBegin, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		TextBox timeBegin = new TextBox();
+		timeBegin.setWidth("35px");
+		timeBegin.setMaxLength(5);
+		begin.add(timeBegin);
+		begin.setCellVerticalAlignment(timeBegin, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		Label beginTimeText = new Label("Uhr");
+		beginTimeText.setStyleName("beschriftung");
+		begin.add(beginTimeText);
+		begin.setCellVerticalAlignment(beginTimeText, HasVerticalAlignment.ALIGN_MIDDLE);
+
+
+		CheckBox cbWholeDay = new CheckBox("ganzt\u00E4gig");
+		begin.add(cbWholeDay);
+		begin.setCellVerticalAlignment(cbWholeDay, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		begin.setCellWidth(beginText, "50px");
+		
+		
+		//Datum und Uhrzeit ENDE
+		HorizontalPanel end = new HorizontalPanel();
+		end.setSpacing(4);
+		end.setStyleName("dateInfoLineComplete");
+		
+		Label endText = new Label("Ende: ");
+		endText.setStyleName("beschriftung");
+		end.add(endText);
+		end.setCellVerticalAlignment(endText, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		DateBox dateEnd = new DateBox();
+		dateEnd.setFormat(new DateBox.DefaultFormat(dateFormat));
+		end.add(dateEnd);
+		end.setCellVerticalAlignment(dateEnd, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		TextBox timeEnd = new TextBox();
+		timeEnd.setWidth("35px");
+		timeEnd.setMaxLength(5);
+		end.add(timeEnd);
+		end.setCellVerticalAlignment(timeEnd, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		Label endTimeText = new Label("Uhr");
+		endTimeText.setStyleName("beschriftung");
+		end.add(endTimeText);
+		end.setCellVerticalAlignment(endTimeText, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		end.setCellWidth(endText, "50px");
+		
+		// Checkbox WIEDERHOLEN
+		FlowPanel repeat = new FlowPanel();
+		repeat.setStyleName("dateInfoLineLeft");
+		CheckBox cbRepeat = new CheckBox("Wiederholen");
+		repeat.add(cbRepeat);
+		
+		
+		// Ausgewählte Resourcen
+		FlowPanel chosenResources = new FlowPanel();
+		chosenResources.setStyleName("dateInfoLineComplete");
+		
+		FlowPanel resource1 = createResourceContainer("Kurse");		
+		FlowPanel resource2 = createResourceContainer("Raum");
+		FlowPanel resource3 = createResourceContainer("Professor");
+		
+		resource1.add(createResource("WWI12B1"));
+		resource2.add(createResource("B353"));
+		resource3.add(createResource("Roland Kuestermann"));
+		
+		Label headerChosenRes  = new Label("Ausgewaehlte Resourcen:");
+		headerChosenRes.setStyleName("beschriftung");
+		
+		chosenResources.add(headerChosenRes);
+		chosenResources.add(resource1);
+		chosenResources.add(resource2);
+		chosenResources.add(resource3);
+
+
+		
+		DisclosurePanel addResources = new DisclosurePanel("Resourcen Hinzufuegen");
+		addResources.setStyleName("dateInfoLineComplete");
+		
+		FlowPanel chooseContainer = new FlowPanel();
+		chooseContainer.setStyleName("chooseContainer");
+	
+		
+		// Baumstruktur für verfügbare Resourcen
+		Tree resourceTree = new Tree();
+		
+		TreeItem rooms = new TreeItem();
+		rooms.setText("Raeume");
+		
+		TreeItem rooms1 = new TreeItem();
+		TreeItem rooms2 = new TreeItem();
+		
+	    rooms1.setText("A");
+	    rooms2.setText("B");
+	    
+	    TreeItem room1_1 = new TreeItem(new CheckBox("305"));
+	    TreeItem room1_2 = new TreeItem(new CheckBox("306"));
+	    TreeItem room1_3 = new TreeItem(new CheckBox("307"));
+	    rooms1.addItem(room1_1);
+	    rooms1.addItem(room1_2);
+	    rooms1.addItem(room1_3);
+	    
+	    TreeItem room2_1 = new TreeItem(new CheckBox("201"));
+	    TreeItem room2_2 = new TreeItem(new CheckBox("202"));
+	    TreeItem room2_3 = new TreeItem(new CheckBox("202"));
+	    rooms2.addItem(room2_1);	
+	    rooms2.addItem(room2_2);
+	    rooms2.addItem(room2_3);
+
+	    rooms.addItem(rooms1);
+	    rooms.addItem(rooms2);
+	    
+	    resourceTree.addItem(rooms);
+
+	    
+	    
+	    chooseContainer.add(resourceTree);
+	    chooseContainer.setWidth(width  * 0.85 + "px");
+		
+	    addResources.setContent(chooseContainer);
+			
+		
+		dateInfos.add(begin);
+		dateInfos.add(end);
+		dateInfos.add(repeat);
+		dateInfos.add(new HTML("<hr  style=\"width:99%;\" />"));
+		dateInfos.add(chosenResources);
+		dateInfos.add(addResources);
+		
 		
 		
 		mainContent.add(dateList);
@@ -83,7 +241,35 @@ ReservationController reservationController;
 		
 		return mainContent;
 	}
-
+	
+	private FlowPanel createResourceContainer(String name){
+		
+		FlowPanel container = new FlowPanel();
+		container.setStyleName("resourceContainer");
+		Label titel = new Label(name);
+		titel.setStyleName("beschriftung");
+		titel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		container.add(titel);
+		
+		return container;
+	}
+	
+	private FlowPanel createResource(String name){
+		
+		FlowPanel resource = new FlowPanel();
+		resource.setStyleName("resource");
+		
+		Label titel = new Label(name);
+		titel.setStyleName("resourceTitel");
+		resource.add(titel);
+		
+		Button cross = new Button("X");
+		cross.setStyleName("closeCross");
+		resource.add(cross);
+				
+		return resource;
+	}
+	
 	private Widget createSingleDate(String date, String begin, String end,
 			String infoText) {
 		

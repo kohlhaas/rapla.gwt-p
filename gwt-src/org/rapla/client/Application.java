@@ -54,6 +54,7 @@ public class Application implements ViewSelectionChangedHandler,
 	@Inject
 	private RaplaGWTClient service;
 	RootPanel root;
+
 	
 	GWTReservationController controller;
 	@Inject
