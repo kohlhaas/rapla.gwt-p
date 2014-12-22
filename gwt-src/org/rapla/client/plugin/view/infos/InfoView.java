@@ -1,6 +1,7 @@
 package org.rapla.client.plugin.view.infos;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,7 +9,9 @@ import javax.inject.Inject;
 import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.factory.InfoViewInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
+import org.rapla.entities.domain.Allocatable;
 import org.rapla.framework.RaplaException;
+import org.rapla.gui.internal.TreeAllocatableSelection;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -30,6 +33,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -41,6 +46,7 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 	private VerticalPanel contentRight;
 
 	private ListBox listBox;
+	private Tree resources;
 	
 	
 
@@ -61,6 +67,7 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		contentRight.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
 		listBox = new ListBox();
+		resources = new Tree();
 		
 	
 		// add the Event Types from data.xml here
@@ -78,6 +85,7 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		
 		final FlowPanel listPanel = new FlowPanel();
 		listPanel.add(listBox);
+		listPanel.add(resources);
 		listPanel.setWidth(width + "px");
 		contentLeft.add(listPanel);
 
@@ -165,6 +173,18 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 	public String getSelectedEventType() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setDynamicFields(List<String> studiengang) {
+
+		//String [] studiengang2 = (String[]) studiengang.toArray(); 
+		for(int i = 0; i < studiengang.size(); i++){
+			resources.addTextItem(studiengang.get(i));
+			
+			
+		}
+		
 	}
 
 
