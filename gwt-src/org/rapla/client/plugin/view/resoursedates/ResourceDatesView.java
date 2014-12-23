@@ -1,8 +1,11 @@
 package org.rapla.client.plugin.view.resoursedates;
 
+import java.text.ParseException;
+
 import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
+
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
@@ -36,19 +39,47 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		dateList.setHeight(height + "px");
 		dateList.setStyleName("dateList");
 		
-		dateList.add(createSingleDate(
-						"01.01.2015", 
-						"16:30",
-						"17:45",
-						"1.75 Vorlesungsstunden"
-					));
-		dateList.add(createSingleDate(
-				"02.01.2015", 
-				"16:30",
-				"17:45",
-				"4 Vorlesungsstunden"
-			));
+		SingleDate eins = new SingleDate();
+		SingleDate zwei = new SingleDate();
+		SingleDate drei = new SingleDate();
+		SingleDate vier = new SingleDate();
+		SingleDate fuenf = new SingleDate();
+		try {
+			eins = new SingleDate("02.01.2015", 
+					"16:30",
+					"17:45",
+					new Double(11.75));
+			zwei = new SingleDate("01.01.2015", 
+					"16:30",
+					"17:45",
+					new Double(11.75));
+			drei = new SingleDate("01.01.2015", 
+					"15:30",
+					"17:45",
+					new Double(11.75));
+			vier = new SingleDate("01.01.2015", 
+					"16:30",
+					"17:45",
+					new Double(11.75));
+			fuenf = new SingleDate("01.01.2015", 
+					"15:30",
+					"17:45",
+					new Double(11.75));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		
+		MultiDate multi = new MultiDate();
+		multi.addSingleDate(eins);
+		multi.addSingleDate(zwei);
+		multi.addSingleDate(drei);
+		
+		dateList.add(vier.getSingleDate());	
+		dateList.add(multi.getMultiDateLabel());
+		dateList.add(fuenf.getSingleDate());	
+
 		
 		FlowPanel buttonBar = new FlowPanel();
 		buttonBar.setHeight(height + "px");
@@ -262,31 +293,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		return resource;
 	}
 	
-	private Widget createSingleDate(String date, String begin, String end,
-			String infoText) {
-		
-		FlowPanel main = new FlowPanel();
-		main.setStyleName("singleDate");
-		
-		FlowPanel times = new FlowPanel();
-		times.setStyleName("singleDateTimes");
-		times.add(new Label(begin));
-		times.add(new Label(end));
-		
-		FlowPanel infos = new FlowPanel();
-		Label dateLabel = new Label(date);
-		dateLabel.setStyleName("singleDateDateLabel");
-		Label infoLabel = new Label(infoText);
-		
-		infos.add(dateLabel);
-		infos.add(infoLabel);
-		
-		main.add(times);
-		main.add(infos);
-		
-		return main;
-	}
-
+	
 	@Override
 	public void updateContent() {
 		// TODO Auto-generated method stub

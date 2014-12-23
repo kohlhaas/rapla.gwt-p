@@ -88,6 +88,14 @@
 	cursor: pointer;
 }
 
+.singleDateSign {
+	width: 10px;
+	float: left;
+	vertical-align: middle;
+	display: block;
+	margin-top: 7px;
+	
+}
 .singleDateTimes {
 	width: 40px;
 	float: left;
@@ -98,6 +106,10 @@
 .singleDateInfos {
 	width: 225px;
 	float: right;
+}
+.multiDateInfos {
+	width: 265px;
+	float: left;
 }
 
 .singleDateDateLabel {
@@ -215,4 +227,7 @@
 	width: 100%;
 	height: auto;
 	clear: both;
+}
+.singleDatesContainer{
+	width: 10px;
 }
