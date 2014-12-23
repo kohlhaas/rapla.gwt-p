@@ -43,7 +43,7 @@ public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
               case "speichern":  
             	  Classification classification = controller.reservationTmp.getClassification();
                   Attribute first = classification.getType().getAttributes()[0];
-                  String text = controller.reservationName.getValue();
+                  String text = controller.reservationName;
                   classification.setValue(first, text);
                   try {
                       ClientFacade facade = getClientFacade();

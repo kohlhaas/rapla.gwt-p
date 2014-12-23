@@ -28,6 +28,7 @@ import org.rapla.entities.domain.PermissionContainer;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.domain.internal.AllocatableImpl;
 import org.rapla.entities.dynamictype.Attribute;
+import org.rapla.entities.dynamictype.AttributeType;
 import org.rapla.entities.dynamictype.Classification;
 import org.rapla.entities.dynamictype.ClassificationFilter;
 import org.rapla.entities.dynamictype.DynamicType;
@@ -85,7 +86,7 @@ public class ReservationController implements GWTReservationController,
 
 	public Reservation reservationTmp;
 
-	public TextBox reservationName;
+	public String reservationName;
 
 	private RaplaContext context;
 
@@ -132,8 +133,6 @@ public class ReservationController implements GWTReservationController,
 		Integer width = (int) (Window.getClientWidth() * 0.90);
 		popupContent.setHeight(height.toString() + "px");
 		popupContent.setWidth(width.toString() + "px");
-
-		reservationName = new TextBox();
 
 		buttonHandler = new BasicButtonHandler(context, this);
 		// ///
@@ -193,10 +192,10 @@ public class ReservationController implements GWTReservationController,
 	}
 
 	public PopupPanel createContent() {
-		
-		loadViews();
+
+		// loadViews();
 		currentView = view1;
-		
+
 		popupContent = new PopupPanel();
 		popupContent.setGlassEnabled(true);
 		popupContent.setAnimationEnabled(true);
@@ -205,163 +204,220 @@ public class ReservationController implements GWTReservationController,
 		Integer width = (int) (Window.getClientWidth() * 0.90);
 		popupContent.setHeight(height.toString() + "px");
 		popupContent.setWidth(width.toString() + "px");
-		
-		reservationName = new TextBox();
-		
-		buttonHandler = new BasicButtonHandler(context, this);
-		
-		//reservation =  this.facade.newReservation();
-		/////
-		
-	    bar = new TabBar();
-	    bar.addTab("Veranstaltungsinfos");
-	    bar.addTab("Termine und Resourcen");
-	    //bar.setTabEnabled(0, false);
-	    bar.selectTab(0);
-	    
-	    cancel = new Button("abbrechen");
-	    cancel.setStyleName("cancelButton");
-	    cancel.addClickHandler(buttonHandler);
-	    
-	    save = new Button("speichern");
-	    save.setStyleName("saveButton");
-	    save.addClickHandler(buttonHandler);	    
-	    
-	    delete = new Button("l\u00F6schen");
-	    delete.setStyleName("deleteButton");
-	    delete.addClickHandler(buttonHandler);
 
-	    layout = new VerticalPanel();
-	    tabBarPanel = new FlowPanel();
+		buttonHandler = new BasicButtonHandler(context, this);
+
+		// reservation = this.facade.newReservation();
+		// ///
+
+		bar = new TabBar();
+		bar.addTab("Veranstaltungsinfos");
+		bar.addTab("Termine und Resourcen");
+		// bar.setTabEnabled(0, false);
+		bar.selectTab(0);
+
+		cancel = new Button("abbrechen");
+		cancel.setStyleName("cancelButton");
+		cancel.addClickHandler(buttonHandler);
+
+		save = new Button("speichern");
+		save.setStyleName("saveButton");
+		save.addClickHandler(buttonHandler);
+
+		delete = new Button("l\u00F6schen");
+		delete.setStyleName("deleteButton");
+		delete.addClickHandler(buttonHandler);
+
+		layout = new VerticalPanel();
+		tabBarPanel = new FlowPanel();
 		contentPanel = new SimplePanel();
 		buttonsPanel = new FlowPanel();
-		
+
 		tabBarPanel.add(bar);
-		
+
 		bar.addSelectionHandler(new SelectionHandler<Integer>() {
-	        public void onSelection(SelectionEvent<Integer> event) {	   
-	        	
-//	        	if (currentView != null){
-//	        		try {
-//						ReservationController.this.saveTemporaryChanges(reservationTmp, currentView);
-//					} catch (RaplaException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//	        	}
-	        	
-	          // Let the user know what they just did.
-	          //Window.alert("You clicked tab " + event.getSelectedItem());
-	        	
-	        	 contentPanel.clear();
-	        //	 contentPanel.add(event.getSelectedItem() == 0 ? infoView.createContent() : resourceDatesView.createContent());
-	        	 
-	        	 
-	        	 currentView = ViewFactory.getInstance((event.getSelectedItem() == 0 ? ViewEnumTypes.INFOVIEW_DESKTOP : ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP));
-	        	 contentPanel.add(currentView.createContent());
+			public void onSelection(SelectionEvent<Integer> event) {
 
-	        	 
-	        	 if(currentView instanceof InfoViewInterface){
-	        	   currentView = (InfoViewInterface) currentView;
-	        	   try {
-					((InfoViewInterface) currentView).setEventTypes(ReservationController.this.getEventTypes());
-					((InfoViewInterface) currentView).setDynamicFields(ReservationController.this.getDynamicFields());
+				// if (currentView != null){
+				// try {
+				// ReservationController.this.saveTemporaryChanges(currentView);
+				// } catch (RaplaException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
+				// }
 
-				} catch (RaplaException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				// Let the user know what they just did.
+				// Window.alert("You clicked tab " + event.getSelectedItem());
+
+				contentPanel.clear();
+				// contentPanel.add(event.getSelectedItem() == 0 ?
+				// infoView.createContent() :
+				// resourceDatesView.createContent());
+
+				currentView = ViewFactory
+						.getInstance((event.getSelectedItem() == 0 ? ViewEnumTypes.INFOVIEW_DESKTOP
+								: ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP));
+				contentPanel.add(currentView.createContent());
+
+				if (currentView instanceof InfoViewInterface) {
+					currentView = (InfoViewInterface) currentView;
+					try {
+						((InfoViewInterface) currentView)
+								.setEventTypes(ReservationController.this
+										.getEventTypes());
+						((InfoViewInterface) currentView)
+								.setDynamicFields(ReservationController.this
+										.getDynamicFields());
+
+					} catch (RaplaException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				} else {
+
 				}
-	        	  
-	        	 }else{
-	        		 
-	        	 }
 
-	        	 
-	        }
-});
-		 
+			}
+		});
+
 		bar.selectTab(0);
-		
+
 		buttonsPanel.add(cancel);
 		buttonsPanel.add(save);
 		buttonsPanel.add(delete);
-		
-	    layout.add(buttonsPanel);
-	    layout.add(tabBarPanel);
-	    layout.add(contentPanel);
-	    
+
+		layout.add(buttonsPanel);
+		layout.add(tabBarPanel);
+		layout.add(contentPanel);
+
 		layout.setCellHeight(buttonsPanel, "40px");
 		layout.setCellHeight(tabBarPanel, "50px");
-	    
 
 		popupContent.add(layout);
 		popupContent.center();
-		
+
 		return popupContent;
 
 	}
-	
 
-	private void saveTemporaryChanges(Reservation reservationTmp,
-			ViewServiceProviderInterface currentView) throws RaplaException {
+	private void saveTemporaryChanges(ViewServiceProviderInterface currentView)
+			throws RaplaException {
+
+		reservationName = ((InfoViewInterface) currentView).getTitelInput()
+				.getText();
+
 		DynamicType[] types;
-		types = ReservationController.this.getFacade().getDynamicTypes( DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
-		   String text = reservationName.getValue();
-		//List<DynamicType> eventTypes = new ArrayList<DynamicType>();
-		 Classification classification = reservationTmp.getClassification();
-        //  Attribute first = classification.getType().getAttributes()[0];
-		 if(currentView instanceof InfoViewInterface){	
-			 
-			
-			
-           
-              
-              for (int i = 0; i < types.length; i++) {
-      			// test.add(types[i].toString());
-      			// String key = types[i].getKey();
-      			Attribute[] attributes = types[i].getAttributes();
+		types = ReservationController.this.getFacade().getDynamicTypes(
+				DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
 
-      			for (int j = 0; j < attributes.length; j++) {
+		// String text = reservationName;
+		// List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		Classification classification = reservationTmp.getClassification();
 
-      				// String constraints = (String)
-      				// attributes[j].getConstraint(attributes[j].getKey());
-      				String[] constraints = attributes[j].getConstraintKeys();
+		// Set new Titel/Name for reservationTmp
+		Attribute first = classification.getType().getAttributes()[0];
+		classification.setValue(first, reservationName);
 
-      				for (int k = 0; k < attributes[j].getConstraintKeys().length; k++) {
-      					
-      					if (constraints[k].equalsIgnoreCase(((InfoViewInterface) currentView).getSelectedEventType()))
-      					{reservationTmp.getClassification().setValue(attributes[j], constraints[k]);}
+		// Attribute first = classification.getType().getAttributes()[0];
+		List<String> items = new ArrayList<String>();
+		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		User user = getFacade().getUser();
 
-      				}
+		Classification classificationTmp;
 
-      			}
+		String key = null;
 
-      			
-      		}
-             
+		if (currentView instanceof InfoViewInterface) {
 
-             
-            		
-				
-             //classification.setType(((facade.getDynamicType((((InfoViewInterface) currentView).getSelectedEventType())))));
-			 
-              
+			for (DynamicType type : types) {
+				if (PermissionContainer.Util.canCreate(type, user))
+					eventTypes.add(type);
+			}
+
+			for (int i = 0; i < eventTypes.size(); i++) {
+				String name = eventTypes.get(i).getName(
+						GWTRaplaLocale.getLocale());
+				items.add(name);
+				if (eventTypes
+						.get(i)
+						.getName(GWTRaplaLocale.getLocale())
+						.equalsIgnoreCase(
+								((InfoViewInterface) currentView)
+										.getSelectedEventType())) {
+					key = eventTypes.get(i).getKey();
+				}
+			}
+
+			classificationTmp = facade.getDynamicType(key).newClassification();
+
+			Allocatable resourceEventType = facade.newAllocatable(
+					classificationTmp, user);
+
+			reservationTmp.addAllocatable(resourceEventType);
+
+			// classification.setType(((facade.getDynamicType((((InfoViewInterface)
+			// currentView).getSelectedEventType())))));
+
 			// reservationTmp.((InfoViewInterface) currentView).getResources();
-              Attribute first = classification.getType().getAttributes()[0];
-              
-              classification.setValue(first, 
- 					 ((InfoViewInterface) currentView).getTitelInput());
-			
-			 ((InfoViewInterface) currentView).getVorlesungsStundenInput();
-			 ((InfoViewInterface) currentView).getStudiengangListBox();
-			 ((InfoViewInterface) currentView).getStudiengangListBoxAuswahl();
 
-		 } else {
-			 currentView = (ResourceDatesInterface) currentView;
-		 }
-		 
+			// reservationTmp.addAllocatable(new Allocatable());
+			// facade.getDynamicType(((InfoViewInterface)
+			// currentView).getSelectedEventType()).get;
+
+			// ((InfoViewInterface) currentView).getVorlesungsStundenInput();
+			// Attribute attrTmp = facade.newAttribute(AttributeType.INT);
+			// Allocatable resourceDuration = facade.newResource();
+			classificationTmp = facade
+					.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE)[0]
+					.newClassification();
+			classificationTmp.setValue("name", "Vorlesungsstunden");
+			classificationTmp.setValue("duration",
+					((InfoViewInterface) currentView)
+							.getVorlesungsStundenInput().getText());
+
+			Allocatable resourceDuration = facade.newAllocatable(
+					classificationTmp, user);
+			// facade.newPeriod();
+			// resourceDuration.setAnn...
+			// resourceDuration.setAnnotation("duration", ((InfoViewInterface)
+			// currentView).getVorlesungsStundenInput().getText());
+			// TO DO: look up real key for setAnnotation (is duration the
+			// correct one?)
+
+			reservationTmp.addAllocatable(resourceDuration);
+
+			// ((InfoViewInterface) currentView).getStudiengangListBox();
+			// Allocatable resourceCourse = facade.newResource();
+			// := (entspricht)
+			// facade.newAllocatable((facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE)[0].newClassification()));
+			// resourceDuration.
+			// resourceCourse.setAnnotation("course", ((InfoViewInterface)
+			// currentView).getStudiengangListBox().getSelectedItemText());
+			// TO DO: look up real key for setAnnotation (is course the correct
+			// one?)
+			// ((InfoViewInterface) currentView).getStudiengangListBoxAuswahl();
+			classificationTmp = facade
+					.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE)[0]
+					.newClassification();
+			classificationTmp.setValue("name", "Studiengang");
+			classificationTmp.setValue("course",
+					((InfoViewInterface) currentView).getStudiengangListBox()
+							.getSelectedItemText());
+
+			Allocatable resourceCourse = facade.newAllocatable(
+					classificationTmp, user);
+
+			reservationTmp.addAllocatable(resourceCourse);
+
+			// getCreateableDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
+
+		} else {
+			currentView = (ResourceDatesInterface) currentView;
+		}
+
 	}
-	
 
 	private void loadViews() {
 
@@ -403,6 +459,54 @@ public class ReservationController implements GWTReservationController,
 	public void viewChanged() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public List<DynamicType> getCreateableDynamicTypes(String classificationType)
+			throws RaplaException {
+
+		DynamicType[] types;
+		List<String> items = new ArrayList<String>();
+		types = getFacade().getDynamicTypes(classificationType);
+		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		User user = getFacade().getUser();
+		for (DynamicType type : types) {
+			if (PermissionContainer.Util.canCreate(type, user))
+				eventTypes.add(type);
+		}
+
+		return eventTypes;
+	}
+
+	public List<String> getResourceTypesNames(String classificationType)
+			throws RaplaException {
+
+		return getDynamicTypesNames(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
+	}
+	public List<String> getPersonTypesNames(String classificationType)
+			throws RaplaException {
+
+		return getDynamicTypesNames(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_PERSON);
+	}
+
+	public List<String> getDynamicTypesNames(String classificationType)
+			throws RaplaException {
+
+		DynamicType[] types;
+		List<String> items = new ArrayList<String>();
+		types = getFacade().getDynamicTypes(classificationType);
+		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		User user = getFacade().getUser();
+		for (DynamicType type : types) {
+			if (PermissionContainer.Util.canCreate(type, user))
+				eventTypes.add(type);
+		}
+
+		for (int i = 0; i < eventTypes.size(); i++) {
+			String name = eventTypes.get(i).getName(GWTRaplaLocale.getLocale());
+			items.add(name);
+		}
+
+		return items;
 	}
 
 	public List<String> getEventTypes() throws RaplaException {
