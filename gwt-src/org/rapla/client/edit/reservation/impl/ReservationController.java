@@ -477,12 +477,12 @@ public class ReservationController implements GWTReservationController,
 		return eventTypes;
 	}
 
-	public List<String> getResourceTypesNames(String classificationType)
+	public List<String> getResourceTypesNames()
 			throws RaplaException {
 
 		return getDynamicTypesNames(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
 	}
-	public List<String> getPersonTypesNames(String classificationType)
+	public List<String> getPersonTypesNames()
 			throws RaplaException {
 
 		return getDynamicTypesNames(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_PERSON);
