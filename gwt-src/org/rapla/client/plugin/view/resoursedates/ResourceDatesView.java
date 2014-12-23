@@ -1,8 +1,11 @@
 package org.rapla.client.plugin.view.resoursedates;
 
+import java.text.ParseException;
+
 import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
+
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
@@ -36,10 +39,46 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		dateList.setHeight(height + "px");
 		dateList.setStyleName("dateList");
 		
-		dateList.add(new SingleDate("01.01.2015", 
-						"16:30",
-						"17:45",
-						"11.75 Vorlesungsstunden").getDate());	
+		SingleDate eins = new SingleDate();
+		SingleDate zwei = new SingleDate();
+		SingleDate drei = new SingleDate();
+		SingleDate vier = new SingleDate();
+		SingleDate fuenf = new SingleDate();
+		try {
+			eins = new SingleDate("02.01.2015", 
+					"16:30",
+					"17:45",
+					new Double(11.75));
+			zwei = new SingleDate("01.01.2015", 
+					"16:30",
+					"17:45",
+					new Double(11.75));
+			drei = new SingleDate("01.01.2015", 
+					"15:30",
+					"17:45",
+					new Double(11.75));
+			vier = new SingleDate("01.01.2015", 
+					"16:30",
+					"17:45",
+					new Double(11.75));
+			fuenf = new SingleDate("01.01.2015", 
+					"15:30",
+					"17:45",
+					new Double(11.75));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		MultiDate multi = new MultiDate();
+		multi.addSingleDate(eins);
+		multi.addSingleDate(zwei);
+		multi.addSingleDate(drei);
+		
+		dateList.add(vier.getSingleDate());	
+		dateList.add(multi.getMultiDateLabel());
+		dateList.add(fuenf.getSingleDate());	
 
 		
 		FlowPanel buttonBar = new FlowPanel();
