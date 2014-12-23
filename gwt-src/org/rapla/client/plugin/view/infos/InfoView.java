@@ -45,10 +45,12 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 	private VerticalPanel contentLeft;
 	private VerticalPanel contentRight;
 
-	private ListBox listBox;
+	private ListBox eventTypesListBox;
 	private Tree resources;
-	
-	
+	private TextBox titelInput;
+	private TextBox vorlesungsStundenInput;
+	private ListBox studiengangListBox;
+	private Collection<String> studiengangListBoxAuswahl;
 
 	
 	@Override
@@ -66,7 +68,7 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		contentLeft.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		contentRight.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
-		listBox = new ListBox();
+		eventTypesListBox = new ListBox();
 		resources = new Tree();
 		
 	
@@ -74,7 +76,7 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		
 				
 
-		listBox.addChangeHandler(new ChangeHandler() {
+		eventTypesListBox.addChangeHandler(new ChangeHandler() {
 
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -84,21 +86,21 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		});
 		
 		final FlowPanel listPanel = new FlowPanel();
-		listPanel.add(listBox);
+		listPanel.add(eventTypesListBox);
 		listPanel.add(resources);
 		listPanel.setWidth(width + "px");
 		contentLeft.add(listPanel);
 
 		final InfoHorizontalPanel titelPanel = new InfoHorizontalPanel(width + "px");
 		final Label titel = new Label("Vorlesungstitel");
-		final TextBox titelInput = new TextBox();
+		titelInput = new TextBox();
 		titelPanel.add(titel, (width / 3) + "px" );
 		titelPanel.add(titelInput, (width / 3) + "px");
 		//titelPanel.setWidth(width + "px");
 
 		final Label vorlesungsStunden = new Label("Vorlesungsstunden");
 		final Label vorlesungsStundenMessage = new Label("");
-		final TextBox vorlesungsStundenInput = new TextBox();
+		vorlesungsStundenInput = new TextBox();
 		vorlesungsStundenInput.addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
@@ -129,11 +131,20 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		
 		final InfoHorizontalPanel studiengangPanel = new InfoHorizontalPanel(width + "px");
 		Label studiengang = new Label("Studiengang");
-		ListBox studiengangListBox = new ListBox();
+		studiengangListBox = new ListBox();
 		studiengangListBox.addItem("WWI12B1");
 		studiengangListBox.addItem("WWI12B2");
 		studiengangListBox.addItem("WWI12B3");
-		// Hier den Handler / Listener für die Listbox einbinden
+		studiengangListBoxAuswahl = new ArrayList();
+		studiengangListBox.addChangeHandler(new ChangeHandler(){
+			// Hier den Handler / Listener für die Listbox einbinden ~ done
+			@Override
+			public void onChange(ChangeEvent event) {
+				studiengangListBoxAuswahl.add(studiengangListBox.getSelectedItemText());
+			}
+			
+		});
+		
 		
 		studiengangPanel.add(studiengang, (width / 3 ) + "px");
 		studiengangPanel.add(studiengangListBox, (width / 3 ) + "px");
@@ -154,6 +165,46 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		return content;
 	}
 
+	public Tree getResources() {
+		return resources;
+	}
+
+	public void setResources(Tree resources) {
+		this.resources = resources;
+	}
+
+	public TextBox getTitelInput() {
+		return titelInput;
+	}
+
+	public void setTitelInput(TextBox titelInput) {
+		this.titelInput = titelInput;
+	}
+
+	public TextBox getVorlesungsStundenInput() {
+		return vorlesungsStundenInput;
+	}
+
+	public void setVorlesungsStundenInput(TextBox vorlesungsStundenInput) {
+		this.vorlesungsStundenInput = vorlesungsStundenInput;
+	}
+
+	public ListBox getStudiengangListBox() {
+		return studiengangListBox;
+	}
+
+	public void setStudiengangListBox(ListBox studiengangListBox) {
+		this.studiengangListBox = studiengangListBox;
+	}
+
+	public Collection<String> getStudiengangListBoxAuswahl() {
+		return studiengangListBoxAuswahl;
+	}
+
+	public void setStudiengangListBoxAuswahl(Collection<String> studiengangListBoxAuswahl) {
+		this.studiengangListBoxAuswahl = studiengangListBoxAuswahl;
+	}
+
 	@Override
 	public void updateContent() {
 		// TODO Auto-generated method stub
@@ -164,7 +215,7 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 	public void setEventTypes(List<String> eventTypes) {
 
 		for(int i = 0; i < eventTypes.size(); i++){
-			listBox.addItem((String) eventTypes.get(i).toString());
+			eventTypesListBox.addItem((String) eventTypes.get(i).toString());
 			}
 
 	}

@@ -1,6 +1,5 @@
 package org.rapla.client.edit.reservation.impl;
 
-
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +12,7 @@ import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.GWTReservationController;
 import org.rapla.client.factory.InfoViewInterface;
+import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewEnumTypes;
 import org.rapla.client.factory.ViewFactory;
 import org.rapla.client.factory.ViewServiceProviderInterface;
@@ -28,13 +28,18 @@ import org.rapla.entities.domain.PermissionContainer;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.domain.internal.AllocatableImpl;
 import org.rapla.entities.dynamictype.Attribute;
+import org.rapla.entities.dynamictype.Classification;
+import org.rapla.entities.dynamictype.ClassificationFilter;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
 import org.rapla.entities.dynamictype.internal.AttributeImpl;
+import org.rapla.entities.dynamictype.internal.ClassificationImpl;
+import org.rapla.entities.dynamictype.internal.DynamicTypeImpl;
 import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
 
+import com.google.gwt.dev.util.collect.HashMap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -49,6 +54,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabBar;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.Button;
@@ -56,70 +62,69 @@ import com.google.gwt.user.client.ui.Button;
 import org.rapla.facade.ClientFacade;
 import org.rapla.gui.internal.TreeAllocatableSelection;
 
-public class ReservationController implements GWTReservationController, ViewSelectionChangedHandler{
+public class ReservationController implements GWTReservationController,
+		ViewSelectionChangedHandler {
 
-//	private ContentDrawer infoDrawer;
-	
+	// private ContentDrawer infoDrawer;
+
 	@Inject
 	InfoView infoView;
 	@Inject
 	ResourceDatesView resourceDatesView;
-	
+
 	private VerticalPanel layout;
 	private FlowPanel tabBarPanel;
 	private SimplePanel contentPanel;
 	private FlowPanel buttonsPanel;
-	
+
 	public PopupPanel popupContent;
-	
+
 	private TabBar bar;
-	
+
 	private Button cancel, save, delete;
-	
-	public Reservation reservation;
-	
+
+	public Reservation reservationTmp;
+
 	public TextBox reservationName;
-	
-    private RaplaContext context;
-    
-    private ClientFacade facade;
-    
-    @Inject 
-    GWTRaplaLocale GWTRaplaLocale; 
-	
 
-    Logger logger = Logger.getLogger("reservationController");
-    
-    BasicButtonHandler buttonHandler;
+	private RaplaContext context;
 
-    
-    public void setContext(RaplaContext context)
-    {
-        this.context = context;
-    }
-    
-    public RaplaContext getContext()
-    {
-        return this.context;
-    }
-    
-    public void setFacade(ClientFacade facade)
-    {
-        this.facade = facade;
-    }
-    
-    
-    public ClientFacade getFacade()
-    {
-        return this.facade;
-    }
- 
-    
-    @Override
-    public void edit(final Reservation event, boolean isNew) throws RaplaException {
-    	reservation = event;
-    	
-    	popupContent = new PopupPanel();
+	private ClientFacade facade;
+
+	ViewServiceProviderInterface currentView;
+	ViewServiceProviderInterface view1;
+	ViewServiceProviderInterface view2;
+	Collection<ViewServiceProviderInterface> views = new ArrayList();
+
+	@Inject
+	GWTRaplaLocale GWTRaplaLocale;
+
+	Logger logger = Logger.getLogger("reservationController");
+
+	BasicButtonHandler buttonHandler;
+
+	public void setContext(RaplaContext context) {
+		this.context = context;
+	}
+
+	public RaplaContext getContext() {
+		return this.context;
+	}
+
+	public void setFacade(ClientFacade facade) {
+		this.facade = facade;
+	}
+
+	public ClientFacade getFacade() {
+		return this.facade;
+	}
+
+	@Override
+	public void edit(final Reservation event, boolean isNew)
+			throws RaplaException {
+		reservationTmp = event;
+
+		popupContent = new PopupPanel();
 		popupContent.setGlassEnabled(true);
 		popupContent.setAnimationEnabled(true);
 		popupContent.setAnimationType(PopupPanel.AnimationType.ROLL_DOWN);
@@ -127,68 +132,71 @@ public class ReservationController implements GWTReservationController, ViewSele
 		Integer width = (int) (Window.getClientWidth() * 0.90);
 		popupContent.setHeight(height.toString() + "px");
 		popupContent.setWidth(width.toString() + "px");
-		
-		reservationName = new TextBox();
-		
-		buttonHandler = new BasicButtonHandler(context, this);
-		/////
-		
-	    bar = new TabBar();
-	    bar.addTab("Veranstaltungsinfos");
-	    bar.addTab("Termine und Resourcen");
-	    //bar.setTabEnabled(0, false);
-	    bar.selectTab(0);
-	    
-	    cancel = new Button("abbrechen");
-	    cancel.setStyleName("cancelButton");
-	    cancel.addClickHandler(buttonHandler);
-	    
-	    save = new Button("speichern");
-	    save.setStyleName("saveButton");
-	    save.addClickHandler(buttonHandler);	    
-	    
-	    delete = new Button("l\u00F6schen");
-	    delete.setStyleName("deleteButton");
-	    delete.addClickHandler(buttonHandler);
 
-	    layout = new VerticalPanel();
-	    tabBarPanel = new FlowPanel();
+		reservationName = new TextBox();
+
+		buttonHandler = new BasicButtonHandler(context, this);
+		// ///
+
+		bar = new TabBar();
+		bar.addTab("Veranstaltungsinfos");
+		bar.addTab("Termine und Resourcen");
+		// bar.setTabEnabled(0, false);
+		bar.selectTab(0);
+
+		cancel = new Button("abbrechen");
+		cancel.setStyleName("cancelButton");
+		cancel.addClickHandler(buttonHandler);
+
+		save = new Button("speichern");
+		save.setStyleName("saveButton");
+		save.addClickHandler(buttonHandler);
+
+		delete = new Button("l\u00F6schen");
+		delete.setStyleName("deleteButton");
+		delete.addClickHandler(buttonHandler);
+
+		layout = new VerticalPanel();
+		tabBarPanel = new FlowPanel();
 		contentPanel = new SimplePanel();
 		buttonsPanel = new FlowPanel();
-		
+
 		tabBarPanel.add(bar);
-		
+
 		bar.addSelectionHandler(new SelectionHandler<Integer>() {
-	        public void onSelection(SelectionEvent<Integer> event) {
-	          // Let the user know what they just did.
-	          //Window.alert("You clicked tab " + event.getSelectedItem());
-	        	 contentPanel.clear();
-	        	 contentPanel.add(event.getSelectedItem() == 0 ? infoView.createContent() : resourceDatesView.createContent());
-	        }});
-		 
+			public void onSelection(SelectionEvent<Integer> event) {
+				// Let the user know what they just did.
+				// Window.alert("You clicked tab " + event.getSelectedItem());
+				contentPanel.clear();
+				contentPanel.add(event.getSelectedItem() == 0 ? infoView
+						.createContent() : resourceDatesView.createContent());
+			}
+		});
+
 		bar.selectTab(0);
-		
+
 		buttonsPanel.add(cancel);
 		buttonsPanel.add(save);
 		buttonsPanel.add(delete);
-		
-	    layout.add(buttonsPanel);
-	    layout.add(tabBarPanel);
-	    layout.add(contentPanel);
-	    
+
+		layout.add(buttonsPanel);
+		layout.add(tabBarPanel);
+		layout.add(contentPanel);
+
 		layout.setCellHeight(buttonsPanel, "40px");
 		layout.setCellHeight(tabBarPanel, "50px");
-	    
-		
-		////
+
+		// //
 		popupContent.add(layout);
 		popupContent.center();
-		
-    }
-	
-	
+
+	}
+
 	public PopupPanel createContent() {
-				
+		
+		loadViews();
+		currentView = view1;
+		
 		popupContent = new PopupPanel();
 		popupContent.setGlassEnabled(true);
 		popupContent.setAnimationEnabled(true);
@@ -231,7 +239,17 @@ public class ReservationController implements GWTReservationController, ViewSele
 		tabBarPanel.add(bar);
 		
 		bar.addSelectionHandler(new SelectionHandler<Integer>() {
-	        public void onSelection(SelectionEvent<Integer> event) {
+	        public void onSelection(SelectionEvent<Integer> event) {	   
+	        	
+//	        	if (currentView != null){
+//	        		try {
+//						ReservationController.this.saveTemporaryChanges(reservationTmp, currentView);
+//					} catch (RaplaException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//	        	}
+	        	
 	          // Let the user know what they just did.
 	          //Window.alert("You clicked tab " + event.getSelectedItem());
 	        	
@@ -239,26 +257,28 @@ public class ReservationController implements GWTReservationController, ViewSele
 	        //	 contentPanel.add(event.getSelectedItem() == 0 ? infoView.createContent() : resourceDatesView.createContent());
 	        	 
 	        	 
-	        	 ViewServiceProviderInterface view = ViewFactory.getInstance((event.getSelectedItem() == 0 ? ViewEnumTypes.INFOVIEW_DESKTOP : ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP), ReservationController.this);
-	        	 contentPanel.add(view.createContent());
+	        	 currentView = ViewFactory.getInstance((event.getSelectedItem() == 0 ? ViewEnumTypes.INFOVIEW_DESKTOP : ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP));
+	        	 contentPanel.add(currentView.createContent());
 
 	        	 
-	        	 if(view instanceof InfoViewInterface){
-	        	   view = (InfoViewInterface) view;
+	        	 if(currentView instanceof InfoViewInterface){
+	        	   currentView = (InfoViewInterface) currentView;
 	        	   try {
-					((InfoViewInterface) view).setEventTypes(ReservationController.this.getEventTypes());
-					((InfoViewInterface) view).setDynamicFields(ReservationController.this.getDynamicFields());
+					((InfoViewInterface) currentView).setEventTypes(ReservationController.this.getEventTypes());
+					((InfoViewInterface) currentView).setDynamicFields(ReservationController.this.getDynamicFields());
 
 				} catch (RaplaException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+	        	  
 	        	 }else{
 	        		 
 	        	 }
 
 	        	 
-	        }});
+	        }
+});
 		 
 		bar.selectTab(0);
 		
@@ -280,88 +300,180 @@ public class ReservationController implements GWTReservationController, ViewSele
 		return popupContent;
 
 	}
-
 	
+
+	private void saveTemporaryChanges(Reservation reservationTmp,
+			ViewServiceProviderInterface currentView) throws RaplaException {
+		DynamicType[] types;
+		types = ReservationController.this.getFacade().getDynamicTypes( DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+		   String text = reservationName.getValue();
+		//List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		 Classification classification = reservationTmp.getClassification();
+        //  Attribute first = classification.getType().getAttributes()[0];
+		 if(currentView instanceof InfoViewInterface){	
+			 
+			
+			
+           
+              
+              for (int i = 0; i < types.length; i++) {
+      			// test.add(types[i].toString());
+      			// String key = types[i].getKey();
+      			Attribute[] attributes = types[i].getAttributes();
+
+      			for (int j = 0; j < attributes.length; j++) {
+
+      				// String constraints = (String)
+      				// attributes[j].getConstraint(attributes[j].getKey());
+      				String[] constraints = attributes[j].getConstraintKeys();
+
+      				for (int k = 0; k < attributes[j].getConstraintKeys().length; k++) {
+      					
+      					if (constraints[k].equalsIgnoreCase(((InfoViewInterface) currentView).getSelectedEventType()))
+      					{reservationTmp.getClassification().setValue(attributes[j], constraints[k]);}
+
+      				}
+
+      			}
+
+      			
+      		}
+             
+
+             
+            		
+				
+             //classification.setType(((facade.getDynamicType((((InfoViewInterface) currentView).getSelectedEventType())))));
+			 
+              
+			// reservationTmp.((InfoViewInterface) currentView).getResources();
+              Attribute first = classification.getType().getAttributes()[0];
+              
+              classification.setValue(first, 
+ 					 ((InfoViewInterface) currentView).getTitelInput());
+			
+			 ((InfoViewInterface) currentView).getVorlesungsStundenInput();
+			 ((InfoViewInterface) currentView).getStudiengangListBox();
+			 ((InfoViewInterface) currentView).getStudiengangListBoxAuswahl();
+
+		 } else {
+			 currentView = (ResourceDatesInterface) currentView;
+		 }
+		 
+	}
+	
+
+	private void loadViews() {
+
+		views.add(ViewFactory.getInstance(ViewEnumTypes.INFOVIEW_DESKTOP));
+		views.add(ViewFactory
+				.getInstance(ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP));
+
+		for (ViewServiceProviderInterface view : views) {
+			view.createContent();
+		}
+
+		if (currentView instanceof InfoViewInterface) {
+			currentView = (InfoViewInterface) currentView;
+			try {
+				((InfoViewInterface) currentView)
+						.setEventTypes(ReservationController.this
+								.getEventTypes());
+				((InfoViewInterface) currentView)
+						.setDynamicFields(ReservationController.this
+								.getDynamicFields());
+
+			} catch (RaplaException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} else {
+
+		}
+
+	}
+
 	public void updateContent() {
 		// TODO Auto-generated method stub
 
 	}
-	
-	
 
 	@Override
 	public void viewChanged() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	public List<String> getEventTypes() throws RaplaException{
-		
+
+	public List<String> getEventTypes() throws RaplaException {
+
 		DynamicType[] types;
 		List<String> items = new ArrayList<String>();
-		types = getFacade().getDynamicTypes( DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+		types = getFacade().getDynamicTypes(
+				DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
 		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
 		User user = getFacade().getUser();
-		for ( DynamicType type: types)
-		{
-		if (PermissionContainer.Util.canCreate(type, user))
-		eventTypes.add(type);
+		for (DynamicType type : types) {
+			if (PermissionContainer.Util.canCreate(type, user))
+				eventTypes.add(type);
 		}
 
-		for (int i = 0; i < eventTypes.size(); i++) 
-		{
-		String name = eventTypes.get(i).getName(GWTRaplaLocale.getLocale());
-		items.add(name);
-		} ;
-		
-		
+		for (int i = 0; i < eventTypes.size(); i++) {
+			String name = eventTypes.get(i).getName(GWTRaplaLocale.getLocale());
+			items.add(name);
+		}
+		;
+
 		return items;
 	}
-	
-	public List<String> getDynamicFields() throws RaplaException{
-		
-       // Allocatable[] allocatables = getFacade().getAllocatables();
-     //   List<String> studiengang = new ArrayList<String>(); 
-//        for(int i = 0; i < allocatables.length; i ++){
-//        	String name = allocatables[i].getName(GWTRaplaLocale.getLocale());
-//    		studiengang.add(name);
-//        }
-//        
-//		TreeAllocatableSelection test = new TreeAllocatableSelection(context);
-//		Collection<Allocatable> studiengang2= test.getAllocatables();
 
-//        AllocatableImpl allocate = new AllocatableImpl(new Date(), new Date()); 
-//        String[] keys = allocate.getAnnotationKeys();
+	public List<String> getDynamicFields() throws RaplaException {
 
-		DynamicType[] types = getFacade().getDynamicTypes( DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
-		List <String> test = new ArrayList<String>();
+		// Allocatable[] allocatables = getFacade().getAllocatables();
+		// List<String> studiengang = new ArrayList<String>();
+		// for(int i = 0; i < allocatables.length; i ++){
+		// String name = allocatables[i].getName(GWTRaplaLocale.getLocale());
+		// studiengang.add(name);
+		// }
+		//
+		// TreeAllocatableSelection test = new
+		// TreeAllocatableSelection(context);
+		// Collection<Allocatable> studiengang2= test.getAllocatables();
+
+		// AllocatableImpl allocate = new AllocatableImpl(new Date(), new
+		// Date());
+		// String[] keys = allocate.getAnnotationKeys();
+
+		DynamicType[] types = getFacade().getDynamicTypes(
+				DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+		List<String> test = new ArrayList<String>();
 		AttributeImpl attr = new AttributeImpl();
-		for(int i = 0; i < types.length; i++){
-		//	test.add(types[i].toString());
-		//	String key = types[i].getKey();
+		for (int i = 0; i < types.length; i++) {
+			// test.add(types[i].toString());
+			// String key = types[i].getKey();
 			Attribute[] attributes = types[i].getAttributes();
 
-			for (int j=0; j < attributes.length; j++){
-				
-				//String constraints = (String) attributes[j].getConstraint(attributes[j].getKey());
-				String [] constraints = attributes[j].getConstraintKeys();
+			for (int j = 0; j < attributes.length; j++) {
 
-			for(int k = 0; k < attributes[j].getConstraintKeys().length; k++){
-				test.add(constraints[k]);
+				// String constraints = (String)
+				// attributes[j].getConstraint(attributes[j].getKey());
+				String[] constraints = attributes[j].getConstraintKeys();
+
+				for (int k = 0; k < attributes[j].getConstraintKeys().length; k++) {
+					test.add(constraints[k]);
+
+				}
 
 			}
-			
-			}
-			
-			//test.add(types[i].toString());
+
+			// test.add(types[i].toString());
 		}
-		
 
-		
-		
-		return test;	
+		return test;
 	}
 
-	
+	public void getContentOfElements() {
+
+	}
 
 }

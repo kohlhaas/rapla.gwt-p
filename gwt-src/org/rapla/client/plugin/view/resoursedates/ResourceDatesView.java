@@ -23,15 +23,7 @@ import com.google.gwt.user.datepicker.client.DateBox;
 
 public class ResourceDatesView implements ViewServiceProviderInterface, ResourceDatesInterface{
 	
-ReservationController reservationController;
-	
-	public ReservationController getReservationController() {
-		return reservationController;
-	}
 
-	public void setReservationController(ReservationController reservationController) {
-		this.reservationController = reservationController;
-	}
 
 	@Override
 	public Widget createContent() {

@@ -41,13 +41,13 @@ public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
               String buttonText = ((Button) source).getText();  //cast the source to a button
               switch (buttonText) {
               case "speichern":  
-            	  Classification classification = controller.reservation.getClassification();
+            	  Classification classification = controller.reservationTmp.getClassification();
                   Attribute first = classification.getType().getAttributes()[0];
                   String text = controller.reservationName.getValue();
                   classification.setValue(first, text);
                   try {
                       ClientFacade facade = getClientFacade();
-                      facade.store(controller.reservation);
+                      facade.store(controller.reservationTmp);
                   } catch (RaplaException e1) {
                       //TODO add exception handling
                       logger.log(Level.SEVERE, e1.getMessage(), e1);
@@ -63,7 +63,7 @@ public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
               case "l\u00F6schen":  
             	  try {
                       ClientFacade facade = getClientFacade();
-                      facade.remove(controller.reservation);
+                      facade.remove(controller.reservationTmp);
                   } catch (RaplaException e1) {
                       //TODO add exception handling
                       logger.log(Level.SEVERE, e1.getMessage(), e1);

@@ -1,6 +1,6 @@
 package org.rapla.client.factory;
 
-public interface ResourceDatesInterface {
+public interface ResourceDatesInterface  extends ViewServiceProviderInterface {
 
 	
 	
