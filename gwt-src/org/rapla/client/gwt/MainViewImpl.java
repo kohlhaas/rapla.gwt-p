@@ -3,7 +3,7 @@ package org.rapla.client.gwt;
 import java.util.List;
 
 import org.rapla.client.MainView;
-import org.rapla.client.plugin.view.ContentDrawer;
+import org.rapla.client.plugin.view.ContentProvider;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -62,13 +62,13 @@ public class MainViewImpl implements MainView {
     }
     
     @Override
-    public void replaceContent(ContentDrawer selectedContentDrawer) {
+    public void replaceContent(ContentProvider contentProvider) {
         if (drawingContent != null)
         {
             root.remove( drawingContent);
         }
         drawingContent = new FlowPanel();
-        Widget createContent = selectedContentDrawer.createContent();
+        Widget createContent = contentProvider.provideContent().asWidget();
         drawingContent.add(createContent);
         root.add(drawingContent);
     }

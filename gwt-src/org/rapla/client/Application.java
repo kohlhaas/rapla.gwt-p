@@ -105,7 +105,6 @@ public class Application implements DetailSelectEventHandler, MainView.Presenter
 	            ReservationController reservationController = controller.get();
                 reservationController.edit( editableEvent, false );
 	        } catch (RaplaException e1) {
-	            // TODO exception handling
 	            logger.error( e1.getMessage(), e1);
 	        }       
 	    }
@@ -138,7 +137,6 @@ public class Application implements DetailSelectEventHandler, MainView.Presenter
                 ReservationController reservationController = controller.get();
                 reservationController.edit( event, true );
             } catch (RaplaException e1) {
-                // TODO exception handling
                 logger.error( e1.getMessage(), e1);
             }
     

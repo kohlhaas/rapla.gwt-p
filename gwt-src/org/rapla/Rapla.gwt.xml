@@ -43,4 +43,10 @@
   
   <!-- SuperDevMode -->
   <set-configuration-property name="devModeRedirectEnabled" value="true"/>
+  
+  <define-configuration-property name="extra.ginModules" is-multi-valued="true" />
+  <!--  Replace with your ReservationGWTModule -->
+  <extend-configuration-property name="extra.ginModules" value="org.rapla.client.edit.reservation.sample.gwt.SampleRaplaReservationGWTModule" />
+
+  
 </module>

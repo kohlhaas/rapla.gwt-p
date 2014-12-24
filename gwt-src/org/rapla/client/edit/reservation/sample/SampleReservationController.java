@@ -1,9 +1,9 @@
-package org.rapla.client.edit.reservation.impl;
+package org.rapla.client.edit.reservation.sample;
 
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.ReservationController;
-import org.rapla.client.edit.reservation.impl.ReservationEditView.Presenter;
+import org.rapla.client.edit.reservation.sample.SampleReservationEditView.Presenter;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
@@ -21,12 +21,12 @@ public class SampleReservationController implements ReservationController,Presen
     @Inject
     ClientFacade facade;
     
-    ReservationEditView editView;
+    SampleReservationEditView editView;
     
     Reservation event;
     boolean isNew;
     
-    public @Inject SampleReservationController(ReservationEditView editView)
+    public @Inject SampleReservationController(SampleReservationEditView editView)
     {
         this.editView = editView;
         editView.setPresenter( this );

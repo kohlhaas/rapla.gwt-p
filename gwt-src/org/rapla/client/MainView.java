@@ -2,7 +2,7 @@ package org.rapla.client;
 
 import java.util.List;
 
-import org.rapla.client.plugin.view.ContentDrawer;
+import org.rapla.client.plugin.view.ContentProvider;
 
 public interface MainView {
 
@@ -15,7 +15,7 @@ public interface MainView {
     
     void show(List<String> viewNames);
 
-    void replaceContent(ContentDrawer selectedContentDrawer);
+    void replaceContent(ContentProvider provider);
 
     void setPresenter(Presenter presenter);
 

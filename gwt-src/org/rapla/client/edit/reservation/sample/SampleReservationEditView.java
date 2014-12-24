@@ -1,10 +1,10 @@
-package org.rapla.client.edit.reservation.impl;
+package org.rapla.client.edit.reservation.sample;
 
 import org.rapla.entities.domain.Reservation;
 
 
 
-public interface ReservationEditView {
+public interface SampleReservationEditView {
 
   public interface Presenter {
     void onSaveButtonClicked();

@@ -1,10 +1,10 @@
-package org.rapla.client.edit.reservation.impl.gwt;
+package org.rapla.client.edit.reservation.sample.gwt;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
 
-import org.rapla.client.edit.reservation.impl.ReservationEditView;
+import org.rapla.client.edit.reservation.sample.SampleReservationEditView;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.AppointmentFormater;
@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
  
-public class ReservationEditViewImpl implements ReservationEditView {
+public class SampleReservationEditViewImpl implements SampleReservationEditView {
     
     private Presenter presenter;
     @Inject

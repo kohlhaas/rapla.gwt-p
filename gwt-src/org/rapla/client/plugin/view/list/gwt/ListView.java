@@ -58,7 +58,7 @@ public class ListView implements ViewPlugin {
     
 
     @Override
-    public Widget createContent() {
+    public Widget provideContent() {
         final CellList<Reservation> list = new CellList<Reservation>(new ReservationCell());
         list.setStyleName("RaplaListDrawerList");
         final ListDataProvider<Reservation> data = new ListDataProvider<>();
@@ -119,10 +119,4 @@ public class ListView implements ViewPlugin {
         });     
         return list;
     }
-
-    @Override
-    public void updateContent() {
-        
-    }
-
 }

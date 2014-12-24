@@ -1,4 +1,4 @@
-package org.rapla.client.edit.reservation;
+package org.rapla.client.edit.reservation.sample;
 
 import static org.mockito.Mockito.verify;
 
@@ -10,8 +10,8 @@ import org.jukito.JukitoRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.rapla.client.edit.reservation.impl.ReservationEditView;
-import org.rapla.client.edit.reservation.impl.SampleReservationController;
+import org.rapla.client.edit.reservation.sample.SampleReservationController;
+import org.rapla.client.edit.reservation.sample.SampleReservationEditView;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
@@ -39,7 +39,7 @@ public class SampleReservationControllerTest {
     }
   
   @Test
-  public void shouldCallShowOnEdit(ReservationEditView editView, Reservation event) throws RaplaException {
+  public void shouldCallShowOnEdit(SampleReservationEditView editView, Reservation event) throws RaplaException {
     boolean isNew = false;
     // WHEN
     controller.edit(event, isNew);
