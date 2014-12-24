@@ -1,11 +1,8 @@
-package org.rapla.client.plugin.view.list;
+package org.rapla.client.plugin.view.list.gwt;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -17,6 +14,7 @@ import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
+import org.rapla.framework.logger.Logger;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -29,11 +27,14 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 public class ListView implements ViewPlugin {
 
-    private final Logger logger = Logger.getLogger("componentClass");
+    @Inject
+    private Logger logger;
     @Inject
     private ClientFacade facade;
     @Inject
     private RaplaLocale raplaLocale;
+    @Inject
+    private RaplaEventBus eventBus;
 
 	public ListView() {
 	}
@@ -44,12 +45,12 @@ public class ListView implements ViewPlugin {
 	}
 
 
-	private static class ReservationCell extends AbstractCell<Reservation>
+	private class ReservationCell extends AbstractCell<Reservation>
     {
 
         @Override
         public void render(com.google.gwt.cell.client.Cell.Context context, Reservation value, SafeHtmlBuilder sb) {
-            String name = value.getName( Locale.GERMANY);
+            String name = value.getName( raplaLocale.getLocale());
             sb.appendEscaped( name);
         }
         
@@ -63,7 +64,6 @@ public class ListView implements ViewPlugin {
         final ListDataProvider<Reservation> data = new ListDataProvider<>();
         data.getList().clear();
         data.addDataDisplay(list);
-        Locale locale = raplaLocale.getLocale();
         Allocatable[] allocatables = null;
         Date start = null;
         Date end = null;
@@ -76,7 +76,7 @@ public class ListView implements ViewPlugin {
             }
             list.setPageSize(data.getList().size());
         } catch (RaplaException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e.getCause());
+            logger.error( e.getMessage(), e.getCause());
         }
        
         //FutureResult<List<ReservationImpl>> reservations =  facade.getReservations(null, null, null, null);
@@ -113,8 +113,7 @@ public class ListView implements ViewPlugin {
             public void onSelectionChange(SelectionChangeEvent event) {
                 Reservation selectedObject = singleSelectionModel.getSelectedObject();
                 DetailSelectEvent event2 = new DetailSelectEvent(selectedObject);
-                RaplaEventBus instance = RaplaEventBus.getInstance();
-                instance.fireEvent(event2);
+                eventBus.fireEvent(event2);
                 logger.info("selection changed");
             }
         });     

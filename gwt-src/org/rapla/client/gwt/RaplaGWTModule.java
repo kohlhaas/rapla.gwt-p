@@ -1,10 +1,10 @@
-package org.rapla.client.internal;
+package org.rapla.client.gwt;
 
 import javax.inject.Singleton;
 
 import org.rapla.AppointmentFormaterImpl;
-import org.rapla.client.edit.reservation.GWTReservationController;
-import org.rapla.client.edit.reservation.impl.SampleReservationController;
+import org.rapla.client.MainView;
+import org.rapla.client.event.RaplaEventBus;
 import org.rapla.components.util.CommandScheduler;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.domain.AppointmentFormater;
@@ -14,7 +14,8 @@ import org.rapla.facade.RaplaComponent;
 import org.rapla.facade.internal.CalendarOptionsImpl;
 import org.rapla.facade.internal.FacadeImpl;
 import org.rapla.framework.RaplaLocale;
-import org.rapla.framework.logger.NullLogger;
+import org.rapla.framework.internal.RaplaJDKLoggingAdapterWithoutClassnameSupport;
+import org.rapla.framework.logger.Logger;
 import org.rapla.storage.StorageOperator;
 import org.rapla.storage.dbrm.RemoteConnectionInfo;
 import org.rapla.storage.dbrm.RemoteOperator;
@@ -26,7 +27,7 @@ import com.google.inject.name.Names;
 public class RaplaGWTModule implements GinModule{
     @Override
     public void configure(GinBinder binder) {
-        binder.bind(org.rapla.framework.logger.Logger.class).to(NullLogger.class);
+        binder.bind(Logger.class).toProvider(RaplaJDKLoggingAdapterWithoutClassnameSupport.class);
         binder.bind(I18nBundle.class).annotatedWith(Names.named(RaplaComponent.RaplaResourcesId)).to(GWTSampleI18nBundle.class).in(Singleton.class);
         binder.bind( RaplaLocale.class).to(GWTRaplaLocale.class).in(Singleton.class);
         binder.bind( RemoteConnectionInfo.class).in(Singleton.class);
@@ -35,7 +36,10 @@ public class RaplaGWTModule implements GinModule{
         binder.bind( ClientFacade.class).to(FacadeImpl.class).in(Singleton.class);
         binder.bind( CalendarOptions.class).to(CalendarOptionsImpl.class).in(Singleton.class);
         binder.bind( StorageOperator.class).to(RemoteOperator.class).in(Singleton.class);
-        binder.bind( GWTReservationController.class).to(SampleReservationController.class).in(Singleton.class);
+        binder.bind( RaplaEventBus.class).in(Singleton.class);
+        
+        binder.bind( MainView.class).to(MainViewImpl.class);
+        
     }
 }
 

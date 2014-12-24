@@ -1,4 +1,4 @@
-package org.rapla.client.internal;
+package org.rapla.client.gwt;
 
 
 import javax.inject.Inject;

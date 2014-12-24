@@ -1,4 +1,4 @@
-package org.rapla.client.plugin.view.list;
+package org.rapla.client.plugin.view.list.gwt;
 
 import org.rapla.client.plugin.view.ViewPlugin;
 

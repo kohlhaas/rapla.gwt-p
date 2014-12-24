@@ -1,4 +1,4 @@
-package org.rapla.client.internal;
+package org.rapla.client.gwt;
 
 import java.util.Calendar;
 import java.util.Date;

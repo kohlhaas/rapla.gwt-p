@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.rapla.client.gwt.MainInjector;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.facade.internal.FacadeImpl;
 import org.rapla.framework.RaplaException;
@@ -53,6 +54,7 @@ public class Rapla implements EntryPoint {
             }
         });
         LoginTokens token = getValidToken();
+        RootPanel.get("raplaPopup").setVisible( false);
         if (token != null)
         {
             

@@ -1,32 +1,27 @@
 package org.rapla.client.event;
 
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.GwtEvent.Type;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.SimpleEventBus;
+import javax.inject.Inject;
+
+import com.google.web.bindery.event.shared.Event;
+import com.google.web.bindery.event.shared.Event.Type;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.google.web.bindery.event.shared.SimpleEventBus;
 
 public class RaplaEventBus {
 
 	private final SimpleEventBus eventBus;
-	private static final RaplaEventBus INSTANCE = new RaplaEventBus();
 
-	private RaplaEventBus() {
-		eventBus = GWT.create(SimpleEventBus.class);
+	@Inject
+	private RaplaEventBus(SimpleEventBus eventBus) {
+		this.eventBus = eventBus;
 	}
 
-	public static RaplaEventBus getInstance() {
-		return INSTANCE;
-	}
-
-	public <H extends EventHandler> HandlerRegistration addHandler(
-			Type<H> type, H handler) {
+	public <H> HandlerRegistration addHandler(Type<H> type, H handler) {
 		HandlerRegistration registration = eventBus.addHandler(type, handler);
 		return registration;
 	}
 
-	public void fireEvent(GwtEvent<?> event) {
+	public void fireEvent(Event<?> event) {
 		eventBus.fireEvent(event);
 	}
 }

@@ -1,22 +1,19 @@
 package org.rapla.client;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.rapla.client.edit.reservation.GWTReservationController;
-import org.rapla.client.event.AddEvent;
-import org.rapla.client.event.AddEvent.AddEventHandler;
+import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.event.DetailSelectEvent.DetailSelectEventHandler;
 import org.rapla.client.event.RaplaEventBus;
-import org.rapla.client.plugin.view.ContentDrawer;
-import org.rapla.client.plugin.view.ViewController;
-import org.rapla.client.plugin.view.ViewSelectionChangedEvent;
-import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
+import org.rapla.client.plugin.view.ViewPlugin;
 import org.rapla.components.util.DateTools;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
@@ -29,43 +26,59 @@ import org.rapla.facade.ModificationEvent;
 import org.rapla.facade.ModificationListener;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
+import org.rapla.framework.logger.Logger;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
 @Singleton
-public class Application implements ViewSelectionChangedHandler,
-		DetailSelectEventHandler, AddEventHandler {
-
-    final Logger logger = Logger.getLogger("Application");
+public class Application implements DetailSelectEventHandler, MainView.Presenter {
     
-	FlowPanel drawingContent = new FlowPanel();
-	@Inject
-	ViewController viewController;
-	@Inject
-    ClientFacade facade;
-	@Inject
-    RaplaLocale raplaLocale;
-	@Inject
-    CalendarOptions calendarOptions;
-	@Inject
-    GWTReservationController controller;
+    @Inject Logger logger;
+    
+	@Inject ClientFacade facade;
+	@Inject RaplaLocale raplaLocale;
+	@Inject CalendarOptions calendarOptions;
+	@Inject Provider<ReservationController> controller;
+	RaplaEventBus eventBus;
+	MainView mainView;
 	
-	RootPanel root;
+	private List<ViewPlugin> views;
+	ViewPlugin selectedView;
+
+    @Inject
+    public void setViews(Set<ViewPlugin> views)
+    {
+        this.views = new ArrayList<ViewPlugin>(views);
+        if ( views.size() > 0)
+        {
+            selectedView = this.views.get(0);
+        }
+        
+    }
 	
+    @Inject public Application(MainView mainView, RaplaEventBus eventBus) {
+        this.mainView = mainView;
+        this.eventBus = eventBus;
+		eventBus.addHandler(DetailSelectEvent.TYPE, this);
+		mainView.setPresenter( this);
+	}
 	
-	public Application() {
-		drawingContent.setStyleName("raplaDrawingContent");
-		RaplaEventBus.getInstance().addHandler(ViewSelectionChangedEvent.TYPE, this);
-		RaplaEventBus.getInstance().addHandler(DetailSelectEvent.TYPE, this);
-		RaplaEventBus.getInstance().addHandler(AddEvent.TYPE, this);
+	@Override
+	public void setSelectedViewIndex(int index) {
+	    if ( index >=0)
+	    {
+	        selectedView = views.get( index);
+	        viewChanged();
+	    }
+	    
 	}
 
 	// private final DataInjector injector2 = GWT.create(DataInjector.class);
 	public void createApplication() {
-	    root = RootPanel.get("raplaRoot");
-		root.clear();
-		root.add(viewController.createContent());
+	    List<String> names = new ArrayList<String>();
+	    for ( ViewPlugin plugin:views)
+	    {
+	        names.add( plugin.getName());
+	    }
+	    mainView.show( names );
 		viewChanged();
 		facade.addModificationListener( new ModificationListener() {
             
@@ -76,31 +89,24 @@ public class Application implements ViewSelectionChangedHandler,
         });
 	}
 
-	@Override
-	public void viewChanged() {
-	    if (drawingContent != null)
-	    {
-	        root.remove( drawingContent);
-	    }
-	    drawingContent = new FlowPanel();
-	    ContentDrawer selectedContentDrawer = viewController.getSelectedContentDrawer();
-        Widget createContent = selectedContentDrawer.createContent();
-        drawingContent.add(createContent);
-        root.add(drawingContent);
+	private void viewChanged() {
+	    mainView.replaceContent( selectedView);
 	}
 
 	@Override
 	public void detailsRequested(DetailSelectEvent e) {
 	    Object selectedObject = e.getSelectedObject();
+	    logger.info("Editing Object");
 	    if ( selectedObject != null)
 	    {
 	        Reservation event = (Reservation) selectedObject;
 	        try {
 	            Reservation editableEvent = facade.edit( event);
-	            controller.edit( editableEvent, false );
+	            ReservationController reservationController = controller.get();
+                reservationController.edit( editableEvent, false );
 	        } catch (RaplaException e1) {
 	            // TODO exception handling
-	            logger.log(Level.SEVERE, e1.getMessage(), e1);
+	            logger.error( e1.getMessage(), e1);
 	        }       
 	    }
 	}
@@ -129,19 +135,20 @@ public class Application implements ViewSelectionChangedHandler,
                 event.addAppointment( newAppointment);
                 Allocatable[] resources = facade.getAllocatables();
                 event.addAllocatable( resources[0]);
-                controller.edit( event, true );
+                ReservationController reservationController = controller.get();
+                reservationController.edit( event, true );
             } catch (RaplaException e1) {
                 // TODO exception handling
-                logger.log(Level.SEVERE, e1.getMessage(), e1);
+                logger.error( e1.getMessage(), e1);
             }
     
         }
 	}
 
 	@Override
-	public void addRequested(AddEvent e) {
-	    TestHandler testHandler = new TestHandler( );
-	    testHandler.handle();
+	public void addClicked() {
+	    logger.info( "Add clicked");
+	    new TestHandler().handle();
 	}
 
 }
