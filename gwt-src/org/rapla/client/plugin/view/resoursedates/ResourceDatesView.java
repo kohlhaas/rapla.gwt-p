@@ -1,10 +1,12 @@
 package org.rapla.client.plugin.view.resoursedates;
 
 import java.text.ParseException;
+import java.util.Date;
 
 import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
+import org.rapla.client.timePicker.TimeBox;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -117,7 +119,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		begin.setStyleName("dateInfoLineComplete");
 		
 		
-		Label beginText = new Label("Begin: ");
+		Label beginText = new Label("Begin:");
 		beginText.setStyleName("beschriftung");
 		begin.add(beginText);
 		begin.setCellVerticalAlignment(beginText, HasVerticalAlignment.ALIGN_MIDDLE);
@@ -127,9 +129,12 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		begin.add(dateBegin);
 		begin.setCellVerticalAlignment(dateBegin, HasVerticalAlignment.ALIGN_MIDDLE);
 		
-		TextBox timeBegin = new TextBox();
+		DateTimeFormat sdfToTime = DateTimeFormat.getFormat( "HH:mm" );
+		Date defaultTime = new Date();
+		defaultTime= sdfToTime.parse("00:00");
+		TimeBox timeBegin = new TimeBox(defaultTime);
 		timeBegin.setWidth("35px");
-		timeBegin.setMaxLength(5);
+		//timeBegin.setMaxLength(5);
 		begin.add(timeBegin);
 		begin.setCellVerticalAlignment(timeBegin, HasVerticalAlignment.ALIGN_MIDDLE);
 		
@@ -161,9 +166,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		end.add(dateEnd);
 		end.setCellVerticalAlignment(dateEnd, HasVerticalAlignment.ALIGN_MIDDLE);
 		
-		TextBox timeEnd = new TextBox();
+		TimeBox timeEnd = new TimeBox(defaultTime);
 		timeEnd.setWidth("35px");
-		timeEnd.setMaxLength(5);
+		//timeEnd.setMaxLength(5);
 		end.add(timeEnd);
 		end.setCellVerticalAlignment(timeEnd, HasVerticalAlignment.ALIGN_MIDDLE);
 		
