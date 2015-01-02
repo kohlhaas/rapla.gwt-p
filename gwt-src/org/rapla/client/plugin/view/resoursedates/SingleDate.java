@@ -15,8 +15,7 @@ public class SingleDate implements Comparable<SingleDate>{
 	private FlowPanel main = new FlowPanel();
 	DateTimeFormat sdfToDate;
 	DateTimeFormat sdfToTime;
-	Date dateObject;
-	Date beginTime;
+	Date dateObject,beginTime, endTime;
 
 	public SingleDate() {
 	}
@@ -34,8 +33,22 @@ public class SingleDate implements Comparable<SingleDate>{
 		
 		dateObject = sdfToDate.parse(date);
 		beginTime = sdfToTime.parse(begin);
-				
-		createSingleDate();
+		endTime = sdfToTime.parse(begin);
+	}
+	
+	public SingleDate(Date date, Date begin, Date end) throws ParseException {
+		this.dateObject = date;
+		this.beginTime = begin;
+		this.endTime = end;
+		
+		sdfToDate = DateTimeFormat.getFormat("dd.MM.yyyy");
+		sdfToTime = DateTimeFormat.getFormat( "HH:mm" );
+		
+		this.date = sdfToDate.format(date);
+		this.begin = sdfToTime.format(begin);
+		this.end = sdfToTime.format(end);
+		
+		this.vorlesungsStunden = ((end.getTime() - begin.getTime()) * 3600000 ) / 45;
 		
 	}
 	
@@ -80,6 +93,7 @@ public class SingleDate implements Comparable<SingleDate>{
 		return date;
 	}
 	public FlowPanel getSingleDate() {
+		this.createSingleDate();
 		return main;
 	}
 

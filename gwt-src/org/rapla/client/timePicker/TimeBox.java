@@ -467,6 +467,9 @@ public class TimeBox extends Composite implements
 	public Long getValue() {
 		return timeValue.getTime();
 	}
+	public Date getTimeValue() {
+		return timeValue;
+	}
 
 	public String getValueAsString() {		
 		DateTimeFormat fmt;
