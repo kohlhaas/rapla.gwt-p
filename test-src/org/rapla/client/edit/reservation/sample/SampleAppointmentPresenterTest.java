@@ -47,7 +47,6 @@ public class SampleAppointmentPresenterTest {
   
   @Test
   public void shouldCallShowOnEdit() throws RaplaException {
-    boolean isNew = false;
     SampleAppointmentView editView = controller.getView();
     
     // WHEN
@@ -64,10 +63,13 @@ public class SampleAppointmentPresenterTest {
     controller.newAppButtonPressed();
     
     // THEN
-    // test if newAppointment is called
+    // test if newAppointment is called in facade
     Date startDate = new Date(facade.today().getTime() + DateTools.MILLISECONDS_PER_HOUR * 8);
     Date endDate = new Date(startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
-    verify(facade).newAppointment(startDate, endDate);
+    Appointment newAppointment = verify(facade).newAppointment(startDate, endDate);
+    
+    // test if appointment is added to event
+    verify(event).addAppointment(newAppointment);
   }
   
 }
