@@ -3,7 +3,7 @@ package org.rapla.client.edit.reservation.sample;
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.ReservationController;
-import org.rapla.client.edit.reservation.sample.SampleReservationEditView.Presenter;
+import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
@@ -12,7 +12,7 @@ import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 
-public class SampleReservationController implements ReservationController,Presenter {
+public class SampleReservationPresenter implements ReservationController,Presenter {
 
     @Inject
     Logger logger;
@@ -21,22 +21,27 @@ public class SampleReservationController implements ReservationController,Presen
     @Inject
     ClientFacade facade;
     
-    SampleReservationEditView editView;
+    private SampleReservationView view;
+    private SampleAppointmentPresenter appointmentPresenter;
     
+    @Inject
+    public SampleReservationPresenter(SampleReservationView view, SampleAppointmentPresenter appointmentPresenter) {
+        this.view = view;
+        view.setPresenter(this);
+        this.appointmentPresenter = appointmentPresenter;
+        view.addSubView( appointmentPresenter.getView());
+    }
+
     Reservation event;
     boolean isNew;
     
-    public @Inject SampleReservationController(SampleReservationEditView editView)
-    {
-        this.editView = editView;
-        editView.setPresenter( this );
-    }
     
     @Override
     public void edit(final Reservation event, boolean isNew) {
         this.event = event;
         this.isNew = isNew;
-        editView.show(event);
+        appointmentPresenter.setReservation( event);
+        view.show(event);
     }
 
     @Override
@@ -47,7 +52,7 @@ public class SampleReservationController implements ReservationController,Presen
         } catch (RaplaException e1) {
             logger.error( e1.getMessage(), e1);
         }
-        editView.hide();
+        view.hide();
     }
 
     @Override
@@ -58,13 +63,13 @@ public class SampleReservationController implements ReservationController,Presen
         } catch (RaplaException e1) {
             logger.error( e1.getMessage(), e1);
         }
-        editView.hide();
+        view.hide();
     }
 
     @Override
     public void onCancelButtonClicked() {
         logger.info("cancel clicked");
-        editView.hide();
+        view.hide();
     }
 
     
@@ -76,18 +81,12 @@ public class SampleReservationController implements ReservationController,Presen
         classification.setValue(first, newName);
     }
     
-    @Override
-    public void newAppButtonPressed() 
-    {
-        
-    }
-
+    
     @Override
     public boolean isDeleteButtonEnabled() 
     {
         return !isNew;
-    }
-    
+    }    
     
 
 }

@@ -1,6 +1,8 @@
 package org.rapla.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -9,11 +11,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import org.rapla.client.base.CalendarPlugin;
 import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.event.DetailSelectEvent.DetailSelectEventHandler;
-import org.rapla.client.event.RaplaEventBus;
-import org.rapla.client.plugin.view.ViewPlugin;
 import org.rapla.components.util.DateTools;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
@@ -24,12 +25,18 @@ import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.ModificationEvent;
 import org.rapla.facade.ModificationListener;
+import org.rapla.facade.internal.FacadeImpl;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
+import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
+import org.rapla.rest.gwtjsonrpc.common.FutureResult;
+import org.rapla.rest.gwtjsonrpc.common.VoidResult;
+
+import com.google.web.bindery.event.shared.EventBus;
 
 @Singleton
-public class Application implements DetailSelectEventHandler, MainView.Presenter {
+public class Application implements DetailSelectEventHandler, ApplicationView.Presenter {
     
     @Inject Logger logger;
     
@@ -37,24 +44,23 @@ public class Application implements DetailSelectEventHandler, MainView.Presenter
 	@Inject RaplaLocale raplaLocale;
 	@Inject CalendarOptions calendarOptions;
 	@Inject Provider<ReservationController> controller;
-	RaplaEventBus eventBus;
-	MainView mainView;
+	EventBus eventBus;
+	ApplicationView mainView;
 	
-	private List<ViewPlugin> views;
-	ViewPlugin selectedView;
+	private List<CalendarPlugin> viewPluginPresenter;
+	CalendarPlugin selectedView;
 
     @Inject
-    public void setViews(Set<ViewPlugin> views)
+    public void setViews(Set<CalendarPlugin> views)
     {
-        this.views = new ArrayList<ViewPlugin>(views);
+        this.viewPluginPresenter = new ArrayList<CalendarPlugin>(views);
         if ( views.size() > 0)
         {
-            selectedView = this.views.get(0);
+            selectedView = this.viewPluginPresenter.get(0);
         }
-        
     }
 	
-    @Inject public Application(MainView mainView, RaplaEventBus eventBus) {
+    @Inject public Application(ApplicationView mainView, EventBus eventBus) {
         this.mainView = mainView;
         this.eventBus = eventBus;
 		eventBus.addHandler(DetailSelectEvent.TYPE, this);
@@ -65,16 +71,41 @@ public class Application implements DetailSelectEventHandler, MainView.Presenter
 	public void setSelectedViewIndex(int index) {
 	    if ( index >=0)
 	    {
-	        selectedView = views.get( index);
+	        selectedView = viewPluginPresenter.get( index);
 	        viewChanged();
 	    }
-	    
 	}
 
-	// private final DataInjector injector2 = GWT.create(DataInjector.class);
 	public void createApplication() {
-	    List<String> names = new ArrayList<String>();
-	    for ( ViewPlugin plugin:views)
+        FacadeImpl facadeImpl = (FacadeImpl) facade;
+        facadeImpl.setCachingEnabled( false );
+        FutureResult<VoidResult> load = facadeImpl.load();
+        logger.info("Loading resources");
+        load.get( new AsyncCallback<VoidResult>() {
+            
+            @Override
+            public void onSuccess(VoidResult result) {
+               try {
+                   Collection<Allocatable> allocatables = Arrays.asList(facade.getAllocatables());
+                   logger.info("loaded " + allocatables.size() + " resources. Starting application");
+                   start();
+               } catch (RaplaException e) {
+                   onFailure(e);
+               }
+            }
+            
+            @Override
+            public void onFailure(Throwable e) {
+                logger.error(e.getMessage(), e);
+                
+            }
+        });
+	}
+
+    private void start()  {
+        // Test for the resources
+        List<String> names = new ArrayList<String>();
+	    for ( CalendarPlugin plugin:viewPluginPresenter)
 	    {
 	        names.add( plugin.getName());
 	    }
@@ -87,10 +118,11 @@ public class Application implements DetailSelectEventHandler, MainView.Presenter
                 viewChanged();
             }
         });
-	}
+    }
 
 	private void viewChanged() {
-	    mainView.replaceContent( selectedView);
+	    mainView.replaceContent( selectedView );
+	    selectedView.updateContent();
 	}
 
 	@Override

@@ -2,9 +2,9 @@ package org.rapla.client;
 
 import java.util.List;
 
-import org.rapla.client.plugin.view.ContentProvider;
+import org.rapla.client.base.CalendarPlugin;
 
-public interface MainView {
+public interface ApplicationView<W> {
 
     interface Presenter
     {
@@ -15,7 +15,7 @@ public interface MainView {
     
     void show(List<String> viewNames);
 
-    void replaceContent(ContentProvider provider);
+    void replaceContent(CalendarPlugin<W> provider);
 
     void setPresenter(Presenter presenter);
 

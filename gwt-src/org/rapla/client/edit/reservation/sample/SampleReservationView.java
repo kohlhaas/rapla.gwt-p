@@ -1,24 +1,20 @@
 package org.rapla.client.edit.reservation.sample;
 
+import org.rapla.client.base.View;
+import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
 
-
-
-public interface SampleReservationEditView {
+public interface SampleReservationView<W> extends View<Presenter> {
 
   public interface Presenter {
     void onSaveButtonClicked();
     void onDeleteButtonClicked();
     void changeEventName(String newEvent);
-    void newAppButtonPressed();
     boolean isDeleteButtonEnabled();
     void onCancelButtonClicked();
   }
 
   void show(Reservation event);
   void hide();
-
-  void setPresenter(Presenter presenter);
-//  void setColumnDefinitions(List<ColumnDefinition<T>> columnDefinitions);
-  //void setRowData(List<T> rowData);
+  void addSubView(ReservationEditSubView<W> view);
 }

@@ -7,11 +7,12 @@ import javax.inject.Singleton;
 
 import org.jukito.JukitoModule;
 import org.jukito.JukitoRunner;
+import org.jukito.TestSingleton;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.rapla.client.edit.reservation.sample.SampleReservationController;
-import org.rapla.client.edit.reservation.sample.SampleReservationEditView;
+import org.rapla.client.edit.reservation.sample.SampleReservationPresenter;
+import org.rapla.client.edit.reservation.sample.SampleReservationView;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
@@ -20,9 +21,9 @@ import org.rapla.framework.internal.RaplaJDKLoggingAdapter;
 import org.rapla.framework.internal.RaplaLocaleImpl;
 
 @RunWith(JukitoRunner.class)
-public class SampleReservationControllerTest {
+public class SampleReservationPresenterTest {
 
-  @Inject SampleReservationController controller;
+  @Inject SampleReservationPresenter controller;
   
   ClientFacade facade;
   
@@ -35,11 +36,12 @@ public class SampleReservationControllerTest {
       protected void configureTest() {
           bind(org.rapla.framework.logger.Logger.class).toProvider(RaplaJDKLoggingAdapter.class);
           bind( RaplaLocale.class).to(RaplaLocaleImpl.class).in(Singleton.class);
+          bindMock( SampleReservationView.class).in( TestSingleton.class);
       }
     }
   
   @Test
-  public void shouldCallShowOnEdit(SampleReservationEditView editView, Reservation event) throws RaplaException {
+  public void shouldCallShowOnEdit(Reservation event,SampleReservationView editView) throws RaplaException {
     boolean isNew = false;
     // WHEN
     controller.edit(event, isNew);
@@ -47,6 +49,7 @@ public class SampleReservationControllerTest {
     // THEN
     // test if presenter is called
     verify(editView).setPresenter(controller);
+
     // test if event is shown
     verify(editView).show(event);
     

@@ -2,14 +2,12 @@ package org.rapla.client.edit.reservation.sample.gwt;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-
-import org.rapla.client.edit.reservation.sample.SampleReservationEditView;
+import org.rapla.client.base.AbstractView;
+import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
+import org.rapla.client.edit.reservation.sample.SampleReservationView;
+import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
 import org.rapla.entities.domain.Allocatable;
-import org.rapla.entities.domain.Appointment;
-import org.rapla.entities.domain.AppointmentFormater;
 import org.rapla.entities.domain.Reservation;
-import org.rapla.framework.RaplaLocale;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -17,28 +15,29 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
  
-public class SampleReservationEditViewImpl implements SampleReservationEditView {
+public class SampleReservationViewImpl extends AbstractView<Presenter> implements SampleReservationView<IsWidget> {
     
-    private Presenter presenter;
-    @Inject
-    RaplaLocale raplaLocale;
-    @Inject
-    AppointmentFormater formatter;
+    FlowPanel content;
 
-    FlowPanel content = new FlowPanel();
-
-    FlowPanel contentRes = new FlowPanel();
-    final TextBox tb = new TextBox();
+    FlowPanel contentRes;
+    
+    FlowPanel subView = new FlowPanel();
+    
+    TextBox tb;
     
     Panel popup;
     
     public void show(Reservation event)
     {
+        content = new FlowPanel();
+        contentRes = new FlowPanel();
+        tb = new TextBox();
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
         popup.clear();
@@ -48,6 +47,7 @@ public class SampleReservationEditViewImpl implements SampleReservationEditView 
         content.add(tb);
 
         content.add( contentRes );
+        content.add( subView );
 
         {
             Button button = new Button("Cancel");
@@ -55,20 +55,20 @@ public class SampleReservationEditViewImpl implements SampleReservationEditView 
                 
                 @Override
                 public void onClick(ClickEvent e) {
-                    presenter.onCancelButtonClicked();
+                    getPresenter().onCancelButtonClicked();
                 }
             });
             content.add(button);
         }
 
-        if (presenter.isDeleteButtonEnabled())
+        if (getPresenter().isDeleteButtonEnabled())
         {
             Button button = new Button("Loeschen");
             button.addClickHandler(new ClickHandler() {
                 
                 @Override
                 public void onClick(ClickEvent e) {
-                    presenter.onDeleteButtonClicked();
+                    getPresenter().onDeleteButtonClicked();
                 }
             });
             content.add(button);
@@ -79,7 +79,7 @@ public class SampleReservationEditViewImpl implements SampleReservationEditView 
                 
                 @Override
                 public void onClick(ClickEvent e) {
-                   presenter.onSaveButtonClicked();
+                    getPresenter().onSaveButtonClicked();
                 }
             });
             content.add(button);
@@ -89,16 +89,16 @@ public class SampleReservationEditViewImpl implements SampleReservationEditView 
             
             @Override
             public void onChange(ChangeEvent event) {
-                presenter.changeEventName( tb.getText() );
+                getPresenter().changeEventName( tb.getText() );
             }
         });
     }
 
     public void mapFromReservation(Reservation event) {
-        Locale locale = raplaLocale.getLocale();
+        Locale locale = getRaplaLocale().getLocale();
         tb.setText( event.getName( locale));
+        contentRes.clear();
         Allocatable[] resources = event.getAllocatables();
-        Appointment[] appointments = event.getAppointments();
         {
             StringBuilder builder = new StringBuilder();
             for ( Allocatable res:resources)
@@ -108,15 +108,6 @@ public class SampleReservationEditViewImpl implements SampleReservationEditView 
             contentRes.add(new Label("Ressourcen: " +builder.toString() ));
 
         }
-        {
-            StringBuilder builder = new StringBuilder();
-            for ( Appointment app:appointments)
-            {
-                String shortSummary = formatter.getShortSummary(app);
-                builder.append( shortSummary);
-            }
-            contentRes.add(new Label("Termine: " +builder.toString() ));
-        }
     }
     
     public void hide()
@@ -124,8 +115,12 @@ public class SampleReservationEditViewImpl implements SampleReservationEditView 
         popup.setVisible(false);
         content.clear();
     }
-    
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
+
+
+    @Override
+    public void addSubView(ReservationEditSubView<IsWidget> view) {
+        IsWidget provideContent = view.provideContent();
+        subView.add( provideContent.asWidget());
     }
+    
 }

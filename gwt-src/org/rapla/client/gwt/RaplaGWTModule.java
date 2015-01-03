@@ -3,8 +3,7 @@ package org.rapla.client.gwt;
 import javax.inject.Singleton;
 
 import org.rapla.AppointmentFormaterImpl;
-import org.rapla.client.MainView;
-import org.rapla.client.event.RaplaEventBus;
+import org.rapla.client.ApplicationView;
 import org.rapla.components.util.CommandScheduler;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.domain.AppointmentFormater;
@@ -23,6 +22,8 @@ import org.rapla.storage.dbrm.RemoteOperator;
 import com.google.gwt.inject.client.GinModule;
 import com.google.gwt.inject.client.binder.GinBinder;
 import com.google.inject.name.Names;
+import com.google.web.bindery.event.shared.EventBus;
+import com.google.web.bindery.event.shared.SimpleEventBus;
 
 public class RaplaGWTModule implements GinModule{
     @Override
@@ -36,9 +37,9 @@ public class RaplaGWTModule implements GinModule{
         binder.bind( ClientFacade.class).to(FacadeImpl.class).in(Singleton.class);
         binder.bind( CalendarOptions.class).to(CalendarOptionsImpl.class).in(Singleton.class);
         binder.bind( StorageOperator.class).to(RemoteOperator.class).in(Singleton.class);
-        binder.bind( RaplaEventBus.class).in(Singleton.class);
+        binder.bind( EventBus.class).to( SimpleEventBus.class).in(Singleton.class);
         
-        binder.bind( MainView.class).to(MainViewImpl.class);
+        binder.bind( ApplicationView.class).to(ApplicationViewImpl.class);
         
     }
 }

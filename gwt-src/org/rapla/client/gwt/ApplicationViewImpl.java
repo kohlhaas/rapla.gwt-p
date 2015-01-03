@@ -2,20 +2,22 @@ package org.rapla.client.gwt;
 
 import java.util.List;
 
-import org.rapla.client.MainView;
-import org.rapla.client.plugin.view.ContentProvider;
+import javax.inject.Inject;
+
+import org.rapla.client.ApplicationView;
+import org.rapla.client.base.CalendarPlugin;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
 
-public class MainViewImpl implements MainView {
+public class ApplicationViewImpl implements ApplicationView<IsWidget> {
 
     FlowPanel drawingContent = new FlowPanel();
     RootPanel root;
@@ -25,6 +27,10 @@ public class MainViewImpl implements MainView {
     {
         drawingContent.setStyleName("raplaDrawingContent");
         root = RootPanel.get("raplaRoot");
+    }
+
+    @Inject
+    public ApplicationViewImpl() {
     }
     
     public void setPresenter(Presenter presenter) 
@@ -62,18 +68,15 @@ public class MainViewImpl implements MainView {
     }
     
     @Override
-    public void replaceContent(ContentProvider contentProvider) {
+    public void replaceContent(CalendarPlugin<IsWidget> contentProvider) {
         if (drawingContent != null)
         {
             root.remove( drawingContent);
         }
         drawingContent = new FlowPanel();
-        Widget createContent = contentProvider.provideContent().asWidget();
-        drawingContent.add(createContent);
+        IsWidget content = contentProvider.provideContent();
+        drawingContent.add(content);
         root.add(drawingContent);
     }
     
-    
-
-
 }
