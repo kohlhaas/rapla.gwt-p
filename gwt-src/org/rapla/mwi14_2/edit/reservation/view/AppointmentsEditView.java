@@ -1,4 +1,4 @@
-package org.rapla.client.edit.reservation.view;
+package org.rapla.mwi14_2.edit.reservation.view;
 
 import java.util.Arrays;
 

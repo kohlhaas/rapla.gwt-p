@@ -1,4 +1,4 @@
-package org.rapla.client.edit.reservation.view;
+package org.rapla.mwi14_2.edit.reservation.view;
 
 /**
  * Created by nam on 12/17/14.
