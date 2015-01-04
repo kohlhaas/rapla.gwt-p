@@ -2,11 +2,10 @@ package org.rapla.client.event;
 
 import org.rapla.client.event.DetailSelectEvent.DetailSelectEventHandler;
 
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
+import com.google.web.bindery.event.shared.Event;
 
-public class DetailSelectEvent extends GwtEvent<DetailSelectEventHandler> {
-	public static interface DetailSelectEventHandler extends EventHandler {
+public class DetailSelectEvent extends Event<DetailSelectEventHandler> {
+	public static interface DetailSelectEventHandler  {
 		void detailsRequested(DetailSelectEvent event);
 	}
 
