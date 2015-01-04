@@ -1,6 +1,5 @@
 package org.rapla.mwi14_2.edit.reservation.controller;
 
-import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.mwi14_2.edit.reservation.view.*;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.RaplaComponent;
@@ -12,7 +11,9 @@ import java.util.logging.Logger;
 /**
  * Created by nam on 10.12.14.
  */
-public class EditController extends RaplaComponent implements ReservationController {
+//have to implement org.rapla.client.edit.reservation.ReservationController --> in Application, if this class wants to be the entry point
+
+public class EditController extends RaplaComponent  {
 
 
   final Logger logger = Logger.getLogger("EditController");
@@ -25,7 +26,6 @@ public class EditController extends RaplaComponent implements ReservationControl
     raplaEditView = new AppointmentsEditView();
   }
 
-  @Override
   public void edit(Reservation event, boolean isNew) throws RaplaException {
     logger.info("building the view");
     raplaEditView.init();
