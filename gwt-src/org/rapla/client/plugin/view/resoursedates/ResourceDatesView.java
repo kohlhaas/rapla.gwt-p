@@ -6,6 +6,8 @@ import java.util.Date;
 import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
+import org.rapla.client.timePicker.HourMinutePicker;
+import org.rapla.client.timePicker.HourMinutePicker.PickerFormat;
 import org.rapla.client.timePicker.TimeBox;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -27,6 +29,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class ResourceDatesView implements ViewServiceProviderInterface, ResourceDatesInterface{
 	
@@ -112,7 +115,8 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		dateInfos.setStyleName("dateInfos");
 		
 		
-	    DateTimeFormat dateFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG);
+		
+		DateTimeFormat dateFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG);
 	    
 	    
 	    // Datum und Uhzreit BEGIN
@@ -134,8 +138,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		DateTimeFormat sdfToTime = DateTimeFormat.getFormat( "HH:mm" );
 		Date defaultTime = new Date();
 		defaultTime= sdfToTime.parse("00:00");
-		final TimeBox timeBegin = new TimeBox(defaultTime);
-		timeBegin.setWidth("35px");
+		
+		final HourMinutePicker timeBegin = new HourMinutePicker(PickerFormat._24_HOUR);
+		//timeBegin.setWidth("35px");
 		//timeBegin.setMaxLength(5);
 		begin.add(timeBegin);
 		begin.setCellVerticalAlignment(timeBegin, HasVerticalAlignment.ALIGN_MIDDLE);
@@ -168,10 +173,12 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		end.add(dateEnd);
 		end.setCellVerticalAlignment(dateEnd, HasVerticalAlignment.ALIGN_MIDDLE);
 		
-		final TimeBox timeEnd = new TimeBox(defaultTime);
-		timeEnd.setWidth("35px");
+		final HourMinutePicker timeEnd = new HourMinutePicker(PickerFormat._24_HOUR);
+		//timeEnd.setWidth("35px");
 		//timeEnd.setMaxLength(5);
-		end.add(timeEnd);
+		timeEnd.setVisible(true);
+		timeEnd.setTitle("endTime"); 
+		end.add(timeEnd.asWidget());
 		end.setCellVerticalAlignment(timeEnd, HasVerticalAlignment.ALIGN_MIDDLE);
 		
 		Label endTimeText = new Label("Uhr");
@@ -185,19 +192,24 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		//Add termin
 		
 		buttonPlus.addClickHandler(new ClickHandler() {
+
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				try {
-					SingleDate addTermin = new SingleDate(dateBegin.getValue(), timeBegin.getTimeValue(), timeEnd.getTimeValue());
+					Date beginTmp = new Date(dateBegin.getValue().getTime() + (timeBegin.getMinutes()*60000));
+					Date endTmp = new Date(dateBegin.getValue().getTime() + (timeEnd.getMinutes()*60000));
+					SingleDate addTermin = new SingleDate(dateBegin.getValue(),beginTmp, endTmp);
+
 					dateList.add(addTermin.getSingleDate());
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					e.printStackTrace();	
 				}
 				
 			}
 		});
+		
 		
 		// Checkbox WIEDERHOLEN
 		FlowPanel repeat = new FlowPanel();
