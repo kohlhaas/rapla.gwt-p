@@ -6,6 +6,8 @@ import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
 
+import de.vksi.c4j.ContractReference;
+
 import java.util.logging.Logger;
 
 /**
@@ -13,6 +15,7 @@ import java.util.logging.Logger;
  */
 //have to implement org.rapla.client.edit.reservation.ReservationController --> in Application, if this class wants to be the entry point
 
+@ContractReference(EditControllerContract.class)
 public class EditController extends RaplaComponent  {
 
 
