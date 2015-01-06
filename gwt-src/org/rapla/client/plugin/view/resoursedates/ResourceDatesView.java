@@ -1,6 +1,7 @@
 package org.rapla.client.plugin.view.resoursedates;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.rapla.client.edit.reservation.impl.ReservationController;
@@ -33,7 +34,11 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class ResourceDatesView implements ViewServiceProviderInterface, ResourceDatesInterface{
 	
-
+	TerminList dateList = new TerminList();
+	DateBox dateBegin = new DateBox();
+	HourMinutePicker timeBegin = new HourMinutePicker(PickerFormat._24_HOUR);
+	DateBox dateEnd = new DateBox();
+	HourMinutePicker timeEnd = new HourMinutePicker(PickerFormat._24_HOUR);
 
 	@Override
 	public Widget createContent() {
@@ -42,7 +47,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		
 		FlowPanel mainContent = new FlowPanel();
 		
-		final FlowPanel dateList = new FlowPanel();
 		dateList.setHeight(height + "px");
 		dateList.setStyleName("dateList");
 		
@@ -83,9 +87,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		multi.addSingleDate(zwei);
 		multi.addSingleDate(drei);
 		
-		dateList.add(vier.getSingleDate());	
+		dateList.add(vier);	
 		dateList.add(multi.getMultiDateLabel());
-		dateList.add(fuenf.getSingleDate());	
+		dateList.add(fuenf);	
 
 		
 		FlowPanel buttonBar = new FlowPanel();
@@ -130,18 +134,11 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		begin.add(beginText);
 		begin.setCellVerticalAlignment(beginText, HasVerticalAlignment.ALIGN_MIDDLE);
 		
-		final DateBox dateBegin = new DateBox();
 		dateBegin.setFormat(new DateBox.DefaultFormat(dateFormat));
 		begin.add(dateBegin);
 		begin.setCellVerticalAlignment(dateBegin, HasVerticalAlignment.ALIGN_MIDDLE);
 		
-		DateTimeFormat sdfToTime = DateTimeFormat.getFormat( "HH:mm" );
-		Date defaultTime = new Date();
-		defaultTime= sdfToTime.parse("00:00");
 		
-		final HourMinutePicker timeBegin = new HourMinutePicker(PickerFormat._24_HOUR);
-		//timeBegin.setWidth("35px");
-		//timeBegin.setMaxLength(5);
 		begin.add(timeBegin);
 		begin.setCellVerticalAlignment(timeBegin, HasVerticalAlignment.ALIGN_MIDDLE);
 		
@@ -168,14 +165,11 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		end.add(endText);
 		end.setCellVerticalAlignment(endText, HasVerticalAlignment.ALIGN_MIDDLE);
 		
-		DateBox dateEnd = new DateBox();
 		dateEnd.setFormat(new DateBox.DefaultFormat(dateFormat));
 		end.add(dateEnd);
 		end.setCellVerticalAlignment(dateEnd, HasVerticalAlignment.ALIGN_MIDDLE);
 		
-		final HourMinutePicker timeEnd = new HourMinutePicker(PickerFormat._24_HOUR);
-		//timeEnd.setWidth("35px");
-		//timeEnd.setMaxLength(5);
+		
 		timeEnd.setVisible(true);
 		timeEnd.setTitle("endTime"); 
 		end.add(timeEnd.asWidget());
@@ -199,9 +193,19 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 				try {
 					Date beginTmp = new Date(dateBegin.getValue().getTime() + (timeBegin.getMinutes()*60000));
 					Date endTmp = new Date(dateBegin.getValue().getTime() + (timeEnd.getMinutes()*60000));
-					SingleDate addTermin = new SingleDate(dateBegin.getValue(),beginTmp, endTmp);
+					final SingleDate addTermin = new SingleDate(dateBegin.getValue(),beginTmp, endTmp);
+					/*
+					addTermin.checkbox.addClickHandler(new ClickHandler(){
 
-					dateList.add(addTermin.getSingleDate());
+						@Override
+						public void onClick(ClickEvent event) {
+							// TODO Auto-generated method stub
+							setDateClick(addTermin);
+						}
+						
+					});
+*/
+					dateList.add(addTermin);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();	
@@ -209,7 +213,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 				
 			}
 		});
-		
 		
 		// Checkbox WIEDERHOLEN
 		FlowPanel repeat = new FlowPanel();
@@ -330,6 +333,20 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		return resource;
 	}
 	
+	public void setDateClick(DateParent date){
+		dateList.setActive(date);
+		if(dateList.getDate(0).getType().equals("SingleDate")){
+			SingleDate tmpSingle = (SingleDate) dateList.getDate(0);
+			dateBegin.setValue(tmpSingle.getDateObject());
+			dateEnd.setValue(tmpSingle.getDateObject());
+
+			timeBegin.setTime("suffix", tmpSingle.getBeginTime().getHours(), tmpSingle.getBeginTime().getMinutes());
+			timeEnd.setTime("suffix", tmpSingle.getEndTime().getHours(), tmpSingle.getEndTime().getMinutes());
+		}else{
+			MultiDate tmpMulti = (MultiDate) dateList.getDate(0);
+		}
+		
+	}
 	
 	@Override
 	public void updateContent() {

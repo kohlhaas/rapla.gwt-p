@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MultiDate {
+public class MultiDate implements DateParent{
 	private List<SingleDate> singleDates = new ArrayList<>();
 	private FlowPanel main = new FlowPanel();
 	private DisclosurePanel singleDatesContainer = new DisclosurePanel();
@@ -35,7 +35,7 @@ public class MultiDate {
 		
 		for (Iterator<SingleDate> iter = singleDates.iterator(); iter.hasNext(); ) {
 			SingleDate sd = iter.next();
-			helper.add(sd.getSingleDate());
+			helper.add(sd);
 		}
 		// a DisclosurePanel can only contain two Widgets
 		singleDatesContainer.add(helper);
@@ -56,5 +56,11 @@ public class MultiDate {
 		main.add(singleDatesContainer);
 
 		return main;
+	}
+
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return "MultiDate";
 	}
 }

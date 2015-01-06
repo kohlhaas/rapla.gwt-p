@@ -1,15 +1,19 @@
 package org.rapla.client.plugin.view.resoursedates;
 
 import java.text.ParseException;
+
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+
 import java.util.Date;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 
-public class SingleDate implements Comparable<SingleDate>{
+public class SingleDate extends Composite implements Comparable<SingleDate>, DateParent{
 	
 	private String date, begin, end;
 	private double vorlesungsStunden;
@@ -17,6 +21,7 @@ public class SingleDate implements Comparable<SingleDate>{
 	private DateTimeFormat sdfToDate = DateTimeFormat.getFormat("dd.MM.yyyy");
 	private DateTimeFormat sdfToTime = DateTimeFormat.getFormat( "HH:mm" );
 	private Date dateObject, beginTime, endTime;
+	public CheckBox checkbox;
 	
 	public SingleDate(){
 		
@@ -34,6 +39,9 @@ public class SingleDate implements Comparable<SingleDate>{
 		dateObject = sdfToDate.parse(date);
 		beginTime = sdfToTime.parse(begin);
 		endTime = sdfToTime.parse(begin);
+		
+		createSingleDate();
+		initWidget(main);
 	}
 	
 	public SingleDate(Date date, Date begin, Date end) throws ParseException {
@@ -45,7 +53,9 @@ public class SingleDate implements Comparable<SingleDate>{
 		this.begin = sdfToTime.format(begin);
 		this.end = sdfToTime.format(end);
 		
-		this.vorlesungsStunden = (((end.getTime() - begin.getTime()) / 60000 ) / 45);		
+		this.vorlesungsStunden = (((end.getTime() - begin.getTime()) / 60000 ) / 45);
+		createSingleDate();
+		initWidget(main);
 	}
 	
 	private void createSingleDate() {
@@ -69,6 +79,9 @@ public class SingleDate implements Comparable<SingleDate>{
 		infos.add(dateLabel);
 		infos.add(infoLabel);
 		
+		//checkbox.setVisible(false);
+		
+		//main.add(checkbox);
 		main.add(element);
 		main.add(times);
 		main.add(infos);
@@ -88,11 +101,12 @@ public class SingleDate implements Comparable<SingleDate>{
 	public String getDate() {
 		return date;
 	}
-	public FlowPanel getSingleDate() {
+	/*
+	 * public FlowPanel getSingleDate() {
 		this.createSingleDate();
 		return main;
 	}
-
+*/
 
 
 	@Override
@@ -113,6 +127,43 @@ public class SingleDate implements Comparable<SingleDate>{
 		back = 1;
 		}
 		return back;
+	}
+
+
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return "SingleDate";
+	}
+
+
+	public Date getDateObject() {
+		return dateObject;
+	}
+
+
+	public void setDateObject(Date dateObject) {
+		this.dateObject = dateObject;
+	}
+
+
+	public Date getBeginTime() {
+		return beginTime;
+	}
+
+
+	public void setBeginTime(Date beginTime) {
+		this.beginTime = beginTime;
+	}
+
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
 	
 }
