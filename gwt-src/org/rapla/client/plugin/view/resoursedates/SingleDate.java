@@ -73,15 +73,12 @@ public class SingleDate extends Composite implements Comparable<SingleDate>, Dat
 		FlowPanel infos = new FlowPanel();
 		Label dateLabel = new Label(date);
 		dateLabel.setStyleName("singleDateDateLabel");
-		Label infoLabel = new Label(vorlesungsStunden + " Vorlesungsstunden");
+		Label infoLabel = new Label(vorlesungsStunden + (vorlesungsStunden == 1 ? " Vorlesungsstunde" : " Vorlesungsstunden"));
 		
 		
 		infos.add(dateLabel);
 		infos.add(infoLabel);
-		
-		//checkbox.setVisible(false);
-		
-		//main.add(checkbox);
+
 		main.add(element);
 		main.add(times);
 		main.add(infos);

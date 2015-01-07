@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -39,6 +40,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 	HourMinutePicker timeBegin = new HourMinutePicker(PickerFormat._24_HOUR);
 	DateBox dateEnd = new DateBox();
 	HourMinutePicker timeEnd = new HourMinutePicker(PickerFormat._24_HOUR);
+	SingleDate addTermin = new SingleDate();
 
 	@Override
 	public Widget createContent() {
@@ -154,7 +156,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		
 		begin.setCellWidth(beginText, "50px");
 		
-		
 		//Datum und Uhrzeit ENDE
 		HorizontalPanel end = new HorizontalPanel();
 		end.setSpacing(4);
@@ -169,9 +170,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		end.add(dateEnd);
 		end.setCellVerticalAlignment(dateEnd, HasVerticalAlignment.ALIGN_MIDDLE);
 		
-		
-		timeEnd.setVisible(true);
-		timeEnd.setTitle("endTime"); 
 		end.add(timeEnd.asWidget());
 		end.setCellVerticalAlignment(timeEnd, HasVerticalAlignment.ALIGN_MIDDLE);
 		
@@ -193,19 +191,21 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 				try {
 					Date beginTmp = new Date(dateBegin.getValue().getTime() + (timeBegin.getMinutes()*60000));
 					Date endTmp = new Date(dateBegin.getValue().getTime() + (timeEnd.getMinutes()*60000));
-					final SingleDate addTermin = new SingleDate(dateBegin.getValue(),beginTmp, endTmp);
-					/*
-					addTermin.checkbox.addClickHandler(new ClickHandler(){
+					addTermin = new SingleDate(dateBegin.getValue(),beginTmp, endTmp);
+					FocusPanel test = new FocusPanel();
+					test.add(addTermin);
+					test.addClickHandler(new ClickHandler(){
 
 						@Override
 						public void onClick(ClickEvent event) {
 							// TODO Auto-generated method stub
 							setDateClick(addTermin);
+							timeBegin.setTime("am", 2, 3);
 						}
 						
 					});
-*/
-					dateList.add(addTermin);
+
+					dateList.add(test);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();	
@@ -215,10 +215,21 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		});
 		
 		// Checkbox WIEDERHOLEN
-		FlowPanel repeat = new FlowPanel();
-		repeat.setStyleName("dateInfoLineLeft");
-		CheckBox cbRepeat = new CheckBox("Wiederholen");
-		repeat.add(cbRepeat);
+		HorizontalPanel repeat = new HorizontalPanel();
+		DisclosurePanel cbRepeat = new DisclosurePanel("Wiederholen");
+		cbRepeat.setStyleName("dateInfoLineLeft");
+		
+		CheckBox daily = new CheckBox("t\u00E4glich");
+		CheckBox weekly = new CheckBox("w\u00F6chtenlich");
+		CheckBox monthly = new CheckBox("monatlich");
+		CheckBox year = new CheckBox("j\u00E4hrlich");
+		
+		repeat.add(daily);
+		repeat.add(weekly);
+		repeat.add(monthly);
+		repeat.add(year);
+		
+		cbRepeat.add(repeat);
 		
 		
 		// Ausgewählte Resourcen
@@ -291,8 +302,8 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		
 		dateInfos.add(begin);
 		dateInfos.add(end);
-		dateInfos.add(repeat);
-		dateInfos.add(new HTML("<hr  style=\"width:99%;\" />"));
+		dateInfos.add(cbRepeat);
+		//dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
 		dateInfos.add(chosenResources);
 		dateInfos.add(addResources);
 		
@@ -335,8 +346,10 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 	
 	public void setDateClick(DateParent date){
 		dateList.setActive(date);
-		if(dateList.getDate(0).getType().equals("SingleDate")){
-			SingleDate tmpSingle = (SingleDate) dateList.getDate(0);
+		int index = dateList.getDateParentIndex(date);
+
+		if(dateList.getDate(index).getType().equals("SingleDate")){
+			SingleDate tmpSingle = (SingleDate) dateList.getDate(index);
 			dateBegin.setValue(tmpSingle.getDateObject());
 			dateEnd.setValue(tmpSingle.getDateObject());
 
@@ -345,6 +358,8 @@ public class ResourceDatesView implements ViewServiceProviderInterface, Resource
 		}else{
 			MultiDate tmpMulti = (MultiDate) dateList.getDate(0);
 		}
+		if (dateList.getDateParentIndex(date) == -1)
+			timeBegin.setTime("am", 2, 3);
 		
 	}
 	

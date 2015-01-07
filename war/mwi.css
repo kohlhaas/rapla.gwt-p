@@ -156,8 +156,8 @@
 }
 .dateInfoLineLeft{
 	margin-top: 7px;
+	height: 4em;
 	float: left;
-	width: 51%;
 	display: block;
 }
 
