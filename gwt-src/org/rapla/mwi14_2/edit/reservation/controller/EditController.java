@@ -1,6 +1,6 @@
 package org.rapla.mwi14_2.edit.reservation.controller;
 
-import org.rapla.mwi14_2.edit.reservation.view.*;
+import org.rapla.mwi14_2.edit.*;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaContext;
