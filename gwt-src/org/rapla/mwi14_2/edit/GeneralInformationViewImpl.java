@@ -3,11 +3,12 @@ package org.rapla.mwi14_2.edit;
 import java.util.Locale;
 
 import org.rapla.client.base.AbstractView;
-import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
-import org.rapla.client.edit.reservation.sample.SampleReservationView;
-import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
+//import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
+//import org.rapla.client.edit.reservation.sample.SampleReservationView;
+//import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.mwi14_2.edit.GeneralInformationView.*;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -17,11 +18,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
  
-public class GeneralInformationViewImpl extends AbstractView<Presenter> implements SampleReservationView<IsWidget> {
+public class GeneralInformationViewImpl extends AbstractView<Presenter> implements GeneralInformationView<IsWidget> {
     
     FlowPanel content;
 
@@ -37,6 +39,30 @@ public class GeneralInformationViewImpl extends AbstractView<Presenter> implemen
     {
         content = new FlowPanel();
         contentRes = new FlowPanel();
+        
+        // Veranstaltungstyp
+        ListBox eventType = new ListBox();
+        eventType.addItem("Vorlesung");
+        content.add(eventType);
+        
+        // Sprachauswahl
+        ListBox language = new ListBox();
+        language.addItem("Deutsch");
+        language.addItem("Englisch");
+        content.add(language);
+        
+        //Studiengang
+        Button course = new Button("Studiengang");
+        course.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent e) {
+                getPresenter().onCourseButtonClicked();
+            }
+        });
+        content.add(course);
+        
+        
+        
         tb = new TextBox();
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
@@ -117,10 +143,10 @@ public class GeneralInformationViewImpl extends AbstractView<Presenter> implemen
     }
 
 
-    @Override
-    public void addSubView(ReservationEditSubView<IsWidget> view) {
-        IsWidget provideContent = view.provideContent();
-        subView.add( provideContent.asWidget());
-    }
+//    @Override
+//    public void addSubView(ReservationEditSubView<IsWidget> view) {
+//        IsWidget provideContent = view.provideContent();
+//        subView.add( provideContent.asWidget());
+//    }
     
 }
