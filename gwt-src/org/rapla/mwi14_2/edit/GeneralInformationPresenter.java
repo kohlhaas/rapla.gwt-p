@@ -3,6 +3,7 @@ package org.rapla.mwi14_2.edit;
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.ReservationController;
+import org.rapla.client.edit.reservation.sample.SampleAppointmentPresenter;
 import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
@@ -29,7 +30,7 @@ public class GeneralInformationPresenter implements ReservationController,Presen
         this.view = view;
         view.setPresenter(this);
         this.appointmentPresenter = appointmentPresenter;
-        view.addSubView( appointmentPresenter.getView());
+//        view.addSubView( appointmentPresenter.getView());
     }
 
     Reservation event;
@@ -41,7 +42,9 @@ public class GeneralInformationPresenter implements ReservationController,Presen
         this.event = event;
         this.isNew = isNew;
         appointmentPresenter.setReservation( event);
+        logger.info("building view now =D");
         view.show(event);
+        logger.info("building view ended");
     }
 
     @Override

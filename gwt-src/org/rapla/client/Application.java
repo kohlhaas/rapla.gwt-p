@@ -29,6 +29,7 @@ import org.rapla.facade.internal.FacadeImpl;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
+import org.rapla.mwi14_2.edit.GeneralInformationPresenter;
 import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 import org.rapla.rest.gwtjsonrpc.common.VoidResult;
@@ -43,7 +44,9 @@ public class Application implements DetailSelectEventHandler, ApplicationView.Pr
 	@Inject ClientFacade facade;
 	@Inject RaplaLocale raplaLocale;
 	@Inject CalendarOptions calendarOptions;
-	@Inject Provider<ReservationController> controller;
+//	@Inject Provider<ReservationController> controller;
+	@Inject Provider<GeneralInformationPresenter> controller;
+
 	EventBus eventBus;
 	ApplicationView mainView;
 	

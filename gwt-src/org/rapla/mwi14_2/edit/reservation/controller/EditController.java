@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by nam on 10.12.14.
- */
+ 
 //have to implement org.rapla.client.edit.reservation.ReservationController --> in Application, if this class wants to be the entry point
 
 @ContractReference(EditControllerContract.class)
@@ -37,3 +37,4 @@ public class EditController extends RaplaComponent  {
 
   }
 }
+*/
