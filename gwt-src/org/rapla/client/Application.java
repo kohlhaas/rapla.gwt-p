@@ -44,8 +44,8 @@ public class Application implements DetailSelectEventHandler, ApplicationView.Pr
 	@Inject ClientFacade facade;
 	@Inject RaplaLocale raplaLocale;
 	@Inject CalendarOptions calendarOptions;
-//	@Inject Provider<ReservationController> controller;
-	@Inject Provider<GeneralInformationPresenter> controller;
+	@Inject Provider<ReservationController> controller;
+//	@Inject Provider<GeneralInformationPresenter> controller;
 
 	EventBus eventBus;
 	ApplicationView mainView;
