@@ -142,10 +142,10 @@ public class SampleReservationViewImpl extends AbstractView<Presenter> implement
     }
 
 
-//    @Override
-//    public void addSubView(ReservationEditSubView<IsWidget> view) {
-//        IsWidget provideContent = view.provideContent();
-//        subView.add( provideContent.asWidget());
-//    }
+    @Override
+    public void addSubView(ReservationEditSubView<IsWidget> view) {
+        IsWidget provideContent = view.provideContent();
+        subView.add( provideContent.asWidget());
+    }
     
 }

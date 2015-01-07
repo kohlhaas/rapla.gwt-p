@@ -17,5 +17,5 @@ public interface SampleReservationView<W> extends View<Presenter> {
 
 		  void show(Reservation event);
 		  void hide();
-		//  void addSubView(ReservationEditSubView<W> view);
+		  void addSubView(ReservationEditSubView<W> view);
 }
