@@ -1,4 +1,4 @@
-package org.rapla.mwi14_2.edit;
+package org.rapla.mwi14_2.edit.gwt;
 
 import java.util.Locale;
 
@@ -8,6 +8,7 @@ import org.rapla.client.base.AbstractView;
 //import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.mwi14_2.edit.GeneralInformationView;
 import org.rapla.mwi14_2.edit.GeneralInformationView.*;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -76,7 +77,7 @@ public class GeneralInformationViewImpl extends AbstractView<Presenter> implemen
         content.add( subView );
 
         {
-            Button button = new Button("Cancel");
+            Button button = new Button("Pencil");
             button.addClickHandler(new ClickHandler() {
                 
                 @Override

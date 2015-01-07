@@ -13,7 +13,7 @@ import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 
-public class GeneralInformationPresenter implements ReservationController,Presenter {
+public class GeneralInformationPresenter implements ReservationController,org.rapla.mwi14_2.edit.GeneralInformationView.Presenter {
 
     @Inject
     Logger logger;
@@ -23,13 +23,13 @@ public class GeneralInformationPresenter implements ReservationController,Presen
     ClientFacade facade;
     
     private GeneralInformationView view;
-    private SampleAppointmentPresenter appointmentPresenter;
+    //private SampleAppointmentPresenter appointmentPresenter;
     
     @Inject
-    public GeneralInformationPresenter(GeneralInformationView view, SampleAppointmentPresenter appointmentPresenter) {
+    public GeneralInformationPresenter(GeneralInformationView view) {
         this.view = view;
         view.setPresenter(this);
-        this.appointmentPresenter = appointmentPresenter;
+       // this.appointmentPresenter = appointmentPresenter;
 //        view.addSubView( appointmentPresenter.getView());
     }
 
@@ -41,7 +41,7 @@ public class GeneralInformationPresenter implements ReservationController,Presen
     public void edit(final Reservation event, boolean isNew) {
         this.event = event;
         this.isNew = isNew;
-        appointmentPresenter.setReservation( event);
+        //appointmentPresenter.setReservation( event);
         logger.info("building view now =D");
         view.show(event);
         logger.info("building view ended");
@@ -89,7 +89,13 @@ public class GeneralInformationPresenter implements ReservationController,Presen
     public boolean isDeleteButtonEnabled() 
     {
         return !isNew;
-    }    
+    }
+
+	@Override
+	public void onCourseButtonClicked() {
+		// TODO Auto-generated method stub
+		
+	}    
     
 
 }
