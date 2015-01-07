@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -104,6 +105,8 @@ public class ReservationController implements GWTReservationController,
 
 	BasicButtonHandler buttonHandler;
 
+	boolean isNew;
+
 	public void setContext(RaplaContext context) {
 		this.context = context;
 	}
@@ -124,70 +127,7 @@ public class ReservationController implements GWTReservationController,
 	public void edit(final Reservation event, boolean isNew)
 			throws RaplaException {
 		reservationTmp = event;
-
-		popupContent = new PopupPanel();
-		popupContent.setGlassEnabled(true);
-		popupContent.setAnimationEnabled(true);
-		popupContent.setAnimationType(PopupPanel.AnimationType.ROLL_DOWN);
-		Integer height = (int) (Window.getClientHeight() * 0.90);
-		Integer width = (int) (Window.getClientWidth() * 0.90);
-		popupContent.setHeight(height.toString() + "px");
-		popupContent.setWidth(width.toString() + "px");
-
-		buttonHandler = new BasicButtonHandler(context, this);
-		// ///
-
-		bar = new TabBar();
-		bar.addTab("Veranstaltungsinfos");
-		bar.addTab("Termine und Resourcen");
-		// bar.setTabEnabled(0, false);
-		bar.selectTab(0);
-
-		cancel = new Button("abbrechen");
-		cancel.setStyleName("cancelButton");
-		cancel.addClickHandler(buttonHandler);
-
-		save = new Button("speichern");
-		save.setStyleName("saveButton");
-		save.addClickHandler(buttonHandler);
-
-		delete = new Button("l\u00F6schen");
-		delete.setStyleName("deleteButton");
-		delete.addClickHandler(buttonHandler);
-
-		layout = new VerticalPanel();
-		tabBarPanel = new FlowPanel();
-		contentPanel = new SimplePanel();
-		buttonsPanel = new FlowPanel();
-
-		tabBarPanel.add(bar);
-
-		bar.addSelectionHandler(new SelectionHandler<Integer>() {
-			public void onSelection(SelectionEvent<Integer> event) {
-				// Let the user know what they just did.
-				// Window.alert("You clicked tab " + event.getSelectedItem());
-				contentPanel.clear();
-				contentPanel.add(event.getSelectedItem() == 0 ? infoView
-						.createContent() : resourceDatesView.createContent());
-			}
-		});
-
-		bar.selectTab(0);
-
-		buttonsPanel.add(cancel);
-		buttonsPanel.add(save);
-		buttonsPanel.add(delete);
-
-		layout.add(buttonsPanel);
-		layout.add(tabBarPanel);
-		layout.add(contentPanel);
-
-		layout.setCellHeight(buttonsPanel, "40px");
-		layout.setCellHeight(tabBarPanel, "50px");
-
-		// //
-		popupContent.add(layout);
-		popupContent.center();
+		this.isNew = isNew;
 
 	}
 
@@ -238,14 +178,16 @@ public class ReservationController implements GWTReservationController,
 		bar.addSelectionHandler(new SelectionHandler<Integer>() {
 			public void onSelection(SelectionEvent<Integer> event) {
 
-				// if (currentView != null){
-				// try {
-				// ReservationController.this.saveTemporaryChanges(currentView);
-				// } catch (RaplaException e) {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
-				// }
-				// }
+				if (currentView != null) {
+					try {
+						ReservationController.this
+								.saveTemporaryChanges(currentView);
+					} catch (RaplaException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				}
 
 				// Let the user know what they just did.
 				// Window.alert("You clicked tab " + event.getSelectedItem());
@@ -300,6 +242,10 @@ public class ReservationController implements GWTReservationController,
 
 		return popupContent;
 
+	}
+	public void saveTemporaryChanges()
+			throws RaplaException {		
+		saveTemporaryChanges(currentView);
 	}
 
 	private void saveTemporaryChanges(ViewServiceProviderInterface currentView)
@@ -477,13 +423,12 @@ public class ReservationController implements GWTReservationController,
 		return eventTypes;
 	}
 
-	public List<String> getResourceTypesNames()
-			throws RaplaException {
+	public List<String> getResourceTypesNames() throws RaplaException {
 
 		return getDynamicTypesNames(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
 	}
-	public List<String> getPersonTypesNames()
-			throws RaplaException {
+
+	public List<String> getPersonTypesNames() throws RaplaException {
 
 		return getDynamicTypesNames(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_PERSON);
 	}
@@ -578,6 +523,22 @@ public class ReservationController implements GWTReservationController,
 
 	public void getContentOfElements() {
 
+	}
+
+	public boolean isNew() {
+		return isNew;
+	}
+
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+
+	public ViewServiceProviderInterface getCurrentView() {
+		return currentView;
+	}
+
+	public void setCurrentView(ViewServiceProviderInterface currentView) {
+		this.currentView = currentView;
 	}
 
 }

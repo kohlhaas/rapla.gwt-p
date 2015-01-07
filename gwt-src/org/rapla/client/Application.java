@@ -180,6 +180,31 @@ public class Application implements ViewSelectionChangedHandler,
 //			root.add(popupContent);
 //			popupContent.add(createContent);
 //			popupContent.center();
+			ClientFacade facade = getClientFacade();
+			try {
+				final Reservation event = facade.newReservation();
+
+				Date selectedDate = facade.today();
+				Date time = new Date(DateTools.MILLISECONDS_PER_MINUTE
+						* getCalendarOptions().getWorktimeStartMinutes());
+				Date startDate = getRaplaLocale().toDate(selectedDate, time);
+				Classification classification = event.getClassification();
+				Attribute first = classification.getType().getAttributes()[0];
+				classification.setValue(first, "Test");
+
+				Date endDate = new Date(startDate.getTime()
+						+ DateTools.MILLISECONDS_PER_HOUR);
+				Appointment newAppointment = facade.newAppointment(startDate,
+						endDate);
+				event.addAppointment(newAppointment);
+				Allocatable[] resources = facade.getAllocatables();
+				event.addAllocatable(resources[0]);
+				reservationController.edit(event, true);
+			} catch (RaplaException e1) {
+				// TODO exception handling
+				logger.log(Level.SEVERE, e1.getMessage(), e1);
+			}
+			
 		
 
 			reservationController.setFacade(getClientFacade());
