@@ -202,7 +202,7 @@ public class ReservationController implements GWTReservationController,
 								: ViewEnumTypes.RESOURCEDATESVIEW_DESKTOP));
 				contentPanel.add(currentView.createContent());
 
-				if (currentView instanceof InfoViewInterface) {
+				if (currentView != null && currentView instanceof InfoViewInterface) {
 					currentView = (InfoViewInterface) currentView;
 					try {
 						((InfoViewInterface) currentView)
@@ -251,31 +251,33 @@ public class ReservationController implements GWTReservationController,
 	private void saveTemporaryChanges(ViewServiceProviderInterface currentView)
 			throws RaplaException {
 
-		reservationName = ((InfoViewInterface) currentView).getTitelInput()
-				.getText();
-
-		DynamicType[] types;
-		types = ReservationController.this.getFacade().getDynamicTypes(
-				DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
-
-		// String text = reservationName;
-		// List<DynamicType> eventTypes = new ArrayList<DynamicType>();
-		Classification classification = reservationTmp.getClassification();
-
-		// Set new Titel/Name for reservationTmp
-		Attribute first = classification.getType().getAttributes()[0];
-		classification.setValue(first, reservationName);
-
-		// Attribute first = classification.getType().getAttributes()[0];
-		List<String> items = new ArrayList<String>();
-		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
-		User user = getFacade().getUser();
-
-		Classification classificationTmp;
-
-		String key = null;
+		
 
 		if (currentView instanceof InfoViewInterface) {
+			
+			reservationName = ((InfoViewInterface) currentView).getTitelInput()
+					.getText();
+
+			DynamicType[] types;
+			types = ReservationController.this.getFacade().getDynamicTypes(
+					DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+
+			// String text = reservationName;
+			// List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+			Classification classification = reservationTmp.getClassification();
+
+			// Set new Titel/Name for reservationTmp
+			Attribute first = classification.getType().getAttributes()[0];
+			classification.setValue(first, reservationName);
+
+			// Attribute first = classification.getType().getAttributes()[0];
+			List<String> items = new ArrayList<String>();
+			List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+			User user = getFacade().getUser();
+
+			Classification classificationTmp;
+
+			String key = null;
 
 			for (DynamicType type : types) {
 				if (PermissionContainer.Util.canCreate(type, user))
