@@ -17,8 +17,8 @@ import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
-import org.rapla.framework.internal.RaplaJDKLoggingAdapter;
 import org.rapla.framework.internal.RaplaLocaleImpl;
+import org.rapla.framework.logger.internal.RaplaJDKLoggingAdapter;
 
 @RunWith(JukitoRunner.class)
 public class SampleReservationPresenterTest {
