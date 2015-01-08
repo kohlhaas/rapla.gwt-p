@@ -17,13 +17,14 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
  
 public class SampleReservationViewImpl extends AbstractView<Presenter> implements SampleReservationView<IsWidget> {
     
-    FlowPanel content;
+	FlowPanel content;
 
     FlowPanel contentRes;
     
@@ -37,6 +38,30 @@ public class SampleReservationViewImpl extends AbstractView<Presenter> implement
     {
         content = new FlowPanel();
         contentRes = new FlowPanel();
+        
+        // Veranstaltungstyp
+        ListBox eventType = new ListBox();
+        eventType.addItem("Vorlesung");
+        content.add(eventType);
+        
+        // Sprachauswahl
+        ListBox language = new ListBox();
+        language.addItem("Deutsch");
+        language.addItem("Englisch");
+        content.add(language);
+        
+        //Studiengang
+        Button course = new Button("Studiengang");
+        course.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent e) {
+                getPresenter().onCourseButtonClicked();
+            }
+        });
+        content.add(course);
+        
+        
+        
         tb = new TextBox();
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
@@ -50,7 +75,7 @@ public class SampleReservationViewImpl extends AbstractView<Presenter> implement
         content.add( subView );
 
         {
-            Button button = new Button("Cancel");
+            Button button = new Button("Kala");
             button.addClickHandler(new ClickHandler() {
                 
                 @Override

@@ -14,7 +14,7 @@ import org.rapla.framework.logger.Logger;
 
 public class SampleReservationPresenter implements ReservationController,Presenter {
 
-    @Inject
+	@Inject
     Logger logger;
     @Inject
     RaplaLocale raplaLocale;
@@ -25,7 +25,7 @@ public class SampleReservationPresenter implements ReservationController,Present
     private SampleAppointmentPresenter appointmentPresenter;
     
     @Inject
-    public SampleReservationPresenter(SampleReservationView view, SampleAppointmentPresenter appointmentPresenter) {
+    public SampleReservationPresenter(SampleReservationView view) {
         this.view = view;
         view.setPresenter(this);
         this.appointmentPresenter = appointmentPresenter;
@@ -41,7 +41,9 @@ public class SampleReservationPresenter implements ReservationController,Present
         this.event = event;
         this.isNew = isNew;
         appointmentPresenter.setReservation( event);
+        logger.info("building view now =D");
         view.show(event);
+        logger.info("building view ended");
     }
 
     @Override
@@ -86,7 +88,14 @@ public class SampleReservationPresenter implements ReservationController,Present
     public boolean isDeleteButtonEnabled() 
     {
         return !isNew;
-    }    
+    }
+
+	@Override
+	public void onCourseButtonClicked() {
+		// TODO Auto-generated method stub
+		
+	}    
     
+
 
 }
