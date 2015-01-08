@@ -84,6 +84,11 @@ public class SampleReservationViewImpl extends AbstractView<Presenter> implement
             });
             content.add(button);
         }
+        
+        {
+        	Button button2 = new Button("ANLEGEN");
+        	content.add(button2);
+        }
         mapFromReservation( event );
         tb.addChangeHandler( new ChangeHandler() {
             
