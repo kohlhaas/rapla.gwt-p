@@ -1,7 +1,10 @@
 package org.rapla.client.plugin.view.resoursedates;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.factory.ResourceDatesInterface;
@@ -34,6 +37,11 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 public class ResourceDatesView implements ViewServiceProviderInterface,
 		ResourceDatesInterface {
 
+	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
+	
+	private ArrayList<List<String>> reservedResources = new ArrayList<List<String>>();
+		
+	
 	FlowPanel mainContent;
 	FlowPanel dateList;
 	FlowPanel buttonBar;
@@ -51,7 +59,8 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	HourMinutePicker timeEnd;
 
 	Tree resourceTree;
-
+	
+	CheckBox cbWholeDay;
 	CheckBox cbRepeat;
 
 	FlowPanel chosenResources;
@@ -154,14 +163,37 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		begin.setCellVerticalAlignment(timeBegin,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
-		Label beginTimeText = new Label("Uhr");
+		final Label beginTimeText = new Label("Uhr");
 		beginTimeText.setStyleName("beschriftung");
 		begin.add(beginTimeText);
 		begin.setCellVerticalAlignment(beginTimeText,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
-		CheckBox cbWholeDay = new CheckBox("ganzt\u00E4gig");
+		final Label endTimeText = new Label("Uhr");
+		
+		cbWholeDay = new CheckBox("ganzt\u00E4gig");
 		begin.add(cbWholeDay);
+		cbWholeDay.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+
+				if(((CheckBox) event.getSource()).getValue()){
+					timeBegin.setVisible(false);
+					timeEnd.setVisible(false);
+					beginTimeText.setVisible(false);
+					endTimeText.setVisible(false);
+				}else{
+					timeBegin.setVisible(true);
+					timeEnd.setVisible(true);
+					beginTimeText.setVisible(true);
+					endTimeText.setVisible(true);
+				}
+				
+			}
+			
+		});
+		
 		begin.setCellVerticalAlignment(cbWholeDay,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
@@ -190,7 +222,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		end.add(timeEnd.asWidget());
 		end.setCellVerticalAlignment(timeEnd, HasVerticalAlignment.ALIGN_MIDDLE);
 
-		Label endTimeText = new Label("Uhr");
+
 		endTimeText.setStyleName("beschriftung");
 		end.add(endTimeText);
 		end.setCellVerticalAlignment(endTimeText,
@@ -238,25 +270,26 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 		cbRepeat.add(repeat);
 
-		// Ausgewählte Resourcen
+		// Ausgewählte Ressourcen laden
 		chosenResources = new FlowPanel();
 		chosenResources.setStyleName("dateInfoLineComplete");
 
-		FlowPanel resource1 = createResourceContainer("Kurse");
-		FlowPanel resource2 = createResourceContainer("Raum");
-		FlowPanel resource3 = createResourceContainer("Professor");
+		// Ausgewählte Resourcen laden
+		loadChosenResources();
+		
 
-		resource1.add(createResource("WWI12B1"));
-		resource2.add(createResource("B353"));
-		resource3.add(createResource("Roland Kuestermann"));
-
-		Label headerChosenRes = new Label("Ausgewaehlte Resourcen:");
+		Label headerChosenRes  = new Label("Ausgewaehlte Ressourcen:");
 		headerChosenRes.setStyleName("beschriftung");
-
+		
+		chosenResources.setStyleName("dateInfoLineComplete");
 		chosenResources.add(headerChosenRes);
-		chosenResources.add(resource1);
-		chosenResources.add(resource2);
-		chosenResources.add(resource3);
+		
+		//-------
+		
+		
+		for(FlowPanel helpList: getPanelResourceContainer()){
+			chosenResources.add(helpList);
+		}
 
 		DisclosurePanel addResources = new DisclosurePanel(
 				"Resourcen Hinzufuegen");
@@ -268,38 +301,17 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		// Baumstruktur für verfügbare Resourcen
 		resourceTree = new Tree();
 
-		TreeItem rooms = new TreeItem();
-		rooms.setText("Raeume");
-
-		TreeItem rooms1 = new TreeItem();
-		TreeItem rooms2 = new TreeItem();
-
-		rooms1.setText("A");
-		rooms2.setText("B");
-
-		TreeItem room1_1 = new TreeItem(new CheckBox("305"));
-		TreeItem room1_2 = new TreeItem(new CheckBox("306"));
-		TreeItem room1_3 = new TreeItem(new CheckBox("307"));
-		rooms1.addItem(room1_1);
-		rooms1.addItem(room1_2);
-		rooms1.addItem(room1_3);
-
-		TreeItem room2_1 = new TreeItem(new CheckBox("201"));
-		TreeItem room2_2 = new TreeItem(new CheckBox("202"));
-		TreeItem room2_3 = new TreeItem(new CheckBox("202"));
-		rooms2.addItem(room2_1);
-		rooms2.addItem(room2_2);
-		rooms2.addItem(room2_3);
-
-		rooms.addItem(rooms1);
-		rooms.addItem(rooms2);
-
-		resourceTree.addItem(rooms);
-
-		chooseContainer.add(resourceTree);
-		chooseContainer.setWidth(width * 0.85 + "px");
-
-		addResources.setContent(chooseContainer);
+		// Auswählbare Ressourcen laden
+		loadResourcesToChoose();
+		
+		createResourceTree();
+		
+			
+	    chooseContainer.add(resourceTree);
+	    chooseContainer.setWidth(width  * 0.85 + "px");
+		
+	    addResources.setContent(chooseContainer);
+		
 
 		dateInfos.add(begin);
 		dateInfos.add(end);
@@ -315,34 +327,276 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		return mainContent;
 	}
 
-	private FlowPanel createResourceContainer(String name) {
 
+
+	private void createResourceTree() {
+		
+		for(List<String> hList : toBeReservedResources){
+			String header = hList.get(0);
+			hList.remove(0);
+			Collections.sort(hList);
+			hList.add(0, header);
+		}
+	
+		
+		// Create ResourceTree
+		for(int i=0; i<toBeReservedResources.size();i++){
+			resourceTree.addItem(new TreeItem());
+			resourceTree.getItem(i).setText(toBeReservedResources.get(i).get(0).toString());
+			resourceTree.getItem(i).setTitle(toBeReservedResources.get(i).get(0).toString());
+			for(int j=1;j<toBeReservedResources.get(i).size();j++){
+				
+				resourceTree.getItem(i).addItem(createCB(toBeReservedResources.get(i).get(j).toString(),toBeReservedResources.get(i).get(0).toString()));
+
+			}
+		}
+		
+	}
+
+	private void loadChosenResources() {
+		
+		
+		List<String> rooms = new ArrayList<String>();
+		rooms.add("Raeume");
+		rooms.add("A 204");
+		
+		List<String> cources = new ArrayList<String>();
+		cources.add("Kurse");
+		cources.add("WWI12B1");
+		
+		List<String> profs = new ArrayList<String>();
+		profs.add("Professoren");
+		profs.add("Kuestermann");		
+		
+		
+	    reservedResources.add(rooms);
+	    reservedResources.add(profs);
+	    reservedResources.add(cources);
+		
+		
+	}
+
+	private void loadResourcesToChoose() {
+		//Ressourcen
+		
+		List<String> room = new ArrayList<String>();
+		room.add("Raeume");
+		room.add("A 204");
+		room.add("A 206");
+		room.add("A 205");
+		room.add("A 203");
+		
+		List<String> cource = new ArrayList<String>();
+		cource.add("Kurse");
+		cource.add("WWI12B1");
+		cource.add("WWI12B2");
+		cource.add("WWI12B3");
+		cource.add("WWI12B4");
+		
+		List<String> prof = new ArrayList<String>();
+		prof.add("Professoren");
+		prof.add("Kuestermann");
+		prof.add("Freytag");
+		prof.add("Daniel");
+		prof.add("Wengler");		
+		
+		
+		toBeReservedResources.add(room);
+		toBeReservedResources.add(cource);
+		toBeReservedResources.add(prof);
+		
+	}
+
+	private FlowPanel createResourceContainer(String name){
+		
 		FlowPanel container = new FlowPanel();
 		container.setStyleName("resourceContainer");
 		Label titel = new Label(name);
 		titel.setStyleName("beschriftung");
 		titel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		container.add(titel);
-
+		
 		return container;
 	}
-
-	private FlowPanel createResource(String name) {
-
+	
+	private FlowPanel createResource(String name, String categorie){
+		
+		final String value = name;
+		final String container = categorie;
 		FlowPanel resource = new FlowPanel();
 		resource.setStyleName("resource");
-
+		resource.setTitle(name);
+		
 		Label titel = new Label(name);
 		titel.setStyleName("resourceTitel");
 		resource.add(titel);
-
+		
 		Button cross = new Button("X");
 		cross.setStyleName("closeCross");
-		resource.add(cross);
 
+		resource.add(cross);
+		cross.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				
+		
+				deleteFromResources(value, container);
+				refreshResourceContainer();
+				refreshResourceTree();
+			}
+			
+		});
+				
 		return resource;
 	}
+	
+	private void refreshResourceTree() {
+		resourceTree.clear();
+		createResourceTree();
+		
+	}
 
+	private void deleteFromResources(String rText, String cText) {
+		
+		for(List<String> helperList : reservedResources){
+			
+			if(helperList.get(0).equals(cText)){
+				for(int i=0;i<helperList.size();i++){
+					if(helperList.get(i).equals(rText)){
+						helperList.remove(i);
+						break;
+					}
+				}
+
+			}
+		}
+		
+		for(List<String> helperList : reservedResources){
+			if(helperList.size()<=1){
+				reservedResources.remove(helperList);
+			}
+		}
+		
+		for(List<String> hList : reservedResources){
+			String header = hList.get(0);
+			hList.remove(0);
+			Collections.sort(hList);
+			hList.add(0, header);
+		}
+		
+	}
+
+	private CheckBox createCB(String name, String categorie){
+		
+		CheckBox helper = new CheckBox(name);
+		helper.setTitle(categorie);
+		helper.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+				CheckBox clicker = (CheckBox) event.getSource();
+				if(clicker.getValue()){
+					addToResources(clicker.getText(), clicker.getTitle());
+					refreshResourceContainer();
+				}else{
+					deleteFromResources(clicker.getText(), clicker.getTitle());
+					refreshResourceContainer();
+				}
+
+			}
+			
+		});
+		
+		if(isChosenResource(name, categorie)){
+			helper.setValue(true);
+		}
+		
+		return helper;
+		
+	}
+	
+	
+	private boolean isChosenResource(String rtext, String ctext) {
+		
+		for(List<String> hList : reservedResources){
+			if(hList.get(0).equals(ctext)){
+				for(String hString : hList){
+					if(hString.equals(rtext)){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+		
+		
+	}
+
+	
+	private void refreshResourceContainer() {
+		
+		deleteResourceContainer();
+		
+		for(List<String> hList : reservedResources){
+			String header = hList.get(0);
+			hList.remove(0);
+			Collections.sort(hList);
+			hList.add(0, header);
+		}
+		
+		for(FlowPanel helpList: getPanelResourceContainer()){
+			chosenResources.add(helpList);
+		}
+
+	}
+
+	private void deleteResourceContainer() {
+		
+		int i = 1;
+		while( i < chosenResources.getWidgetCount()){
+			chosenResources.remove(i);
+		}
+	}
+
+	private void addToResources(String rText, String rCategorie) {
+		
+		boolean added = false;
+		for(List<String> helperList : reservedResources){
+			
+			if(helperList.get(0).equals(rCategorie)){
+				helperList.add(rText);
+				added = true;
+			}
+		}
+		
+		if(!added){
+			List<String> list = new ArrayList<String>();
+			list.add(rCategorie);
+			list.add(rText);
+			reservedResources.add(list);
+		}
+		
+		
+		
+	}
+	
+
+	private List<FlowPanel> getPanelResourceContainer(){
+		
+		List<FlowPanel> container = new ArrayList<FlowPanel>();
+		
+		for(int i=0;i<reservedResources.size();i++){
+			container.add(createResourceContainer(reservedResources.get(i).get(0).toString()));
+			for(int j=1;j<reservedResources.get(i).size();j++){
+				container.get(i).add(createResource(reservedResources.get(i).get(j).toString(), reservedResources.get(i).get(0).toString()));
+			}
+		}
+
+		return container;
+	}	
+	
 	@Override
 	public void updateContent() {
 		// TODO Auto-generated method stub
@@ -451,6 +705,14 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 	public void setButtonPlus(Label buttonPlus) {
 		this.buttonPlus = buttonPlus;
+	}
+
+	public ArrayList<List<String>> getToBeReservedResources() {
+		return toBeReservedResources;
+	}
+
+	public void setToBeReservedResources(ArrayList<List<String>> toBeReservedResources) {
+		this.toBeReservedResources = toBeReservedResources;
 	}
 
 }
