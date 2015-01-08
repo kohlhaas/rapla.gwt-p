@@ -210,7 +210,7 @@ public class ReservationController implements GWTReservationController,
 										.getEventTypes());
 						((InfoViewInterface) currentView)
 								.setDynamicFields(ReservationController.this
-										.getDynamicFields());
+										.getDynamicFields("reservation2"));
 
 					} catch (RaplaException e) {
 						// TODO Auto-generated catch block
@@ -385,7 +385,7 @@ public class ReservationController implements GWTReservationController,
 								.getEventTypes());
 				((InfoViewInterface) currentView)
 						.setDynamicFields(ReservationController.this
-								.getDynamicFields());
+								.getDynamicFields("reservation2"));
 
 			} catch (RaplaException e) {
 				// TODO Auto-generated catch block
@@ -456,72 +456,135 @@ public class ReservationController implements GWTReservationController,
 		return items;
 	}
 
-	public List<String> getEventTypes() throws RaplaException {
+	
 
+	public List<String> getEventTypes() throws RaplaException{
+		
 		DynamicType[] types;
 		List<String> items = new ArrayList<String>();
-		types = getFacade().getDynamicTypes(
-				DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+		types = getFacade().getDynamicTypes( DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
 		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
 		User user = getFacade().getUser();
-		for (DynamicType type : types) {
-			if (PermissionContainer.Util.canCreate(type, user))
-				eventTypes.add(type);
+		for ( DynamicType type: types)
+		{
+		if (PermissionContainer.Util.canCreate(type, user))
+		eventTypes.add(type);
+		}
+
+		for (int i = 0; i < eventTypes.size(); i++) 
+		{
+		String name = eventTypes.get(i).getName(GWTRaplaLocale.getLocale());
+		items.add(name);
+		} ;
+		
+		
+		return items;
+	}
+	
+	public Attribute[] getDynamicFields(String eventKey) throws RaplaException{
+
+		AttributeImpl attr = new AttributeImpl();
+		
+		DynamicTypeImpl type = new DynamicTypeImpl();
+		
+		
+		
+		DynamicType[] types;
+		types = ReservationController.this.getFacade().getDynamicTypes(
+				DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+		
+		List<String> items = new ArrayList<String>();
+		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		User user = getFacade().getUser();
+
+		
+
+		String key = eventKey;
+
+		for (DynamicType typen : types) {
+			if (PermissionContainer.Util.canCreate(typen, user))
+				eventTypes.add(typen);
 		}
 
 		for (int i = 0; i < eventTypes.size(); i++) {
-			String name = eventTypes.get(i).getName(GWTRaplaLocale.getLocale());
+			String name = eventTypes.get(i).getName(
+					GWTRaplaLocale.getLocale());
 			items.add(name);
-		}
-		;
-
-		return items;
-	}
-
-	public List<String> getDynamicFields() throws RaplaException {
-
-		// Allocatable[] allocatables = getFacade().getAllocatables();
-		// List<String> studiengang = new ArrayList<String>();
-		// for(int i = 0; i < allocatables.length; i ++){
-		// String name = allocatables[i].getName(GWTRaplaLocale.getLocale());
-		// studiengang.add(name);
-		// }
-		//
-		// TreeAllocatableSelection test = new
-		// TreeAllocatableSelection(context);
-		// Collection<Allocatable> studiengang2= test.getAllocatables();
-
-		// AllocatableImpl allocate = new AllocatableImpl(new Date(), new
-		// Date());
-		// String[] keys = allocate.getAnnotationKeys();
-
-		DynamicType[] types = getFacade().getDynamicTypes(
-				DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
-		List<String> test = new ArrayList<String>();
-		AttributeImpl attr = new AttributeImpl();
-		for (int i = 0; i < types.length; i++) {
-			// test.add(types[i].toString());
-			// String key = types[i].getKey();
-			Attribute[] attributes = types[i].getAttributes();
-
-			for (int j = 0; j < attributes.length; j++) {
-
-				// String constraints = (String)
-				// attributes[j].getConstraint(attributes[j].getKey());
-				String[] constraints = attributes[j].getConstraintKeys();
-
-				for (int k = 0; k < attributes[j].getConstraintKeys().length; k++) {
-					test.add(constraints[k]);
-
-				}
-
+			if (eventTypes
+					.get(i)
+					.getName(GWTRaplaLocale.getLocale())
+					.equalsIgnoreCase(
+							((InfoViewInterface) currentView)
+									.getSelectedEventType())) {
+				key = eventTypes.get(i).getKey();
 			}
-
-			// test.add(types[i].toString());
 		}
 
-		return test;
+		
+		type.setKey(key);
+		
+		
+//		
+//		
+//		ArrayList<Attributes> attributes = new ArrayList<Attributes>();
+//		
+//
+		Attribute[] attributes = {new AttributeImpl()}; 
+		
+		for(int i = 0; i < type.getAttributes().length; i++){
+//
+			attributes[i] = type.getAttributes()[i];
+			attributes[6] = new AttributeImpl(); 
+//				
+//			attributes.add(i, new Attributes(type.getAttributes()[i].toString()));
+//				
+//				for(int j = 0; j < type.getAttributes()[i].getConstraintKeys().length; j++ ){
+//				
+//				attributes.get(i).constraintKeys.add((type.getAttributes()[i].getConstraintKeys()[j]));
+//				}
+//		
+//				
+		}
+//		
+				
+		
+		return attributes;	
 	}
+	
+	public String[] getConstraintKeys(Attribute attribute) throws RaplaException{
+		
+	
+		
+		String[] constraintKeys = null; 
+		
+		for(int i = 0; i < attribute.getConstraintKeys().length; i++){
+			constraintKeys[i] = attribute.getConstraintKeys()[i];
+		}
+		
+		return constraintKeys;
+	}
+
+//	public class Attributes{
+//	     
+//		ArrayList constraintKeys; 
+//		String name;
+//		
+//		public Attributes(String name){
+//			this.name = name; 
+//		}
+//		
+//		public String getName(){
+//			return this.name;
+//		}
+//		
+//		public void setName(String name){
+//			this.name = name; 
+//		}
+//		
+//		
+//		
+//	}
+
 
 	public void getContentOfElements() {
 

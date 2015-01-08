@@ -10,6 +10,7 @@ import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.factory.InfoViewInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
 import org.rapla.entities.domain.Allocatable;
+import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.framework.RaplaException;
 import org.rapla.gui.internal.TreeAllocatableSelection;
 
@@ -211,6 +212,7 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 
 	}
 
+
 	@Override
 	public void setEventTypes(List<String> eventTypes) {
 
@@ -227,16 +229,26 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 	}
 
 	@Override
-	public void setDynamicFields(List<String> studiengang) {
+	public void setDynamicFields(Attribute[] attributes) {
 
-		//String [] studiengang2 = (String[]) studiengang.toArray(); 
-		for(int i = 0; i < studiengang.size(); i++){
-			resources.addTextItem(studiengang.get(i));
+		
+		for(int i = 0; i < attributes.length; i++){
 			
-			
+		String name =   attributes[i].toString();
+		
+		eventTypesListBox.addItem(name);
+				
 		}
+		
+	}
+	
+	public void setConstraintKeys(String[] constraintKeys){
+		
+		
+	}
+
 		
 	}
 
 
-}
+

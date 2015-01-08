@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.rapla.entities.domain.Allocatable;
+import org.rapla.entities.dynamictype.Attribute;
 
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -16,7 +17,7 @@ public void setEventTypes(List<String> eventTypes);
 
 public String getSelectedEventType();
 
-public void setDynamicFields(List<String> dynamicFields);
+public void setDynamicFields(Attribute[] attributes);
 
 //~~
 public Tree getResources();
