@@ -1,5 +1,6 @@
 package org.rapla.client.edit.reservation.sample;
 
+import java.util.Date;
 import java.util.List;
 
 import org.rapla.client.base.View;
@@ -9,7 +10,7 @@ import org.rapla.entities.domain.Appointment;
 public interface SampleAppointmentView<W> extends View<Presenter>, ReservationEditSubView<W> {
     public interface Presenter
     {
-        void newAppButtonPressed();   
+        void newAppButtonPressed(Date startDate, Date endDate);
     }
 
     void show(List<Appointment> asList);
