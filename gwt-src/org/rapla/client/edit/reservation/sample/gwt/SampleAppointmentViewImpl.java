@@ -62,6 +62,24 @@ public class SampleAppointmentViewImpl extends AbstractView<Presenter> implement
         update(appointments);
     }
 
+
+    public void update(List<Appointment> appointments) {
+        appointmentContent.clear();
+        StringBuilder builder = new StringBuilder();
+        boolean isFirst = true;
+        for (Appointment app : appointments) {
+            String shortSummary = formatter.getShortSummary(app);
+            if (!isFirst) {
+                builder.append(", ");
+            } else {
+                isFirst = false;
+            }
+            builder.append(shortSummary);
+
+        }
+        appointmentContent.add(new Label("Termine: " + builder.toString()));
+    }
+
     private void initEndDatePicker() {
         datePicker2.addValueChangeHandler(new ValueChangeHandler<Date>() {
             public void onValueChange(ValueChangeEvent<Date> event) {
@@ -83,23 +101,6 @@ public class SampleAppointmentViewImpl extends AbstractView<Presenter> implement
             }
         });
         datePicker.setValue(new Date(), true);
-    }
-
-    public void update(List<Appointment> appointments) {
-        appointmentContent.clear();
-        StringBuilder builder = new StringBuilder();
-        boolean isFirst = true;
-        for (Appointment app : appointments) {
-            String shortSummary = formatter.getShortSummary(app);
-            if (!isFirst) {
-                builder.append(", ");
-            } else {
-                isFirst = false;
-            }
-            builder.append(shortSummary);
-
-        }
-        appointmentContent.add(new Label("Termine: " + builder.toString()));
     }
 
     @Override

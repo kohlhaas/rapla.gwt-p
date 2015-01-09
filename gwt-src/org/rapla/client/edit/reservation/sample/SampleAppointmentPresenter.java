@@ -29,8 +29,6 @@ public class SampleAppointmentPresenter implements Presenter {
 
     @Override
     public void newAppButtonPressed(Date startDate, Date endDate) {
-//        Date startDate = new Date(facade.today().getTime() + DateTools.MILLISECONDS_PER_HOUR * 8);
-//        Date endDate = new Date(startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
         Appointment newAppointment;
         try {
             newAppointment = facade.newAppointment(startDate, endDate);

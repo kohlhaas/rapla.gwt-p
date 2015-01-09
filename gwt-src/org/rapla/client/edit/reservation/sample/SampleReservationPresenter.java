@@ -72,7 +72,13 @@ public class SampleReservationPresenter implements ReservationController,Present
         view.hide();
     }
 
-    
+    // TODO: have to add an appropiate action
+    @Override
+    public void onCourseButtonClicked() {
+        logger.info("Course clicked");
+    }
+
+
     @Override
     public void changeEventName(String newName) {
         logger.info("Name changed to " + newName);

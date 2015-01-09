@@ -12,6 +12,7 @@ public interface SampleReservationView<W> extends View<Presenter> {
     void changeEventName(String newEvent);
     boolean isDeleteButtonEnabled();
     void onCancelButtonClicked();
+    void onCourseButtonClicked();
   }
 
   void show(Reservation event);

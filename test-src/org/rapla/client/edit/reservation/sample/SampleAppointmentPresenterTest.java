@@ -59,8 +59,8 @@ public class SampleAppointmentPresenterTest {
     // test if appointment show is called
     verify(editView).show(Arrays.asList(event.getAppointments()));
     
-    // WHEN
-    controller.newAppButtonPressed();
+    // WHEN TODO: have to add an appropiate test
+//    controller.newAppButtonPressed();
     
     // THEN
     // test if newAppointment is called in facade

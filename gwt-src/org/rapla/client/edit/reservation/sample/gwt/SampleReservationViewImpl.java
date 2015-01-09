@@ -26,12 +26,16 @@ public class SampleReservationViewImpl extends AbstractView<Presenter> implement
 
     Panel popup;
 
+    String chosenEventType = "";
+    String chosenLanguage = "";
+
 
     public void show(Reservation event) {
 
 
         content = new FlowPanel();
         contentRes = new FlowPanel();
+
         tb = new TextBox();
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
@@ -47,6 +51,32 @@ public class SampleReservationViewImpl extends AbstractView<Presenter> implement
         content.add(contentRes);
         content.add(subView);
 
+        // Veranstaltungstyp
+        ListBox eventType = new ListBox();
+        eventType.addItem("Vorlesung");
+        chosenEventType = eventType.getSelectedValue();
+        content.add(eventType);
+
+        // Sprachauswahl
+        ListBox language = new ListBox();
+        language.addItem("Deutsch");
+        language.addItem("Englisch");
+        chosenLanguage = eventType.getSelectedValue();
+        content.add(language);
+
+        //Studiengang
+        {
+            Button course = new Button("Studiengang");
+            course.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent e) {
+                    getPresenter().onCourseButtonClicked();
+                }
+            });
+            content.add(course);
+        }
+
+        //Standard Buttons
         {
             Button button = new Button("Cancel");
             button.addClickHandler(new ClickHandler() {
@@ -70,6 +100,7 @@ public class SampleReservationViewImpl extends AbstractView<Presenter> implement
             });
             content.add(button);
         }
+
         {
             Button button = new Button("Speichern");
             button.addClickHandler(new ClickHandler() {
