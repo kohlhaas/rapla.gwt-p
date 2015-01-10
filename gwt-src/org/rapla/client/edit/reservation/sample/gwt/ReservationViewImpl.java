@@ -51,24 +51,26 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         content.add(new Label("Veranstaltung bearbeiten/anlegen"));
 
         content.add(tb);
-
-        content.add(contentRes);
-        content.add(subView);
-
-        // Veranstaltungstyp
+        
+//YS-Teil
+        
+        
+        // Eventtype
         ListBox eventType = new ListBox();
-        eventType.addItem("Vorlesung");
+        eventType.addItem("Lehrveranstaltung");
+        eventType.addItem("Klausur");
+        eventType.addStyleName("Eventtype");
         chosenEventType = eventType.getSelectedValue();
         content.add(eventType);
-
-        // Sprachauswahl
+        
+        // Language selection
         ListBox language = new ListBox();
         language.addItem("Deutsch");
         language.addItem("Englisch");
         chosenLanguage = eventType.getSelectedValue();
         content.add(language);
-
-        //Studiengang
+        
+        //Study course
         {
             Button course = new Button("Studiengang");
             course.addClickHandler(new ClickHandler() {
@@ -79,6 +81,14 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             });
             content.add(course);
         }
+        
+
+        content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
+        content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugefügt
+
+
+               
+        
 
         //Standard Buttons
         {
