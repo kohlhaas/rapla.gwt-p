@@ -11,8 +11,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.datepicker.client.DatePicker;
 import org.rapla.client.base.AbstractView;
-import org.rapla.client.edit.reservation.sample.SampleAppointmentView;
-import org.rapla.client.edit.reservation.sample.SampleAppointmentView.Presenter;
+import org.rapla.client.edit.reservation.sample.AppointmentView;
+import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.AppointmentFormater;
 
@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import java.util.Date;
 import java.util.List;
 
-public class SampleAppointmentViewImpl extends AbstractView<Presenter> implements SampleAppointmentView<IsWidget> {
+public class AppointmentViewImpl extends AbstractView<Presenter> implements AppointmentView<IsWidget> {
 
     @Inject
     AppointmentFormater formatter;

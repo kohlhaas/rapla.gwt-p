@@ -1,6 +1,6 @@
 package org.rapla.client.edit.reservation.sample;
 
-import org.rapla.client.edit.reservation.sample.SampleAppointmentView.Presenter;
+import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.ClientFacade;
@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class SampleAppointmentPresenter implements Presenter {
-    private SampleAppointmentView view;
+public class AppointmentPresenter implements Presenter {
+    private AppointmentView view;
     @Inject
     ClientFacade facade;
     @Inject
@@ -22,7 +22,7 @@ public class SampleAppointmentPresenter implements Presenter {
     private Reservation reservation;
 
     @Inject
-    public SampleAppointmentPresenter(SampleAppointmentView view) {
+    public AppointmentPresenter(AppointmentView view) {
         this.view = view;
         this.view.setPresenter(this);
     }
@@ -47,7 +47,7 @@ public class SampleAppointmentPresenter implements Presenter {
         view.show(asList);
     }
 
-    public SampleAppointmentView getView() {
+    public AppointmentView getView() {
         return view;
     }
 

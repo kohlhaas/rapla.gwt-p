@@ -9,18 +9,16 @@ import com.google.gwt.user.client.ui.*;
 
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
-import org.rapla.client.edit.reservation.sample.SampleReservationView;
-import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
+import org.rapla.client.edit.reservation.sample.ReservationView;
+import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Repeating;
 import org.rapla.entities.domain.Reservation;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Locale;
 
-public class SampleReservationViewImpl extends AbstractView<Presenter> implements SampleReservationView<IsWidget> {
+public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 
     FlowPanel content;
 

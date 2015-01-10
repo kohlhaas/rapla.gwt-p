@@ -11,8 +11,6 @@ import org.jukito.TestSingleton;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.rapla.client.edit.reservation.sample.SampleReservationPresenter;
-import org.rapla.client.edit.reservation.sample.SampleReservationView;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
@@ -21,9 +19,10 @@ import org.rapla.framework.internal.RaplaJDKLoggingAdapter;
 import org.rapla.framework.internal.RaplaLocaleImpl;
 
 @RunWith(JukitoRunner.class)
-public class SampleReservationPresenterTest {
+public class ReservationPresenterTest {
 
-  @Inject SampleReservationPresenter controller;
+  @Inject
+  ReservationPresenter controller;
   
   ClientFacade facade;
   
@@ -36,12 +35,12 @@ public class SampleReservationPresenterTest {
       protected void configureTest() {
           bind(org.rapla.framework.logger.Logger.class).toProvider(RaplaJDKLoggingAdapter.class);
           bind( RaplaLocale.class).to(RaplaLocaleImpl.class).in(Singleton.class);
-          bindMock( SampleReservationView.class).in( TestSingleton.class);
+          bindMock( ReservationView.class).in( TestSingleton.class);
       }
     }
   
   @Test
-  public void shouldCallShowOnEdit(Reservation event,SampleReservationView editView) throws RaplaException {
+  public void shouldCallShowOnEdit(Reservation event,ReservationView editView) throws RaplaException {
     boolean isNew = false;
     // WHEN
     controller.edit(event, isNew);

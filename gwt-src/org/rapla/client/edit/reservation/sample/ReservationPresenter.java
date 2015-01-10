@@ -3,7 +3,7 @@ package org.rapla.client.edit.reservation.sample;
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.ReservationController;
-import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
+import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
@@ -12,7 +12,7 @@ import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 
-public class SampleReservationPresenter implements ReservationController,Presenter {
+public class ReservationPresenter implements ReservationController,Presenter {
 
     @Inject
     Logger logger;
@@ -21,11 +21,11 @@ public class SampleReservationPresenter implements ReservationController,Present
     @Inject
     ClientFacade facade;
     
-    private SampleReservationView view;
-    private SampleAppointmentPresenter appointmentPresenter;
+    private ReservationView view;
+    private AppointmentPresenter appointmentPresenter;
     
     @Inject
-    public SampleReservationPresenter(SampleReservationView view, SampleAppointmentPresenter appointmentPresenter) {
+    public ReservationPresenter(ReservationView view, AppointmentPresenter appointmentPresenter) {
         this.view = view;
         view.setPresenter(this);
         this.appointmentPresenter = appointmentPresenter;

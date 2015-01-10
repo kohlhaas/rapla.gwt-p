@@ -24,9 +24,10 @@ import org.rapla.framework.internal.RaplaJDKLoggingAdapter;
 import org.rapla.framework.internal.RaplaLocaleImpl;
 
 @RunWith(JukitoRunner.class)
-public class SampleAppointmentPresenterTest {
+public class AppointmentPresenterTest {
 
-  @Inject SampleAppointmentPresenter controller;
+  @Inject
+  AppointmentPresenter controller;
   
   ClientFacade facade;
   Reservation event;
@@ -47,7 +48,7 @@ public class SampleAppointmentPresenterTest {
   
   @Test
   public void shouldCallShowOnEdit() throws RaplaException {
-    SampleAppointmentView editView = controller.getView();
+    AppointmentView editView = controller.getView();
     
     // WHEN
     controller.setReservation(event);

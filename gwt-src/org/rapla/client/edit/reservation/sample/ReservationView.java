@@ -1,10 +1,10 @@
 package org.rapla.client.edit.reservation.sample;
 
 import org.rapla.client.base.View;
-import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
+import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
 
-public interface SampleReservationView<W> extends View<Presenter> {
+public interface ReservationView<W> extends View<Presenter> {
 
   public interface Presenter {
     void onSaveButtonClicked();
