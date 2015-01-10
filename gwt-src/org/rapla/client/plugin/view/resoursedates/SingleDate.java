@@ -22,6 +22,7 @@ public class SingleDate extends Composite implements Comparable<SingleDate>, Dat
 	private DateTimeFormat sdfToTime = DateTimeFormat.getFormat( "HH:mm" );
 	private Date dateObject, beginTime, endTime;
 	public CheckBox checkbox;
+	private boolean calculateLectureHours;
 	
 	public SingleDate(){
 		
@@ -44,10 +45,11 @@ public class SingleDate extends Composite implements Comparable<SingleDate>, Dat
 		initWidget(main);
 	}
 	
-	public SingleDate(Date date, Date begin, Date end) throws ParseException {
+	public SingleDate(Date date, Date begin, Date end, boolean calculateLectureHours) throws ParseException {
 		this.dateObject = date;
 		this.beginTime = begin;
 		this.endTime = end;
+		this.calculateLectureHours = calculateLectureHours;
 		
 		this.date = sdfToDate.format(date);
 		this.begin = sdfToTime.format(begin);
@@ -73,8 +75,14 @@ public class SingleDate extends Composite implements Comparable<SingleDate>, Dat
 		FlowPanel infos = new FlowPanel();
 		Label dateLabel = new Label(date);
 		dateLabel.setStyleName("singleDateDateLabel");
-		Label infoLabel = new Label(vorlesungsStunden + (vorlesungsStunden == 1 ? " Vorlesungsstunde" : " Vorlesungsstunden"));
 		
+		calculateLectureHours = begin.equals(end) ? false : true;
+		
+		Label infoLabel = new Label();
+		if(calculateLectureHours == true){
+			//call plugin to calculate lecture hours
+		infoLabel.setText(vorlesungsStunden + (vorlesungsStunden == 1 ? " Vorlesungsstunde" : " Vorlesungsstunden"));
+		}
 		
 		infos.add(dateLabel);
 		infos.add(infoLabel);

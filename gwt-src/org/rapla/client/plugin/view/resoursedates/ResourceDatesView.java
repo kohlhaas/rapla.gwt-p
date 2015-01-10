@@ -13,6 +13,7 @@ import org.rapla.client.timePicker.HourMinutePicker;
 import org.rapla.client.timePicker.HourMinutePicker.PickerFormat;
 import org.rapla.client.timePicker.TimeBox;
 
+import com.google.gwt.dev.jjs.impl.GwtAstBuilder;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -64,6 +65,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	CheckBox cbRepeat;
 
 	FlowPanel chosenResources;
+	DisclosurePanel dateDisclosurePanel;
 
 	@Override
 	public Widget createContent() {
@@ -109,6 +111,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		buttonBar = new FlowPanel();
 		buttonBar.setHeight(height + "px");
 		buttonBar.setStyleName("datesButtonBar");
+		
 
 		// Image buttonNextGap = new Image("button_luecke.png");
 		buttonNextGap = new Label(">>");
@@ -121,6 +124,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		// Image buttonPlus = new Image("button_plus.png");
 		buttonPlus = new Label("+");
 		buttonPlus.setStyleName("buttonsResourceDates");
+
 		// TO-DO: Is this really a Label? Or should it be a Button? Can a Label
 		// be used, too?
 
@@ -181,11 +185,15 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 				if(((CheckBox) event.getSource()).getValue()){
 					timeBegin.setVisible(false);
 					timeEnd.setVisible(false);
+					timeBegin.setTime("am", 0, 0);
+					timeEnd.setTime("am", 0, 0);
 					beginTimeText.setVisible(false);
 					endTimeText.setVisible(false);
 				}else{
 					timeBegin.setVisible(true);
 					timeEnd.setVisible(true);
+					timeBegin.clear();
+					timeEnd.clear();
 					beginTimeText.setVisible(true);
 					endTimeText.setVisible(true);
 				}
@@ -237,12 +245,13 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 			@Override
 			public void onClick(ClickEvent event) {
 				try {
+					dateDisclosurePanel.setOpen(true);
 					Date beginTmp = new Date(dateBegin.getValue().getTime()
 							+ (timeBegin.getMinutes() * 60000));
 					Date endTmp = new Date(dateBegin.getValue().getTime()
 							+ (timeEnd.getMinutes() * 60000));
 					SingleDate addTermin = new SingleDate(dateBegin.getValue(),
-							beginTmp, endTmp);
+							beginTmp, endTmp, true);
 
 					dateList.add(addTermin);
 				} catch (ParseException e) {
@@ -312,10 +321,19 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		
 	    addResources.setContent(chooseContainer);
 		
-
-		dateInfos.add(begin);
-		dateInfos.add(end);
-		dateInfos.add(cbRepeat);
+	    
+		//dateInfos.add(begin);
+		//dateInfos.add(end);
+		//dateInfos.add(cbRepeat);
+	    FlowPanel dateContentWrapper = new FlowPanel();
+	    dateContentWrapper.add(begin);
+	    dateContentWrapper.add(end);
+	    dateContentWrapper.add(cbRepeat);
+	    dateDisclosurePanel = new DisclosurePanel();
+	    dateDisclosurePanel.add(dateContentWrapper);
+		dateDisclosurePanel.setOpen(false);
+		dateInfos.add(dateDisclosurePanel);
+		
 		// dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
 		dateInfos.add(chosenResources);
 		dateInfos.add(addResources);
