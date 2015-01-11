@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 public class TerminList extends FlowPanel {
 	
-	private List<DateParent> dates = new ArrayList<>();
+	private List<RaplaDate> dates = new ArrayList<>();
 	private int active = -1;
 
 	public TerminList() {
@@ -19,16 +19,12 @@ public class TerminList extends FlowPanel {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void add(SingleDate s){
+	public void add(RaplaDate s){
 		super.add(s);
 		dates.add(s);
 	}
 	
-	public void add(MultiDate md){
-		super.add(md.getMultiDateLabel());
-		dates.add(md);
-	}
-	public DateParent getDate(int index){
+	public RaplaDate getDate(int index){
 		return dates.get(index);
 		
 	}
@@ -37,14 +33,14 @@ public class TerminList extends FlowPanel {
 		dates.remove(index);	
 	}
 
-	public void setActive(DateParent date) {
+	public void setActive(RaplaDate date) {
 		active = getDateParentIndex(date);		
 	}
 	public int getActive(){
 		return active;
 	}
 	
-	public int getDateParentIndex(DateParent date){
+	public int getDateParentIndex(RaplaDate date){
 		return dates.indexOf(date);
 	}
 

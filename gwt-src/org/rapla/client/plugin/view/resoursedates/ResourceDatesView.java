@@ -6,14 +6,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
 import org.rapla.client.timePicker.HourMinutePicker;
 import org.rapla.client.timePicker.HourMinutePicker.PickerFormat;
-import org.rapla.client.timePicker.TimeBox;
-
-import com.google.gwt.dev.jjs.impl.GwtAstBuilder;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -23,17 +19,14 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
-import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class ResourceDatesView implements ViewServiceProviderInterface,
 		ResourceDatesInterface {
@@ -68,7 +61,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	DisclosurePanel dateDisclosurePanel;
 
 	@Override
-	public Widget createContent() {
+	public Widget createContent(){
 		Integer height = (int) (Window.getClientHeight() * 0.90 * 0.80);
 		Integer width = (int) (Window.getClientWidth() * 0.90 * 0.80);
 
@@ -78,35 +71,33 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		dateList.setHeight(height + "px");
 		dateList.setStyleName("dateList");
 
-		SingleDate eins = new SingleDate();
-		SingleDate zwei = new SingleDate();
-		SingleDate drei = new SingleDate();
-		SingleDate vier = new SingleDate();
-		SingleDate fuenf = new SingleDate();
-		try {
-			eins = new SingleDate("02.01.2015", "16:30", "17:45", new Double(
-					11.75));
-			zwei = new SingleDate("01.01.2015", "16:30", "17:45", new Double(
-					11.75));
-			drei = new SingleDate("01.01.2015", "15:30", "17:45", new Double(
-					11.75));
-			vier = new SingleDate("01.01.2015", "16:30", "17:45", new Double(
-					11.75));
-			fuenf = new SingleDate("01.01.2015", "15:30", "17:45", new Double(
-					11.75));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			//Dummy create
+			try {
+				Date now = new Date(System.currentTimeMillis());
+				Date plusOneHour = new Date(System.currentTimeMillis() + 5400000);
+				Date extra = new Date(System.currentTimeMillis() + 960000000);
+				RaplaDate eins = new RaplaDate(extra,extra,false);
+				RaplaDate zwei = new RaplaDate(now,plusOneHour,true);
+				RaplaDate drei = new RaplaDate(now,plusOneHour,true);
+				RaplaDate vier = new RaplaDate(now,plusOneHour,true);
+				RaplaDate fuenf = new RaplaDate(now,plusOneHour,true);
+				
+				List<RaplaDate> list = new ArrayList<>();
+				list.add(eins);
+				list.add(zwei);
+				list.add(drei);
 
-		MultiDate multi = new MultiDate();
-		multi.addSingleDate(eins);
-		multi.addSingleDate(zwei);
-		multi.addSingleDate(drei);
+				RaplaDate multi = new RaplaDate(list);
 
-		dateList.add(vier);
-		dateList.add(multi.getMultiDateLabel());
-		dateList.add(fuenf);
+				dateList.add(vier);
+				dateList.add(multi);
+				dateList.add(fuenf);
+
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
 
 		buttonBar = new FlowPanel();
 		buttonBar.setHeight(height + "px");
@@ -137,7 +128,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		dateInfos.setStyleName("dateInfos");
 
 		DateTimeFormat dateFormat = DateTimeFormat
-				.getFormat(PredefinedFormat.DATE_LONG);
+				.getFormat(PredefinedFormat.DATE_FULL);
 
 		// Datum und Uhzreit BEGIN
 		HorizontalPanel begin = new HorizontalPanel();
@@ -156,13 +147,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		begin.setCellVerticalAlignment(dateBegin,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
-		DateTimeFormat sdfToTime = DateTimeFormat.getFormat("HH:mm");
-		Date defaultTime = new Date();
-		defaultTime = sdfToTime.parse("00:00");
-
 		timeBegin = new HourMinutePicker(PickerFormat._24_HOUR);
-		// timeBegin.setWidth("35px");
-		// timeBegin.setMaxLength(5);
 		begin.add(timeBegin);
 		begin.setCellVerticalAlignment(timeBegin,
 				HasVerticalAlignment.ALIGN_MIDDLE);
@@ -246,6 +231,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 			public void onClick(ClickEvent event) {
 				try {
 					dateDisclosurePanel.setOpen(true);
+					/*
 					Date beginTmp = new Date(dateBegin.getValue().getTime()
 							+ (timeBegin.getMinutes() * 60000));
 					Date endTmp = new Date(dateBegin.getValue().getTime()
@@ -254,14 +240,15 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 							beginTmp, endTmp, true);
 
 					dateList.add(addTermin);
-				} catch (ParseException e) {
+					*/
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			}
 		});
-
+		
 		// Checkbox WIEDERHOLEN
 		HorizontalPanel repeat = new HorizontalPanel();
 		DisclosurePanel cbRepeat = new DisclosurePanel("Wiederholen");
