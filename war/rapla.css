@@ -1,5 +1,28 @@
 /** Add css rules here for your application. */
 
+.generalInformation .Eventtype {
+	margin: 0 5px 5px 5px;
+}
+
+.generalInformation .language {
+	margin: 0 5px 5px 5px;
+}
+
+.generalInformation .horizontal {
+	height: 20px;
+	display: table-cell;
+}
+.generalInformation .horizontal .eventname {
+	vertical-align: middle;
+	text-align: center;
+	line-height:20px;
+	color: #777777;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-right: 5px;
+	
+}
+
 
 /** Example rules used by the template application (remove for your app) */
 h1 {

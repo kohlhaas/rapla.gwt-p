@@ -25,6 +25,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel contentRes;
 
     FlowPanel subView = new FlowPanel();
+    
+    FlowPanel generalInformation; 
 
     TextBox tb;
 
@@ -38,6 +40,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
 
         content = new FlowPanel();
+        generalInformation = new FlowPanel();
         contentRes = new FlowPanel();
 
         tb = new TextBox();
@@ -45,12 +48,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         popup.setVisible(true);
         popup.clear();
         content.clear();
+        generalInformation.clear();
         popup.add(content);
+        content.add(generalInformation);
+        generalInformation.setStyleName("generalInformation");
 
 
-        content.add(new Label("Veranstaltung bearbeiten/anlegen"));
 
-        content.add(tb);
         
 //YS-Teil
         
@@ -61,14 +65,15 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         eventType.addItem("Klausur");
         eventType.addStyleName("Eventtype");
         chosenEventType = eventType.getSelectedValue();
-        content.add(eventType);
+        generalInformation.add(eventType);
         
         // Language selection
         ListBox language = new ListBox();
         language.addItem("Deutsch");
         language.addItem("Englisch");
         chosenLanguage = eventType.getSelectedValue();
-        content.add(language);
+        language.addStyleName("language");
+        generalInformation.add(language);
         
         //Study course
         {
@@ -79,10 +84,29 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onCourseButtonClicked();
                 }
             });
-            content.add(course);
+            generalInformation.add(course);
         }
         
+        //Tabelle Design
+        HorizontalPanel ho = new HorizontalPanel();
+        
+        //Label eventname
+        Label eventname = new Label("Veranstaltungsname");
+        //String name = "Veranstaltungsname";
+        eventname.addStyleName("eventname");
+        //tabelle.setWidget(1, 1, eventname);
+        //tabelle.setWidget(1, 2 ,tb);
+        HTML name = new HTML("Veranstaltungsname");
+        ho.add(eventname);
+        ho.add(tb);
+        ho.addStyleName("horizontal");
+        generalInformation.add(ho);
+        eventname.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        
+        //generalInformation.add(tb);
+        
 
+        
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
         content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugefügt
 
