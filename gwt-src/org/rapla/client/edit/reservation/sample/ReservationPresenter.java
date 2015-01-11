@@ -1,5 +1,7 @@
 package org.rapla.client.edit.reservation.sample;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.ReservationController;
@@ -92,7 +94,12 @@ public class ReservationPresenter implements ReservationController,Presenter {
     public boolean isDeleteButtonEnabled() 
     {
         return !isNew;
-    }    
+    }
+
+	@Override
+	public void appointmentSelected(int selectedIndex) {
+		view.updateAppointmentOptionsPanel( event.getAppointments()[selectedIndex] );
+	}    
     
 
 }
