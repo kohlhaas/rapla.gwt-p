@@ -108,7 +108,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
-        content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugefügt
+        content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugefï¿½gt
 
 
                
