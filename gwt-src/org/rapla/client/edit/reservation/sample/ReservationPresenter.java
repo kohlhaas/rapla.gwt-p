@@ -95,11 +95,6 @@ public class ReservationPresenter implements ReservationController,Presenter {
     {
         return !isNew;
     }
-
-	@Override
-	public void appointmentSelected(int selectedIndex) {
-		view.updateAppointmentOptionsPanel( event.getAppointments()[selectedIndex] );
-	}    
     
 
 }
