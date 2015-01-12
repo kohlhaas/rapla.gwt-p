@@ -44,16 +44,33 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
 
     public void show(Reservation event) {
-
-    	tabPanel = new TabPanel();
-        content = new FlowPanel();
-        generalInformation = new FlowPanel();
-        contentRes = new FlowPanel();
-
-        tb = new TextBox();
+    	
+    	/*Structuring GU*/
+    	
+    	//Popup for the whole eventplanning
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
+        popup.addStyleName("popup");
+
+        //Tabs for structuring eventplanning in general information - tab and appointment- and ressourceplanning 
+    	tabPanel = new TabPanel();
+        tabPanel.addStyleName("tabPanel");
         
+        //Content tab1
+        content = new FlowPanel();
+        content.addStyleName("content");
+        
+        generalInformation = new FlowPanel();
+        generalInformation.setStyleName("generalInformation");
+        
+        contentRes = new FlowPanel();
+        
+        
+        
+
+        tb = new TextBox();
+
+        //Clear Panels
         popup.clear();
         content.clear();
         generalInformation.clear();
@@ -61,16 +78,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //popup.add(content);
         popup.add(tabPanel);
         tabPanel.add(content, "Allgemeine Informationen");
-        tabPanel.addStyleName("tabPanel");
         content.add(generalInformation);
-        generalInformation.setStyleName("generalInformation");
         
-
-
-
         
-//YS-Teil
-        
+        /* Filling structure */
         
         // Eventtype
         ListBox eventType = new ListBox();
@@ -110,7 +121,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         eventname.addStyleName("eventname");
         //tabelle.setWidget(1, 1, eventname);
         //tabelle.setWidget(1, 2 ,tb);
-        HTML name = new HTML("Veranstaltungsname");
         ho.add(eventname);
         ho.add(tb);
         ho.addStyleName("horizontal");
@@ -201,7 +211,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         content.clear();
     }
 
-
+    //Method to insert the AppointmentView as SubView to the ReservationView
     @Override
     public void addSubView(ReservationEditSubView<IsWidget> view) {
         IsWidget provideContent = view.provideContent();
