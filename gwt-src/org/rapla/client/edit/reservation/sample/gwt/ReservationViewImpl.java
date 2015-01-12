@@ -1,6 +1,6 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
-import com.google.gwt.dom.client.Style.Unit;
+
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,7 +24,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
 	Panel popup;
 	
-	TabPanel tabPanel; //Tabs for General Information and Appointment+Ressourcen-Planning
+	TabPanel tabPanel; //Tabs for General Information and Appointment+Ressources-Planning
 	
     FlowPanel content;
 
@@ -66,6 +66,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //popup.add(content);
         popup.add(tabPanel);
         tabPanel.add(content, "Allgemeine Informationen");
+        tabPanel.addStyleName("tabPanel");
         content.add(generalInformation);
         generalInformation.setStyleName("generalInformation");
         
