@@ -1,5 +1,6 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -21,6 +22,10 @@ import java.util.Locale;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 
+	Panel popup;
+	
+	TabPanel tabPanel; //Tabs for General Information and Appointment+Ressourcen-Planning
+	
     FlowPanel content;
 
     FlowPanel contentRes;
@@ -33,7 +38,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     TextBox tb;
 
-    Panel popup;
+    
 
     String chosenEventType = "";
     String chosenLanguage = "";
@@ -45,7 +50,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     public void show(Reservation event) {
 
-
+    	tabPanel = new TabPanel();
         content = new FlowPanel();
         generalInformation = new FlowPanel();
         contentRes = new FlowPanel();
@@ -53,12 +58,17 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tb = new TextBox();
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
+        
         popup.clear();
         content.clear();
         generalInformation.clear();
-        popup.add(content);
+        
+        //popup.add(content);
+        popup.add(tabPanel);
+        tabPanel.add(content, "Allgemeine Informationen");
         content.add(generalInformation);
         generalInformation.setStyleName("generalInformation");
+        
 
 
 
@@ -91,6 +101,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onCourseButtonClicked();
                 }
             });
+            course.addStyleName("Course");
             generalInformation.add(course);
         }
         
@@ -115,7 +126,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
-        content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
+       // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
+        tabPanel.add(subView , "Temin- und Ressourcenplanung");
+        tabPanel.selectTab(0);
 
 
                
