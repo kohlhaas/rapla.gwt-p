@@ -14,11 +14,9 @@ public interface ReservationView<W> extends View<Presenter> {
     boolean isDeleteButtonEnabled();
     void onCancelButtonClicked();
     void onCourseButtonClicked();
-	void appointmentSelected(int selectedIndex);
   }
 
   void show(Reservation event);
-  void updateAppointmentOptionsPanel(Appointment selectedAppointment);
   void hide();
   void addSubView(ReservationEditSubView<W> view);
 }

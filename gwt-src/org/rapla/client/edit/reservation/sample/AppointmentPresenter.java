@@ -27,19 +27,19 @@ public class AppointmentPresenter implements Presenter {
         this.view.setPresenter(this);
     }
 
-    @Override
-    public void newAppButtonPressed(Date startDate, Date endDate) {
-        Appointment newAppointment;
-        try {
-            newAppointment = facade.newAppointment(startDate, endDate);
-            reservation.addAppointment(newAppointment);
-        } catch (RaplaException e) {
-            logger.error(e.getMessage(), e);
-        }
-        List<Appointment> asList = Arrays.asList(reservation.getAppointments());
-        view.update(asList);
-
-    }
+//    @Override
+//    public void newAppButtonPressed(Date startDate, Date endDate) {
+//        Appointment newAppointment;
+//        try {
+//            newAppointment = facade.newAppointment(startDate, endDate);
+//            reservation.addAppointment(newAppointment);
+//        } catch (RaplaException e) {
+//            logger.error(e.getMessage(), e);
+//        }
+//        List<Appointment> asList = Arrays.asList(reservation.getAppointments());
+//        view.update(asList);
+//
+//    }
 
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
@@ -50,5 +50,11 @@ public class AppointmentPresenter implements Presenter {
     public AppointmentView getView() {
         return view;
     }
+    
+
+	@Override
+	public void appointmentSelected(int selectedIndex) {
+		view.updateAppointmentOptionsPanel( reservation.getAppointments()[selectedIndex] );
+	}   
 
 }
