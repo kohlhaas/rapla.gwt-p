@@ -107,4 +107,9 @@ public class AppointmentPresenter implements Presenter {
         view.updateAppointmentOptionsPanel(reservation.getAppointments()[selectedIndex]);
     }
 
+	@Override
+	public void removeAppointmentButtonPressed(int selectedIndex) {
+		// TODO delete appointment from list, then call view.updateAppointmentList(..)
+	}
+
 }

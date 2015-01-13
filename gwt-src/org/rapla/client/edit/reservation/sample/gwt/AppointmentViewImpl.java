@@ -102,6 +102,16 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         initStartDateFields();
         initEndDateFields();
+        
+        Button removeAppointment = new Button("Termin löschen");
+        removeAppointment.setStyleName("remove-appointment");
+        removeAppointment.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				getPresenter().removeAppointmentButtonPressed(appointmentList.getSelectedIndex());
+			}
+		});
+        appointmentOptionsPanel.add(removeAppointment);
 
         // Fill in data from appointment object
         // Check the box according to selected appointment

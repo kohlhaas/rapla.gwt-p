@@ -14,6 +14,7 @@ public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubV
         void newAppointmentButtonPressed();
         Date nextFreeDateButtonPressed(Date startDate, Date endDate);
         void appointmentSelected(int selectedIndex);
+        void removeAppointmentButtonPressed(int selectedIndex);
     }
 
     void show(List<Appointment> asList);
