@@ -90,7 +90,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
         // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
-        tabPanel.add(subView, "Temin- und Ressourcenplanung");
+        tabPanel.add(subView, "Termin- und Ressourcenplanung");
         tabPanel.selectTab(0);
 
         initSaveDeleteCancelButtons();
