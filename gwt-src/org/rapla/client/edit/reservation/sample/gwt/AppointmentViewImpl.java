@@ -68,6 +68,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         appointmentList.setStyleName("appointment-list");
         appointmentList.setVisibleItemCount(7);
         content.add(appointmentList);
+        appointmentOptionsPanel = new FlowPanel();
         appointmentList.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent change) {
@@ -80,15 +81,10 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     }
 
     public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
-        // Terminplanung View
         // Rechte Seite des Termin Panels
-        int widgetNo = content.getWidgetIndex(appointmentOptionsPanel);
-        if (widgetNo >= 0) {
-            content.remove(widgetNo);
-        }
 
         // Create Panels and Widgets
-        appointmentOptionsPanel = new FlowPanel();
+        appointmentOptionsPanel.clear();
         appointmentOptionsPanel.setStyleName("appointment-options");
         content.add(appointmentOptionsPanel);
 
