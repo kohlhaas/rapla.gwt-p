@@ -1,12 +1,15 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
+
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
@@ -15,6 +18,7 @@ import org.rapla.entities.domain.AppointmentFormater;
 import org.rapla.entities.domain.Repeating;
 
 import javax.inject.Inject;
+
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +38,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     DateBox startDateField, endDateField;
     FlowPanel startFields, endFields;
     Label startTimeColon, endTimeColon;
+    ListBox appointmentList;
 
 
     DateTimeFormat df = DateTimeFormat.getFormat("dd.MM.yyyy");
@@ -52,12 +57,9 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         // Terminplanung View
         // Appointment List
-        ListBox appointmentList = new ListBox();
+        appointmentList = new ListBox();
+        updateAppointmentList(appointments);
         appointmentList.setStyleName("appointment-list");
-        for (Appointment a : appointments) {
-            String appointmentLabel = df.format(a.getStart()) + " "; // + " - " + df.format(a.getEnd());
-            appointmentList.addItem(appointmentLabel);
-        }
         appointmentList.setVisibleItemCount(7);
         content.add(appointmentList);
         appointmentList.addChangeHandler(new ChangeHandler() {
@@ -67,7 +69,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
                 getPresenter().appointmentSelected(appointmentList.getSelectedIndex());
             }
         });
-        getPresenter().appointmentSelected(appointmentList.getSelectedIndex());
+      //fire change event to update appointment options panel
+        DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList); 
     }
 
     public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
@@ -112,6 +115,15 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endHourField.setText(hoursFormat.format(selectedAppointment.getEnd()));
         endMinuteField.setText(minutesFormat.format(selectedAppointment.getEnd()));
 
+    }
+    
+    public void updateAppointmentList(List<Appointment> appointments) {
+    	appointmentList.clear();
+    	for (Appointment a : appointments) {
+            String appointmentLabel = df.format(a.getStart()) + " "; // + " - " + df.format(a.getEnd());
+            appointmentList.addItem(appointmentLabel);
+        }
+    	
     }
 
     //TODO: startDate and EndDate is kind of redundant
