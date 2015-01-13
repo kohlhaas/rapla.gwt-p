@@ -12,6 +12,9 @@
   <inherits name="com.google.gwt.http.HTTP"/>
   <inherits name='com.google.gwt.logging.Logging'/>
   
+  <inherits name="com.blogspot.ctasada.gwt.eureka.Eureka"/>
+    <inherits name="com.blogspot.ctasada.gwt.eureka.theme.standard.Standard"/>
+  
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->
@@ -33,7 +36,17 @@
   <inherits name="com.google.gwt.inject.Inject"/>
   
   <!-- English language, independent of country -->
-  <extend-property name="locale" values="en"/>
+    <inherits name="com.google.gwt.i18n.CldrLocales" />
+    <inherits name="com.google.gwt.i18n.I18N" />
+
+    <set-configuration-property name="locale.searchorder"
+        value="cookie,queryparam" />
+    <set-configuration-property name="locale.useragent"
+        value="Y" />
+
+    <extend-property name="locale" values="de" />
+    <set-property name="locale" value="de" />
+    <set-property-fallback name="locale" value="de" />
   <!-- directives -->
   
   <set-property name="gwt.logging.logLevel" value="INFO"/>       

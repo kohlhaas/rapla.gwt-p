@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate> {
 	public RaplaDate() {
 
 	}
+
 	public RaplaDate(Date begin, Date end, boolean calculateLectureHours)
 			throws ParseException {
 		this.beginTime = begin;
@@ -87,8 +89,9 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate> {
 
 		for (Iterator<RaplaDate> iter = raplaDates.iterator(); iter.hasNext();) {
 			RaplaDate sd = iter.next();
-			if(sd.calculateLectureHours == true)
-			vorlesungsStunden = vorlesungsStunden + sd.getVorlesungsstunden();
+			if (sd.calculateLectureHours == true)
+				vorlesungsStunden = vorlesungsStunden
+						+ sd.getVorlesungsstunden();
 			helper.add(sd);
 		}
 		this.beginTime = raplaDates.get(0).getBeginTime();
@@ -101,8 +104,11 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate> {
 
 		FlowPanel infos = new FlowPanel();
 		infos.setStyleName("multiDateInfos");
-		Label dateLabel = new Label(raplaDates.get(0).sdfToDay.format(beginTime) + " - "
-				+ raplaDates.get(raplaDates.size() - 1).sdfToDay.format(endTime));
+		Label dateLabel = new Label(
+				raplaDates.get(0).sdfToDay.format(beginTime)
+						+ " - "
+						+ raplaDates.get(raplaDates.size() - 1).sdfToDay
+								.format(endTime));
 		dateLabel.setStyleName("singleDateDateLabel");
 		Label infoLabel = new Label(vorlesungsStunden + " Vorlesungsstunden");
 
@@ -111,6 +117,47 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate> {
 
 		singleDatesContainer.setHeader(infos);
 		main.add(singleDatesContainer);
+	}
+
+
+	public static List<RaplaDate> recurringDates(Date startDay, Date endDay, long startTime, long endTime,
+			int repeatType) {
+		Date beginTmp = new Date(startDay.getTime() + startTime);
+		Date endTmp = new Date(endDay.getTime() + endTime);
+		List<RaplaDate> tmp = new ArrayList<>();
+		RaplaDate next;
+		long day = 86400000;
+		while (startDay.before(endDay)) {
+			switch (repeatType) {
+			case 1:
+				startDay = new Date(startDay.getTime() + day);
+				break;
+			case 2:
+				startDay = new Date(startDay.getTime() + (day*7));
+				break;
+			case 3:
+				startDay = new Date(startDay.getTime() + (day*7*4));
+				break;
+			case 4:
+				startDay = new Date(startDay.getTime() + (day*365));
+			default:
+				break;
+
+			}
+			try {
+				if((startDay.before(endDay))){
+				next = new RaplaDate(new Date(startDay.getTime() + startTime), new Date(startDay.getTime() + endTime), true);
+				tmp.add(next);
+				}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+
+		}
+		//tmp.remove(tmp.size()-1);
+		return tmp;
 	}
 
 	@Override
@@ -126,11 +173,9 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate> {
 		return back;
 	}
 
-
 	public double getVorlesungsstunden() {
 		return vorlesungsStunden;
 	}
-
 
 	public Date getBeginTime() {
 		return beginTime;
@@ -147,10 +192,12 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate> {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
-	public boolean isListEmpty(){
+
+	public boolean isListEmpty() {
 		return this.raplaDates.isEmpty();
 	}
-	public List<RaplaDate> getRaplaDateList(){
+
+	public List<RaplaDate> getRaplaDateList() {
 		return this.raplaDates;
 	}
 

@@ -10,10 +10,14 @@ import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewServiceProviderInterface;
 import org.rapla.client.timePicker.HourMinutePicker;
 import org.rapla.client.timePicker.HourMinutePicker.PickerFormat;
+
+import com.blogspot.ctasada.gwt.eureka.client.ui.SmallTimeBox;
+import com.blogspot.ctasada.gwt.eureka.client.ui.TimeBox;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -23,9 +27,12 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 public class ResourceDatesView implements ViewServiceProviderInterface,
@@ -49,8 +56,8 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	DateBox dateBegin;
 	DateBox dateEnd;
 
-	HourMinutePicker timeBegin;
-	HourMinutePicker timeEnd;
+	SmallTimeBox timeBegin;
+	SmallTimeBox timeEnd;
 
 	Tree resourceTree;
 	
@@ -128,7 +135,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		dateInfos.setStyleName("dateInfos");
 
 		DateTimeFormat dateFormat = DateTimeFormat
-				.getFormat(PredefinedFormat.DATE_FULL);
+				.getFormat(PredefinedFormat.DATE_MEDIUM);
 
 		// Datum und Uhzreit BEGIN
 		HorizontalPanel begin = new HorizontalPanel();
@@ -142,23 +149,46 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
 		dateBegin = new DateBox();
+		dateBegin.setStyleName("dateInput");
 		dateBegin.setFormat(new DateBox.DefaultFormat(dateFormat));
 		begin.add(dateBegin);
-		begin.setCellVerticalAlignment(dateBegin,
-				HasVerticalAlignment.ALIGN_MIDDLE);
 
-		timeBegin = new HourMinutePicker(PickerFormat._24_HOUR);
+		timeBegin = new SmallTimeBox(new Date(-3600000));
 		begin.add(timeBegin);
-		begin.setCellVerticalAlignment(timeBegin,
-				HasVerticalAlignment.ALIGN_MIDDLE);
-
 		final Label beginTimeText = new Label("Uhr");
 		beginTimeText.setStyleName("beschriftung");
 		begin.add(beginTimeText);
 		begin.setCellVerticalAlignment(beginTimeText,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
+		
+		// Datum und Uhrzeit ENDE
+		HorizontalPanel end = new HorizontalPanel();
+		end.setSpacing(4);
+		end.setStyleName("dateInfoLineComplete");
+		
+		Label endText = new Label("Ende: ");
+		endText.setStyleName("beschriftung");
+		end.add(endText);
+		end.setCellVerticalAlignment(endText, HasVerticalAlignment.ALIGN_MIDDLE);
+
+		dateEnd = new DateBox();
+		dateEnd.setStyleName("dateInput");
+		dateEnd.setFormat(new DateBox.DefaultFormat(dateFormat));
+		end.add(dateEnd);
+
+		timeEnd = new SmallTimeBox(new Date(-3600000));
+		timeEnd.setTitle("endTime");
+		end.add(timeEnd.asWidget());
+
 		final Label endTimeText = new Label("Uhr");
+		endTimeText.setStyleName("beschriftung");
+		end.add(endTimeText);
+		end.setCellVerticalAlignment(endTimeText,
+				HasVerticalAlignment.ALIGN_MIDDLE);
+
+		end.setCellWidth(endText, "50px");
+		
 		
 		cbWholeDay = new CheckBox("ganzt\u00E4gig");
 		begin.add(cbWholeDay);
@@ -170,15 +200,13 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 				if(((CheckBox) event.getSource()).getValue()){
 					timeBegin.setVisible(false);
 					timeEnd.setVisible(false);
-					timeBegin.setTime("am", 0, 0);
-					timeEnd.setTime("am", 0, 0);
+					timeEnd.setValue((long) (3600000*23)-60);
 					beginTimeText.setVisible(false);
 					endTimeText.setVisible(false);
 				}else{
 					timeBegin.setVisible(true);
 					timeEnd.setVisible(true);
-					timeBegin.clear();
-					timeEnd.clear();
+					timeEnd.setValue((long) -3600000);
 					beginTimeText.setVisible(true);
 					endTimeText.setVisible(true);
 				}
@@ -192,37 +220,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 		begin.setCellWidth(beginText, "50px");
 
-		// Datum und Uhrzeit ENDE
-		HorizontalPanel end = new HorizontalPanel();
-		end.setSpacing(4);
-		end.setStyleName("dateInfoLineComplete");
-
-		Label endText = new Label("Ende: ");
-		endText.setStyleName("beschriftung");
-		end.add(endText);
-		end.setCellVerticalAlignment(endText, HasVerticalAlignment.ALIGN_MIDDLE);
-
-		dateEnd = new DateBox();
-		dateEnd.setFormat(new DateBox.DefaultFormat(dateFormat));
-		end.add(dateEnd);
-		end.setCellVerticalAlignment(dateEnd, HasVerticalAlignment.ALIGN_MIDDLE);
-
-		timeEnd = new HourMinutePicker(PickerFormat._24_HOUR);
-		// timeEnd.setWidth("35px");
-		// timeEnd.setMaxLength(5);
-		timeEnd.setVisible(true);
-		timeEnd.setTitle("endTime");
-		end.add(timeEnd.asWidget());
-		end.setCellVerticalAlignment(timeEnd, HasVerticalAlignment.ALIGN_MIDDLE);
-
-
-		endTimeText.setStyleName("beschriftung");
-		end.add(endTimeText);
-		end.setCellVerticalAlignment(endTimeText,
-				HasVerticalAlignment.ALIGN_MIDDLE);
-
-		end.setCellWidth(endText, "50px");
-
 		// Add termin
 
 		buttonPlus.addClickHandler(new ClickHandler() {
@@ -231,16 +228,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 			public void onClick(ClickEvent event) {
 				try {
 					dateDisclosurePanel.setOpen(true);
-					/*
-					Date beginTmp = new Date(dateBegin.getValue().getTime()
-							+ (timeBegin.getMinutes() * 60000));
-					Date endTmp = new Date(dateBegin.getValue().getTime()
-							+ (timeEnd.getMinutes() * 60000));
-					SingleDate addTermin = new SingleDate(dateBegin.getValue(),
-							beginTmp, endTmp, true);
-
-					dateList.add(addTermin);
-					*/
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -254,17 +241,79 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		DisclosurePanel cbRepeat = new DisclosurePanel("Wiederholen");
 		cbRepeat.setStyleName("dateInfoLineLeft");
 
-		CheckBox daily = new CheckBox("t\u00E4glich");
-		CheckBox weekly = new CheckBox("w\u00F6chtenlich");
-		CheckBox monthly = new CheckBox("monatlich");
-		CheckBox year = new CheckBox("j\u00E4hrlich");
+		final RadioButton daily = new RadioButton("repeat","t\u00E4glich");
+		final RadioButton weekly = new RadioButton("repeat", "w\u00F6chentlich");
+		final RadioButton monthly = new RadioButton("repeat", "monatlich");
+		final RadioButton year = new RadioButton("repeat", "j\u00E4hrlich");
+		RadioButton clear = new RadioButton("repeat", "keine Wiederholung");
 
 		repeat.add(daily);
 		repeat.add(weekly);
 		repeat.add(monthly);
 		repeat.add(year);
+		repeat.add(clear);
 
 		cbRepeat.add(repeat);
+		
+		HorizontalPanel addDateWithLabel = new HorizontalPanel();
+		Button addDate = new Button("Termin hinzuf\u00FCgen");
+		final Label addDateInfo = new Label();
+		addDateWithLabel.add(addDate);
+		addDateWithLabel.add(addDateInfo);
+		addDateWithLabel.setCellVerticalAlignment(addDate, HasVerticalAlignment.ALIGN_MIDDLE);
+		addDateWithLabel.setCellVerticalAlignment(addDateInfo, HasVerticalAlignment.ALIGN_MIDDLE);
+		addDate.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				RaplaDate addTermin;
+				
+				Date beginTmp = new Date(dateBegin.getValue().getTime() + timeBegin.getTime() + 3600000);
+				Date endTmp = new Date(dateEnd.getValue().getTime() + timeEnd.getTime() + 3600000);
+				
+				
+				if(beginTmp.after(endTmp)){
+				addDateInfo.setStyleName("error");	
+				addDateInfo.setText("Begin- nach Endtermin!");
+				}else{
+					addDateInfo.setStyleName("");
+					addDateInfo.setText("");
+					if(daily.getValue() || weekly.getValue() || monthly.getValue() || year.getValue()){
+						List<RaplaDate> tmp = new ArrayList<>();
+						int type;
+						if(daily.getValue()){
+							type = 1;
+						}else if (weekly.getValue()){
+							type = 2;
+						}else if( monthly.getValue()){
+							type = 3;
+						}else{
+							type = 4;
+						}
+						tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, type);
+						try {
+							tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
+							addTermin = new RaplaDate(tmp);
+							dateList.add(addTermin);
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else{
+					try {	
+						addTermin = new RaplaDate(beginTmp, endTmp, true);
+						dateList.add(addTermin);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					}
+				}
+
+				
+			}
+			
+		});
 
 		// Ausgewählte Ressourcen laden
 		chosenResources = new FlowPanel();
@@ -312,10 +361,11 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		//dateInfos.add(begin);
 		//dateInfos.add(end);
 		//dateInfos.add(cbRepeat);
-	    FlowPanel dateContentWrapper = new FlowPanel();
-	    dateContentWrapper.add(begin);
+	    VerticalPanel dateContentWrapper = new VerticalPanel();
+	    dateContentWrapper.add(begin);	
 	    dateContentWrapper.add(end);
 	    dateContentWrapper.add(cbRepeat);
+	    dateContentWrapper.add(addDateWithLabel);
 	    dateDisclosurePanel = new DisclosurePanel();
 	    dateDisclosurePanel.add(dateContentWrapper);
 		dateDisclosurePanel.setOpen(false);
@@ -646,22 +696,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 	public void setDateEnd(DateBox dateEnd) {
 		this.dateEnd = dateEnd;
-	}
-
-	public HourMinutePicker getTimeBegin() {
-		return timeBegin;
-	}
-
-	public void setTimeBegin(HourMinutePicker timeBegin) {
-		this.timeBegin = timeBegin;
-	}
-
-	public HourMinutePicker getTimeEnd() {
-		return timeEnd;
-	}
-
-	public void setTimeEnd(HourMinutePicker timeEnd) {
-		this.timeEnd = timeEnd;
 	}
 
 	public Tree getResourceTree() {
