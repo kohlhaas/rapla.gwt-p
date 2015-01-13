@@ -64,7 +64,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         content.add(addAppointment);
         // Appointment List
         appointmentList = new ListBox();
-        updateAppointmentList(appointments, 0);
+        updateAppointmentList(appointments, appointments.size()-1);
         appointmentList.setStyleName("appointment-list");
         appointmentList.setVisibleItemCount(7);
         content.add(appointmentList);
