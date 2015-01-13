@@ -42,7 +42,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
 
     /**
-     * save a appointment by calling : "getPresenter().newAppButtonPressed(dateStart, dateEnd)"
+     * save an appointment by calling : "getPresenter().newAppointmentButtonPressed(dateStart, dateEnd)"
      *
      * @param appointments
      */

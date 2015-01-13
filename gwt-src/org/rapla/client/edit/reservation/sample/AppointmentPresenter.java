@@ -36,7 +36,7 @@ public class AppointmentPresenter implements Presenter {
     }
 
     @Override
-    public void newAppButtonPressed(Date startDate, Date endDate) {
+    public void newAppointmentButtonPressed(Date startDate, Date endDate) {
         Appointment newAppointment;
         try {
             newAppointment = facade.newAppointment(startDate, endDate);
