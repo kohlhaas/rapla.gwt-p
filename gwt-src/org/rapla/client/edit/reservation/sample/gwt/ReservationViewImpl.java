@@ -5,141 +5,147 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.datepicker.client.DateBox;
 
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Allocatable;
-import org.rapla.entities.domain.Appointment;
-import org.rapla.entities.domain.Repeating;
 import org.rapla.entities.domain.Reservation;
 
 import java.util.Locale;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 
-	Panel popup;
-	
-	TabPanel tabPanel; //Tabs for General Information and Appointment+Ressources-Planning
-	
+    Panel popup;
+
+    TabPanel tabPanel; //Tabs for General Information and Appointment+Ressources-Planning
+
     FlowPanel content;
 
     FlowPanel contentRes;
 
     FlowPanel subView = new FlowPanel();
-    
-    FlowPanel generalInformation;
-    
+
+    FlowPanel generalInformation = new FlowPanel();
+
 
     TextBox tb;
 
-    
 
     String chosenEventType = "";
     String chosenLanguage = "";
 
 
     public void show(Reservation event) {
-    	
+
     	/*Structuring GU*/
-    	
-    	//Popup for the whole eventplanning
+
+        //Popup for the whole eventplanning
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
         popup.addStyleName("popup");
 
         //Tabs for structuring eventplanning in general information - tab and appointment- and ressourceplanning 
-    	tabPanel = new TabPanel();
+        tabPanel = new TabPanel();
         tabPanel.addStyleName("tabPanel");
-        
+
         //Content tab1
         content = new FlowPanel();
         content.addStyleName("content");
-        
-        generalInformation = new FlowPanel();
-        generalInformation.setStyleName("generalInformation");
-        
-        contentRes = new FlowPanel();
-        
-        
-        
 
+        generalInformation.setStyleName("generalInformation");
+
+        contentRes = new FlowPanel();
         tb = new TextBox();
 
         //Clear Panels
         popup.clear();
         content.clear();
         generalInformation.clear();
-        
+
         //popup.add(content);
         popup.add(tabPanel);
         tabPanel.add(content, "Allgemeine Informationen");
         content.add(generalInformation);
         
-        
         /* Filling structure */
-        
-        // Eventtype
-        ListBox eventType = new ListBox();
-        eventType.addItem("Lehrveranstaltung");
-        eventType.addItem("Klausur");
-        eventType.addStyleName("Eventtype");
-        chosenEventType = eventType.getSelectedValue();
-        generalInformation.add(eventType);
-        
+        initEvenTypeLB();
         // Language selection
-        ListBox language = new ListBox();
-        language.addItem("Deutsch");
-        language.addItem("Englisch");
-        chosenLanguage = eventType.getSelectedValue();
-        language.addStyleName("language");
-        generalInformation.add(language);
-        
+        initLanguageLB();
         //Study course
-        {
-            Button course = new Button("Studiengang");
-            course.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent e) {
-                    getPresenter().onCourseButtonClicked();
-                }
-            });
-            course.addStyleName("Course");
-            generalInformation.add(course);
-        }
-        
-        //Tabelle Design
-        HorizontalPanel ho = new HorizontalPanel();
-        
+        initCourseButton();
+
         //Label eventname
         Label eventname = new Label("Veranstaltungsname");
         //String name = "Veranstaltungsname";
         eventname.addStyleName("eventname");
         //tabelle.setWidget(1, 1, eventname);
         //tabelle.setWidget(1, 2 ,tb);
-        ho.add(eventname);
-        ho.add(tb);
-        ho.addStyleName("horizontal");
-        generalInformation.add(ho);
+        initHorizontalPanel(eventname);
         eventname.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        
-        //generalInformation.add(tb);
-        
 
-        
+        //generalInformation.add(tb);
+
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
-       // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
-        tabPanel.add(subView , "Temin- und Ressourcenplanung");
+        // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
+        tabPanel.add(subView, "Temin- und Ressourcenplanung");
         tabPanel.selectTab(0);
 
+        initSaveDeleteCancelButtons();
 
-               
-        
+        mapFromReservation(event);
+        tb.addChangeHandler(new ChangeHandler() {
 
+            @Override
+            public void onChange(ChangeEvent event) {
+                getPresenter().changeEventName(tb.getText());
+            }
+        });
+
+
+    }
+
+    private void initHorizontalPanel(Label eventname) {
+        HorizontalPanel horizontalPanel = new HorizontalPanel();
+        horizontalPanel.add(eventname);
+        horizontalPanel.add(tb);
+        horizontalPanel.addStyleName("horizontal");
+        generalInformation.add(horizontalPanel);
+    }
+
+    private void initLanguageLB() {
+        ListBox language = new ListBox();
+        language.addItem("Deutsch");
+        language.addItem("Englisch");
+        chosenLanguage = language.getSelectedValue();
+        language.addStyleName("language");
+        generalInformation.add(language);
+    }
+
+    private void initEvenTypeLB() {
+        ListBox eventType = new ListBox();
+        eventType.addItem("Lehrveranstaltung");
+        eventType.addItem("Klausur");
+        eventType.addStyleName("Eventtype");
+        chosenEventType = eventType.getSelectedValue();
+        generalInformation.add(eventType);
+    }
+
+    private void initCourseButton() {
+        Button course = new Button("Studiengang");
+        course.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent e) {
+                getPresenter().onCourseButtonClicked();
+            }
+        });
+        course.addStyleName("Course");
+        generalInformation.add(course);
+    }
+
+    private void initSaveDeleteCancelButtons() {
         //Standard Buttons
         {
             Button button = new Button("Cancel");
@@ -176,20 +182,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             });
             content.add(button);
         }
-        mapFromReservation(event);
-        tb.addChangeHandler(new ChangeHandler() {
-
-            @Override
-            public void onChange(ChangeEvent event) {
-                getPresenter().changeEventName(tb.getText());
-            }
-        });
-        
-        
-        
-        
     }
-        
+
 
     public void mapFromReservation(Reservation event) {
         Locale locale = getRaplaLocale().getLocale();

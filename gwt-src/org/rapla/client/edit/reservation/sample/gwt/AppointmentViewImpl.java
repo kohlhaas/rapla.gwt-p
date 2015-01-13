@@ -35,41 +35,22 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     AppointmentFormater formatter;
 
     FlowPanel content = new FlowPanel();
-    
+
     FlowPanel appointmentOptionsPanel;
-        
+
     DateTimeFormat df = DateTimeFormat.getFormat("dd.MM.yyyy");
     DateTimeFormat hoursFormat = DateTimeFormat.getFormat("HH");
     DateTimeFormat minutesFormat = DateTimeFormat.getFormat("mm");
 
 
+    /**
+     * save a appointment by calling : "getPresenter().newAppButtonPressed(dateStart, dateEnd)"
+     * @param appointments
+     */
+
     public void show(List<Appointment> appointments) {
         content.clear();
 
-        // Set the default value
-
-//        // Set the value in the text box when the user selects a date
-//        initStartDatePicker();
-//        initEndDatePicker();
-////TODO: ADD an extended DatePicker or smth similiar, to add the concrete time "08:00"...
-//        content.add(datePicker);
-//        content.add(datePicker2);
-//        content.add(dateStartText);
-//        content.add(dateEndText);
-//        Button newApp = new Button("new Termin");
-//
-//        newApp.addClickHandler(new ClickHandler() {
-//
-//            @Override
-//            public void onClick(ClickEvent event) {
-//                getPresenter().newAppButtonPressed(dateStart, dateEnd);
-//            }
-//        });
-//        content.add(newApp);
-//        content.add(appointmentContent);
-//        update(appointments);
-//        
-        
         // Terminplanung View
         // Appointment List
         ListBox appointmentList = new ListBox();
@@ -86,10 +67,10 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 				ListBox appointmentList = (ListBox) change.getSource();
 				getPresenter().appointmentSelected(appointmentList.getSelectedIndex());
 			}
-        });     
+        });
         getPresenter().appointmentSelected(appointmentList.getSelectedIndex());
     }
-    
+
     public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
         // Terminplanung View
         // Rechte Seite des Termin Panels
@@ -108,7 +89,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     	appointmentOptionsPanel = new FlowPanel();
         appointmentOptionsPanel.setStyleName("appointment-options");
         content.add(appointmentOptionsPanel);
-        
+
         // Repeat Radio Buttons
         selectRepeat[0] = new RadioButton("select-repeat", "Nicht wiederholen");
         selectRepeat[1] = new RadioButton("select-repeat", "Täglich");
@@ -121,74 +102,74 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         for(RadioButton repeatButton : selectRepeat) {
         	selectRepeatPanel.add(repeatButton);
         }
-        
+
         // Einzeltermine Button
         convertToSingleEventsButton = new Button("In Einzeltermine umwandeln");
         appointmentOptionsPanel.add(convertToSingleEventsButton);
-        
+
         // Formular zur Zeit- & Datumswahl 
         appointmentDatesForm = new FlowPanel();
         appointmentDatesForm.setStyleName("appointment-date-form");
         appointmentOptionsPanel.add(appointmentDatesForm);
-        
-        
+
+
         startFields = new FlowPanel();
         startFields.setStyleName("start-datetime");
         appointmentDatesForm.add(startFields);
-        
+
         startDateField = new DateBox();
         startDateField.setFormat(new DateBox.DefaultFormat(df));
         startDateField.setStyleName("date-field");
         startFields.add(startDateField);
-        
+
         startHourField = new IntegerBox();
         startHourField.setStyleName("time-field");
         startHourField.setMaxLength(2);
         startHourField.setVisibleLength(2);
         startFields.add(startHourField);
-        
+
         startTimeColon = new Label(" : ");
         startTimeColon.setStyleName("time-field");
         startFields.add(startTimeColon);
-        
+
         startMinuteField = new IntegerBox();
         startMinuteField.setStyleName("time-field");
         startMinuteField.setMaxLength(2);
         startMinuteField.setVisibleLength(2);
         startFields.add(startMinuteField);
-        
+
         endFields = new FlowPanel();
         endFields.setStyleName("end-datetime");
         appointmentDatesForm.add(endFields);
-        
+
         //endDateField = new TextBox();
         endDateField = new DateBox();
         endDateField.setFormat(new DateBox.DefaultFormat(df));
         endDateField.setStyleName("date-field");
-        
+
         endFields.add(endDateField);
-        
+
         endHourField = new IntegerBox();
         endHourField.setStyleName("time-field");
         endHourField.setMaxLength(2);
         endHourField.setVisibleLength(2);
         endFields.add(endHourField);
-        
+
         endTimeColon = new Label(" : ");
         endTimeColon.setStyleName("time-field");
         endFields.add(endTimeColon);
-        
+
         endMinuteField = new IntegerBox();
         endMinuteField.setStyleName("time-field");
         endMinuteField.setMaxLength(2);
         endMinuteField.setVisibleLength(2);
         endFields.add(endMinuteField);
-    	
+
         // Fill in data from appointment object
         // Check the box according to selected appointment
         Repeating repeat = selectedAppointment.getRepeating();
-        RadioButton checked = selectRepeat[0]; 
-        if(repeat != null) { 
+        RadioButton checked = selectRepeat[0];
+        if(repeat != null) {
         	switch (repeat.getType()) {
 				case DAILY:
 					checked = selectRepeat[1];
@@ -203,7 +184,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 					checked = selectRepeat[4];
 					break;
         	}
-        	
+
         }
         checked.setValue(true);
         // Fill text fields
@@ -213,7 +194,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endDateField.setValue(selectedAppointment.getEnd());
         endHourField.setText(hoursFormat.format( selectedAppointment.getEnd() ));
         endMinuteField.setText(minutesFormat.format( selectedAppointment.getEnd() ));
-		
+
 	}
 
 

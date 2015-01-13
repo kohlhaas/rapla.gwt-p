@@ -8,14 +8,15 @@ import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.entities.domain.Appointment;
 
 public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubView<W> {
-    public interface Presenter
-    {
-//        void newAppButtonPressed(Date startDate, Date endDate);
-		void appointmentSelected(int selectedIndex);
+    public interface Presenter {
+        void newAppButtonPressed(Date startDate, Date endDate);
+
+        void appointmentSelected(int selectedIndex);
     }
 
     void show(List<Appointment> asList);
+
     void updateAppointmentOptionsPanel(Appointment selectedAppointment);
     //void update(List<Appointment> appointments);
-    
+
 }
