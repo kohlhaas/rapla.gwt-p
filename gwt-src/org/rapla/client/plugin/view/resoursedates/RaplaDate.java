@@ -3,6 +3,10 @@ package org.rapla.client.plugin.view.resoursedates;
 import java.text.ParseException;
 
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 import java.util.ArrayList;
@@ -16,7 +20,7 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public class RaplaDate extends Composite implements Comparable<RaplaDate> {
+public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasClickHandlers {
 
 	private double vorlesungsStunden;
 	private FlowPanel main = new FlowPanel();
@@ -122,8 +126,6 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate> {
 
 	public static List<RaplaDate> recurringDates(Date startDay, Date endDay, long startTime, long endTime,
 			int repeatType) {
-		Date beginTmp = new Date(startDay.getTime() + startTime);
-		Date endTmp = new Date(endDay.getTime() + endTime);
 		List<RaplaDate> tmp = new ArrayList<>();
 		RaplaDate next;
 		long day = 86400000;
@@ -193,12 +195,25 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate> {
 		this.endTime = endTime;
 	}
 
-	public boolean isListEmpty() {
+	public boolean isReccuringDate() {
 		return this.raplaDates.isEmpty();
 	}
 
 	public List<RaplaDate> getRaplaDateList() {
 		return this.raplaDates;
+	}
+	
+	public long getStartHourMinute(){
+		return (long) ((beginTime.getHours()*3600000) + (beginTime.getMinutes()*60000));
+	}
+	public long getEndHourMinute(){
+		return (long) ((endTime.getHours()*3600000) + (endTime.getMinutes()*60000));
+	}
+
+	@Override
+	public HandlerRegistration addClickHandler(ClickHandler handler) {
+		// TODO Auto-generated method stub
+		return addDomHandler(handler, ClickEvent.getType());
 	}
 
 }

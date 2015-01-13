@@ -75,6 +75,19 @@
 	display: block;
 	margin-bottom: 3px;
 }
+.buttonsResourceDatesClickable {
+	float: left;
+	width: 28px;
+	background-color: red;
+	border-radius: 50px;
+	color: white;
+	cursor: pointer;
+	height: 28px;
+	text-align: center;
+	font-size: 20px;
+	display: block;
+	margin-bottom: 3px;
+}
 
 .singleDate {
 	width: 300px;

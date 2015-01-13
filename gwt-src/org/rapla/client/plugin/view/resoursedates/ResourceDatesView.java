@@ -44,7 +44,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		
 	
 	FlowPanel mainContent;
-	FlowPanel dateList;
+	TerminList dateList;
 	FlowPanel buttonBar;
 
 	Label buttonNextGap;
@@ -62,10 +62,10 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	Tree resourceTree;
 	
 	CheckBox cbWholeDay;
-	CheckBox cbRepeat;
 
 	FlowPanel chosenResources;
 	DisclosurePanel dateDisclosurePanel;
+	DisclosurePanel cbRepeatType;
 
 	@Override
 	public Widget createContent(){
@@ -74,7 +74,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 		mainContent = new FlowPanel();
 
-		dateList = new FlowPanel();
+		dateList = new TerminList();
 		dateList.setHeight(height + "px");
 		dateList.setStyleName("dateList");
 
@@ -118,10 +118,24 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		// Image buttonGarbageCan = new Image("button_eimer.png");
 		buttonGarbageCan = new Label("X");
 		buttonGarbageCan.setStyleName("buttonsResourceDates");
+		buttonGarbageCan.setTitle("Termin l\u00F6schen");
+		buttonGarbageCan.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if(buttonGarbageCan.getStyleName().equals("buttonsResourceDatesClickable")){
+					dateList.removeDate(dateList.getActive());
+					clearDateTimeInputFields();
+					buttonGarbageCan.setStyleName("buttonsResourceDates");
+				}		
+			}
+			
+		});
 
 		// Image buttonPlus = new Image("button_plus.png");
 		buttonPlus = new Label("+");
-		buttonPlus.setStyleName("buttonsResourceDates");
+		buttonPlus.setTitle("Termin erstellen");
+		buttonPlus.setStyleName("buttonsResourceDatesClickable");
 
 		// TO-DO: Is this really a Label? Or should it be a Button? Can a Label
 		// be used, too?
@@ -228,6 +242,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 			public void onClick(ClickEvent event) {
 				try {
 					dateDisclosurePanel.setOpen(true);
+					buttonPlus.setStyleName("buttonsResourceDates");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -238,22 +253,22 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		
 		// Checkbox WIEDERHOLEN
 		HorizontalPanel repeat = new HorizontalPanel();
-		DisclosurePanel cbRepeat = new DisclosurePanel("Wiederholen");
-		cbRepeat.setStyleName("dateInfoLineLeft");
+		cbRepeatType = new DisclosurePanel("Wiederholen");
+		cbRepeatType.setStyleName("dateInfoLineLeft");
 
 		final RadioButton daily = new RadioButton("repeat","t\u00E4glich");
 		final RadioButton weekly = new RadioButton("repeat", "w\u00F6chentlich");
 		final RadioButton monthly = new RadioButton("repeat", "monatlich");
 		final RadioButton year = new RadioButton("repeat", "j\u00E4hrlich");
-		RadioButton clear = new RadioButton("repeat", "keine Wiederholung");
+		RadioButton clearRepeatType = new RadioButton("repeat", "keine Wiederholung");
 
 		repeat.add(daily);
 		repeat.add(weekly);
 		repeat.add(monthly);
 		repeat.add(year);
-		repeat.add(clear);
+		repeat.add(clearRepeatType);
 
-		cbRepeat.add(repeat);
+		cbRepeatType.add(repeat);
 		
 		HorizontalPanel addDateWithLabel = new HorizontalPanel();
 		Button addDate = new Button("Termin hinzuf\u00FCgen");
@@ -262,12 +277,34 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		addDateWithLabel.add(addDateInfo);
 		addDateWithLabel.setCellVerticalAlignment(addDate, HasVerticalAlignment.ALIGN_MIDDLE);
 		addDateWithLabel.setCellVerticalAlignment(addDateInfo, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+	
+		class RaplaDateClickHandler implements ClickHandler{
+
+			@Override
+			public void onClick(ClickEvent event) {
+				RaplaDate tmp = (RaplaDate)event.getSource();
+				dateList.setActive(tmp);
+				if(!(dateList.getActive() == -1)){
+					dateBegin.setValue(tmp.getBeginTime());
+					dateEnd.setValue(tmp.getEndTime());
+					timeBegin.setValue((long)-3600000 + tmp.getStartHourMinute());
+					timeEnd.setValue((long)-3600000 + tmp.getEndHourMinute());
+					buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
+				}else{
+					clearDateTimeInputFields();
+					buttonGarbageCan.setStyleName("buttonsResourceDates");
+				}
+				
+			}
+			
+		}
 		addDate.addClickHandler(new ClickHandler(){
 
 			@Override
 			public void onClick(ClickEvent event) {
-				RaplaDate addTermin;
-				
+				RaplaDate addTermin = new RaplaDate();
+					
 				Date beginTmp = new Date(dateBegin.getValue().getTime() + timeBegin.getTime() + 3600000);
 				Date endTmp = new Date(dateEnd.getValue().getTime() + timeEnd.getTime() + 3600000);
 				
@@ -295,6 +332,8 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 							tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
 							addTermin = new RaplaDate(tmp);
 							dateList.add(addTermin);
+							addTermin.addClickHandler(new RaplaDateClickHandler());
+							clearDateTimeInputFields();
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -302,19 +341,20 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 					}else{
 					try {	
 						addTermin = new RaplaDate(beginTmp, endTmp, true);
+						addTermin.addClickHandler(new RaplaDateClickHandler());
 						dateList.add(addTermin);
+						clearDateTimeInputFields();
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					}
 				}
-
 				
 			}
 			
 		});
-
+	
 		// Ausgewählte Ressourcen laden
 		chosenResources = new FlowPanel();
 		chosenResources.setStyleName("dateInfoLineComplete");
@@ -357,14 +397,11 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		
 	    addResources.setContent(chooseContainer);
 		
-	    
-		//dateInfos.add(begin);
-		//dateInfos.add(end);
-		//dateInfos.add(cbRepeat);
+
 	    VerticalPanel dateContentWrapper = new VerticalPanel();
 	    dateContentWrapper.add(begin);	
 	    dateContentWrapper.add(end);
-	    dateContentWrapper.add(cbRepeat);
+	    dateContentWrapper.add(cbRepeatType);
 	    dateContentWrapper.add(addDateWithLabel);
 	    dateDisclosurePanel = new DisclosurePanel();
 	    dateDisclosurePanel.add(dateContentWrapper);
@@ -381,8 +418,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 		return mainContent;
 	}
-
-
 
 	private void createResourceTree() {
 		
@@ -670,10 +705,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		return dateList;
 	}
 
-	public void setDateList(FlowPanel dateList) {
-		this.dateList = dateList;
-	}
-
 	public FlowPanel getButtonBar() {
 		return buttonBar;
 	}
@@ -704,14 +735,6 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 	public void setResourceTree(Tree resourceTree) {
 		this.resourceTree = resourceTree;
-	}
-
-	public CheckBox getCbRepeat() {
-		return cbRepeat;
-	}
-
-	public void setCbRepeat(CheckBox cbRepeat) {
-		this.cbRepeat = cbRepeat;
 	}
 
 	public FlowPanel getChosenResources() {
@@ -752,6 +775,14 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 	public void setToBeReservedResources(ArrayList<List<String>> toBeReservedResources) {
 		this.toBeReservedResources = toBeReservedResources;
+	}
+	private void clearDateTimeInputFields(){
+		dateBegin.setValue(null);
+		dateEnd.setValue(null);
+		timeEnd.setValue((long) -3600000);
+		timeBegin.setValue((long) -3600000);
+		cbWholeDay.setValue(false);
+		
 	}
 
 }

@@ -3,6 +3,8 @@ package org.rapla.client.plugin.view.resoursedates;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class TerminList extends FlowPanel {
@@ -19,9 +21,21 @@ public class TerminList extends FlowPanel {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void add(RaplaDate s){
+	public void add(final RaplaDate s){
 		super.add(s);
 		dates.add(s);
+		/*
+		 * Needs GWTBus (fireEvent) to embed in ResourceDatesView
+		s.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				int position = dates.indexOf(s);
+				active = active == position ? -1 : position;				
+			}
+			
+		});
+		*/
 	}
 	
 	public RaplaDate getDate(int index){
@@ -34,13 +48,13 @@ public class TerminList extends FlowPanel {
 	}
 
 	public void setActive(RaplaDate date) {
-		active = getDateParentIndex(date);		
+		active = getRaplaDateIndex(date) == active ? -1 : getRaplaDateIndex(date);		
 	}
 	public int getActive(){
 		return active;
 	}
 	
-	public int getDateParentIndex(RaplaDate date){
+	public int getRaplaDateIndex(RaplaDate date){
 		return dates.indexOf(date);
 	}
 
