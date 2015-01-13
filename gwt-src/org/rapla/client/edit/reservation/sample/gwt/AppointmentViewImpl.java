@@ -2,21 +2,9 @@ package org.rapla.client.edit.reservation.sample.gwt;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.IntegerBox;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
-import com.google.gwt.user.datepicker.client.DatePicker;
-
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
@@ -25,8 +13,6 @@ import org.rapla.entities.domain.AppointmentFormater;
 import org.rapla.entities.domain.Repeating;
 
 import javax.inject.Inject;
-
-import java.util.Date;
 import java.util.List;
 
 public class AppointmentViewImpl extends AbstractView<Presenter> implements AppointmentView<IsWidget> {
@@ -45,6 +31,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     /**
      * save a appointment by calling : "getPresenter().newAppButtonPressed(dateStart, dateEnd)"
+     *
      * @param appointments
      */
 
@@ -55,18 +42,18 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         // Appointment List
         ListBox appointmentList = new ListBox();
         appointmentList.setStyleName("appointment-list");
-        for(Appointment a : appointments) {
-        	String appointmentLabel = df.format(a.getStart()) + " "; // + " - " + df.format(a.getEnd());
-        	appointmentList.addItem(appointmentLabel);
+        for (Appointment a : appointments) {
+            String appointmentLabel = df.format(a.getStart()) + " "; // + " - " + df.format(a.getEnd());
+            appointmentList.addItem(appointmentLabel);
         }
         appointmentList.setVisibleItemCount(7);
         content.add(appointmentList);
         appointmentList.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent change) {
-				ListBox appointmentList = (ListBox) change.getSource();
-				getPresenter().appointmentSelected(appointmentList.getSelectedIndex());
-			}
+            @Override
+            public void onChange(ChangeEvent change) {
+                ListBox appointmentList = (ListBox) change.getSource();
+                getPresenter().appointmentSelected(appointmentList.getSelectedIndex());
+            }
         });
         getPresenter().appointmentSelected(appointmentList.getSelectedIndex());
     }
@@ -74,8 +61,11 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
         // Terminplanung View
         // Rechte Seite des Termin Panels
-    	int widgetNo =content.getWidgetIndex(appointmentOptionsPanel);
-    	if (widgetNo >= 0) {content.remove(widgetNo);} ;
+        int widgetNo = content.getWidgetIndex(appointmentOptionsPanel);
+        if (widgetNo >= 0) {
+            content.remove(widgetNo);
+        }
+        ;
         RadioButton[] selectRepeat = new RadioButton[5];
         FlowPanel selectRepeatPanel;
         Button convertToSingleEventsButton;
@@ -83,10 +73,10 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         IntegerBox startHourField, startMinuteField, endHourField, endMinuteField;
         DateBox startDateField, endDateField;
         FlowPanel startFields, endFields;
-        Label startTimeColon,endTimeColon;
+        Label startTimeColon, endTimeColon;
 
         // Create Panels and Widgets
-    	appointmentOptionsPanel = new FlowPanel();
+        appointmentOptionsPanel = new FlowPanel();
         appointmentOptionsPanel.setStyleName("appointment-options");
         content.add(appointmentOptionsPanel);
 
@@ -99,8 +89,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         selectRepeat[0].setValue(true);
         selectRepeatPanel = new FlowPanel();
         appointmentOptionsPanel.add(selectRepeatPanel);
-        for(RadioButton repeatButton : selectRepeat) {
-        	selectRepeatPanel.add(repeatButton);
+        for (RadioButton repeatButton : selectRepeat) {
+            selectRepeatPanel.add(repeatButton);
         }
 
         // Einzeltermine Button
@@ -169,33 +159,33 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         // Check the box according to selected appointment
         Repeating repeat = selectedAppointment.getRepeating();
         RadioButton checked = selectRepeat[0];
-        if(repeat != null) {
-        	switch (repeat.getType()) {
-				case DAILY:
-					checked = selectRepeat[1];
-        			break;
-				case MONTHLY:
-					checked = selectRepeat[2];
-					break;
-				case WEEKLY:
-					checked = selectRepeat[3];
-					break;
-				case YEARLY:
-					checked = selectRepeat[4];
-					break;
-        	}
+        if (repeat != null) {
+            switch (repeat.getType()) {
+                case DAILY:
+                    checked = selectRepeat[1];
+                    break;
+                case MONTHLY:
+                    checked = selectRepeat[2];
+                    break;
+                case WEEKLY:
+                    checked = selectRepeat[3];
+                    break;
+                case YEARLY:
+                    checked = selectRepeat[4];
+                    break;
+            }
 
         }
         checked.setValue(true);
         // Fill text fields
         startDateField.setValue(selectedAppointment.getStart());
-        startHourField.setText(hoursFormat.format( selectedAppointment.getStart() ));
-        startMinuteField.setText(minutesFormat.format( selectedAppointment.getStart() ));
+        startHourField.setText(hoursFormat.format(selectedAppointment.getStart()));
+        startMinuteField.setText(minutesFormat.format(selectedAppointment.getStart()));
         endDateField.setValue(selectedAppointment.getEnd());
-        endHourField.setText(hoursFormat.format( selectedAppointment.getEnd() ));
-        endMinuteField.setText(minutesFormat.format( selectedAppointment.getEnd() ));
+        endHourField.setText(hoursFormat.format(selectedAppointment.getEnd()));
+        endMinuteField.setText(minutesFormat.format(selectedAppointment.getEnd()));
 
-	}
+    }
 
 
 //    public void update(List<Appointment> appointments) {
@@ -213,29 +203,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 //
 //        }
 //        appointmentContent.add(new Label("Termine: " + builder.toString()));
-//    }
-//
-//    private void initEndDatePicker() {
-//        datePicker2.addValueChangeHandler(new ValueChangeHandler<Date>() {
-//            public void onValueChange(ValueChangeEvent<Date> event) {
-//                dateEnd = event.getValue();
-//                String dateString = DateTimeFormat.getMediumDateFormat().format(dateEnd);
-//                dateEndText.setText("ausgewaehlt Ende: " + dateString);
-//            }
-//        });
-//        datePicker2.setValue(new Date(), true);
-//
-//    }
-//
-//    private void initStartDatePicker() {
-//        datePicker.addValueChangeHandler(new ValueChangeHandler<Date>() {
-//            public void onValueChange(ValueChangeEvent<Date> event) {
-//                dateStart = event.getValue();
-//                String dateString = DateTimeFormat.getMediumDateFormat().format(dateStart);
-//                dateStartText.setText("ausgewaehlt Start: " + dateString);
-//            }
-//        });
-//        datePicker.setValue(new Date(), true);
 //    }
 
     @Override
