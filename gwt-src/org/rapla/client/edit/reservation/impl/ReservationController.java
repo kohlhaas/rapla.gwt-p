@@ -606,4 +606,37 @@ public class ReservationController implements GWTReservationController,
 		this.currentView = currentView;
 	}
 
+	protected void loadDataFromReservation(ViewServiceProviderInterface currentView2) {
+		Classification classificationTmp = reservationTmp.getClassification();
+		Allocatable[] allocatables = reservationTmp.getAllocatables();
+
+		if (currentView2 instanceof InfoViewInterface) {
+
+			for (int a=0; a < allocatables.length; a++) {
+				String tmp = (String) allocatables[a].getClassification()
+						.getValue("name");
+
+				// classificationTmp.setValue("name", "Studiengang");
+				// classificationTmp.setValue("course",
+				// ((InfoViewInterface) currentView).getStudiengangListBox()
+				// .getSelectedItemText());
+
+				for (int i = 0; i < (((InfoViewInterface) currentView2)
+						.getStudiengangListBox().getItemCount()); i++) {
+					if (tmp.equals(((InfoViewInterface) currentView2)
+							.getStudiengangListBox().getItemText(i))) {
+						((InfoViewInterface) currentView2)
+								.getStudiengangListBox().setSelectedIndex(i);
+					}
+				}
+				
+
+			}
+		} else {
+
+		}
+
+	}
+
+
 }

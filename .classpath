@@ -15,6 +15,6 @@
 	<classpathentry kind="lib" path="lib/guice-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/guice-assistedinject-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/javax.inject.jar"/>
-	<classpathentry kind="lib" path="C:/Users/EDV313/Downloads/gwt-eureka-0.1.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-eureka-0.1.jar"/>
 	<classpathentry kind="output" path="eclipse-build"/>
 </classpath>
