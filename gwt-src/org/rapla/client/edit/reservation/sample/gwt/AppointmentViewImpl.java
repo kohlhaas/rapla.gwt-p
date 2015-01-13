@@ -19,7 +19,6 @@ import org.rapla.entities.domain.Repeating;
 
 import javax.inject.Inject;
 
-import java.util.Date;
 import java.util.List;
 
 public class AppointmentViewImpl extends AbstractView<Presenter> implements AppointmentView<IsWidget> {
@@ -54,11 +53,18 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     public void show(List<Appointment> appointments) {
         content.clear();
-
-        // Terminplanung View
+        Button addAppointment = new Button("Termin hinzufügen");
+        addAppointment.setStyleName("add-appointment");
+        addAppointment.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				getPresenter().newAppointmentButtonPressed();
+			}
+        });
+        content.add(addAppointment);
         // Appointment List
         appointmentList = new ListBox();
-        updateAppointmentList(appointments);
+        updateAppointmentList(appointments, 0);
         appointmentList.setStyleName("appointment-list");
         appointmentList.setVisibleItemCount(7);
         content.add(appointmentList);
@@ -117,13 +123,14 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     }
     
-    public void updateAppointmentList(List<Appointment> appointments) {
+    public void updateAppointmentList(List<Appointment> appointments, int focus) {
     	appointmentList.clear();
     	for (Appointment a : appointments) {
             String appointmentLabel = df.format(a.getStart()) + " "; // + " - " + df.format(a.getEnd());
             appointmentList.addItem(appointmentLabel);
         }
-    	
+    	appointmentList.setSelectedIndex(focus);
+    	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
     }
 
     //TODO: startDate and EndDate is kind of redundant

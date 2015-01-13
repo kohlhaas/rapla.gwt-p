@@ -36,11 +36,13 @@ public class AppointmentPresenter implements Presenter {
     }
 
     @Override
-    public void newAppointmentButtonPressed(Date startDate, Date endDate) {
+    public void newAppointmentButtonPressed() {
         Appointment newAppointment;
         try {
-            newAppointment = facade.newAppointment(startDate, endDate);
+            newAppointment = facade.newAppointment(new Date(), new Date());
             reservation.addAppointment(newAppointment);
+            List<Appointment> appointmentList = Arrays.asList(reservation.getAppointments());
+            view.updateAppointmentList(appointmentList, appointmentList.size()-1);
         } catch (RaplaException e) {
             logger.error(e.getMessage(), e);
         }

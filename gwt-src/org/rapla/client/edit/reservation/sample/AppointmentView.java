@@ -11,7 +11,7 @@ import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
 public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubView<W> {
     public interface Presenter {
-        void newAppointmentButtonPressed(Date startDate, Date endDate);
+        void newAppointmentButtonPressed();
         Date nextFreeDateButtonPressed(Date startDate, Date endDate);
         void appointmentSelected(int selectedIndex);
     }
@@ -19,6 +19,6 @@ public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubV
     void show(List<Appointment> asList);
 
     void updateAppointmentOptionsPanel(Appointment selectedAppointment);
-    //void update(List<Appointment> appointments);
+    void updateAppointmentList(List<Appointment> appointments, int focus);
 
 }
