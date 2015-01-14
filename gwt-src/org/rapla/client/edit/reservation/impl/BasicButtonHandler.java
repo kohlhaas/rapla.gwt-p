@@ -41,25 +41,24 @@ public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
 																// to a button
 			switch (buttonText) {
 			case "speichern":
-				
+
 				try {
 					controller.saveTemporaryChanges();
-				} catch (RaplaException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				Classification classification = controller.reservationTmp
-						.getClassification();
-				Attribute first = classification.getType().getAttributes()[0];
-				String text = controller.reservationName;
-				classification.setValue(first, text);
-				try {
-					ClientFacade facade = getClientFacade();
+
+					 Classification classification = controller.reservationTmp
+					 .getClassification();
+					 Attribute first =
+					 classification.getType().getAttributes()[0];
+					 String text = controller.reservationName;
+					 classification.setValue(first, text);
+
+					ClientFacade facade = controller.getFacade();
 					facade.store(controller.reservationTmp);
+
 				} catch (RaplaException e1) {
 					// TODO add exception handling
 					logger.log(Level.SEVERE, e1.getMessage(), e1);
+					e1.printStackTrace();
 				}
 				controller.popupContent.hide();
 
@@ -72,7 +71,7 @@ public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
 			case "l\u00F6schen":
 				if (!controller.isNew()) {
 					try {
-						ClientFacade facade = getClientFacade();
+						ClientFacade facade = controller.getFacade();
 						facade.remove(controller.reservationTmp);
 					} catch (RaplaException e1) {
 						// TODO add exception handling

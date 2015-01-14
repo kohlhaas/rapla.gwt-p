@@ -16,6 +16,7 @@ public interface InfoViewInterface extends ViewServiceProviderInterface {
 public void setEventTypes(List<String> eventTypes); 
 
 public String getSelectedEventType();
+public void  setSelectedEventType(String select);
 
 public void setDynamicFields(Attribute[] attributes);
 

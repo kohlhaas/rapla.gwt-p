@@ -39,8 +39,8 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-
-public class InfoView implements ViewServiceProviderInterface, InfoViewInterface {
+public class InfoView implements ViewServiceProviderInterface,
+		InfoViewInterface {
 
 	private HorizontalPanel content;
 	private VerticalPanel contentLeft;
@@ -53,7 +53,6 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 	private ListBox studiengangListBox;
 	private Collection<String> studiengangListBoxAuswahl;
 
-	
 	@Override
 	public Widget createContent() {
 
@@ -65,17 +64,15 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		contentLeft = new VerticalPanel();
 		contentRight = new VerticalPanel();
 		contentLeft.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		contentRight.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		contentRight
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		contentLeft.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		contentRight.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
 		eventTypesListBox = new ListBox();
 		resources = new Tree();
-		
-	
+
 		// add the Event Types from data.xml here
-		
-				
 
 		eventTypesListBox.addChangeHandler(new ChangeHandler() {
 
@@ -85,19 +82,20 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 
 			}
 		});
-		
+
 		final FlowPanel listPanel = new FlowPanel();
 		listPanel.add(eventTypesListBox);
 		listPanel.add(resources);
 		listPanel.setWidth(width + "px");
 		contentLeft.add(listPanel);
 
-		final InfoHorizontalPanel titelPanel = new InfoHorizontalPanel(width + "px");
+		final InfoHorizontalPanel titelPanel = new InfoHorizontalPanel(width
+				+ "px");
 		final Label titel = new Label("Vorlesungstitel");
 		titelInput = new TextBox();
-		titelPanel.add(titel, (width / 3) + "px" );
+		titelPanel.add(titel, (width / 3) + "px");
 		titelPanel.add(titelInput, (width / 3) + "px");
-		//titelPanel.setWidth(width + "px");
+		// titelPanel.setWidth(width + "px");
 
 		final Label vorlesungsStunden = new Label("Vorlesungsstunden");
 		final Label vorlesungsStundenMessage = new Label("");
@@ -124,36 +122,38 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 			}
 		});
 
+		final InfoHorizontalPanel vorlesungsStundenPanel = new InfoHorizontalPanel(
+				width + "px");
+		vorlesungsStundenPanel.add(vorlesungsStunden, (width / 3) + "px");
+		vorlesungsStundenPanel.add(vorlesungsStundenInput, (width / 3) + "px");
+		vorlesungsStundenPanel
+				.add(vorlesungsStundenMessage, (width / 3) + "px");
 
-		final InfoHorizontalPanel vorlesungsStundenPanel = new InfoHorizontalPanel(width + "px");
-		vorlesungsStundenPanel.add(vorlesungsStunden, (width / 3 ) + "px");
-		vorlesungsStundenPanel.add(vorlesungsStundenInput, (width / 3 ) + "px");
-		vorlesungsStundenPanel.add(vorlesungsStundenMessage, (width / 3 ) + "px");
-		
-		final InfoHorizontalPanel studiengangPanel = new InfoHorizontalPanel(width + "px");
+		final InfoHorizontalPanel studiengangPanel = new InfoHorizontalPanel(
+				width + "px");
 		Label studiengang = new Label("Studiengang");
 		studiengangListBox = new ListBox();
 		studiengangListBox.addItem("WWI12B1");
 		studiengangListBox.addItem("WWI12B2");
 		studiengangListBox.addItem("WWI12B3");
 		studiengangListBoxAuswahl = new ArrayList();
-		studiengangListBox.addChangeHandler(new ChangeHandler(){
+		studiengangListBox.addChangeHandler(new ChangeHandler() {
 			// Hier den Handler / Listener für die Listbox einbinden ~ done
 			@Override
 			public void onChange(ChangeEvent event) {
-				studiengangListBoxAuswahl.add(studiengangListBox.getSelectedItemText());
+				studiengangListBoxAuswahl.add(studiengangListBox
+						.getSelectedItemText());
 			}
-			
+
 		});
-		
-		
-		studiengangPanel.add(studiengang, (width / 3 ) + "px");
-		studiengangPanel.add(studiengangListBox, (width / 3 ) + "px");
+
+		studiengangPanel.add(studiengang, (width / 3) + "px");
+		studiengangPanel.add(studiengangListBox, (width / 3) + "px");
 
 		studiengangPanel.finalize(3);
 		vorlesungsStundenPanel.finalize(3);
 		titelPanel.finalize(3);
-		
+
 		contentRight.add(titelPanel);
 		contentRight.add(vorlesungsStundenPanel);
 		contentRight.add(studiengangPanel);
@@ -202,7 +202,8 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 		return studiengangListBoxAuswahl;
 	}
 
-	public void setStudiengangListBoxAuswahl(Collection<String> studiengangListBoxAuswahl) {
+	public void setStudiengangListBoxAuswahl(
+			Collection<String> studiengangListBoxAuswahl) {
 		this.studiengangListBoxAuswahl = studiengangListBoxAuswahl;
 	}
 
@@ -212,43 +213,44 @@ public class InfoView implements ViewServiceProviderInterface, InfoViewInterface
 
 	}
 
-
 	@Override
 	public void setEventTypes(List<String> eventTypes) {
 
-		for(int i = 0; i < eventTypes.size(); i++){
+		for (int i = 0; i < eventTypes.size(); i++) {
 			eventTypesListBox.addItem((String) eventTypes.get(i).toString());
-			}
+		}
 
 	}
 
 	@Override
 	public String getSelectedEventType() {
-		// TODO Auto-generated method stub
-		return null;
+		return eventTypesListBox.getSelectedItemText();
+	}
+
+	@Override
+	public void setSelectedEventType(String select) {
+		for (int i = 0; i < eventTypesListBox.getItemCount(); i++) {
+			if (eventTypesListBox.getItemText(i).equals(select)) {
+				eventTypesListBox.setItemSelected(i, true);
+			}
+		}
 	}
 
 	@Override
 	public void setDynamicFields(Attribute[] attributes) {
 
-		
-		for(int i = 0; i < attributes.length; i++){
-			
-		String name =   attributes[i].toString();
-		
-		eventTypesListBox.addItem(name);
-				
+		for (int i = 0; i < attributes.length; i++) {
+
+			String name = attributes[i].toString();
+
+			eventTypesListBox.addItem(name);
+
 		}
-		
-	}
-	
-	public void setConstraintKeys(String[] constraintKeys){
-		
-		
+
 	}
 
-		
+	public void setConstraintKeys(String[] constraintKeys) {
+
 	}
 
-
-
+}

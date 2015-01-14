@@ -28,6 +28,7 @@ import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
+import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.ModificationEvent;
 import org.rapla.facade.ModificationListener;
@@ -114,7 +115,11 @@ public class Application implements ViewSelectionChangedHandler,
 			try {
 				ClientFacade facade = service.getFacade();
 				Reservation editableEvent = facade.edit(event);
-				controller.edit(editableEvent, false);
+				reservationController.edit(editableEvent, false);
+				reservationController.setFacade(facade);
+				PopupPanel createContent = reservationController.createContent();
+				root.add(createContent);
+				createContent.center();
 			} catch (RaplaException e1) {
 				// TODO exception handling
 				logger.log(Level.SEVERE, e1.getMessage(), e1);
@@ -182,7 +187,7 @@ public class Application implements ViewSelectionChangedHandler,
 //			popupContent.center();
 			ClientFacade facade = getClientFacade();
 			try {
-				final Reservation event = facade.newReservation();
+				Reservation event = facade.newReservation(facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION)[0].newClassification());
 
 				Date selectedDate = facade.today();
 				Date time = new Date(DateTools.MILLISECONDS_PER_MINUTE
