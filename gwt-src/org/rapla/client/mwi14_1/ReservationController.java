@@ -1,9 +1,7 @@
 package org.rapla.client.mwi14_1;
 
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -12,9 +10,6 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.rapla.client.edit.reservation.GWTReservationController;
-import org.rapla.client.internal.GWTRaplaLocale;
-import org.rapla.client.internal.RaplaGWTClient;
 import org.rapla.client.mwi14_1.factory.InfoViewInterface;
 import org.rapla.client.mwi14_1.factory.ResourceDatesInterface;
 import org.rapla.client.mwi14_1.factory.ViewEnumTypes;
@@ -22,52 +17,34 @@ import org.rapla.client.mwi14_1.factory.ViewFactory;
 import org.rapla.client.mwi14_1.factory.ViewServiceProviderInterface;
 import org.rapla.client.mwi14_1.view.infos.InfoView;
 import org.rapla.client.mwi14_1.view.resoursedates.ResourceDatesView;
-import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
-import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.User;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
-import org.rapla.entities.domain.Permission;
 import org.rapla.entities.domain.PermissionContainer;
 import org.rapla.entities.domain.Reservation;
-import org.rapla.entities.domain.internal.AllocatableImpl;
 import org.rapla.entities.dynamictype.Attribute;
-import org.rapla.entities.dynamictype.AttributeType;
 import org.rapla.entities.dynamictype.Classification;
-import org.rapla.entities.dynamictype.ClassificationFilter;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
 import org.rapla.entities.dynamictype.internal.AttributeImpl;
-import org.rapla.entities.dynamictype.internal.ClassificationImpl;
 import org.rapla.entities.dynamictype.internal.DynamicTypeImpl;
-import org.rapla.facade.RaplaComponent;
+import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
+import org.rapla.framework.RaplaLocale;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabBar;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Button;
 
-import org.rapla.facade.ClientFacade;
-import org.rapla.gui.internal.TreeAllocatableSelection;
-
-public class ReservationController implements GWTReservationController,
-		ViewSelectionChangedHandler {
+public class ReservationController implements org.rapla.client.edit.reservation.ReservationController
+{
 
 	// private ContentDrawer infoDrawer;
 
@@ -101,7 +78,7 @@ public class ReservationController implements GWTReservationController,
 	Collection<ViewServiceProviderInterface> views = new ArrayList();
 
 	@Inject
-	GWTRaplaLocale GWTRaplaLocale;
+	RaplaLocale GWTRaplaLocale;
 
 	Logger logger = Logger.getLogger("reservationController");
 
@@ -506,7 +483,6 @@ public class ReservationController implements GWTReservationController,
 
 	}
 
-	@Override
 	public void viewChanged() {
 		// TODO Auto-generated method stub
 

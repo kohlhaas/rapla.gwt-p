@@ -17,7 +17,7 @@ import org.rapla.facade.RaplaComponent;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
-import org.rapla.client.edit.reservation.GWTReservationController;
+import org.rapla.client.mwi14_1.ReservationController;
 
 public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
 
