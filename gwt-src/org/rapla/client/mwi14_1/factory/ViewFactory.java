@@ -1,8 +1,8 @@
-package org.rapla.client.factory;
+package org.rapla.client.mwi14_1.factory;
 
-import org.rapla.client.edit.reservation.impl.ReservationController;
-import org.rapla.client.plugin.view.infos.InfoView;
-import org.rapla.client.plugin.view.resoursedates.ResourceDatesView;
+import org.rapla.client.mwi14_1.ReservationController;
+import org.rapla.client.mwi14_1.view.infos.InfoView;
+import org.rapla.client.mwi14_1.view.resoursedates.ResourceDatesView;
 
 public class ViewFactory {
 	public static ViewServiceProviderInterface getInstance(ViewEnumTypes viewId){ //mit enum ersetzten

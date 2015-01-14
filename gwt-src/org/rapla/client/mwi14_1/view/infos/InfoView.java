@@ -1,4 +1,4 @@
-package org.rapla.client.plugin.view.infos;
+package org.rapla.client.mwi14_1.view.infos;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,9 +6,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.rapla.client.edit.reservation.impl.ReservationController;
-import org.rapla.client.factory.InfoViewInterface;
-import org.rapla.client.factory.ViewServiceProviderInterface;
+import org.rapla.client.mwi14_1.ReservationController;
+import org.rapla.client.mwi14_1.factory.InfoViewInterface;
+import org.rapla.client.mwi14_1.factory.ViewServiceProviderInterface;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.framework.RaplaException;

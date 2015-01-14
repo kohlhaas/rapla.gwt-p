@@ -6,10 +6,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.rapla.client.edit.reservation.impl.ReservationController;
 import org.rapla.client.event.RaplaEventBus;
 import org.rapla.client.event.AddReservationEvent;
-import org.rapla.client.factory.ViewServiceProviderInterface;
+import org.rapla.client.mwi14_1.ReservationController;
+import org.rapla.client.mwi14_1.factory.ViewServiceProviderInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;

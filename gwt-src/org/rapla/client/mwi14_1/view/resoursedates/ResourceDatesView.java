@@ -1,4 +1,4 @@
-package org.rapla.client.plugin.view.resoursedates;
+package org.rapla.client.mwi14_1.view.resoursedates;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.rapla.client.factory.ResourceDatesInterface;
-import org.rapla.client.factory.ViewServiceProviderInterface;
-import org.rapla.client.timePicker.HourMinutePicker;
-import org.rapla.client.timePicker.HourMinutePicker.PickerFormat;
+import org.rapla.client.mwi14_1.factory.ResourceDatesInterface;
+import org.rapla.client.mwi14_1.factory.ViewServiceProviderInterface;
+import org.rapla.client.mwi14_1.timePicker.HourMinutePicker;
+import org.rapla.client.mwi14_1.timePicker.HourMinutePicker.PickerFormat;
 
 import com.blogspot.ctasada.gwt.eureka.client.ui.SmallTimeBox;
 import com.blogspot.ctasada.gwt.eureka.client.ui.TimeBox;

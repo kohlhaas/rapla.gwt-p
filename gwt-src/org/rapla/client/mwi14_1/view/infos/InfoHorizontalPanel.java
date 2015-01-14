@@ -1,4 +1,4 @@
-package org.rapla.client.plugin.view.infos;
+package org.rapla.client.mwi14_1.view.infos;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;

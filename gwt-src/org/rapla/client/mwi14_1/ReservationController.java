@@ -1,4 +1,4 @@
-package org.rapla.client.edit.reservation.impl;
+package org.rapla.client.mwi14_1;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -13,16 +13,16 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.GWTReservationController;
-import org.rapla.client.factory.InfoViewInterface;
-import org.rapla.client.factory.ResourceDatesInterface;
-import org.rapla.client.factory.ViewEnumTypes;
-import org.rapla.client.factory.ViewFactory;
-import org.rapla.client.factory.ViewServiceProviderInterface;
 import org.rapla.client.internal.GWTRaplaLocale;
 import org.rapla.client.internal.RaplaGWTClient;
+import org.rapla.client.mwi14_1.factory.InfoViewInterface;
+import org.rapla.client.mwi14_1.factory.ResourceDatesInterface;
+import org.rapla.client.mwi14_1.factory.ViewEnumTypes;
+import org.rapla.client.mwi14_1.factory.ViewFactory;
+import org.rapla.client.mwi14_1.factory.ViewServiceProviderInterface;
+import org.rapla.client.mwi14_1.view.infos.InfoView;
+import org.rapla.client.mwi14_1.view.resoursedates.ResourceDatesView;
 import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
-import org.rapla.client.plugin.view.infos.InfoView;
-import org.rapla.client.plugin.view.resoursedates.ResourceDatesView;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.User;
 import org.rapla.entities.domain.Allocatable;

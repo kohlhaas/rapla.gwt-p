@@ -1,4 +1,4 @@
-package org.rapla.client.edit.reservation.impl;
+package org.rapla.client.mwi14_1;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

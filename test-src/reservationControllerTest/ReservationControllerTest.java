@@ -7,6 +7,7 @@ import org.jukito.JukitoModule;
 
 
 
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,7 +23,7 @@ import org.jukito.JukitoRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.rapla.client.edit.reservation.impl.ReservationController;
+import org.rapla.client.mwi14_1.ReservationController;
 import org.rapla.components.util.DateTools;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;

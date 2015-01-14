@@ -1,4 +1,4 @@
-package org.rapla.client.timePicker;
+package org.rapla.client.mwi14_1.timePicker;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;

@@ -1,4 +1,4 @@
-package org.rapla.client.factory;
+package org.rapla.client.mwi14_1.factory;
 
 import java.util.Collection;
 import java.util.List;

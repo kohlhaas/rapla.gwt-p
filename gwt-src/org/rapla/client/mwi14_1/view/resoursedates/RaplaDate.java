@@ -1,4 +1,4 @@
-package org.rapla.client.plugin.view.resoursedates;
+package org.rapla.client.mwi14_1.view.resoursedates;
 
 import java.text.ParseException;
 
