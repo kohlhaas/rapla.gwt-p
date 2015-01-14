@@ -26,6 +26,23 @@
 	font-size: 12pt;
 }
 
+.gwt-TabBar .gwt-TabBarItem-disabled {
+	color: #d8d1d1 !important;
+font-style: italic !important;
+border: 2px solid #29292b !important;
+}
+
+.gwt-TabBar .gwt-TabBarItem-selected{
+border-top: 2px solid #29292b !important;
+border-left: 2px solid #29292b !important;
+border-right: 2px solid #29292b !important;
+}
+/*
+.gwt-TabBar .gwt-TabBarFirst .gwt-TabBarRest{
+	border: 2px solid #29292b !important;
+}
+*/
+
 .gwt-PopupPanel {
 	border: 3px solid #828788;
 }
