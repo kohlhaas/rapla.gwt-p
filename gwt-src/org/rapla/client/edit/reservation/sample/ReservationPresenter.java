@@ -1,5 +1,7 @@
 package org.rapla.client.edit.reservation.sample;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.ReservationController;
@@ -7,6 +9,8 @@ import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
+import org.rapla.entities.dynamictype.DynamicType;
+import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
@@ -23,6 +27,7 @@ public class ReservationPresenter implements ReservationController,Presenter {
     
     private ReservationView view;
     private SampleAppointmentPresenter appointmentPresenter;
+    private Reservation tempReservation;
     
     @Inject
     public ReservationPresenter(ReservationView view, SampleAppointmentPresenter appointmentPresenter) {
@@ -38,7 +43,7 @@ public class ReservationPresenter implements ReservationController,Presenter {
     
     @Override
     public void edit(final Reservation event, boolean isNew) {
-        this.event = event;
+        tempReservation = event;
         this.isNew = isNew;
         appointmentPresenter.setReservation( event);
         view.show(event);
@@ -48,14 +53,82 @@ public class ReservationPresenter implements ReservationController,Presenter {
     public void onSaveButtonClicked() {
         logger.info("save clicked");
         try {
-            facade.store( event);
+   
+        	 saveTemporaryChanges();
+			 Classification classification = tempReservation.getClassification();
+			 Attribute first =
+			 classification.getType().getAttributes()[0];
+			 String text = view.getTitelInput();
+			 classification.setValue(first, text);       	
+            facade.store(tempReservation);
         } catch (RaplaException e1) {
             logger.error( e1.getMessage(), e1);
         }
         view.hide();
     }
 
-    @Override
+    private void saveTemporaryChanges() {
+    	Classification classificationTmp = tempReservation.getClassification();
+
+    			String reservationName = view.getTitelInput();
+
+			Attribute first = classificationTmp.getType().getAttributes()[0];
+			classificationTmp.setValue(first, reservationName);
+
+	
+			// change reservation type
+			try {
+				for (DynamicType type : facade
+						.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION)) {
+					if (!(type.getName(raplaLocale.getLocale())
+							.equals(classificationTmp.getType()))
+							//&& type.getName(raplaLocale.getLocale()).equals(
+							//		((InfoViewInterface) currentView)
+							//				.getSelectedEventType())) 
+							){
+
+						HashMap<Attribute, Object> attributes = new HashMap<Attribute, Object>();
+						for (Attribute a : classificationTmp.getAttributes()) {
+							attributes.put(a, classificationTmp.getValue(a));
+						}
+
+						tempReservation.setClassification(type.newClassification());
+
+						classificationTmp = tempReservation.getClassification();
+
+						for (Attribute a : classificationTmp.getAttributes()) {
+							classificationTmp
+									.setValue(a, attributes.get(a));
+						}
+
+					}
+				}
+			} catch (RaplaException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// set Vorlesungstunden
+			try {
+				if (tempReservation
+						.getClassification()
+						.getType()
+						.equals(facade
+								.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION)[0])) {
+					Attribute second = classificationTmp.getType().getAttributes()[5];
+					classificationTmp.setValue("",view.getVorlesungsStundenInput());
+				} else {
+				//?
+}
+			} catch (RaplaException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+	}
+
+	@Override
     public void onDeleteButtonClicked() {
         logger.info("delete clicked");
         try {

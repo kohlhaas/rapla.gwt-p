@@ -3,6 +3,7 @@ package org.rapla.client.edit.reservation.sample;
 import org.rapla.client.base.View;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.dynamictype.Attribute;
 
 public interface ReservationView<W> extends View<Presenter> {
 
@@ -26,4 +27,6 @@ public interface ReservationView<W> extends View<Presenter> {
   void hide();
   void addSubView(ReservationEditSubView<W> view);
   void update(int selectedTab);
+String getTitelInput();
+Attribute getVorlesungsStundenInput();
 }

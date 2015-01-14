@@ -14,6 +14,7 @@ import org.rapla.client.mwi14_1.view.infos.InfoHorizontalPanel;
 import org.rapla.client.mwi14_1.view.resoursedates.TerminList;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.dynamictype.Attribute;
 
 import com.blogspot.ctasada.gwt.eureka.client.ui.SmallTimeBox;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -599,6 +600,20 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         IsWidget provideContent = view.provideContent();
      //   subView.add( provideContent.asWidget());
     }
+
+
+	@Override
+	public String getTitelInput() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Attribute getVorlesungsStundenInput() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
     
     
