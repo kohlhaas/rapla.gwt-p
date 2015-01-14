@@ -29,4 +29,5 @@ public interface ReservationView<W> extends View<Presenter> {
   void update(int selectedTab);
 String getTitelInput();
 Attribute getVorlesungsStundenInput();
+String getSelectedEventType();
 }

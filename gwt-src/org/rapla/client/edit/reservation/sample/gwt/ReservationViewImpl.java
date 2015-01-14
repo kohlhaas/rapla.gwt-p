@@ -614,6 +614,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	@Override
+	public String getSelectedEventType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
     
     

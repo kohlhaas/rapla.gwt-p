@@ -1,16 +1,26 @@
 package org.rapla.client.edit.reservation.sample;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
+import org.rapla.entities.User;
+import org.rapla.entities.domain.Allocatable;
+import org.rapla.entities.domain.Appointment;
+import org.rapla.entities.domain.PermissionContainer;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
+import org.rapla.entities.dynamictype.internal.AttributeImpl;
+import org.rapla.entities.dynamictype.internal.DynamicTypeImpl;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
@@ -207,6 +217,251 @@ public class ReservationPresenter implements ReservationController,Presenter {
 		// TODO Auto-generated method stub
 		
 	}    
-    
+	
+	public List<DynamicType> getCreateableDynamicTypes(String classificationType)
+			throws RaplaException {
+
+		DynamicType[] types;
+		List<String> items = new ArrayList<String>();
+		types = facade.getDynamicTypes(classificationType);
+		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		User user = facade.getUser();
+		for (DynamicType type : types) {
+			if (PermissionContainer.Util.canCreate(type, user))
+				eventTypes.add(type);
+		}
+
+		return eventTypes;
+	}
+
+	public List<String> getResourceTypesNames() throws RaplaException {
+
+		return getDynamicTypesNames(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
+	}
+
+	public List<String> getPersonTypesNames() throws RaplaException {
+
+		return getDynamicTypesNames(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_PERSON);
+	}
+
+	public List<String> getDynamicTypesNames(String classificationType)
+			throws RaplaException {
+
+		DynamicType[] types;
+		List<String> items = new ArrayList<String>();
+		types = facade.getDynamicTypes(classificationType);
+		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		User user = facade.getUser();
+		for (DynamicType type : types) {
+			if (PermissionContainer.Util.canCreate(type, user))
+				eventTypes.add(type);
+		}
+
+		for (int i = 0; i < eventTypes.size(); i++) {
+			String name = eventTypes.get(i).getName(raplaLocale.getLocale());
+			items.add(name);
+		}
+
+		return items;
+	}
+
+	public List<String> getEventTypes() throws RaplaException {
+
+		DynamicType[] types;
+		List<String> items = new ArrayList<String>();
+		types = facade.getDynamicTypes(
+				DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		User user = facade.getUser();
+		for (DynamicType type : types) {
+			if (PermissionContainer.Util.canCreate(type, user))
+				eventTypes.add(type);
+		}
+
+		for (int i = 0; i < eventTypes.size(); i++) {
+			String name = eventTypes.get(i).getName(raplaLocale.getLocale());
+			items.add(name);
+		}
+		;
+
+		return items;
+	}
+
+	public Attribute[] getDynamicFields(String eventKey) throws RaplaException {
+
+		AttributeImpl attr = new AttributeImpl();
+
+		DynamicTypeImpl type = new DynamicTypeImpl();
+
+		DynamicType[] types;
+		types = facade.getDynamicTypes(
+				DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+
+		List<String> items = new ArrayList<String>();
+		List<DynamicType> eventTypes = new ArrayList<DynamicType>();
+		User user = facade.getUser();
+
+		String key = eventKey;
+
+		for (DynamicType typen : types) {
+			if (PermissionContainer.Util.canCreate(typen, user))
+				eventTypes.add(typen);
+		}
+
+		for (int i = 0; i < eventTypes.size(); i++) {
+			String name = eventTypes.get(i).getName(raplaLocale.getLocale());
+			items.add(name);
+			if (eventTypes
+					.get(i)
+					.getName(raplaLocale.getLocale())
+					.equalsIgnoreCase(view.getSelectedEventType())) {
+				key = eventTypes.get(i).getKey();
+			}
+		}
+
+		type.setKey(key);
+		Attribute[] attributes = { new AttributeImpl() };
+
+		for (int i = 0; i < type.getAttributes().length; i++) {
+			
+			attributes[i] = type.getAttributes()[i];
+			attributes[6] = new AttributeImpl();
+		}
+		
+		return attributes;
+	}
+
+	public String[] getConstraintKeys(Attribute attribute)
+			throws RaplaException {
+
+		String[] constraintKeys = null;
+
+		for (int i = 0; i < attribute.getConstraintKeys().length; i++) {
+			constraintKeys[i] = attribute.getConstraintKeys()[i];
+		}
+
+		return constraintKeys;
+	}
+
+	protected void loadDataFromReservation(
+			Reservation currentView2) { //to be double checked
+
+//		Locale locale = this.GWTRaplaLocale.getLocale();
+//		Classification classificationTmp = reservationTmp.getClassification();
+//
+//		Allocatable[] allocatables = reservationTmp.getAllocatables();
+//
+//		Allocatable[] resources = reservationTmp.getAllocatables();
+//		Appointment[] appointments = reservationTmp.getAppointments();
+//
+//		// I just want to see all
+//		// this.logAllElements();
+//
+////		logger.log(Level.WARNING, "All Attributes - ");
+////		for (Attribute a : classificationTmp.getType().getAttributes()) {
+////			logger.log(
+////					Level.WARNING,
+////					"Allocatable: " + a.getName(locale) + "-" + a.getName()
+////							+ "-" + a.getKey() + "-"
+////							+ classificationTmp.getValueAsString(a, locale));
+////		}
+//
+//		if (currentView2 instanceof InfoViewInterface) {
+//			if (reservationName != null) {
+//				((InfoViewInterface) currentView).getTitelInput().setText(
+//						reservationName);
+//			}
+//
+//			((InfoViewInterface) currentView)
+//					.setSelectedEventType(classificationTmp.getType().getName(
+//							locale));
+//
+//			if (allocatables != null) {
+//				for (int a = 0; a < allocatables.length; a++) {
+//					DynamicType tmp = allocatables[a].getClassification()
+//							.getType();
+//					String tmp2 = tmp.toString();
+//
+//					if (tmp2.equals(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION)) {
+//						((InfoViewInterface) currentView)
+//								.setSelectedEventType(allocatables[a]
+//										.getName(locale));
+//					}
+//		
+//				}
+//			}
+//
+//			for (Attribute a : classificationTmp.getAttributes()) {
+//				String tmp = a.getName(locale);
+//				String tmp2 = classificationTmp.getValueAsString(a, locale);
+//				if (tmp.equals("Studiengang")) {
+//					for (int i = 0; i < (((InfoViewInterface) currentView2)
+//							.getStudiengangListBox().getItemCount()); i++) {
+//						if (tmp2.equals(((InfoViewInterface) currentView2)
+//								.getStudiengangListBox().getItemText(i))) {
+//							((InfoViewInterface) currentView2)
+//									.getStudiengangListBox()
+//									.setSelectedIndex(i);
+//						}
+//					}
+//
+//				}
+//				if (tmp.equals("Gepl. Vorlesungsstunden")) {
+//					((InfoViewInterface) currentView2)
+//							.getVorlesungsStundenInput().setText(tmp2);
+//				}
+//			}
+//
+//		} else {
+//
+//		}
+
+	}
+
+	private void logAllElements() {
+		Classification classificationTmp = tempReservation.getClassification();
+		Allocatable[] resources = tempReservation.getAllocatables();
+		Appointment[] appointments = tempReservation.getAppointments();
+
+		logger.warn( "All Allocatables - ");
+		try {
+			for (Allocatable a : facade.getAllocatables()) {
+
+				logger.warn(
+						"Allocatable: "
+								+ a.getName(raplaLocale.getLocale()));
+			}
+		} catch (RaplaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		logger.warn( "All Attributes - ");
+		for (Attribute a : classificationTmp.getType().getAttributes()) {
+			logger.warn(
+					"Allocatable: "
+							+ a.getName(raplaLocale.getLocale()) + "-"
+							+ a.getName() + "-" + a.getKey());
+		}
+
+		{
+			StringBuilder builder = new StringBuilder();
+			for (Allocatable res : resources) {
+				builder.append(res.getName(raplaLocale.getLocale()));
+			}
+			logger.warn( "Ressourcen: " + builder.toString());
+
+		}
+		{
+			StringBuilder builder = new StringBuilder();
+			for (Appointment app : appointments) {
+				builder.append(app.toString());
+			}
+			logger.warn( "Termine: " + builder.toString());
+		}
+
+		logger.warn("reservationname: " + view.getTitelInput());
+
+	}
 
 }
