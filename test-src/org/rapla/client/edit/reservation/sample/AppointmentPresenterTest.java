@@ -58,7 +58,7 @@ public class AppointmentPresenterTest {
     verify(editView).setPresenter(controller);
 
     // test if appointment show is called
-    verify(editView).show(Arrays.asList(event.getAppointments()));
+    verify(editView).show(event);
     
     // WHEN TODO: have to add an appropiate test
 //    controller.newAppButtonPressed();
