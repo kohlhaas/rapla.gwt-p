@@ -93,8 +93,7 @@ public class AppointmentPresenter implements Presenter {
 
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
-        List<Appointment> asList = Arrays.asList(reservation.getAppointments());
-        view.show(asList);
+        view.show(reservation);
     }
 
     public AppointmentView getView() {

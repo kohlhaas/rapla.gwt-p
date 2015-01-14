@@ -13,13 +13,17 @@ import com.google.gwt.user.datepicker.client.DateBox;
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
+import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.AppointmentFormater;
 import org.rapla.entities.domain.Repeating;
+import org.rapla.entities.domain.Reservation;
 
 import javax.inject.Inject;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class AppointmentViewImpl extends AbstractView<Presenter> implements AppointmentView<IsWidget> {
 
@@ -30,6 +34,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     RadioButton[] selectRepeat = new RadioButton[5];
     FlowPanel selectRepeatPanel;
 
+    FlowPanel appointmentPanel;
+    FlowPanel resourcePanel;
     FlowPanel appointmentOptionsPanel;
     Button convertToSingleEventsButton;
     FlowPanel appointmentDatesForm;
@@ -44,6 +50,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     DateTimeFormat hoursFormat = DateTimeFormat.getFormat("HH");
     DateTimeFormat minutesFormat = DateTimeFormat.getFormat("mm");
 
+	private ListBox resourcesList;
+
 
     /**
      * save an appointment by calling : "getPresenter().newAppointmentButtonPressed(dateStart, dateEnd)"
@@ -51,8 +59,16 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
      * @param appointments
      */
 
-    public void show(List<Appointment> appointments) {
+    public void show(Reservation reservation) {
+    	List<Appointment> appointments = Arrays.asList(reservation.getAppointments());
+    	List<Allocatable> resources = Arrays.asList(reservation.getAllocatables());
+    	
         content.clear();
+        appointmentPanel = new FlowPanel();
+        appointmentPanel.addStyleName("appointment-panel");
+        content.add(appointmentPanel);
+        
+        // "Add appointment" Button
         Button addAppointment = new Button("Termin hinzufügen");
         addAppointment.setStyleName("add-appointment");
         addAppointment.addClickHandler(new ClickHandler() {
@@ -61,13 +77,14 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 				getPresenter().newAppointmentButtonPressed();
 			}
         });
-        content.add(addAppointment);
+        appointmentPanel.add(addAppointment);
+        
         // Appointment List
         appointmentList = new ListBox();
         updateAppointmentList(appointments, appointments.size()-1);
         appointmentList.setStyleName("appointment-list");
         appointmentList.setVisibleItemCount(7);
-        content.add(appointmentList);
+        appointmentPanel.add(appointmentList);
         appointmentOptionsPanel = new FlowPanel();
         appointmentList.addChangeHandler(new ChangeHandler() {
             @Override
@@ -77,7 +94,18 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
             }
         });
       //fire change event to update appointment options panel
-        DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList); 
+        DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
+        
+        // Resources Panel
+        resourcePanel = new FlowPanel();
+        resourcePanel.addStyleName("resource-panel");
+        content.add(resourcePanel);
+        
+        resourcesList = new ListBox();
+        resourcesList.setStyleName("resources-list");
+        resourcesList.setVisibleItemCount(7);
+        updateResources(resources);
+        resourcePanel.add(resourcesList);
     }
 
     public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
@@ -86,7 +114,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         // Create Panels and Widgets
         appointmentOptionsPanel.clear();
         appointmentOptionsPanel.setStyleName("appointment-options");
-        content.add(appointmentOptionsPanel);
+        appointmentPanel.add(appointmentOptionsPanel);
 
         // Repeat Radio Buttons
         initRadioButtonRepeat();
@@ -138,6 +166,28 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     	appointmentList.setSelectedIndex(focus);
     	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
     }
+    
+    public void updateResources(List<Allocatable> resources) {
+    	Locale locale = getRaplaLocale().getLocale();
+    	for (Allocatable res: resources) {
+    		resourcesList.addItem(res.getName(locale));
+    	}
+    }
+    
+//    public void mapFromReservation(Reservation event) {
+//        Locale locale = getRaplaLocale().getLocale();
+//        tb.setText(event.getName(locale));
+//        contentRes.clear();
+//        
+//        {
+//            StringBuilder builder = new StringBuilder();
+//            for (Allocatable res : resources) {
+//                builder.append(res.getName(locale));
+//            }
+//            contentRes.add(new Label("Ressourcen: " + builder.toString()));
+//
+//        }
+//    }
 
     //TODO: startDate and EndDate is kind of redundant
     private void initStartDateFields() {

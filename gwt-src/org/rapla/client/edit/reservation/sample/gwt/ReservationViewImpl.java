@@ -184,7 +184,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         initSaveDeleteCancelButtons();
 
-        mapFromReservation(event);
         tb.addChangeHandler(new ChangeHandler(){
 
             @Override
@@ -271,23 +270,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             });
             content.add(button);}
         }
-    
 
-
-    public void mapFromReservation(Reservation event) {
-        Locale locale = getRaplaLocale().getLocale();
-        tb.setText(event.getName(locale));
-        contentRes.clear();
-        Allocatable[] resources = event.getAllocatables();
-        {
-            StringBuilder builder = new StringBuilder();
-            for (Allocatable res : resources) {
-                builder.append(res.getName(locale));
-            }
-            contentRes.add(new Label("Ressourcen: " + builder.toString()));
-
-        }
-    }
 
     public void hide() {
         popup.setVisible(false);

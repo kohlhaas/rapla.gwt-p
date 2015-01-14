@@ -3,41 +3,59 @@
 .dateBoxPopup {
 	z-index: 1003;
 }
-
-.add-appointment {
+.appointment-panel {
 	display: block;
-	margin: 0 0 10px 0;
+	.add-appointment {
+		display: block;
+		margin: 0 0 10px 0;
+	}
+	.appointment-list {
+		display: inline-block;
+		option {
+			padding-right: 10px;
+		}
+	}
+
+	.appointment-options {
+		display: inline-block;
+		padding-left: 10px;
+		vertical-align: top;
+		.gwt-RadioButton {
+			margin: 0 5px 5px 5px;
+			&:first-child {margin-left: 0}
+		}
+
+		.gwt-Button {
+			margin: 10px 5px 10px 0;
+		}
+
+		.appointment-date-form {
+			.start-datetime, .end-datetime {
+				display:block;
+			}
+
+			.date-field {
+				margin-right: 10px;
+			}
+
+			.time-field {
+				display: inline;
+			}
+		}
+		.remove-appointment {
+			margin: 10px 0 0 0;
+		}
+	}
 }
-.appointment-list, .appointment-options {
-	display: inline-block;
-}
 
-.appointment-options {
-	padding-left: 10px;
-	vertical-align: top;
-	.gwt-RadioButton {
-		margin: 0 5px 5px 5px;
-		&:first-child {margin-left: 0}
-	}
-
-	.gwt-Button {
-		margin: 10px 5px 10px 0;
-	}
-
-	.appointment-date-form {
-		.start-datetime, .end-datetime {
-			display:block;
+.resource-panel {
+	display: block;
+	margin-top: 15px;
+	.resources-list {
+		display: inline-block;
+		min-width: 70px;
+		option {
+			padding-right: 10px;
 		}
-
-		.date-field {
-			margin-right: 10px;
-		}
-
-		.time-field {
-			display: inline;
-		}
-	}
-	.remove-appointment {
-		margin: 10px 0 0 0;
 	}
 }
