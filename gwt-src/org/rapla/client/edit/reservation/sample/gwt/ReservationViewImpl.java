@@ -25,18 +25,15 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     TabPanel tabPanel; //Tabs for General Information and Appointment+Ressources-Planning
 
     FlowPanel content;
-
     FlowPanel contentRes;
-
     FlowPanel subView = new FlowPanel();
-    
     FlowPanel generalInformation;
     
-    HorizontalPanel horizontal2; 
-
-
-
-
+    HorizontalPanel ho;
+    HorizontalPanel horizontal2;
+    
+    VerticalPanel updown;
+    
     TextBox tb;
 
 
@@ -46,62 +43,76 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     public void show(Reservation event) {
 
-    	/*Structuring GU*/
+    	/*Structuring GUI*/
 
-        //Popup for the whole eventplanning
+        //Popup for the whole event planning
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
         popup.setStyleName("popup");
 
-        //Tabs for structuring eventplanning in general information - tab and appointment- and ressourceplanning 
+        //Tabs for structuring event-planning in general information - tab and appointment- and resource planning 
         tabPanel = new TabPanel();
         tabPanel.addStyleName("tabPanel");
 
-
-        //Content tab1
-        
+        //Content tab 1 (Content generalInformation und ressourcen) --> fällt nachdem Ressourcen bei AppointmenView sind raus
         content = new FlowPanel();
         content.setStyleName("content");
 
-        
+        //includes content of generalInformation
         generalInformation = new FlowPanel();
         generalInformation.setStyleName("generalInformation");
         
-        //Horizontal Panel for Labels
+        //Horizontal Panels for structuring Labels
+        ho = new HorizontalPanel();
+        ho.setStylePrimaryName("horizontal");
+        
         horizontal2 = new HorizontalPanel();
         horizontal2.setStyleName("horizontal2");
         
+        //Structuring up and down button
+        updown = new VerticalPanel(); 
+       
+        //FlowPanel for resources-part
         contentRes = new FlowPanel();
-        
-        
-        content.addStyleName("content");
-        generalInformation.setStyleName("generalInformation");
 
-        contentRes = new FlowPanel();
-        tb = new TextBox();
-        tb.setStyleName("textbox");
-
+        
         //Clear Panels
         popup.clear();
+        tabPanel.clear();
         content.clear();
         generalInformation.clear();
+        ho.clear();
+        horizontal2.clear();
+        updown.clear();
+        contentRes.clear();
+        
 
-        //popup.add(content);
+        //Building structure through panels
         popup.add(tabPanel);
         tabPanel.add(content, "Allgemeine Informationen");
+        tabPanel.add(subView, "Termin- und Ressourcenplanung");
+        tabPanel.selectTab(0);
         content.add(generalInformation);
+        content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
+        // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
+        generalInformation.add(ho);
+        generalInformation.add(horizontal2);
+        horizontal2.add(updown);
+        
         
         /* Filling structure */
         
         // Eventtype
         ListBox eventType = new ListBox();
+        eventType.setStyleName("eventtype");
         eventType.addItem("Lehrveranstaltung");
         eventType.addItem("Klausur");
-        eventType.setStyleName("eventtype");
         chosenEventType = eventType.getSelectedValue();
         generalInformation.add(eventType);
         
-        initEvenTypeLB();
+        //DOPPELT initEvenTypeLB();
+        
+       
         // Language selection
         ListBox language = new ListBox();
         language.addItem("Deutsch");
@@ -110,7 +121,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         language.setStyleName("language");
         generalInformation.add(language);
         
-        initLanguageLB();
+        //DOPPELT initLanguageLB();
+        
         //Study course
         {
             Button course = new Button("Studiengang");
@@ -125,73 +137,60 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             generalInformation.add(course);
         }
         
-        //Tabelle Design
-        HorizontalPanel ho = new HorizontalPanel();
-        ho.setStylePrimaryName("horizontal");
-        
-        initCourseButton();
+        //DOPPELT initCourseButton();
 
-        //Label eventname
+        //Label eventname (ho)
         Label eventname = new Label("Veranstaltungsname");
-        //String name = "Veranstaltungsname";
         eventname.setStyleName("eventname");
-        //tabelle.setWidget(1, 1, eventname);
-        //tabelle.setWidget(1, 2 ,tb);
         ho.add(eventname);
-        ho.add(tb);
         
-        generalInformation.add(ho);
-        //eventname.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        //TextBox for insert eventname (ho)
+        {
+            tb = new TextBox();
+            tb.setStyleName("textbox");
+            tb.addChangeHandler(new ChangeHandler(){
+
+                @Override
+                public void onChange(ChangeEvent event) {
+                    getPresenter().changeEventName(tb.getText());
+                }
+            });
+            ho.add(tb);
+        }
+
         
-        //generalInformation.add(tb);
-        
-        //Label planned lesson hours
+        //Label planned lesson hours (horizontal2)
         Label planhour = new Label("geplante Vorlesungsstunden");
         planhour.setStyleName("planhour");
         horizontal2.add(planhour);
         
+        //TextBox for insert planned hours (horizontal2)
         TextBox tbPlanhour = new TextBox();
         horizontal2.add(tbPlanhour);
         
-        VerticalPanel updown = new VerticalPanel();
+        
+        //Buttons for count up planned hours
         Button up = new Button();
         up.setStyleName("up");
         //String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center><label>Text</label></br></div>";
         String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center></div>";
         up.setHTML(html);
+        updown.add(up);
         
-        //CustomButton neu = new CustomButton()
         Button down = new Button();
         down.setStyleName("down");
         String html2 = "<div><center><img src = '/images/TriangleDown.png' height = '7px' width = '7px'></img></center></div>";
         down.setHTML(html2);
-        
-        updown.add(up);
         updown.add(down);
-        horizontal2.add(updown);
-        generalInformation.add(horizontal2);
         
         
-        initHorizontalPanel(eventname);
-
-
-        //generalInformation.add(tb);
-
-        content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
-        // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
-        tabPanel.add(subView, "Termin- und Ressourcenplanung");
-        tabPanel.selectTab(0);
+        //DOPPELT initHorizontalPanel(eventname);
 
         initSaveDeleteCancelButtons();
 
         mapFromReservation(event);
-        tb.addChangeHandler(new ChangeHandler(){
+        
 
-            @Override
-            public void onChange(ChangeEvent event) {
-                getPresenter().changeEventName(tb.getText());
-            }
-        });
 
 
     }
