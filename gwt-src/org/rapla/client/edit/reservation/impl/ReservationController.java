@@ -712,14 +712,14 @@ public class ReservationController implements GWTReservationController,
 		// I just want to see all
 		// this.logAllElements();
 
-		logger.log(Level.WARNING, "All Attributes - ");
-		for (Attribute a : classificationTmp.getType().getAttributes()) {
-			logger.log(
-					Level.WARNING,
-					"Allocatable: " + a.getName(locale) + "-" + a.getName()
-							+ "-" + a.getKey() + "-"
-							+ classificationTmp.getValueAsString(a, locale));
-		}
+//		logger.log(Level.WARNING, "All Attributes - ");
+//		for (Attribute a : classificationTmp.getType().getAttributes()) {
+//			logger.log(
+//					Level.WARNING,
+//					"Allocatable: " + a.getName(locale) + "-" + a.getName()
+//							+ "-" + a.getKey() + "-"
+//							+ classificationTmp.getValueAsString(a, locale));
+//		}
 
 		if (currentView2 instanceof InfoViewInterface) {
 			if (reservationName != null) {
