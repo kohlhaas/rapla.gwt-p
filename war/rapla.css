@@ -2,24 +2,29 @@
 
 
 
-.generalInformation .Eventtype {
-	margin: 0 5px 5px 5px;
+.tabPanel {
+	padding: 5px;
 }
 
-.generalInformation .language {
-	margin: 0 5px 5px 5px;
+.content {
+	padding: 0px;
+}
+.eventtype {
+	margin: 0 5px 10px 5px;
+}
+.language {
+	margin: 0 5px 10px 5px;
 }
 
-.generalInformation .Course {
-	margin: 0 5px 5px 5px;
+.course {
+	margin: 0 5px 10px 5px;
 }
 
-.generalInformation .horizontal {
-	margin-top: 10px;
-	height: 20px;
-	display: table-cell;
-}
-.generalInformation .horizontal .eventname {
+
+
+
+.eventname {
+	padding-left: 5px;
 	vertical-align: middle;
 	text-align: center;
 	line-height:20px;
@@ -28,6 +33,21 @@
 	margin-bottom: 5px;
 	margin-right: 5px;
 	
+}
+
+.up {
+	width: auto;
+	height: auto;
+}
+
+.down {
+	width: auto;
+	height: auto;
+}
+
+.textbox {
+	line-height: 20px;
+	width: 
 }
 
 

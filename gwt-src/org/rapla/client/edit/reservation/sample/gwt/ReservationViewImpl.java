@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
 
@@ -34,6 +35,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     
     FlowPanel generalInformation;
     
+    HorizontalPanel horizontal2; 
+    
 
     TextBox tb;
 
@@ -50,18 +53,24 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	//Popup for the whole eventplanning
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
-        popup.addStyleName("popup");
+        popup.setStyleName("popup");
 
         //Tabs for structuring eventplanning in general information - tab and appointment- and ressourceplanning 
     	tabPanel = new TabPanel();
-        tabPanel.addStyleName("tabPanel");
+        tabPanel.setStyleName("tabPanel");
         
         //Content tab1
+        
         content = new FlowPanel();
-        content.addStyleName("content");
+        content.setStyleName("content");
+
         
         generalInformation = new FlowPanel();
         generalInformation.setStyleName("generalInformation");
+        
+        //Horizontal Panel for Labels
+        horizontal2 = new HorizontalPanel();
+        horizontal2.setStyleName("horizontal2");
         
         contentRes = new FlowPanel();
         
@@ -69,6 +78,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         
 
         tb = new TextBox();
+        tb.setStyleName("textbox");
 
         //Clear Panels
         popup.clear();
@@ -87,7 +97,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         ListBox eventType = new ListBox();
         eventType.addItem("Lehrveranstaltung");
         eventType.addItem("Klausur");
-        eventType.addStyleName("Eventtype");
+        eventType.setStyleName("eventtype");
         chosenEventType = eventType.getSelectedValue();
         generalInformation.add(eventType);
         
@@ -96,38 +106,67 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         language.addItem("Deutsch");
         language.addItem("Englisch");
         chosenLanguage = eventType.getSelectedValue();
-        language.addStyleName("language");
+        language.setStyleName("language");
         generalInformation.add(language);
         
         //Study course
         {
             Button course = new Button("Studiengang");
+            course.setStyleName("course");
             course.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent e) {
                     getPresenter().onCourseButtonClicked();
                 }
             });
-            course.addStyleName("Course");
+            
             generalInformation.add(course);
         }
         
         //Tabelle Design
         HorizontalPanel ho = new HorizontalPanel();
+        ho.setStylePrimaryName("horizontal");
         
         //Label eventname
         Label eventname = new Label("Veranstaltungsname");
         //String name = "Veranstaltungsname";
-        eventname.addStyleName("eventname");
+        eventname.setStyleName("eventname");
         //tabelle.setWidget(1, 1, eventname);
         //tabelle.setWidget(1, 2 ,tb);
         ho.add(eventname);
         ho.add(tb);
-        ho.addStyleName("horizontal");
+        
         generalInformation.add(ho);
-        eventname.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        //eventname.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         
         //generalInformation.add(tb);
+        
+        //Label planned lesson hours
+        Label planhour = new Label("geplante Vorlesungsstunden");
+        planhour.setStyleName("planhour");
+        horizontal2.add(planhour);
+        
+        TextBox tbPlanhour = new TextBox();
+        horizontal2.add(tbPlanhour);
+        
+        VerticalPanel updown = new VerticalPanel();
+        Button up = new Button();
+        up.setStyleName("up");
+        //String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center><label>Text</label></br></div>";
+        String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center></div>";
+        up.setHTML(html);
+        
+        //CustomButton neu = new CustomButton()
+        Button down = new Button();
+        down.setStyleName("down");
+        String html2 = "<div><center><img src = '/images/TriangleDown.png' height = '7px' width = '7px'></img></center></div>";
+        down.setHTML(html2);
+        
+        updown.add(up);
+        updown.add(down);
+        horizontal2.add(updown);
+        generalInformation.add(horizontal2);
+        
         
 
         
