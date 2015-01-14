@@ -1,6 +1,7 @@
 package org.rapla.client.edit.reservation.sample;
 
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
+import org.rapla.entities.RaplaType;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
@@ -14,9 +15,13 @@ import org.rapla.framework.logger.Logger;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
 import javax.inject.Inject;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class AppointmentPresenter implements Presenter {
     private AppointmentView view;
@@ -108,7 +113,21 @@ public class AppointmentPresenter implements Presenter {
 
 	@Override
 	public void removeAppointmentButtonPressed(int selectedIndex) {
-		// TODO delete appointment from list, then call view.updateAppointmentList(..)
+		// TODO: delete appointment from list, then call view.updateAppointmentList(..)
+	}
+
+
+	@Override
+	public Map<RaplaType<Allocatable>, List<Allocatable>> sortResources(List<Allocatable> resources) {
+		Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = new HashMap<RaplaType<Allocatable>, List<Allocatable>>();
+		for(Allocatable resource : resources) {
+			RaplaType<Allocatable> resourceType = resource.getRaplaType();
+			if(! sortedResources.containsKey(resourceType)) {
+				sortedResources.put(resourceType, new ArrayList<Allocatable>());
+			}
+			sortedResources.get(resourceType).add(resource);
+		}
+		return sortedResources;
 	}
 
 }

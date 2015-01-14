@@ -46,10 +46,15 @@
   display: block;
   margin-top: 15px;
 }
-.resource-panel .resources-list {
-  display: inline-block;
-  min-width: 70px;
+.resource-panel .resources-types {
+  display: block;
 }
-.resource-panel .resources-list option {
+.resource-panel .resources-lists {
+  margin-top: 10px;
+}
+.resource-panel .resources-lists .resources-list {
+  min-width: 200px;
+}
+.resource-panel .resources-lists .resources-list option {
   padding-right: 10px;
 }
