@@ -13,8 +13,12 @@ import org.rapla.client.timePicker.HourMinutePicker.PickerFormat;
 
 import com.blogspot.ctasada.gwt.eureka.client.ui.SmallTimeBox;
 import com.blogspot.ctasada.gwt.eureka.client.ui.TimeBox;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.LocaleInfo;
@@ -66,6 +70,17 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	FlowPanel chosenResources;
 	DisclosurePanel dateDisclosurePanel;
 	DisclosurePanel cbRepeatType;
+	
+	Label addDateInfo;
+	Button addDate;
+	Button rewriteDate;
+	
+	HorizontalPanel repeat;
+	RadioButton daily;
+	RadioButton weekly;
+	RadioButton monthly;
+	RadioButton year;
+	RadioButton noReccuring;
 
 	@Override
 	public Widget createContent(){
@@ -78,34 +93,14 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		dateList.setHeight(height + "px");
 		dateList.setStyleName("dateList");
 
-			//Dummy create
-			try {
-				Date now = new Date(System.currentTimeMillis());
-				Date plusOneHour = new Date(System.currentTimeMillis() + 5400000);
-				Date extra = new Date(System.currentTimeMillis() + 960000000);
-				RaplaDate eins = new RaplaDate(extra,extra,false);
-				RaplaDate zwei = new RaplaDate(now,plusOneHour,true);
-				RaplaDate drei = new RaplaDate(now,plusOneHour,true);
-				RaplaDate vier = new RaplaDate(now,plusOneHour,true);
-				RaplaDate fuenf = new RaplaDate(now,plusOneHour,true);
-				
-				List<RaplaDate> list = new ArrayList<>();
-				list.add(eins);
-				list.add(zwei);
-				list.add(drei);
-
-				RaplaDate multi = new RaplaDate(list);
-
-				dateList.add(vier);
-				dateList.add(multi);
-				dateList.add(fuenf);
-
-			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-
+		//Dummy create
+		FlowPanel firstDateListWidget = new FlowPanel();
+		firstDateListWidget.setStyleName("wildcardPanel");
+		Label explainer = new Label("Durch das Dr\u00FCcken des roten Plus-Buttons \u00F6ffnet sich das Fenster zur Erstellung von Terminen");
+		explainer.setStyleName("wildcard");
+		firstDateListWidget.add(explainer);	
+		dateList.add(firstDateListWidget);
+		
 		buttonBar = new FlowPanel();
 		buttonBar.setHeight(height + "px");
 		buttonBar.setStyleName("datesButtonBar");
@@ -252,109 +247,68 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		});
 		
 		// Checkbox WIEDERHOLEN
-		HorizontalPanel repeat = new HorizontalPanel();
+		repeat = new HorizontalPanel();
 		cbRepeatType = new DisclosurePanel("Wiederholen");
 		cbRepeatType.setStyleName("dateInfoLineLeft");
 
-		final RadioButton daily = new RadioButton("repeat","t\u00E4glich");
-		final RadioButton weekly = new RadioButton("repeat", "w\u00F6chentlich");
-		final RadioButton monthly = new RadioButton("repeat", "monatlich");
-		final RadioButton year = new RadioButton("repeat", "j\u00E4hrlich");
-		RadioButton clearRepeatType = new RadioButton("repeat", "keine Wiederholung");
+		daily = new RadioButton("repeat","t\u00E4glich");
+		weekly = new RadioButton("repeat", "w\u00F6chentlich");
+		monthly = new RadioButton("repeat", "monatlich");
+		year = new RadioButton("repeat", "j\u00E4hrlich");
+		noReccuring = new RadioButton("repeat", "keine Wiederholung");
 
 		repeat.add(daily);
 		repeat.add(weekly);
 		repeat.add(monthly);
 		repeat.add(year);
-		repeat.add(clearRepeatType);
+		repeat.add(noReccuring);
 
 		cbRepeatType.add(repeat);
 		
 		HorizontalPanel addDateWithLabel = new HorizontalPanel();
-		Button addDate = new Button("Termin hinzuf\u00FCgen");
-		final Label addDateInfo = new Label();
+		addDate = new Button("Termin hinzuf\u00FCgen");
+		rewriteDate = new Button("Termin \u00FCberschreiben");
+		rewriteDate.setVisible(false);
+		addDateInfo = new Label();
 		addDateWithLabel.add(addDate);
+		addDateWithLabel.add(rewriteDate);
 		addDateWithLabel.add(addDateInfo);
 		addDateWithLabel.setCellVerticalAlignment(addDate, HasVerticalAlignment.ALIGN_MIDDLE);
+		addDateWithLabel.setCellVerticalAlignment(rewriteDate, HasVerticalAlignment.ALIGN_MIDDLE);
 		addDateWithLabel.setCellVerticalAlignment(addDateInfo, HasVerticalAlignment.ALIGN_MIDDLE);
 		
-	
-		class RaplaDateClickHandler implements ClickHandler{
+		rewriteDate.addClickHandler(new ClickHandler(){
 
 			@Override
 			public void onClick(ClickEvent event) {
-				RaplaDate tmp = (RaplaDate)event.getSource();
-				dateList.setActive(tmp);
-				if(!(dateList.getActive() == -1)){
-					dateBegin.setValue(tmp.getBeginTime());
-					dateEnd.setValue(tmp.getEndTime());
-					timeBegin.setValue((long)-3600000 + tmp.getStartHourMinute());
-					timeEnd.setValue((long)-3600000 + tmp.getEndHourMinute());
-					buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
-				}else{
-					clearDateTimeInputFields();
-					buttonGarbageCan.setStyleName("buttonsResourceDates");
-				}
-				
+				int active = dateList.getActive();
+				dateList.removeDate(active);
+				addDateWidget();
+				/*dateList.insert(dateList.getLastRaplaDate(), active);
+				dateList.remove(dateList.getLastPosition());
+				clearDateTimeInputFields();
+				*/
 			}
 			
-		}
+		});
+		
 		addDate.addClickHandler(new ClickHandler(){
 
 			@Override
 			public void onClick(ClickEvent event) {
-				RaplaDate addTermin = new RaplaDate();
-					
-				Date beginTmp = new Date(dateBegin.getValue().getTime() + timeBegin.getTime() + 3600000);
-				Date endTmp = new Date(dateEnd.getValue().getTime() + timeEnd.getTime() + 3600000);
-				
-				
-				if(beginTmp.after(endTmp)){
-				addDateInfo.setStyleName("error");	
-				addDateInfo.setText("Begin- nach Endtermin!");
-				}else{
-					addDateInfo.setStyleName("");
-					addDateInfo.setText("");
-					if(daily.getValue() || weekly.getValue() || monthly.getValue() || year.getValue()){
-						List<RaplaDate> tmp = new ArrayList<>();
-						int type;
-						if(daily.getValue()){
-							type = 1;
-						}else if (weekly.getValue()){
-							type = 2;
-						}else if( monthly.getValue()){
-							type = 3;
-						}else{
-							type = 4;
-						}
-						tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, type);
-						try {
-							tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
-							addTermin = new RaplaDate(tmp);
-							dateList.add(addTermin);
-							addTermin.addClickHandler(new RaplaDateClickHandler());
-							clearDateTimeInputFields();
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}else{
-					try {	
-						addTermin = new RaplaDate(beginTmp, endTmp, true);
-						addTermin.addClickHandler(new RaplaDateClickHandler());
-						dateList.add(addTermin);
-						clearDateTimeInputFields();
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					}
-				}
-				
+				addDateWidget();				
 			}
 			
 		});
 	
+		
+		
+		
+		
+		
+		
+		
+		
 		// Ausgewählte Ressourcen laden
 		chosenResources = new FlowPanel();
 		chosenResources.setStyleName("dateInfoLineComplete");
@@ -376,8 +330,16 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 			chosenResources.add(helpList);
 		}
 
-		DisclosurePanel addResources = new DisclosurePanel(
-				"Resourcen Hinzufuegen");
+		DisclosurePanel addResources = new DisclosurePanel("Resourcen Hinzufuegen");
+		addResources.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+				
+			  @Override
+			  public void onOpen(OpenEvent<DisclosurePanel> event) {
+			    dateDisclosurePanel.setOpen(false);
+				buttonPlus.setStyleName("buttonsResourceDatesClickable");
+			  }
+		});
+		
 		addResources.setStyleName("dateInfoLineComplete");
 
 		FlowPanel chooseContainer = new FlowPanel();
@@ -687,6 +649,28 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		return container;
 	}	
 	
+	class RaplaDateClickHandler implements ClickHandler{
+
+		@Override
+		public void onClick(ClickEvent event) {
+			RaplaDate tmp = (RaplaDate)event.getSource();
+			dateList.setActive(tmp);
+			if(!(dateList.getActive() == -1)){
+				dateBegin.setValue(tmp.getBeginTime());
+				dateEnd.setValue(tmp.getEndTime());
+				timeBegin.setValue((long)-3600000 + tmp.getStartHourMinute());
+				timeEnd.setValue((long)-3600000 + tmp.getEndHourMinute());
+				buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
+				rewriteDate.setVisible(true);
+			}else{
+				clearDateTimeInputFields();
+				buttonGarbageCan.setStyleName("buttonsResourceDates");
+			}
+			
+		}
+		
+	}
+	
 	@Override
 	public void updateContent() {
 		// TODO Auto-generated method stub
@@ -776,13 +760,67 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	public void setToBeReservedResources(ArrayList<List<String>> toBeReservedResources) {
 		this.toBeReservedResources = toBeReservedResources;
 	}
+
+	private void addDateWidget() {
+
+		RaplaDate addTermin = new RaplaDate();
+			
+		Date beginTmp = new Date(dateBegin.getValue().getTime() + timeBegin.getTime() + 3600000);
+		Date endTmp = new Date(dateEnd.getValue().getTime() + timeEnd.getTime() + 3600000);
+		
+		
+		if(beginTmp.after(endTmp)){
+		addDateInfo.setStyleName("error");	
+		addDateInfo.setText("Begin- nach Endtermin!");
+		}else{
+			addDateInfo.setStyleName("");
+			addDateInfo.setText("");
+			if(daily.getValue() || weekly.getValue() || monthly.getValue() || year.getValue()){
+				List<RaplaDate> tmp = new ArrayList<>();
+				int type;
+				if(daily.getValue()){
+					type = 1;
+				}else if (weekly.getValue()){
+					type = 2;
+				}else if( monthly.getValue()){
+					type = 3;
+				}else{
+					type = 4;
+				}
+				tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, type);
+				try {
+					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
+					addTermin = new RaplaDate(tmp);
+					dateList.add(addTermin);
+					addTermin.addClickHandler(new RaplaDateClickHandler());
+					clearDateTimeInputFields();
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else{
+			try {	
+				addTermin = new RaplaDate(beginTmp, endTmp, true);
+				addTermin.addClickHandler(new RaplaDateClickHandler());
+				dateList.add(addTermin);
+				clearDateTimeInputFields();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+		}
+	}
 	private void clearDateTimeInputFields(){
 		dateBegin.setValue(null);
 		dateEnd.setValue(null);
 		timeEnd.setValue((long) -3600000);
 		timeBegin.setValue((long) -3600000);
 		cbWholeDay.setValue(false);
-		
+		rewriteDate.setVisible(false);
+		buttonGarbageCan.setStyleName("buttonsResourceDates");
+		noReccuring.setValue(true);
+		cbRepeatType.setOpen(false);
 	}
 
 }

@@ -11,6 +11,7 @@ public class TerminList extends FlowPanel {
 	
 	private List<RaplaDate> dates = new ArrayList<>();
 	private int active = -1;
+	private boolean firstWidget = true;
 
 	public TerminList() {
 		// TODO Auto-generated constructor stub
@@ -22,6 +23,13 @@ public class TerminList extends FlowPanel {
 	}
 	
 	public void add(final RaplaDate s){
+		
+		if(firstWidget){
+			this.remove(0);
+			firstWidget = false;
+		}
+			
+		
 		super.add(s);
 		dates.add(s);
 		/*
@@ -56,6 +64,12 @@ public class TerminList extends FlowPanel {
 	
 	public int getRaplaDateIndex(RaplaDate date){
 		return dates.indexOf(date);
+	}
+	public int getLastPosition(){
+		return dates.size()-1;
+	}
+	public RaplaDate getLastRaplaDate(){
+		return dates.get(getLastPosition());
 	}
 
 }

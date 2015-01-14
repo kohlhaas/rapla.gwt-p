@@ -45,6 +45,16 @@
 	overflow-x: hidden;
 }
 
+.wildcard{
+	    font-family: Baskerville, "Baskerville Old Face", "Hoefler Text", Garamond, "Times New Roman", serif;
+	    font-style:italic;
+	    color: #A4A4A4;
+	    font-size: 125%;
+	    text-align: center;
+}
+.wildcardPanel{
+	border: 1px solid #c2c2c2;
+}
 .datesButtonBar {
 	padding: 2px;
 	width: 28px;
