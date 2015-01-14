@@ -28,6 +28,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel contentRes;
     FlowPanel subView = new FlowPanel();
     FlowPanel generalInformation;
+    FlowPanel zeile1;
     
     HorizontalPanel ho;
     HorizontalPanel horizontal2;
@@ -62,6 +63,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         generalInformation = new FlowPanel();
         generalInformation.setStyleName("generalInformation");
         
+        //zeile1
+        zeile1 = new FlowPanel();
+        zeile1.setStyleName("zeile1");
+        
         //Horizontal Panels for structuring Labels
         ho = new HorizontalPanel();
         ho.setStylePrimaryName("horizontal");
@@ -81,6 +86,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tabPanel.clear();
         content.clear();
         generalInformation.clear();
+        zeile1.clear();
         ho.clear();
         horizontal2.clear();
         updown.clear();
@@ -95,9 +101,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
         // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
+        generalInformation.add(zeile1);
         generalInformation.add(ho);
         generalInformation.add(horizontal2);
-        horizontal2.add(updown);
+        
         
         
         /* Filling structure */
@@ -108,7 +115,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         eventType.addItem("Lehrveranstaltung");
         eventType.addItem("Klausur");
         chosenEventType = eventType.getSelectedValue();
-        generalInformation.add(eventType);
+        zeile1.add(eventType);
         
         //DOPPELT initEvenTypeLB();
         
@@ -119,7 +126,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         language.addItem("Englisch");
         chosenLanguage = eventType.getSelectedValue();
         language.setStyleName("language");
-        generalInformation.add(language);
+        zeile1.add(language);
         
         //DOPPELT initLanguageLB();
         
@@ -134,10 +141,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 }
             });
             
-            generalInformation.add(course);
+            zeile1.add(course);
         }
         
         //DOPPELT initCourseButton();
+
 
         //Label eventname (ho)
         Label eventname = new Label("Veranstaltungsname");
@@ -182,6 +190,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         String html2 = "<div><center><img src = '/images/TriangleDown.png' height = '7px' width = '7px'></img></center></div>";
         down.setHTML(html2);
         updown.add(down);
+        
+        horizontal2.add(updown);
         
         
         //DOPPELT initHorizontalPanel(eventname);
