@@ -44,7 +44,7 @@
   
   <define-configuration-property name="extra.ginModules" is-multi-valued="true" />
   <!--  Replace with your ReservationGWTModule -->
-  <extend-configuration-property name="extra.ginModules" value="org.rapla.client.edit.reservation.sample.gwt.SampleReservationEditModule" />
+  <extend-configuration-property name="extra.ginModules" value="org.rapla.client.edit.reservation.sample.gwt.ReservationEditModule" />
 
   
 </module>

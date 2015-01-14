@@ -4,17 +4,17 @@ import javax.inject.Singleton;
 
 import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.edit.reservation.sample.SampleAppointmentView;
-import org.rapla.client.edit.reservation.sample.SampleReservationView;
-import org.rapla.client.edit.reservation.sample.SampleReservationPresenter;
+import org.rapla.client.edit.reservation.sample.ReservationView;
+import org.rapla.client.edit.reservation.sample.ReservationPresenter;
 
 import com.google.gwt.inject.client.GinModule;
 import com.google.gwt.inject.client.binder.GinBinder;
 
-public class SampleReservationEditModule implements GinModule{
+public class ReservationEditModule implements GinModule{
     @Override
     public void configure(GinBinder binder) {
-        binder.bind( ReservationController.class).to(SampleReservationPresenter.class).in( Singleton.class);
-        binder.bind( SampleReservationView.class).to(SampleReservationViewImpl.class);
+        binder.bind( ReservationController.class).to(ReservationPresenter.class).in( Singleton.class);
+        binder.bind( ReservationView.class).to(ReservationViewImpl.class);
         binder.bind( SampleAppointmentView.class).to(SampleAppointmentViewImpl.class);
     }
 }
