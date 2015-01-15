@@ -116,6 +116,16 @@ public class AppointmentPresenter implements Presenter {
 		// TODO: delete appointment from list, then call view.updateAppointmentList(..)
 	}
 
+	@Override
+	public void addRessourceButtonPressed(int selectedIndex, String resourceTypeName) {
+		try {
+			Map<RaplaType<Allocatable>, List<Allocatable>> resources = sortResources(Arrays.asList(facade.getAllocatables()));
+			// TODO: find the added resource in the above map and add it to reservation, then call view.updateBookedResources
+		} catch (RaplaException e) {
+			// TODO: Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
 
 	@Override
 	public Map<RaplaType<Allocatable>, List<Allocatable>> sortResources(List<Allocatable> resources) {

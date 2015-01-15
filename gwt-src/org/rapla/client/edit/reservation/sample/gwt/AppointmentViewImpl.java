@@ -341,5 +341,11 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         return content;
     }
 
+	@Override
+	public void updateBookedResources(List<Allocatable> resources) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

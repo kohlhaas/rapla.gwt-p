@@ -19,6 +19,7 @@ public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubV
         Date nextFreeDateButtonPressed(Date startDate, Date endDate);
         void appointmentSelected(int selectedIndex);
         void removeAppointmentButtonPressed(int selectedIndex);
+        void addRessourceButtonPressed(int selectedIndex, String resourceTypeName);
         Map<RaplaType<Allocatable>, List<Allocatable>> sortResources(List<Allocatable> resources);
     }
 
@@ -27,4 +28,5 @@ public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubV
     void updateAppointmentOptionsPanel(Appointment selectedAppointment);
     void updateAppointmentList(List<Appointment> appointments, int focus);
     void updateResources(List<Allocatable> resources);
+    void updateBookedResources(List<Allocatable> resources);
 }
