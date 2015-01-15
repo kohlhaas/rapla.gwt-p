@@ -1,5 +1,6 @@
 package org.rapla.client.edit.reservation.history;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Map;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
@@ -59,9 +62,20 @@ public class HistoryManager {
 				public void onChange(ChangeEvent event) {
 					TextBox textBox = (TextBox) event.getSource();
 					Step newStep = new TextBoxStep(textBox, lastValue.get(textBox));
-					HistoryManager.getInstance().addStep(textBox,newStep);
+					HistoryManager.getInstance().addStep(newStep);
 				}
 			});
+		}
+		else if (className == DateBox.class) {
+			DateBox dateBox = (DateBox) widget;
+			lastValue.put(dateBox, dateBox.getValue());
+			dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<Date> event) {
+					DateBox dateBox = (DateBox) event.getSource();
+					Step newStep = new DateBoxStep(dateBox, lastValue.get(dateBox));
+					HistoryManager.getInstance().addStep(newStep);
+				}});
 		}
 	}
 	
@@ -76,7 +90,7 @@ public class HistoryManager {
 		return output;
 	}
 	
-	private void addStep(Widget widget, Step step) {
+	private void addStep(Step step) {
 		while(currentPosition.hasNext()) {
 			steps.remove(currentPosition.next());
 		}
@@ -84,7 +98,7 @@ public class HistoryManager {
 		//if(steps.size()>0)
 		//currentPosition.next();
 		
-		lastValue.put(widget, step.up());
+		lastValue.put(step.getWidget(), step.up());
 	}
 
 }
