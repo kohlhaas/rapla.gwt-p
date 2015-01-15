@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 import org.rapla.client.base.AbstractView;
+import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.entities.RaplaType;
@@ -71,6 +72,9 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     	List<Allocatable> resources = Arrays.asList(reservation.getAllocatables());
     	
         content.clear();
+        
+        historyPOC();
+        
         appointmentPanel = new FlowPanel();
         appointmentPanel.addStyleName("appointment-panel");
         content.add(appointmentPanel);
@@ -345,6 +349,47 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 	public void updateBookedResources(List<Allocatable> resources) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void historyPOC() {
+		TextBox tb = new TextBox();
+        tb.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				content.add(new HTML("<p>"+HistoryManager.getInstance().output() + "</p>"));
+			}
+		});
+        content.add(tb);
+        
+        TextBox tb2 = new TextBox();
+        tb2.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				content.add(new HTML("<p>"+HistoryManager.getInstance().output() + "</p>"));
+			}
+		});
+        content.add(tb2);
+        
+        HistoryManager.getInstance().trackWidget(tb);
+        HistoryManager.getInstance().trackWidget(tb2);
+        Button b = new Button("undo");
+        content.add(b);
+        b.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if(HistoryManager.getInstance().canUndo())
+					HistoryManager.getInstance().undo();
+			}});
+        Button redo = new Button("redo");
+        content.add(redo);
+        redo.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if(HistoryManager.getInstance().canRedo())
+					HistoryManager.getInstance().redo();
+			}});
 	}
 
 
