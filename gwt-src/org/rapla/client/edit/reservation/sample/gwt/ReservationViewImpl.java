@@ -5,21 +5,12 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.ui.HasWidgets.ForIsWidget;
-
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
-import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Reservation;
-
-import java.util.Locale;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 
@@ -28,18 +19,17 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     TabPanel tabPanel; //Tabs for General Information and Appointment+Ressources-Planning
 
     FlowPanel content;
-    FlowPanel contentRes;
+    FlowPanel contentRes = new FlowPanel();
     FlowPanel subView = new FlowPanel();
     FlowPanel generalInformation;
-    FlowPanel zeile1;
-    FlowPanel part2;
-    
-    Grid grid;
-    
-    VerticalPanel updown;
-    
-    TextBox tb;
+    FlowPanel row1;
+    FlowPanel part2 = new FlowPanel();
 
+    Grid grid;
+
+    VerticalPanel upDown;
+
+    TextBox tb;
 
     String chosenEventType = "";
     String chosenLanguage = "";
@@ -47,55 +37,94 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     public void show(Reservation event) {
 
+//        TODO: using the type in the name of the method or variable ... YES OR NO? Example:  initEventTypeListBox or initEventTypeLB or initEventType || content or contentPanel or PContent --> s. Hungarian Notation
+
     	/*Structuring GUI*/
 
-        //Popup for the whole event planning
-        popup = RootPanel.get("raplaPopup");
-        popup.setVisible(true);
-        popup.setStyleName("popup");
+        initRaplaPopupPanel();
+        initTabPanel();
+        initContentPanel();
+        initGeneralInformationPanel();
+        initRow1();
+        initSecondGrid();
+        initUpDownPanel();
 
-        //Tabs for structuring event-planning in general information - tab and appointment- and resource planning 
-        tabPanel = new TabPanel();
-        tabPanel.addStyleName("tabPanel");
+        clearPanels();
+        structuringPanels();
 
-        //Content tab 1 (Content generalInformation und ressourcen) --> fällt nachdem Ressourcen bei AppointmenView sind raus
-        content = new FlowPanel();
-        content.setStyleName("content");
+        /* Filling structure */
+        initEventTypeListBox();
+        initLanguageListBox();
+        initCourseButton();
+        initLabelEventNameInGrid();
+        initEventNameTextBox();
+        initLabelPlannedHoursInGrid();
+        initTextBoxPlannedHoursInGrid();
 
-        //includes content of generalInformation
-        generalInformation = new FlowPanel();
-        generalInformation.setStyleName("generalInformation");
+
+        //Buttons for count up planned hours
+        Button upButton = new Button();
+        upButton.setStyleName("up");
+        //String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center><label>Text</label></br></div>";
+        //String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center></div>";
+        //up.setHTML(html);
+        upDown.add(upButton);
         
-        //zeile1
-        zeile1 = new FlowPanel();
-        zeile1.setStyleName("zeile1");
-        
-        //Second part of the structure
-        part2 = new FlowPanel();
+/*        Button down = new Button();
+        down.setSize("15px", "15px");
+        down.setStyleName("down");
+        String html2 = "<div class = 'img' ><img class= 'img_1' src = '/images/triangledown_klein.png'></img></div>";
+        down.setHTML(html2);
+        upDown.add(down);  */
+
+        part2.add(upDown);
+
+        Label info = new Label("Sonstige Veranstaltungsinformationen:");
+        part2.add(info);
+
+        TextArea taInfo = new TextArea();
+        part2.add(taInfo);
+
+
+        initSaveDeleteCancelButtons();
+
+
+    }
+
+    private void initSecondGrid() {
         grid = new Grid(2, 2);
         grid.setStyleName("grid");
-        
-        //Structuring up and down button
-        updown = new VerticalPanel(); 
-        updown.setStyleName("updown");
-       
-        //FlowPanel for resources-part
-        contentRes = new FlowPanel();
+    }
 
-        
-        //Clear Panels
-        popup.clear();
-        tabPanel.clear();
-        content.clear();
-        generalInformation.clear();
-        zeile1.clear();
-        part2.clear();
-        grid.clear();
-        updown.clear();
-        contentRes.clear();
-        
+    private void initUpDownPanel() {
+        upDown = new VerticalPanel();
+        upDown.setStyleName("upDown");
+    }
 
-        //Building structure through panels
+    private void initTextBoxPlannedHoursInGrid() {
+        TextBox tbPlanhour = new TextBox();
+        tbPlanhour.setStyleName("tbPlanhour");
+        grid.setWidget(1, 1, tbPlanhour);
+    }
+
+    private void initLabelPlannedHoursInGrid() {
+        Label planhour = new Label("geplante Vorlesungsstunden");
+        planhour.setStyleName("planhour");
+        grid.setWidget(1, 0, planhour);
+    }
+
+    private void initLabelEventNameInGrid() {
+        Label eventname = new Label("Veranstaltungsname");
+        eventname.setStyleName("eventname");
+        grid.setWidget(0, 0, eventname);
+    }
+
+    private void initRow1() {
+        row1 = new FlowPanel();
+        row1.setStyleName("zeile1");
+    }
+
+    private void structuringPanels() {
         popup.add(tabPanel);
         tabPanel.add(content, "Allgemeine Informationen");
         tabPanel.add(subView, "Termin- und Ressourcenplanung");
@@ -103,154 +132,86 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
         // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
-        generalInformation.add(zeile1);
+        generalInformation.add(row1);
         generalInformation.add(part2);
         part2.add(grid);
-        
-        
-        /* Filling structure */
-        
-        // Eventtype
-        ListBox eventType = new ListBox();
-        eventType.setStyleName("eventtype");
-        eventType.addItem("Lehrveranstaltung");
-        eventType.addItem("Klausur");
-        chosenEventType = eventType.getSelectedValue();
-        zeile1.add(eventType);
-        
-        //DOPPELT initEvenTypeLB();
-        
-       
-        // Language selection
-        ListBox language = new ListBox();
-        language.addItem("Deutsch");
-        language.addItem("Englisch");
-        chosenLanguage = eventType.getSelectedValue();
-        language.setStyleName("language");
-        zeile1.add(language);
-        
-        //DOPPELT initLanguageLB();
-        
-        //Study course
-        {
-            Button course = new Button("Studiengang");
-            course.setStyleName("course");
-            course.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent e) {
-                    getPresenter().onCourseButtonClicked();
-                }
-            });
-            
-            zeile1.add(course);
-        }
-        
-        //DOPPELT initCourseButton();
-
-
-        //Label eventname
-        Label eventname = new Label("Veranstaltungsname");
-        eventname.setStyleName("eventname");
-        grid.setWidget(0,0, eventname);
-        
-        //TextBox for insert eventname 
-        {
-            tb = new TextBox();
-            tb.setStyleName("textbox");
-            tb.addChangeHandler(new ChangeHandler(){
-
-                @Override
-                public void onChange(ChangeEvent event) {
-                    getPresenter().changeEventName(tb.getText());
-                }
-            });
-            grid.setWidget(0,1, tb);
-        }
-
-        
-        //Label planned lesson hours
-        Label planhour = new Label("geplante Vorlesungsstunden");
-        planhour.setStyleName("planhour");
-        grid.setWidget(1,0, planhour);
-        
-        //TextBox for insert planned hours 
-        TextBox tbPlanhour = new TextBox();
-        tbPlanhour.setStyleName("tbPlanhour");
-        grid.setWidget(1,1, tbPlanhour);
-        
-        
-        
-        //Buttons for count up planned hours
-        Button up = new Button();
-        up.setStyleName("up");
-        //String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center><label>Text</label></br></div>";
-        //String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center></div>";
-        //up.setHTML(html);
-        updown.add(up);
-        
-/*        Button down = new Button();
-        down.setSize("15px", "15px");
-        down.setStyleName("down");
-        String html2 = "<div class = 'img' ><img class= 'img_1' src = '/images/triangledown_klein.png'></img></div>";
-        down.setHTML(html2);
-        updown.add(down);  */
-        
-        part2.add(updown);
-        
-        Label info = new Label("Sonstige Veranstaltungsinformationen:");
-        part2.add(info);
-        
-        TextArea taInfo = new TextArea();
-        part2.add(taInfo);
-        
-        
-
-        
-        
-        //DOPPELT initHorizontalPanel(eventname);
-
-        initSaveDeleteCancelButtons();
-
-
-
     }
 
-    private void initHorizontalPanel(Label eventname) {
-        HorizontalPanel horizontalPanel = new HorizontalPanel();
-        horizontalPanel.add(eventname);
-        horizontalPanel.add(tb);
-        horizontalPanel.addStyleName("horizontal");
-        generalInformation.add(horizontalPanel);
-    }
+    private void initEventNameTextBox() {
+        tb = new TextBox();
+        tb.setStyleName("textbox");
+        tb.addChangeHandler(new ChangeHandler() {
 
-    private void initLanguageLB() {
-        ListBox language = new ListBox();
-        language.addItem("Deutsch");
-        language.addItem("Englisch");
-        chosenLanguage = language.getSelectedValue();
-        language.addStyleName("language");
-        generalInformation.add(language);
-    }
-
-    private void initEvenTypeLB() {
-        ListBox eventType = new ListBox();
-        eventType.addItem("Lehrveranstaltung");
-        eventType.addItem("Klausur");
-        eventType.addStyleName("Eventtype");
-        chosenEventType = eventType.getSelectedValue();
-        generalInformation.add(eventType);
+            @Override
+            public void onChange(ChangeEvent event) {
+                getPresenter().changeEventName(tb.getText());
+            }
+        });
+        grid.setWidget(0, 1, tb);
     }
 
     private void initCourseButton() {
         Button course = new Button("Studiengang");
+        course.setStyleName("course");
         course.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent e) {
                 getPresenter().onCourseButtonClicked();
             }
         });
-        course.addStyleName("Course");
-        generalInformation.add(course);
+
+        row1.add(course);
+    }
+
+    private void initLanguageListBox() {
+        ListBox language = new ListBox();
+        language.addItem("Deutsch");
+        language.addItem("Englisch");
+        chosenLanguage = language.getSelectedValue();
+        language.setStyleName("language");
+        row1.add(language);
+    }
+
+    private void initEventTypeListBox() {
+        ListBox eventType = new ListBox();
+        eventType.setStyleName("eventtype");
+        eventType.addItem("Lehrveranstaltung");
+        eventType.addItem("Klausur");
+        chosenEventType = eventType.getSelectedValue();
+        row1.add(eventType);
+    }
+
+    private void initGeneralInformationPanel() {
+        generalInformation = new FlowPanel();
+        generalInformation.setStyleName("generalInformation");
+    }
+
+    private void initContentPanel() {
+        content = new FlowPanel();
+        content.setStyleName("content");
+    }
+
+    private void clearPanels() {
+        popup.clear();
+        tabPanel.clear();
+        content.clear();
+        generalInformation.clear();
+        row1.clear();
+        part2.clear();
+        grid.clear();
+        upDown.clear();
+        contentRes.clear();
+    }
+
+    private void initTabPanel() {
+        tabPanel = new TabPanel();
+        tabPanel.addStyleName("tabPanel");
+    }
+
+    private void initRaplaPopupPanel() {
+        popup = RootPanel.get("raplaPopup");
+        popup.setVisible(true);
+        popup.setStyleName("popup");
     }
 
     private void initSaveDeleteCancelButtons() {
@@ -288,8 +249,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onSaveButtonClicked();
                 }
             });
-            content.add(button);}
+            content.add(button);
         }
+    }
 
 
     public void hide() {
