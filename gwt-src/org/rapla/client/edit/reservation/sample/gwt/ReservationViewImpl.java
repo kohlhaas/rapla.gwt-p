@@ -6,8 +6,11 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HasWidgets.ForIsWidget;
 
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
@@ -29,9 +32,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel subView = new FlowPanel();
     FlowPanel generalInformation;
     FlowPanel zeile1;
+    FlowPanel part2;
     
-    HorizontalPanel ho;
-    HorizontalPanel horizontal2;
+    Grid grid;
     
     VerticalPanel updown;
     
@@ -67,15 +70,14 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         zeile1 = new FlowPanel();
         zeile1.setStyleName("zeile1");
         
-        //Horizontal Panels for structuring Labels
-        ho = new HorizontalPanel();
-        ho.setStylePrimaryName("horizontal");
-        
-        horizontal2 = new HorizontalPanel();
-        horizontal2.setStyleName("horizontal2");
+        //Second part of the structure
+        part2 = new FlowPanel();
+        grid = new Grid(2, 2);
+        grid.setStyleName("grid");
         
         //Structuring up and down button
         updown = new VerticalPanel(); 
+        updown.setStyleName("updown");
        
         //FlowPanel for resources-part
         contentRes = new FlowPanel();
@@ -87,8 +89,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         content.clear();
         generalInformation.clear();
         zeile1.clear();
-        ho.clear();
-        horizontal2.clear();
+        part2.clear();
+        grid.clear();
         updown.clear();
         contentRes.clear();
         
@@ -102,9 +104,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
         // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
         generalInformation.add(zeile1);
-        generalInformation.add(ho);
-        generalInformation.add(horizontal2);
-        
+        generalInformation.add(part2);
+        part2.add(grid);
         
         
         /* Filling structure */
@@ -147,12 +148,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //DOPPELT initCourseButton();
 
 
-        //Label eventname (ho)
+        //Label eventname
         Label eventname = new Label("Veranstaltungsname");
         eventname.setStyleName("eventname");
-        ho.add(eventname);
+        grid.setWidget(0,0, eventname);
         
-        //TextBox for insert eventname (ho)
+        //TextBox for insert eventname 
         {
             tb = new TextBox();
             tb.setStyleName("textbox");
@@ -163,35 +164,41 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().changeEventName(tb.getText());
                 }
             });
-            ho.add(tb);
+            grid.setWidget(0,1, tb);
         }
 
         
-        //Label planned lesson hours (horizontal2)
+        //Label planned lesson hours
         Label planhour = new Label("geplante Vorlesungsstunden");
         planhour.setStyleName("planhour");
-        horizontal2.add(planhour);
+        grid.setWidget(1,0, planhour);
         
-        //TextBox for insert planned hours (horizontal2)
+        //TextBox for insert planned hours 
         TextBox tbPlanhour = new TextBox();
-        horizontal2.add(tbPlanhour);
+        tbPlanhour.setStyleName("tbPlanhour");
+        grid.setWidget(1,1, tbPlanhour);
+        
         
         
         //Buttons for count up planned hours
         Button up = new Button();
         up.setStyleName("up");
         //String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center><label>Text</label></br></div>";
-        String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center></div>";
-        up.setHTML(html);
+        //String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center></div>";
+        //up.setHTML(html);
         updown.add(up);
         
-        Button down = new Button();
+/*        Button down = new Button();
+        down.setSize("15px", "15px");
         down.setStyleName("down");
-        String html2 = "<div><center><img src = '/images/TriangleDown.png' height = '7px' width = '7px'></img></center></div>";
+        String html2 = "<div class = 'img' ><img class= 'img_1' src = '/images/triangledown_klein.png'></img></div>";
         down.setHTML(html2);
-        updown.add(down);
+        updown.add(down);  */
         
-        horizontal2.add(updown);
+        part2.add(updown);
+        
+        
+
         
         
         //DOPPELT initHorizontalPanel(eventname);
