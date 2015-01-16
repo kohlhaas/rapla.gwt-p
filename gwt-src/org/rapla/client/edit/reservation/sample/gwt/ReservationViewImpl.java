@@ -22,6 +22,35 @@ import org.rapla.entities.domain.Reservation;
 import java.util.Locale;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
+	
+	private static class MyDialog extends DialogBox {
+
+	    public MyDialog() {
+	      // Set the dialog box's caption.
+	      setText("My First Dialog");
+
+	      // Enable animation.
+	      setAnimationEnabled(true);
+
+	      // Enable glass background.
+	      setGlassEnabled(true);
+
+	      // DialogBox is a SimplePanel, so you have to set its widget property to
+	      // whatever you want its contents to be.
+
+	        
+	      
+	        
+	      Button ok = new Button("OK");
+	      ok.addClickHandler(new ClickHandler() {
+	        public void onClick(ClickEvent event) {
+	          MyDialog.this.hide();
+	        }
+	      });
+	      setWidget(ok);
+	    }
+	  }
+
 
     Panel popup;
 
@@ -33,6 +62,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel generalInformation;
     FlowPanel zeile1;
     FlowPanel part2;
+    FlowPanel coursePanel;
     
     Grid grid;
     
@@ -70,6 +100,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         zeile1 = new FlowPanel();
         zeile1.setStyleName("zeile1");
         
+        coursePanel = new FlowPanel();
+        coursePanel.setStyleName("coursePanel");
+        
         //Second part of the structure
         part2 = new FlowPanel();
         grid = new Grid(2, 2);
@@ -104,6 +137,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
         // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
         generalInformation.add(zeile1);
+        generalInformation.add(coursePanel);
         generalInformation.add(part2);
         part2.add(grid);
         
@@ -138,12 +172,47 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             course.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent e) {
+                	coursePanel.setVisible(true);
+                	
+                    TreeItem root = new TreeItem();
+                	root.setText("root");
+                	root.addTextItem("item0");
+                	root.addTextItem("item1");
+                	root.addTextItem("item2");
+            	      
+                	// Add a CheckBox to the tree
+                	TreeItem item = new TreeItem(new CheckBox("item3"));
+                	root.addItem(item);
+            	      
+                	Tree t = new Tree();
+                	t.addItem(root);
+            	      
+                	coursePanel.add(t);
+                	
+                	
+                	Button ausblenden = new Button("ausblenden");
+                	coursePanel.add(ausblenden);
+                	ausblenden.addClickHandler(new ClickHandler(){
+                		@Override
+                		public void onClick(ClickEvent e) {
+                			coursePanel.setVisible(false);
+                		}
+                	});
+                    
+                	new MyDialog().show();
+                	
                     getPresenter().onCourseButtonClicked();
                 }
             });
             
             zeile1.add(course);
         }
+        
+        
+        
+
+    	
+    	
         
         //DOPPELT initCourseButton();
 
@@ -201,7 +270,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         part2.add(info);
         
         TextArea taInfo = new TextArea();
+        taInfo.setStyleName("taInfo");
         part2.add(taInfo);
+        
+
+        
+        
+        
         
         
 
@@ -210,6 +285,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //DOPPELT initHorizontalPanel(eventname);
 
         initSaveDeleteCancelButtons();
+        
+      
 
 
 

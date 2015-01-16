@@ -3,7 +3,7 @@
 
 
 .tabPanel {
-	/*padding: 5px; */
+	padding: 5px; 
 }
 
 .textbox {
@@ -18,6 +18,10 @@
 
 .grid {
 	margin-bottom: 5px;
+}
+
+.taInfo {
+	width: 100%
 }
 
 .zeile1 {
