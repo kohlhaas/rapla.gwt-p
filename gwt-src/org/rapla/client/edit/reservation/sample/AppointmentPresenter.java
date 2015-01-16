@@ -31,6 +31,8 @@ public class AppointmentPresenter implements Presenter {
     Logger logger;
     @Inject
     RaplaLocale locale;
+    @Inject
+    CalendarOptions calendarOptions;
 
     private Reservation reservation;
 
@@ -83,8 +85,7 @@ public class AppointmentPresenter implements Presenter {
             newAppointment = facade.newAppointment(startDate, endDate);
             logger.info("new appointment for Dates: " + startDate.toString() + " - " + endDate.toString());
             List<Allocatable> asList = Arrays.asList(facade.getAllocatables());
-            CalendarOptions options = new CalendarOptionsImpl();//TODO: find which CalendarOption is important
-            FutureResult<Date> nextAllocatableDate = facade.getNextAllocatableDate(asList, newAppointment, options);
+            FutureResult<Date> nextAllocatableDate = facade.getNextAllocatableDate(asList, newAppointment, calendarOptions);
             logger.info("next allo date: "+ nextAllocatableDate.get().toString());
             return nextAllocatableDate.get();
         } catch (RaplaException e) {
