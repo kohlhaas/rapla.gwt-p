@@ -197,6 +197,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         
         part2.add(updown);
         
+        Label info = new Label("Sonstige Veranstaltungsinformationen:");
+        part2.add(info);
+        
+        TextArea taInfo = new TextArea();
+        part2.add(taInfo);
+        
         
 
         
