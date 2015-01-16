@@ -226,30 +226,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                   public void onClick(ClickEvent e) {
                   	coursePanel.setVisible(true);
                   	
-                      TreeItem root = new TreeItem();
-                  	root.setText("root");
-                  	root.addTextItem("item0");
-                  	root.addTextItem("item1");
-                  	root.addTextItem("item2");
-              	      
-                  	// Add a CheckBox to the tree
-                  	TreeItem item = new TreeItem(new CheckBox("item3"));
-                  	root.addItem(item);
-              	      
-                  	Tree t = new Tree();
-                  	t.addItem(root);
-              	      
-                  	coursePanel.add(t);
-                  	
-                  	
-                  	Button ausblenden = new Button("ausblenden");
-                  	coursePanel.add(ausblenden);
-                  	ausblenden.addClickHandler(new ClickHandler(){
-                  		@Override
-                  		public void onClick(ClickEvent e) {
-                  			coursePanel.setVisible(false);
-                  		}
-                  	});
+ 
                       
                   	new MyDialog().show();
                   	
@@ -258,6 +235,34 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
               });
               
               row1.add(course);
+              
+              
+              TreeItem root = new TreeItem();
+             	root.setText("root");
+             	root.addTextItem("item0");
+             	root.addTextItem("item1");
+             	root.addTextItem("item2");
+         	      
+             	// Add a CheckBox to the tree
+             	TreeItem item = new TreeItem(new CheckBox("item3"));
+             	root.addItem(item);
+         	      
+             	Tree t = new Tree();
+             	t.addItem(root);
+         	      
+             	coursePanel.add(t);
+             	
+             	
+             	Button ausblenden = new Button("ausblenden");
+             	coursePanel.add(ausblenden);
+             	ausblenden.addClickHandler(new ClickHandler(){
+             		@Override
+             		public void onClick(ClickEvent e) {
+             			coursePanel.setVisible(false);
+             		}
+             	});
+             	
+             	coursePanel.setVisible(false);
       }
 
     private void initLabelEventNameInGrid() {
