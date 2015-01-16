@@ -1,4 +1,4 @@
-package org.rapla.client.mwi14_1.view.resoursedates;
+package org.rapla.client.edit.reservation.sample.gwt;
 
 import java.text.ParseException;
 

@@ -1,5 +1,6 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -10,8 +11,6 @@ import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
-import org.rapla.client.mwi14_1.view.infos.InfoHorizontalPanel;
-import org.rapla.client.mwi14_1.view.resoursedates.TerminList;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
@@ -378,7 +377,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         			begin.add(dateBegin);
 
         		//	timeBegin = new SmallTimeBox(new Date(-3600000));
-        			//begin.add(timeBegin);
+        		//	begin.add(timeBegin);
         			final Label beginTimeText = new Label("Uhr");
         			beginTimeText.setStyleName("beschriftung");
         			begin.add(beginTimeText);
@@ -497,7 +496,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         			chosenResources.setStyleName("dateInfoLineComplete");
 
         			// Ausgewählte Resourcen laden
-        		//	loadChosenResources();
+        			//loadChosenResources();
         			
 
         			Label headerChosenRes  = new Label("Ausgewaehlte Ressourcen:");
@@ -538,7 +537,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         			
         				
         		    chooseContainer.add(resourceTree);
-        		 //   chooseContainer.setWidth(width  * 0.85 + "px");
+        		    chooseContainer.setWidth(width  * 0.85 + "px");
         			
         		    addResources.setContent(chooseContainer);
         			
@@ -618,11 +617,193 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
 	@Override
 	public String getSelectedEventType() {
-		// TODO Auto-generated method stub
-		return null;
+		return eventTypesListBox.getSelectedItemText();
 	}
     
-    
+
+	public void setEventTypes(List<String> eventTypes) {
+
+		for (int i = 0; i < eventTypes.size(); i++) {
+			eventTypesListBox.addItem((String) eventTypes.get(i).toString());
+		}
+
+	}
+
+	
+
+
+	public void setSelectedEventType(String select) {
+		for (int i = 0; i < eventTypesListBox.getItemCount(); i++) {
+			if (eventTypesListBox.getItemText(i).equals(select)) {
+				eventTypesListBox.setItemSelected(i, true);
+			}
+		}
+	}
+
+	
+	public void setDynamicFields(Attribute[] attributes) {
+
+		for (int i = 0; i < attributes.length; i++) {
+
+			String name = attributes[i].toString();
+
+			eventTypesListBox.addItem(name);
+
+		}
+
+	}
+
+	public void setConstraintKeys(String[] constraintKeys) {
+
+	}
+
+	//resources and dates elements
+	
+	public FlowPanel getMainContent() {
+		return mainContent;
+	}
+
+	public void setMainContent(FlowPanel mainContent) {
+		this.mainContent = mainContent;
+	}
+
+	public FlowPanel getDateList() {
+		return dateList;
+	}
+
+	public FlowPanel getButtonBar() {
+		return buttonBar;
+	}
+
+	public void setButtonBar(FlowPanel buttonBar) {
+		this.buttonBar = buttonBar;
+	}
+
+	public DateBox getDateBegin() {
+		return dateBegin;
+	}
+
+	public void setDateBegin(DateBox dateBegin) {
+		this.dateBegin = dateBegin;
+	}
+
+	public DateBox getDateEnd() {
+		return dateEnd;
+	}
+
+	public void setDateEnd(DateBox dateEnd) {
+		this.dateEnd = dateEnd;
+	}
+
+	public Tree getResourceTree() {
+		return resourceTree;
+	}
+
+	public void setResourceTree(Tree resourceTree) {
+		this.resourceTree = resourceTree;
+	}
+
+	public FlowPanel getChosenResources() {
+		return chosenResources;
+	}
+
+	public void setChosenResources(FlowPanel chosenResources) {
+		this.chosenResources = chosenResources;
+	}
+
+	public Label getButtonNextGap() {
+		return buttonNextGap;
+	}
+
+	public void setButtonNextGap(Label buttonNextGap) {
+		this.buttonNextGap = buttonNextGap;
+	}
+
+	public Label getButtonGarbageCan() {
+		return buttonGarbageCan;
+	}
+
+	public void setButtonGarbageCan(Label buttonGarbageCan) {
+		this.buttonGarbageCan = buttonGarbageCan;
+	}
+
+	public Label getButtonPlus() {
+		return buttonPlus;
+	}
+
+	public void setButtonPlus(Label buttonPlus) {
+		this.buttonPlus = buttonPlus;
+	}
+
+	public ArrayList<List<String>> getToBeReservedResources() {
+		return toBeReservedResources;
+	}
+
+	public void setToBeReservedResources(ArrayList<List<String>> toBeReservedResources) {
+		this.toBeReservedResources = toBeReservedResources;
+	}
+
+	private void addDateWidget() {
+
+	//	RaplaDate addTermin = new RaplaDate();
+			
+//		Date beginTmp = new Date(dateBegin.getValue().getTime() + timeBegin.getTime() + 3600000);
+//		Date endTmp = new Date(dateEnd.getValue().getTime() + timeEnd.getTime() + 3600000);
+		
+		
+//		if(beginTmp.after(endTmp)){
+//		addDateInfo.setStyleName("error");	
+//		addDateInfo.setText("Begin- nach Endtermin!");
+//		}else{
+//			addDateInfo.setStyleName("");
+//			addDateInfo.setText("");
+//			if(daily.getValue() || weekly.getValue() || monthly.getValue() || year.getValue()){
+//				List<RaplaDate> tmp = new ArrayList<>();
+//				int type;
+//				if(daily.getValue()){
+//					type = 1;
+//				}else if (weekly.getValue()){
+//					type = 2;
+//				}else if( monthly.getValue()){
+//					type = 3;
+//				}else{
+//					type = 4;
+//				}
+////				tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, type);
+//				try {
+//			//		tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
+//					addTermin = new RaplaDate(tmp);
+//					dateList.add(addTermin);
+//				//	addTermin.addClickHandler(new RaplaDateClickHandler());
+//					clearDateTimeInputFields();
+//				} catch (ParseException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}else{
+//			try {	
+//				addTermin = new RaplaDate(beginTmp, endTmp, true);
+//			//	addTermin.addClickHandler(new RaplaDateClickHandler());
+//				dateList.add(addTermin);
+//				clearDateTimeInputFields();
+//			} catch (ParseException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+	//		}
+	//	}
+	}
+	private void clearDateTimeInputFields(){
+		dateBegin.setValue(null);
+		dateEnd.setValue(null);
+	//	timeEnd.setValue((long) -3600000);
+		//timeBegin.setValue((long) -3600000);
+		cbWholeDay.setValue(false);
+		rewriteDate.setVisible(false);
+		buttonGarbageCan.setStyleName("buttonsResourceDates");
+		noReccuring.setValue(true);
+		cbRepeatType.setOpen(false);
+	}
     
     
 }
