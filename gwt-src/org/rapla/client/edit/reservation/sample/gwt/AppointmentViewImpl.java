@@ -1,32 +1,19 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
-
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.entities.RaplaType;
-import org.rapla.entities.domain.Allocatable;
-import org.rapla.entities.domain.Appointment;
-import org.rapla.entities.domain.AppointmentFormater;
-import org.rapla.entities.domain.Repeating;
-import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.domain.*;
+import org.rapla.entities.dynamictype.DynamicType;
 
 import javax.inject.Inject;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class AppointmentViewImpl extends AbstractView<Presenter> implements AppointmentView<IsWidget> {
 
@@ -47,46 +34,72 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     FlowPanel startFields, endFields;
     Label startTimeColon, endTimeColon;
     ListBox appointmentList;
-
+    ListBox dynamicTypeList = new ListBox();
+    ListBox allocatableList = new ListBox();
 
     DateTimeFormat df = DateTimeFormat.getFormat("dd.MM.yyyy");
     DateTimeFormat hoursFormat = DateTimeFormat.getFormat("HH");
     DateTimeFormat minutesFormat = DateTimeFormat.getFormat("mm");
 
-	private FlowPanel resourceListsPanel;
+    private FlowPanel resourceListsPanel;
     private ListBox resourceTypesList;
-	private Map<String, ListBox> resourceLists;
-	
+    private Map<String, ListBox> resourceLists;
 
 
     /**
      * save an appointment by calling : "getPresenter().newAppointmentButtonPressed(dateStart, dateEnd)"
-     *
      */
 
     public void show(Reservation reservation) {
-    	List<Appointment> appointments = Arrays.asList(reservation.getAppointments());
-    	List<Allocatable> resources = Arrays.asList(reservation.getAllocatables());
-    	
+        List<Appointment> appointments = Arrays.asList(reservation.getAppointments());
+        List<Allocatable> resources = Arrays.asList(reservation.getAllocatables());
+
         content.clear();
         appointmentPanel = new FlowPanel();
         appointmentPanel.addStyleName("appointment-panel");
         content.add(appointmentPanel);
-        
+
+/**
+ * thats how you can get all "RessourcenTypen" and the single resources
+ * all ressourcetypes
+ */
+
+        Locale locale = getRaplaLocale().getLocale();
+        DynamicType[] dynamicTypes = getPresenter().getResourceTypes();
+        for (DynamicType dynamicType : dynamicTypes) {
+            dynamicTypeList.addItem(dynamicType.getName(locale));
+        }
+
+        /**
+         * all ressources
+         */
+        for (Allocatable allocatable : getPresenter().getAllocatables()) {
+            allocatableList.addItem(allocatable.getName(locale));
+        }
+
+
+        content.add(dynamicTypeList);
+        content.add(allocatableList);
+
+        /**
+         *
+         *
+         */
+
         // "Add appointment" Button
         Button addAppointment = new Button("Termin hinzufügen");
         addAppointment.setStyleName("add-appointment");
         addAppointment.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				getPresenter().newAppointmentButtonPressed();
-			}
+            @Override
+            public void onClick(ClickEvent event) {
+                getPresenter().newAppointmentButtonPressed();
+            }
         });
         appointmentPanel.add(addAppointment);
-        
+
         // Appointment List
         appointmentList = new ListBox();
-        updateAppointmentList(appointments, appointments.size()-1);
+        updateAppointmentList(appointments, appointments.size() - 1);
         appointmentList.setStyleName("appointment-list");
         appointmentList.setVisibleItemCount(7);
         appointmentPanel.add(appointmentList);
@@ -98,14 +111,15 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
                 getPresenter().appointmentSelected(appointmentList.getSelectedIndex());
             }
         });
-      //fire change event to update appointment options panel
+        //fire change event to update appointment options panel
         DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
-        
+
+
         // Resources Panel
         resourcePanel = new FlowPanel();
         resourcePanel.addStyleName("resource-panel");
         content.add(resourcePanel);
-        
+
         resourceTypesList = new ListBox();
         resourceTypesList.setStyleName("resources-types");
         resourcePanel.add(resourceTypesList);
@@ -138,15 +152,15 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         initStartDateFields();
         initEndDateFields();
-        
+
         Button removeAppointment = new Button("Termin löschen");
         removeAppointment.setStyleName("remove-appointment");
         removeAppointment.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				getPresenter().removeAppointmentButtonPressed(appointmentList.getSelectedIndex());
-			}
-		});
+            @Override
+            public void onClick(ClickEvent event) {
+                getPresenter().removeAppointmentButtonPressed(appointmentList.getSelectedIndex());
+            }
+        });
         appointmentOptionsPanel.add(removeAppointment);
 
         // Fill in data from appointment object
@@ -164,50 +178,50 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endMinuteField.setText(minutesFormat.format(selectedAppointment.getEnd()));
 
     }
-    
+
     public void updateAppointmentList(List<Appointment> appointments, int focus) {
-    	appointmentList.clear();
-    	for (Appointment a : appointments) {
+        appointmentList.clear();
+        for (Appointment a : appointments) {
             String appointmentLabel = df.format(a.getStart()) + " "; // + " - " + df.format(a.getEnd());
             appointmentList.addItem(appointmentLabel);
         }
-    	appointmentList.setSelectedIndex(focus);
-    	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
+        appointmentList.setSelectedIndex(focus);
+        DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
     }
-    
+
     @Override
     public void updateResources(List<Allocatable> resources) {
-    	resourceLists.clear();
+        resourceLists.clear();
         resourceTypesList.clear();
         resourceTypesList.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				resourceListsPanel.clear();
-				resourceListsPanel.add(
-					resourceLists.get(
-						resourceTypesList.getSelectedValue()
-					) 
-				);
-			}
+            @Override
+            public void onChange(ChangeEvent event) {
+                resourceListsPanel.clear();
+                resourceListsPanel.add(
+                        resourceLists.get(
+                                resourceTypesList.getSelectedValue()
+                        )
+                );
+            }
         });
-    	
-    	Locale locale = getRaplaLocale().getLocale();
-    	Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = getPresenter().sortResources(resources);
-    	for(RaplaType<Allocatable> resourceTypes : sortedResources.keySet()) {
-    		String resourceTypeName = resourceTypes.getLocalName();
-    		resourceTypesList.addItem(resourceTypeName);
-    		ListBox resourceList = new ListBox();
-    		resourceList.setVisibleItemCount(7);
-    		resourceList.addStyleName("resources-list");
-    		resourceLists.put(resourceTypeName,resourceList);
-	    	for (Allocatable resource : sortedResources.get(resourceTypes)) {
-	    		resourceList.addItem(resource.getName(locale));
-	    	}
-    	}
-    	
-    	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), resourceTypesList);
+
+        Locale locale = getRaplaLocale().getLocale();
+        Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = getPresenter().sortResources(resources);
+        for (RaplaType<Allocatable> resourceTypes : sortedResources.keySet()) {
+            String resourceTypeName = resourceTypes.getLocalName();
+            resourceTypesList.addItem(resourceTypeName);
+            ListBox resourceList = new ListBox();
+            resourceList.setVisibleItemCount(7);
+            resourceList.addStyleName("resources-list");
+            resourceLists.put(resourceTypeName, resourceList);
+            for (Allocatable resource : sortedResources.get(resourceTypes)) {
+                resourceList.addItem(resource.getName(locale));
+            }
+        }
+
+        DomEvent.fireNativeEvent(Document.get().createChangeEvent(), resourceTypesList);
     }
-    
+
 //    public void mapFromReservation(Reservation event) {
 //        Locale locale = getRaplaLocale().getLocale();
 //        tb.setText(event.getName(locale));
@@ -339,11 +353,11 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         return content;
     }
 
-	@Override
-	public void updateBookedResources(List<Allocatable> resources) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void updateBookedResources(List<Allocatable> resources) {
+        // TODO Auto-generated method stub
+
+    }
 
 
 }

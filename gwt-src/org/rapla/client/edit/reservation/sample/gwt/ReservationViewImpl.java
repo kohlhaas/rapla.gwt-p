@@ -11,6 +11,7 @@ import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.dynamictype.DynamicType;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 	
@@ -229,8 +230,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
  
                       
                   	new MyDialog().show();
-                  	
-                      getPresenter().onCourseButtonClicked();
+                      /**
+                       * this method returns all "Veranstaltungstypen" in a DynamicType array, ask if you want only Veranstaltungstyp with name "Studiengang"
+                       */
+                      DynamicType[] dynamicTypes = getPresenter().onCourseButtonClicked();
                   }
               });
               

@@ -5,6 +5,7 @@ import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
+import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
@@ -72,10 +73,19 @@ public class ReservationPresenter implements ReservationController, Presenter {
         view.hide();
     }
 
-    // TODO: have to add an appropiate action
+    /**
+     *
+     * @return all "Veranslatungstypen" eventTypes, null if error
+     */
     @Override
-    public void onCourseButtonClicked() {
+    public DynamicType[] onCourseButtonClicked() {
         logger.info("Course clicked");
+        try {
+            facade.getDynamicTypes("reservation");
+        } catch (RaplaException e) {
+            logger.error("error while using facade: ", e);
+        }
+        return null;
     }
 
 

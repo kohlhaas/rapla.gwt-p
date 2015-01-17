@@ -10,6 +10,7 @@ import org.rapla.entities.RaplaType;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.Conflict;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
@@ -22,6 +23,9 @@ public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubV
         void appointmentSelected(int selectedIndex);
         void removeAppointmentButtonPressed(int selectedIndex);
         void addResourceButtonPressed(int selectedIndex, String resourceTypeName);
+        DynamicType[] getEventTypes();
+        DynamicType[] getResourceTypes();
+        Allocatable[] getAllocatables();
         Map<RaplaType<Allocatable>, List<Allocatable>> sortResources(List<Allocatable> resources);
     }
 

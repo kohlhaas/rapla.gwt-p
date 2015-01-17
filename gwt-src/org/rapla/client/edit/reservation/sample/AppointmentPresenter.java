@@ -5,6 +5,7 @@ import org.rapla.entities.RaplaType;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.Conflict;
@@ -151,4 +152,46 @@ public class AppointmentPresenter implements Presenter {
         return sortedResources;
     }
 
+
+    /**
+     * all allocatable are under types, returns null if an error has happened
+     * example : resourceTypes: rooms, persons, objects|things ||| resources: rooms = chairs,tables... ; persons = age,semestre...; things: pen,beamer...
+     */
+    public Allocatable [] getAllocatables(){
+        try {
+            return facade.getAllocatables();
+        } catch (RaplaException e) {
+            logger.error("error while using facade: ", e);
+        }
+        return null;
+    }
+
+    /**
+     * @return all "Veranslatungstypen" eventTypes
+     */
+    public DynamicType[] getEventTypes(){
+        return getDynamicTypes("reservation");
+    }
+
+    /**
+     * @return all "Ressourcen Typen" resourcestypes
+     */
+    public DynamicType[] getResourceTypes(){
+        return getDynamicTypes("resource");
+    }
+
+    /**
+     *  possible keys are reservation(Veranstaltungstyp), person(..) and resource(ressourcetypes), returns null if an error has happened
+     * example : resourceTypes: rooms, persons, objects|things ||| resources: rooms = chairs,tables... ; persons = age,semestre...; things: pen,beamer...
+     */
+    private DynamicType[] getDynamicTypes(String name){
+        try {
+            return facade.getDynamicTypes(name);
+        } catch (RaplaException e) {
+            logger.error("error while using facade: ", e);
+        }
+        return null;
+    }
+
 }
+
