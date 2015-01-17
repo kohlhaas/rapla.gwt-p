@@ -1,6 +1,7 @@
 package org.rapla.client.edit.reservation.sample;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +26,7 @@ import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
+import org.rapla.client.edit.reservation.sample.InfoView;
 
 public class ReservationPresenter implements ReservationController,Presenter {
 
@@ -36,15 +38,23 @@ public class ReservationPresenter implements ReservationController,Presenter {
     ClientFacade facade;
     
     private ReservationView view;
-    private SampleAppointmentPresenter appointmentPresenter;
+    private InfoViewPresenter infoViewPresenter;
+    
     private Reservation tempReservation;
+	private ResourceDatesViewPresenter resourceDatesPresenter;
     
     @Inject
-    public ReservationPresenter(ReservationView view, SampleAppointmentPresenter appointmentPresenter) {
+    public ReservationPresenter(ReservationView view, InfoViewPresenter infoViewPresenter, ResourceDatesViewPresenter resourceDatesPresenter) {
         this.view = view;
         view.setPresenter(this);
-        this.appointmentPresenter = appointmentPresenter;
-        view.addSubView( appointmentPresenter.getView());
+        this.infoViewPresenter = infoViewPresenter;
+		this.resourceDatesPresenter = resourceDatesPresenter;
+		
+        view.addSubView( infoViewPresenter.getView());
+        view.addSubView( resourceDatesPresenter.getView());
+//       InfoView test2 =  (InfoView) infoViewPresenter.getView();
+//       test2.hide();
+        
     }
 
     Reservation event;
@@ -55,8 +65,10 @@ public class ReservationPresenter implements ReservationController,Presenter {
     public void edit(final Reservation event, boolean isNew) {
         tempReservation = event;
         this.isNew = isNew;
-        appointmentPresenter.setReservation( event);
+        infoViewPresenter.setReservation(event);
+        //resourceViewPresenter.setReservation(event);	
         view.show(event);
+        
     }
 
     @Override
@@ -173,7 +185,18 @@ public class ReservationPresenter implements ReservationController,Presenter {
 
 	@Override
 	public void onTabChanged(int selectedTab) {
-		view.update(selectedTab);
+	
+		ReservationEditSubView tempView = infoViewPresenter.getView();
+		
+		if(selectedTab == 0){
+			tempView = infoViewPresenter.getView();
+		}else if(selectedTab == 1){
+			tempView = resourceDatesPresenter.getView();
+		}else{
+			
+		}
+		
+		view.update(tempView);
 	}
 
 	@Override

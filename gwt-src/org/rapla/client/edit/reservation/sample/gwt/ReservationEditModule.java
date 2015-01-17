@@ -3,6 +3,8 @@ package org.rapla.client.edit.reservation.sample.gwt;
 import javax.inject.Singleton;
 
 import org.rapla.client.edit.reservation.ReservationController;
+import org.rapla.client.edit.reservation.sample.InfoView;
+import org.rapla.client.edit.reservation.sample.ResourceDatesView;
 import org.rapla.client.edit.reservation.sample.SampleAppointmentView;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ReservationPresenter;
@@ -16,5 +18,8 @@ public class ReservationEditModule implements GinModule{
         binder.bind( ReservationController.class).to(ReservationPresenter.class).in( Singleton.class);
         binder.bind( ReservationView.class).to(ReservationViewImpl.class);
         binder.bind( SampleAppointmentView.class).to(SampleAppointmentViewImpl.class);
+        binder.bind( InfoView.class).to(InfoViewImpl.class);
+        binder.bind( ResourceDatesView.class).to(ResourceDatesViewImpl.class);
+
     }
 }

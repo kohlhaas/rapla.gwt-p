@@ -3,21 +3,27 @@ package org.rapla.client.edit.reservation.sample;
 import java.util.List;
 
 import org.rapla.client.base.View;
+import org.rapla.client.edit.reservation.sample.ResourceDatesView.Presenter;
 import org.rapla.entities.domain.Appointment;
-import org.rapla.client.edit.reservation.sample.InfoView.Presenter;;
 
-public interface InfoView<W> extends View<Presenter>, ReservationEditSubView<W> {
+public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditSubView<W> {
     public interface Presenter
     {
         void newAppButtonPressed();
         //add handler here 
 
-		void onEventTypesChanged();
+		void onGarbageCanButtonClicked();
 
-		void onStudiengangChanged();
+		void onWholeDaySelected();
+
+		void onButtonPlusClicked();
+
+		void onRewriteDateClicked();
+
+
     }
 
-   
+
     void hide();
     
     void update(List<Appointment> appointments);
@@ -27,3 +33,4 @@ public interface InfoView<W> extends View<Presenter>, ReservationEditSubView<W> 
 	void show();
     
 }
+

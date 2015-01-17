@@ -26,7 +26,7 @@ public interface ReservationView<W> extends View<Presenter> {
   void show(Reservation event);
   void hide();
   void addSubView(ReservationEditSubView<W> view);
-  void update(int selectedTab);
+  void update(ReservationEditSubView tempView);
   String getTitelInput();
   Attribute getVorlesungsStundenInput();
   String getSelectedEventType();

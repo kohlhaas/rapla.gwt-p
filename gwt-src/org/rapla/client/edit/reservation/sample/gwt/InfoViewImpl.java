@@ -44,112 +44,109 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 
 	@Override
 	public IsWidget provideContent() {
-		
-			contentPanel = new SimplePanel();
-  		    contentPanel.clear(); 
-		 
-		    infoTab = new HorizontalPanel();
-			contentLeft = new VerticalPanel();
-			contentRight = new VerticalPanel();
-			contentLeft.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			contentRight
-					.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			contentLeft.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-			contentRight.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
-			eventTypesListBox = new ListBox();
-			resources = new Tree();
-
-			// add the Event Types from data.xml here
-
-			eventTypesListBox.addChangeHandler(new ChangeHandler() {
-
-				@Override
-				public void onChange(ChangeEvent event) {
-					getPresenter().onEventTypesChanged();
-
-				}
-			});
-
-			final FlowPanel listPanel = new FlowPanel();
-			listPanel.add(eventTypesListBox);
-			listPanel.add(resources);
-			listPanel.setWidth(width + "px");
-			contentLeft.add(listPanel);
-
-			final InfoHorizontalPanel titelPanel = new InfoHorizontalPanel(width
-					+ "px");
-			final Label title = new Label("Vorlesungstitel");
-			titelInput = new TextBox();
-			titelPanel.add(title, (width / 3) + "px");
-			titelPanel.add(titelInput, (width / 3) + "px");
-			 titelPanel.setWidth(width + "px");
-
-			final Label vorlesungsStunden = new Label("Vorlesungsstunden");
-			final Label vorlesungsStundenMessage = new Label("");
-			vorlesungsStundenInput = new TextBox();
-			vorlesungsStundenInput.addKeyUpHandler(new KeyUpHandler() {
-				@Override
-				public void onKeyUp(KeyUpEvent event) {
-					//to be implemented
-
-				}
-			});
-
-			final InfoHorizontalPanel vorlesungsStundenPanel = new InfoHorizontalPanel(
-					width + "px");
-			vorlesungsStundenPanel.add(vorlesungsStunden, (width / 3) + "px");
-			vorlesungsStundenPanel.add(vorlesungsStundenInput, (width / 3) + "px");
-			vorlesungsStundenPanel
-					.add(vorlesungsStundenMessage, (width / 3) + "px");
-
-			final InfoHorizontalPanel studiengangPanel = new InfoHorizontalPanel(
-					width + "px");
-			Label studiengang = new Label("Studiengang");
-			studiengangListBox = new ListBox();
-			studiengangListBox.addItem("WWI12B1");
-			studiengangListBox.addItem("WWI12B2");
-			studiengangListBox.addItem("WWI12B3");
-			studiengangListBoxAuswahl = new ArrayList();
-			studiengangListBox.addChangeHandler(new ChangeHandler() {
-				// Hier den Handler / Listener für die Listbox einbinden ~ done
-				@Override
-				public void onChange(ChangeEvent event) {
-					getPresenter().onStudiengangChanged();
-
-				}
-
-			});
-
-			studiengangPanel.add(studiengang, (width / 3) + "px");
-			studiengangPanel.add(studiengangListBox, (width / 3) + "px");
-
-			studiengangPanel.finalize(3);
-			vorlesungsStundenPanel.finalize(3);
-			titelPanel.finalize(3);
-
-			contentRight.add(titelPanel);
-			contentRight.add(vorlesungsStundenPanel);
-			contentRight.add(studiengangPanel);
-
-			
-			
-			infoTab.add(contentLeft);
-			infoTab.add(contentRight);
-			
-			infoTab.setCellWidth(contentLeft, width + "px");
-			infoTab.setCellWidth(contentRight, width + "px");
-			contentPanel.add(infoTab);
-		
-		
-		
-		
 		return contentPanel;
 	}
 
 	@Override
-	public void show(List asList) {
-		// TODO Auto-generated method stub
+	public void show() {
+
+		contentPanel = new SimplePanel();
+		    contentPanel.clear(); 
+	 
+	    infoTab = new HorizontalPanel();
+		contentLeft = new VerticalPanel();
+		contentRight = new VerticalPanel();
+		contentLeft.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		contentRight
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		contentLeft.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		contentRight.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+
+		eventTypesListBox = new ListBox();
+		resources = new Tree();
+
+		// add the Event Types from data.xml here
+
+		eventTypesListBox.addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				getPresenter().onEventTypesChanged();
+
+			}
+		});
+
+		final FlowPanel listPanel = new FlowPanel();
+		listPanel.add(eventTypesListBox);
+		listPanel.add(resources);
+		listPanel.setWidth(width + "px");
+		contentLeft.add(listPanel);
+
+		final InfoHorizontalPanel titelPanel = new InfoHorizontalPanel(width
+				+ "px");
+		final Label title = new Label("Vorlesungstitel");
+		titelInput = new TextBox();
+		titelPanel.add(title, (width / 3) + "px");
+		titelPanel.add(titelInput, (width / 3) + "px");
+		 titelPanel.setWidth(width + "px");
+
+		final Label vorlesungsStunden = new Label("Vorlesungsstunden");
+		final Label vorlesungsStundenMessage = new Label("");
+		vorlesungsStundenInput = new TextBox();
+		vorlesungsStundenInput.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				//to be implemented
+
+			}
+		});
+
+		final InfoHorizontalPanel vorlesungsStundenPanel = new InfoHorizontalPanel(
+				width + "px");
+		vorlesungsStundenPanel.add(vorlesungsStunden, (width / 3) + "px");
+		vorlesungsStundenPanel.add(vorlesungsStundenInput, (width / 3) + "px");
+		vorlesungsStundenPanel
+				.add(vorlesungsStundenMessage, (width / 3) + "px");
+
+		final InfoHorizontalPanel studiengangPanel = new InfoHorizontalPanel(
+				width + "px");
+		Label studiengang = new Label("Studiengang");
+		studiengangListBox = new ListBox();
+		studiengangListBox.addItem("WWI12B1");
+		studiengangListBox.addItem("WWI12B2");
+		studiengangListBox.addItem("WWI12B3");
+		studiengangListBoxAuswahl = new ArrayList();
+		studiengangListBox.addChangeHandler(new ChangeHandler() {
+			// Hier den Handler / Listener für die Listbox einbinden ~ done
+			@Override
+			public void onChange(ChangeEvent event) {
+				getPresenter().onStudiengangChanged();
+
+			}
+
+		});
+
+		studiengangPanel.add(studiengang, (width / 3) + "px");
+		studiengangPanel.add(studiengangListBox, (width / 3) + "px");
+
+		studiengangPanel.finalize(3);
+		vorlesungsStundenPanel.finalize(3);
+		titelPanel.finalize(3);
+
+		contentRight.add(titelPanel);
+		contentRight.add(vorlesungsStundenPanel);
+		contentRight.add(studiengangPanel);
+
+		
+		
+		infoTab.add(contentLeft);
+		infoTab.add(contentRight);
+		
+		infoTab.setCellWidth(contentLeft, width + "px");
+		infoTab.setCellWidth(contentRight, width + "px");
+		contentPanel.add(infoTab);
+	
 		
 	}
 
@@ -163,6 +160,12 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 	public void setHeightAndWidth(int height, int width){
 		this.height = height;
 		this.width = width;
+		
+	}
+
+	@Override
+	public void hide() {
+		contentPanel.setVisible(false);
 		
 	}
 
