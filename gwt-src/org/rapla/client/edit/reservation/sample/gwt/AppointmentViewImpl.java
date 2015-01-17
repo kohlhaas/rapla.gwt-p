@@ -22,7 +22,6 @@ import org.rapla.entities.domain.Reservation;
 
 import javax.inject.Inject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +62,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     /**
      * save an appointment by calling : "getPresenter().newAppointmentButtonPressed(dateStart, dateEnd)"
      *
-     * @param appointments
      */
 
     public void show(Reservation reservation) {

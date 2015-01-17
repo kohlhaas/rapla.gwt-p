@@ -8,20 +8,13 @@ import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.Conflict;
-import org.rapla.facade.internal.CalendarOptionsImpl;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
 import javax.inject.Inject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 public class AppointmentPresenter implements Presenter {
     private AppointmentView view;
@@ -42,6 +35,7 @@ public class AppointmentPresenter implements Presenter {
         this.view.setPresenter(this);
     }
 
+
     @Override
     public void newAppointmentButtonPressed() {
         Appointment newAppointment;
@@ -49,17 +43,16 @@ public class AppointmentPresenter implements Presenter {
             newAppointment = facade.newAppointment(new Date(), new Date());
             reservation.addAppointment(newAppointment);
             List<Appointment> appointmentList = Arrays.asList(reservation.getAppointments());
-            view.updateAppointmentList(appointmentList, appointmentList.size()-1);
+            view.updateAppointmentList(appointmentList, appointmentList.size() - 1);
         } catch (RaplaException e) {
             logger.error(e.getMessage(), e);
         }
-        //List<Appointment> asList = Arrays.asList(reservation.getAppointments());
-        //        view.update(asList);
     }
 
     /**
      * gets all conflicts for the existing reservation, if a new appButton has been pressed, a new app will be added to
      * the reservation.. conflicts in this reservation will be shown. Else it returns NULL
+     *
      * @return NULL if error
      */
     public Conflict[] getConflicts() {
@@ -74,9 +67,10 @@ public class AppointmentPresenter implements Presenter {
     /**
      * get the next Free date, depending on the startDate and endDate and CalendarOption, if an exception is thrown
      * THE METHOD RETURNS NULL
-     * @return NULL if error
+     *
      * @param startDate
      * @param endDate
+     * @return NULL if error
      */
     public Date nextFreeDateButtonPressed(Date startDate, Date endDate) {
         Appointment newAppointment;
@@ -86,7 +80,7 @@ public class AppointmentPresenter implements Presenter {
             logger.info("new appointment for Dates: " + startDate.toString() + " - " + endDate.toString());
             List<Allocatable> asList = Arrays.asList(facade.getAllocatables());
             FutureResult<Date> nextAllocatableDate = facade.getNextAllocatableDate(asList, newAppointment, calendarOptions);
-            logger.info("next allo date: "+ nextAllocatableDate.get().toString());
+            logger.info("next allo date: " + nextAllocatableDate.get().toString());
             return nextAllocatableDate.get();
         } catch (RaplaException e) {
             logger.error("error while using facade: ", e);
@@ -112,33 +106,49 @@ public class AppointmentPresenter implements Presenter {
         view.updateAppointmentOptionsPanel(reservation.getAppointments()[selectedIndex]);
     }
 
-	@Override
-	public void removeAppointmentButtonPressed(int selectedIndex) {
-		// TODO: delete appointment from list, then call view.updateAppointmentList(..)
-	}
+    /**
+     * removes the Appointment, chosen by the given index
+     */
+    @Override
+    public void removeAppointmentButtonPressed(int selectedIndex) {
+        logger.info("removing app with Index: " + selectedIndex);
+        Appointment selectedAppointment = reservation.getAppointments()[selectedIndex];
+        logger.info("removing app toString: " + selectedAppointment.toString());
+        this.reservation.removeAppointment(selectedAppointment);
+        this.view.updateAppointmentList(Arrays.asList(reservation.getAppointments()), selectedIndex - 1);
+    }
 
-	@Override
-	public void addRessourceButtonPressed(int selectedIndex, String resourceTypeName) {
-		try {
-			Map<RaplaType<Allocatable>, List<Allocatable>> resources = sortResources(Arrays.asList(facade.getAllocatables()));
-			// TODO: find the added resource in the above map and add it to reservation, then call view.updateBookedResources
-		} catch (RaplaException e) {
-			// TODO: Auto-generated catch block
-			e.printStackTrace();
-		}		
-	}
+    @Override
+    public void addResourceButtonPressed(int selectedIndex, String resourceTypeName) {
+        try {
+            RaplaType<Allocatable> raplaTypeKey = null;
 
-	@Override
-	public Map<RaplaType<Allocatable>, List<Allocatable>> sortResources(List<Allocatable> resources) {
-		Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = new HashMap<RaplaType<Allocatable>, List<Allocatable>>();
-		for(Allocatable resource : resources) {
-			RaplaType<Allocatable> resourceType = resource.getRaplaType();
-			if(! sortedResources.containsKey(resourceType)) {
-				sortedResources.put(resourceType, new ArrayList<Allocatable>());
-			}
-			sortedResources.get(resourceType).add(resource);
-		}
-		return sortedResources;
-	}
+            //TODO: very vague, needs proper error handling, ex; allocatable from map == null? ClassCastException??..
+            Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = this.sortResources(Arrays.asList(facade.getAllocatables()));
+            for (RaplaType<Allocatable> raplaType : sortedResources.keySet()) {
+                if (raplaType.getLocalName().equals(resourceTypeName)) {
+                    raplaTypeKey = raplaType;
+                }
+            }
+            List<Allocatable> allocatables = sortedResources.get(raplaTypeKey);
+            this.reservation.addAllocatable(allocatables.get(selectedIndex));
+            view.updateBookedResources((Arrays.asList(reservation.getAppointments())));
+        } catch (RaplaException e) {
+            logger.error("error while using facade: ", e);
+        }
+    }
+
+    @Override
+    public Map<RaplaType<Allocatable>, List<Allocatable>> sortResources(List<Allocatable> resources) {
+        Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = new HashMap<RaplaType<Allocatable>, List<Allocatable>>();
+        for (Allocatable resource : resources) {
+            RaplaType<Allocatable> resourceType = resource.getRaplaType();
+            if (!sortedResources.containsKey(resourceType)) {
+                sortedResources.put(resourceType, new ArrayList<Allocatable>());
+            }
+            sortedResources.get(resourceType).add(resource);
+        }
+        return sortedResources;
+    }
 
 }
