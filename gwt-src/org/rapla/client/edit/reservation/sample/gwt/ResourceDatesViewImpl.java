@@ -1,6 +1,7 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.rapla.client.base.AbstractView;
@@ -29,6 +30,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.blogspot.ctasada.gwt.eureka.client.ui.*;
 
 public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements ResourceDatesView<IsWidget>{
 
@@ -50,8 +52,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	DateBox dateBegin;
 	DateBox dateEnd;
 
-//	SmallTimeBox timeBegin;
-//	SmallTimeBox timeEnd;
+	SmallTimeBox timeBegin;
+	SmallTimeBox timeEnd;
 
 	Tree resourceTree;
 	
@@ -153,8 +155,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			dateBegin.setFormat(new DateBox.DefaultFormat(dateFormat));
 			begin.add(dateBegin);
 
-		//	timeBegin = new SmallTimeBox(new Date(-3600000));
-		//	begin.add(timeBegin);
+			timeBegin = new SmallTimeBox(new Date(-3600000));
+			begin.add(timeBegin);
 			final Label beginTimeText = new Label("Uhr");
 			beginTimeText.setStyleName("beschriftung");
 			begin.add(beginTimeText);
@@ -177,9 +179,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			dateEnd.setFormat(new DateBox.DefaultFormat(dateFormat));
 			end.add(dateEnd);
 
-			//timeEnd = new SmallTimeBox(new Date(-3600000));
-			//timeEnd.setTitle("endTime");
-			//end.add(timeEnd.asWidget());
+			timeEnd = new SmallTimeBox(new Date(-3600000));
+			timeEnd.setTitle("endTime");
+			end.add(timeEnd.asWidget());
 
 			final Label endTimeText = new Label("Uhr");
 			endTimeText.setStyleName("beschriftung");
