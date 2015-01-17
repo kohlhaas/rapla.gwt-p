@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import java.util.*;
 
 public class AppointmentPresenter implements Presenter {
-    private AppointmentView view;
     @Inject
     ClientFacade facade;
     @Inject
@@ -27,6 +26,7 @@ public class AppointmentPresenter implements Presenter {
     @Inject
     CalendarOptions calendarOptions;
 
+    private AppointmentView view;
     private Reservation reservation;
 
     @Inject
@@ -59,10 +59,10 @@ public class AppointmentPresenter implements Presenter {
         try {
             return facade.getConflicts(this.reservation);
         } catch (RaplaException e) {
-            logger.error("error while using facade: ", e);
+            logger.error(e.getMessage(), e);
             return null;
         }
-    }// its possible that this method is only needed as a private one, TODO: frontend needs Conflicts Object or the Conflict Dates ?
+    }
 
     /**
      * get the next Free date, depending on the startDate and endDate and CalendarOption, if an exception is thrown

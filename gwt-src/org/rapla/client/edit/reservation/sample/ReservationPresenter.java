@@ -1,9 +1,5 @@
 package org.rapla.client.edit.reservation.sample;
 
-import java.util.Date;
-
-import javax.inject.Inject;
-
 import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
@@ -14,7 +10,9 @@ import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 
-public class ReservationPresenter implements ReservationController,Presenter {
+import javax.inject.Inject;
+
+public class ReservationPresenter implements ReservationController, Presenter {
 
     @Inject
     Logger logger;
@@ -22,27 +20,27 @@ public class ReservationPresenter implements ReservationController,Presenter {
     RaplaLocale raplaLocale;
     @Inject
     ClientFacade facade;
-    
+
     private ReservationView view;
     private AppointmentPresenter appointmentPresenter;
-    
+    private Reservation event;
+    boolean isNew;
+
+
     @Inject
     public ReservationPresenter(ReservationView view, AppointmentPresenter appointmentPresenter) {
         this.view = view;
         view.setPresenter(this);
         this.appointmentPresenter = appointmentPresenter;
-        view.addSubView( appointmentPresenter.getView());
+        view.addSubView(appointmentPresenter.getView());
     }
 
-    Reservation event;
-    boolean isNew;
-    
-    
+
     @Override
     public void edit(final Reservation event, boolean isNew) {
         this.event = event;
         this.isNew = isNew;
-        appointmentPresenter.setReservation( event);
+        appointmentPresenter.setReservation(event);
         view.show(event);
     }
 
@@ -50,9 +48,9 @@ public class ReservationPresenter implements ReservationController,Presenter {
     public void onSaveButtonClicked() {
         logger.info("save clicked");
         try {
-            facade.store( event);
+            facade.store(event);
         } catch (RaplaException e1) {
-            logger.error( e1.getMessage(), e1);
+            logger.error(e1.getMessage(), e1);
         }
         view.hide();
     }
@@ -61,9 +59,9 @@ public class ReservationPresenter implements ReservationController,Presenter {
     public void onDeleteButtonClicked() {
         logger.info("delete clicked");
         try {
-            facade.remove( event);
+            facade.remove(event);
         } catch (RaplaException e1) {
-            logger.error( e1.getMessage(), e1);
+            logger.error(e1.getMessage(), e1);
         }
         view.hide();
     }
@@ -88,13 +86,12 @@ public class ReservationPresenter implements ReservationController,Presenter {
         Attribute first = classification.getType().getAttributes()[0];
         classification.setValue(first, newName);
     }
-    
-    
+
+
     @Override
-    public boolean isDeleteButtonEnabled() 
-    {
+    public boolean isDeleteButtonEnabled() {
         return !isNew;
     }
-    
+
 
 }

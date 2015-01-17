@@ -223,7 +223,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 //        }
 //    }
 
-    //TODO: startDate and EndDate is kind of redundant
+    //TODO: startDate and EndDate is kind of redundant, maybe using a method for both ?
     private void initStartDateFields() {
         startFields = new FlowPanel();
         startFields.setStyleName("start-datetime");

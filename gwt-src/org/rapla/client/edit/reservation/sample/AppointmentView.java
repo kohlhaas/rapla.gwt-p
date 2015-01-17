@@ -11,10 +11,12 @@ import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.CalendarOptions;
+import org.rapla.facade.Conflict;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
 public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubView<W> {
     public interface Presenter {
+        Conflict[] getConflicts();
         void newAppointmentButtonPressed();
         Date nextFreeDateButtonPressed(Date startDate, Date endDate);
         void appointmentSelected(int selectedIndex);
