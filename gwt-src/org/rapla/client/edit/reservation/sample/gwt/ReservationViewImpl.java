@@ -78,9 +78,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 	
 	//for resources and dates tab
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
-	
 	private ArrayList<List<String>> reservedResources = new ArrayList<List<String>>();
-		
 	
 	FlowPanel mainContent;
 	TerminList dateList;
