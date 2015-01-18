@@ -14,7 +14,7 @@ public interface ReservationView<W> extends View<Presenter> {
     void changeEventName(String newEvent);
     boolean isDeleteButtonEnabled();
     void onCancelButtonClicked();
-    DynamicType[] onCourseButtonClicked();
+    DynamicType[] getAllEventTypes();
   }
 
   void show(Reservation event);

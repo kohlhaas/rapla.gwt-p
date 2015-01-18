@@ -78,10 +78,9 @@ public class ReservationPresenter implements ReservationController, Presenter {
      * @return all "Veranslatungstypen" eventTypes, null if error
      */
     @Override
-    public DynamicType[] onCourseButtonClicked() {
-        logger.info("Course clicked");
+    public DynamicType[] getAllEventTypes() {
         try {
-            facade.getDynamicTypes("reservation");
+            return facade.getDynamicTypes("reservation");
         } catch (RaplaException e) {
             logger.error("error while using facade: ", e);
         }

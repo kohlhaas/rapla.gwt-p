@@ -11,37 +11,38 @@ import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
 
+import java.util.Locale;
+
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
-	
-	private static class MyDialog extends DialogBox {
 
-	    public MyDialog() {
-	      // Set the dialog box's caption.
-	      setText("My First Dialog");
+    private static class MyDialog extends DialogBox {
 
-	      // Enable animation.
-	      setAnimationEnabled(true);
+        public MyDialog() {
+            // Set the dialog box's caption.
+            setText("My First Dialog");
 
-	      // Enable glass background.
-	      setGlassEnabled(true);
+            // Enable animation.
+            setAnimationEnabled(true);
 
-	      // DialogBox is a SimplePanel, so you have to set its widget property to
-	      // whatever you want its contents to be.
+            // Enable glass background.
+            setGlassEnabled(true);
 
-	        
-	      
-	        
-	      Button ok = new Button("OK");
-	      ok.addClickHandler(new ClickHandler() {
-	        public void onClick(ClickEvent event) {
-	          MyDialog.this.hide();
-	        }
-	      });
-	      setWidget(ok);
-	    }
-	  }
+            // DialogBox is a SimplePanel, so you have to set its widget property to
+            // whatever you want its contents to be.
+
+
+            Button ok = new Button("OK");
+            ok.addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    MyDialog.this.hide();
+                }
+            });
+            setWidget(ok);
+        }
+    }
 
 
     Panel popup;
@@ -55,14 +56,14 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel row1;
     FlowPanel part2;
     FlowPanel coursePanel;
-    
+
     Grid grid;
-    
+
     VerticalPanel upDown;
-    
+
     TextBox tb;
 
-
+    ListBox language = new ListBox();
     String chosenEventType = "";
     String chosenLanguage = "";
 
@@ -88,7 +89,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         /* Filling structure */
         initEventTypeListBox();
-        initLanguageListBox();
         initCourseButton();
         initLabelEventNameInGrid();
         initEventNameTextBox();
@@ -96,8 +96,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         initTextBoxPlannedHoursInGrid();
 
 
-
-        
         initUpButton();
         initLabelInfo();
         initTextAreaInfo();
@@ -113,60 +111,60 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         down.setHTML(html2);
         upDown.add(down);  */
 
- initSaveDeleteCancelButtons();
+        initSaveDeleteCancelButtons();
 
 
     }
-    
+
     private void initRaplaPopupPanel() {
         popup = RootPanel.get("raplaPopup");
         popup.setVisible(true);
         popup.setStyleName("popup");
     }
-    
+
     private void initTabPanel() {
         tabPanel = new TabPanel();
         tabPanel.addStyleName("tabPanel");
     }
-    
+
     private void initContentPanel() {
         content = new FlowPanel();
         content.setStyleName("content");
     }
-    
+
     private void initGeneralInformationPanel() {
         generalInformation = new FlowPanel();
         generalInformation.setStyleName("generalInformation");
     }
-    
+
     private void initRow1() {
         row1 = new FlowPanel();
         row1.setStyleName("zeile1");
     }
-    
-	private void initCoursePanel() {
+
+    private void initCoursePanel() {
         coursePanel = new FlowPanel();
         coursePanel.setStyleName("coursePanel");
-		
-	}
-	
-	private void initPart2Panel() {
+
+    }
+
+    private void initPart2Panel() {
         //Second part of the structure
         part2 = new FlowPanel();
-		
-	}
-	
-	private void initSecondGrid() {
+
+    }
+
+    private void initSecondGrid() {
         grid = new Grid(2, 2);
         grid.setStyleName("grid");
     }
-	
+
     private void initUpDownPanel() {
         upDown = new VerticalPanel();
         upDown.setStyleName("upDown");
 
     }
-    
+
     private void clearPanels() {
         popup.clear();
         tabPanel.clear();
@@ -179,7 +177,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         upDown.clear();
         contentRes.clear();
     }
-    
+
     private void structuringPanels() {
         popup.add(tabPanel);
         tabPanel.add(content, "Allgemeine Informationen");
@@ -188,95 +186,111 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
         // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
-        
+
         generalInformation.add(row1);
         generalInformation.add(coursePanel);
         generalInformation.add(part2);
         part2.add(grid);
         part2.add(upDown);
     }
-    
+
     private void initEventTypeListBox() {
         // Eventtype
-        ListBox eventType = new ListBox();
+        final ListBox eventType = new ListBox();
         eventType.setStyleName("eventtype");
-        eventType.addItem("Lehrveranstaltung");
-        eventType.addItem("Klausur");
-        chosenEventType = eventType.getSelectedValue();
+        final DynamicType[] dynamicTypes = getPresenter().getAllEventTypes();
+        final Locale locale = getRaplaLocale().getLocale();
+
+        /**
+         * SEHR UNSAUBER, nur grob, bitte ggf. verbessern
+         */
+        for (DynamicType dynamicType : dynamicTypes) {
+            eventType.addItem(dynamicType.getName(locale));
+        }
+        eventType.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                language.clear();
+                for (DynamicType dynamicType : dynamicTypes) {
+                    chosenEventType = eventType.getSelectedValue();
+                    if (dynamicType.getName(locale).equals(chosenEventType)) {
+                        for (Attribute attribute : dynamicType.getAttributes()) {
+                            language.addItem(attribute.getName(locale));
+                        }
+                    }
+                }
+            }
+        });
         row1.add(eventType);
+        initLanguageListBox();
     }
-    
+
     private void initLanguageListBox() {
         // Language selection
-        ListBox language = new ListBox();
-        language.addItem("Deutsch");
-        language.addItem("Englisch");
         chosenLanguage = language.getSelectedValue();
         language.setStyleName("language");
         row1.add(language);
     }
-    
+
     private void initCourseButton() {
 
-        
+
         //Study course
-              Button course = new Button("Studiengang");
-              course.setStyleName("course");
-              course.addClickHandler(new ClickHandler() {
-                  @Override
-                  public void onClick(ClickEvent e) {
-                  	coursePanel.setVisible(true);
-                  	
- 
-                      
-                  	new MyDialog().show();
-                      /**
-                       * this method returns all "Veranstaltungstypen" in a DynamicType array, ask if you want only Veranstaltungstyp with name "Studiengang"
-                       */
-                      DynamicType[] dynamicTypes = getPresenter().onCourseButtonClicked();
-                  }
-              });
-              
-              row1.add(course);
-              
-              
-              TreeItem root = new TreeItem();
-             	root.setText("root");
-             	root.addTextItem("item0");
-             	root.addTextItem("item1");
-             	root.addTextItem("item2");
-         	      
-             	// Add a CheckBox to the tree
-             	TreeItem item = new TreeItem(new CheckBox("item3"));
-             	root.addItem(item);
-         	      
-             	Tree t = new Tree();
-             	t.addItem(root);
-         	      
-             	coursePanel.add(t);
-             	
-             	
-             	Button ausblenden = new Button("ausblenden");
-             	coursePanel.add(ausblenden);
-             	ausblenden.addClickHandler(new ClickHandler(){
-             		@Override
-             		public void onClick(ClickEvent e) {
-             			coursePanel.setVisible(false);
-             		}
-             	});
-             	
-             	coursePanel.setVisible(false);
-      }
+        Button course = new Button("Studiengang");
+        course.setStyleName("course");
+        course.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent e) {
+                coursePanel.setVisible(true);
+
+
+                new MyDialog().show();
+                /**
+                 * this method returns all "Veranstaltungstypen" in a DynamicType array, ask if you want only Veranstaltungstyp with name "Studiengang"
+                 */
+            }
+        });
+
+        row1.add(course);
+
+
+        TreeItem root = new TreeItem();
+        root.setText("root");
+        root.addTextItem("item0");
+        root.addTextItem("item1");
+        root.addTextItem("item2");
+
+        // Add a CheckBox to the tree
+        TreeItem item = new TreeItem(new CheckBox("item3"));
+        root.addItem(item);
+
+        Tree t = new Tree();
+        t.addItem(root);
+
+        coursePanel.add(t);
+
+
+        Button ausblenden = new Button("ausblenden");
+        coursePanel.add(ausblenden);
+        ausblenden.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent e) {
+                coursePanel.setVisible(false);
+            }
+        });
+
+        coursePanel.setVisible(false);
+    }
 
     private void initLabelEventNameInGrid() {
         //Label eventname
         Label eventname = new Label("Veranstaltungsname");
         eventname.setStyleName("eventname");
-        grid.setWidget(0,0, eventname);
+        grid.setWidget(0, 0, eventname);
     }
-    
+
     private void initEventNameTextBox() {
-    	//TextBox for insert eventname 
+        //TextBox for insert eventname
         tb = new TextBox();
         tb.setStyleName("textbox");
         tb.addChangeHandler(new ChangeHandler() {
@@ -287,9 +301,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             }
         });
         grid.setWidget(0, 1, tb);
-        
+
     }
-    
+
     private void initLabelPlannedHoursInGrid() {
         Label planhour = new Label("geplante Vorlesungsstunden");
         planhour.setStyleName("planhour");
@@ -301,8 +315,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tbPlanhour.setStyleName("tbPlanhour");
         grid.setWidget(1, 1, tbPlanhour);
     }
-    
-	private void initUpButton() {
+
+    private void initUpButton() {
         //Button for count up planned hours
         Button upButton = new Button();
         upButton.setStyleName("up");
@@ -310,21 +324,21 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //String html = "<div><center><img src = '/images/TriangleUp.png' height = '7px' width = '7px'></img></center></div>";
         //up.setHTML(html);
         upDown.add(upButton);
-        		
-	}
 
-	private void initLabelInfo() {
+    }
+
+    private void initLabelInfo() {
         Label info = new Label("Sonstige Veranstaltungsinformationen:");
         part2.add(info);
-		
-	}
-	
+
+    }
+
     private void initTextAreaInfo() {
         TextArea taInfo = new TextArea();
         taInfo.setStyleName("taInfo");
         part2.add(taInfo);
-		
-	}
+
+    }
 
 
     private void initSaveDeleteCancelButtons() {
