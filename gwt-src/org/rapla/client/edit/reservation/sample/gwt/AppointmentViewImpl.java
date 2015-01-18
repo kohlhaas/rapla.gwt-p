@@ -36,6 +36,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     ListBox appointmentList;
     ListBox dynamicTypeList = new ListBox();
     ListBox allocatableList = new ListBox();
+    Button nextFreeApp = new Button();
+    TextBox nextFreeAppTB = new TextBox();
 
     DateTimeFormat df = DateTimeFormat.getFormat("dd.MM.yyyy");
     DateTimeFormat hoursFormat = DateTimeFormat.getFormat("HH");
@@ -80,6 +82,17 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         content.add(dynamicTypeList);
         content.add(allocatableList);
+        nextFreeApp.setText("nextFreeApp");
+        nextFreeApp.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Date date = getPresenter().nextFreeDateButtonPressed(new Date(), new Date());
+                nextFreeAppTB.setText(date.toString());
+            }
+        });
+
+        content.add(nextFreeApp);
+        content.add(nextFreeAppTB);
 
         /**
          *
