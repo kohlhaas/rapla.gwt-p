@@ -56,7 +56,14 @@ public class ResourceDatesViewPresenter implements Presenter{
 
 	@Override
 	public void onRewriteDateClicked() {
-		// TODO Auto-generated method stub
+		
+		view.RewriteDate();
+		
+	}
+
+	@Override
+	public void onAddDateClicked() {
+		view.addDateWidget();
 		
 	}
 

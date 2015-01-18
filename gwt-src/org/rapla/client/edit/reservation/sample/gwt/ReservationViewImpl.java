@@ -136,7 +136,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 		width = (int) (Window.getClientWidth() * 0.90);
 		popup.setHeight(height + "px");
 		popup.setWidth(width + "px");
-	
+		
      	popup.clear();
         
         bar = new TabBar();
@@ -260,25 +260,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
 
-	@Override
-	public String getTitelInput() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public Attribute getVorlesungsStundenInput() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public String getSelectedEventType() {
-		return eventTypesListBox.getSelectedItemText();
-	}
-    
+	
 
 	public void setEventTypes(List<String> eventTypes) {
 

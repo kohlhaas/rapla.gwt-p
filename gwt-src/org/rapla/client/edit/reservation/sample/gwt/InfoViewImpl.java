@@ -7,6 +7,7 @@ import java.util.List;
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.InfoView;
 import org.rapla.client.edit.reservation.sample.InfoView.Presenter;
+import org.rapla.entities.dynamictype.Attribute;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -168,6 +169,26 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 		contentPanel.setVisible(false);
 		
 	}
+	
+	@Override
+	public String getTitelInput() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Attribute getVorlesungsStundenInput() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String getSelectedEventType() {
+		return eventTypesListBox.getSelectedItemText();
+	}
+    
 
 	
 

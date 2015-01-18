@@ -80,8 +80,8 @@ public class ReservationPresenter implements ReservationController,Presenter {
 			 Classification classification = tempReservation.getClassification();
 			 Attribute first =
 			 classification.getType().getAttributes()[0];
-			 String text = view.getTitelInput();
-			 classification.setValue(first, text);       	
+	//		 String text = view.getTitelInput();
+	//		 classification.setValue(first, text);       	
             facade.store(tempReservation);
         } catch (RaplaException e1) {
             logger.error( e1.getMessage(), e1);
@@ -92,10 +92,10 @@ public class ReservationPresenter implements ReservationController,Presenter {
     private void saveTemporaryChanges() {
     	Classification classificationTmp = tempReservation.getClassification();
 
-    			String reservationName = view.getTitelInput();
+  //  			String reservationName = infoViewPresenter.getView().getTitelInput();
 
 			Attribute first = classificationTmp.getType().getAttributes()[0];
-			classificationTmp.setValue(first, reservationName);
+	//		classificationTmp.setValue(first, reservationName);
 
 	
 			// change reservation type
@@ -138,7 +138,7 @@ public class ReservationPresenter implements ReservationController,Presenter {
 						.equals(facade
 								.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION)[0])) {
 					Attribute second = classificationTmp.getType().getAttributes()[5];
-					classificationTmp.setValue("",view.getVorlesungsStundenInput());
+			//		classificationTmp.setValue("",view.getVorlesungsStundenInput());
 				} else {
 				//?
 }
@@ -199,47 +199,7 @@ public class ReservationPresenter implements ReservationController,Presenter {
 		view.update(tempView);
 	}
 
-	@Override
-	public void onEventTypesChanged() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onStudiengangChanged() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onGarbageCanButtonClicked() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onWholeDaySelected() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onButtonPlusClicked() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onRewriteDateClicked() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAddDateClicked() {
-		// TODO Auto-generated method stub
-		
-	}    
+	
 	
 	public List<DynamicType> getCreateableDynamicTypes(String classificationType)
 			throws RaplaException {
@@ -334,15 +294,15 @@ public class ReservationPresenter implements ReservationController,Presenter {
 		for (int i = 0; i < eventTypes.size(); i++) {
 			String name = eventTypes.get(i).getName(raplaLocale.getLocale());
 			items.add(name);
-			if (eventTypes
-					.get(i)
-					.getName(raplaLocale.getLocale())
-					.equalsIgnoreCase(view.getSelectedEventType())) {
-				key = eventTypes.get(i).getKey();
-			}
+//			if (eventTypes
+//					.get(i)
+//					.getName(raplaLocale.getLocale())
+//					.equalsIgnoreCase(view.getSelectedEventType())) {
+//				key = eventTypes.get(i).getKey();
+//			}
 		}
-
-		type.setKey(key);
+//
+//		type.setKey(key);
 		Attribute[] attributes = { new AttributeImpl() };
 
 		for (int i = 0; i < type.getAttributes().length; i++) {
@@ -483,7 +443,7 @@ public class ReservationPresenter implements ReservationController,Presenter {
 			logger.warn( "Termine: " + builder.toString());
 		}
 
-		logger.warn("reservationname: " + view.getTitelInput());
+	//	logger.warn("reservationname: " + view.getTitelInput());
 
 	}
 

@@ -1,6 +1,8 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -15,11 +17,13 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -28,6 +32,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.blogspot.ctasada.gwt.eureka.client.ui.*;
@@ -79,12 +84,16 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	@Override
 	public IsWidget provideContent() {
 		
-	
 		return contentPanel;
 	}
 
 	@Override
 	public void show() {
+		
+		 
+		height = (int) (Window.getClientHeight() * 0.90); //to be deleted
+		width = (int) (Window.getClientWidth() * 0.90); //to be deleted
+		
 		contentPanel = new SimplePanel();
 		contentPanel.clear();
 	 	
@@ -264,7 +273,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 
 				@Override
 				public void onClick(ClickEvent event) {
-					getPresenter().onRewriteDateClicked();
+					getPresenter().onAddDateClicked();
 				}
 				
 			});
@@ -275,7 +284,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			chosenResources.setStyleName("dateInfoLineComplete");
 
 			// Ausgewählte Resourcen laden
-			//loadChosenResources();
+			loadChosenResources();
 			
 
 			Label headerChosenRes  = new Label("Ausgewaehlte Ressourcen:");
@@ -287,9 +296,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			//-------
 			
 			
-//			for(FlowPanel helpList: getPanelResourceContainer()){
-//				chosenResources.add(helpList);
-//			}
+			for(FlowPanel helpList: getPanelResourceContainer()){
+				chosenResources.add(helpList);
+			}
 
 			DisclosurePanel addResources = new DisclosurePanel("Resourcen Hinzufuegen");
 			addResources.addOpenHandler(new OpenHandler<DisclosurePanel>() {
@@ -310,9 +319,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			resourceTree = new Tree();
 
 			// Auswählbare Ressourcen laden
-		//	loadResourcesToChoose();
+			 loadResourcesToChoose();
 			
-			 //createResourceTree();
+			 createResourceTree();
 			
 				
 		    chooseContainer.add(resourceTree);
@@ -344,6 +353,275 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 		
 	}
 
+private void createResourceTree() {
+		
+		for(List<String> hList : toBeReservedResources){
+			String header = hList.get(0);
+			hList.remove(0);
+			Collections.sort(hList);
+			hList.add(0, header);
+		}
+	
+		
+		// Create ResourceTree
+		for(int i=0; i<toBeReservedResources.size();i++){
+			resourceTree.addItem(new TreeItem());
+			resourceTree.getItem(i).setText(toBeReservedResources.get(i).get(0).toString());
+			resourceTree.getItem(i).setTitle(toBeReservedResources.get(i).get(0).toString());
+			for(int j=1;j<toBeReservedResources.get(i).size();j++){
+				
+				resourceTree.getItem(i).addItem(createCB(toBeReservedResources.get(i).get(j).toString(),toBeReservedResources.get(i).get(0).toString()));
+
+			}
+		}
+		
+	}
+
+	private void loadChosenResources() {
+		
+		
+		List<String> rooms = new ArrayList<String>();
+		rooms.add("Raeume");
+		rooms.add("A 204");
+		
+		List<String> cources = new ArrayList<String>();
+		cources.add("Kurse");
+		cources.add("WWI12B1");
+		
+		List<String> profs = new ArrayList<String>();
+		profs.add("Professoren");
+		profs.add("Kuestermann");		
+		
+		
+	    reservedResources.add(rooms);
+	    reservedResources.add(profs);
+	    reservedResources.add(cources);
+		
+		
+	}
+
+	private void loadResourcesToChoose() {
+		//Ressourcen
+		
+		List<String> room = new ArrayList<String>();
+		room.add("Raeume");
+		room.add("A 204");
+		room.add("A 206");
+		room.add("A 205");
+		room.add("A 203");
+		
+		List<String> cource = new ArrayList<String>();
+		cource.add("Kurse");
+		cource.add("WWI12B1");
+		cource.add("WWI12B2");
+		cource.add("WWI12B3");
+		cource.add("WWI12B4");
+		
+		List<String> prof = new ArrayList<String>();
+		prof.add("Professoren");
+		prof.add("Kuestermann");
+		prof.add("Freytag");
+		prof.add("Daniel");
+		prof.add("Wengler");		
+		
+		
+		toBeReservedResources.add(room);
+		toBeReservedResources.add(cource);
+		toBeReservedResources.add(prof);
+		
+	}
+
+	private FlowPanel createResourceContainer(String name){
+		
+		FlowPanel container = new FlowPanel();
+		container.setStyleName("resourceContainer");
+		Label titel = new Label(name);
+		titel.setStyleName("beschriftung");
+		titel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		container.add(titel);
+		
+		return container;
+	}
+	
+	private FlowPanel createResource(String name, String categorie){
+		
+		final String value = name;
+		final String container = categorie;
+		FlowPanel resource = new FlowPanel();
+		resource.setStyleName("resource");
+		resource.setTitle(name);
+		
+		Label titel = new Label(name);
+		titel.setStyleName("resourceTitel");
+		resource.add(titel);
+		
+		Button cross = new Button("X");
+		cross.setStyleName("closeCross");
+
+		resource.add(cross);
+		cross.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				
+		
+				deleteFromResources(value, container);
+				refreshResourceContainer();
+				refreshResourceTree();
+			}
+			
+		});
+				
+		return resource;
+	}
+	
+	private void refreshResourceTree() {
+		resourceTree.clear();
+		createResourceTree();
+		
+	}
+
+	private void deleteFromResources(String rText, String cText) {
+		
+		for(List<String> helperList : reservedResources){
+			
+			if(helperList.get(0).equals(cText)){
+				for(int i=0;i<helperList.size();i++){
+					if(helperList.get(i).equals(rText)){
+						helperList.remove(i);
+						break;
+					}
+				}
+
+			}
+		}
+		
+		for(List<String> helperList : reservedResources){
+			if(helperList.size()<=1){
+				reservedResources.remove(helperList);
+			}
+		}
+		
+		for(List<String> hList : reservedResources){
+			String header = hList.get(0);
+			hList.remove(0);
+			Collections.sort(hList);
+			hList.add(0, header);
+		}
+		
+	}
+
+	private CheckBox createCB(String name, String categorie){
+		
+		CheckBox helper = new CheckBox(name);
+		helper.setTitle(categorie);
+		helper.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+				CheckBox clicker = (CheckBox) event.getSource();
+				if(clicker.getValue()){
+					addToResources(clicker.getText(), clicker.getTitle());
+					refreshResourceContainer();
+				}else{
+					deleteFromResources(clicker.getText(), clicker.getTitle());
+					refreshResourceContainer();
+				}
+
+			}
+			
+		});
+		
+		if(isChosenResource(name, categorie)){
+			helper.setValue(true);
+		}
+		
+		return helper;
+		
+	}
+	
+	
+	private boolean isChosenResource(String rtext, String ctext) {
+		
+		for(List<String> hList : reservedResources){
+			if(hList.get(0).equals(ctext)){
+				for(String hString : hList){
+					if(hString.equals(rtext)){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+		
+		
+	}
+
+	
+	private void refreshResourceContainer() {
+		
+		deleteResourceContainer();
+		
+		for(List<String> hList : reservedResources){
+			String header = hList.get(0);
+			hList.remove(0);
+			Collections.sort(hList);
+			hList.add(0, header);
+		}
+		
+		for(FlowPanel helpList: getPanelResourceContainer()){
+			chosenResources.add(helpList);
+		}
+
+	}
+
+	private void deleteResourceContainer() {
+		
+		int i = 1;
+		while( i < chosenResources.getWidgetCount()){
+			chosenResources.remove(i);
+		}
+	}
+
+	private void addToResources(String rText, String rCategorie) {
+		
+		boolean added = false;
+		for(List<String> helperList : reservedResources){
+			
+			if(helperList.get(0).equals(rCategorie)){
+				helperList.add(rText);
+				added = true;
+			}
+		}
+		
+		if(!added){
+			List<String> list = new ArrayList<String>();
+			list.add(rCategorie);
+			list.add(rText);
+			reservedResources.add(list);
+		}
+		
+		
+		
+	}
+	
+
+	private List<FlowPanel> getPanelResourceContainer(){
+		
+		List<FlowPanel> container = new ArrayList<FlowPanel>();
+		
+		for(int i=0;i<reservedResources.size();i++){
+			container.add(createResourceContainer(reservedResources.get(i).get(0).toString()));
+			for(int j=1;j<reservedResources.get(i).size();j++){
+				container.get(i).add(createResource(reservedResources.get(i).get(j).toString(), reservedResources.get(i).get(0).toString()));
+			}
+		}
+
+		return container;
+	}	
+	
+
 	@Override
 	public void hide() {
 		contentPanel.setVisible(false);
@@ -358,8 +636,79 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 
 	@Override
 	public void setHeightAndWidth(int height, int width) {
-		// TODO Auto-generated method stub
+
+		this.height = height;
+		this.width = width;
+	}
+	
+	
+	@Override
+	public void addDateWidget() {
+		RaplaDate addTermin = new RaplaDate();
+			
+		Date beginTmp = new Date(dateBegin.getValue().getTime() + timeBegin.getTime() + 3600000);
+		Date endTmp = new Date(dateEnd.getValue().getTime() + timeEnd.getTime() + 3600000);
 		
+		
+		if(beginTmp.after(endTmp)){
+		addDateInfo.setStyleName("error");	
+		addDateInfo.setText("Begin- nach Endtermin!");
+		}else{
+			addDateInfo.setStyleName("");
+			addDateInfo.setText("");
+			if(daily.getValue() || weekly.getValue() || monthly.getValue() || year.getValue()){
+				List<RaplaDate> tmp = new ArrayList<>();
+				int type;
+				if(daily.getValue()){
+					type = 1;
+				}else if (weekly.getValue()){
+					type = 2;
+				}else if( monthly.getValue()){
+					type = 3;
+				}else{
+					type = 4;
+				}
+				tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, type);
+				try {
+					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
+					addTermin = new RaplaDate(tmp);
+					dateList.add(addTermin);
+				//	addTermin.addClickHandler(new RaplaDateClickHandler());
+					clearDateTimeInputFields();
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else{
+			try {	
+				addTermin = new RaplaDate(beginTmp, endTmp, true);
+			//	addTermin.addClickHandler(new RaplaDateClickHandler());
+				dateList.add(addTermin);
+				clearDateTimeInputFields();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+		}
+	}
+	private void clearDateTimeInputFields(){
+		dateBegin.setValue(null);
+		dateEnd.setValue(null);
+		timeEnd.setValue((long) -3600000);
+		timeBegin.setValue((long) -3600000);
+		cbWholeDay.setValue(false);
+		rewriteDate.setVisible(false);
+		buttonGarbageCan.setStyleName("buttonsResourceDates");
+		noReccuring.setValue(true);
+		cbRepeatType.setOpen(false);
+	}
+
+	@Override
+	public void RewriteDate() {
+		int active = dateList.getActive();
+		dateList.removeDate(active);
+		addDateWidget();		
 	}
 
 

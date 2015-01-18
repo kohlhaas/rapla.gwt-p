@@ -14,20 +14,12 @@ public interface ReservationView<W> extends View<Presenter> {
     boolean isDeleteButtonEnabled();
     void onCancelButtonClicked();
 	void onTabChanged(int selectedTab);
-	void onEventTypesChanged();
-	void onStudiengangChanged();
-	void onGarbageCanButtonClicked();
-	void onWholeDaySelected();
-	void onButtonPlusClicked();
-	void onRewriteDateClicked();
-	void onAddDateClicked();
+
   }
 
   void show(Reservation event);
   void hide();
   void addSubView(ReservationEditSubView<W> view);
   void update(ReservationEditSubView tempView);
-  String getTitelInput();
-  Attribute getVorlesungsStundenInput();
-  String getSelectedEventType();
+
 }

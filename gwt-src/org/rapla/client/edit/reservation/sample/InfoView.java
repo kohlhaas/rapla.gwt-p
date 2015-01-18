@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.rapla.client.base.View;
 import org.rapla.entities.domain.Appointment;
+import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.client.edit.reservation.sample.InfoView.Presenter;;
 
 public interface InfoView<W> extends View<Presenter>, ReservationEditSubView<W> {
@@ -21,9 +22,12 @@ public interface InfoView<W> extends View<Presenter>, ReservationEditSubView<W> 
     void hide();
     
     void update(List<Appointment> appointments);
-    //add  methoden des alten infoViewInterface
 
 	void setHeightAndWidth(int height, int width);
 	void show();
+
+	String getTitelInput();
+	Attribute getVorlesungsStundenInput();
+	String getSelectedEventType();
     
 }

@@ -20,6 +20,8 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 
 		void onRewriteDateClicked();
 
+		void onAddDateClicked();
+
 
     }
 
@@ -31,6 +33,10 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 
 	void setHeightAndWidth(int height, int width);
 	void show();
+
+	void addDateWidget();
+
+	void RewriteDate();
     
 }
 
