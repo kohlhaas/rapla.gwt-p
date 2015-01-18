@@ -28,7 +28,6 @@ public class ResourceDatesViewPresenter implements Presenter{
 		
 	}
 
-	
 
 	public ReservationEditSubView getView() {
 		// TODO Auto-generated method stub
@@ -56,7 +55,9 @@ public class ResourceDatesViewPresenter implements Presenter{
 
 	@Override
 	public void onButtonPlusClicked() {
-		// TODO Auto-generated method stub
+		view.openEditView();
+	
+
 		
 	}
 

@@ -341,7 +341,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 		    dateDisclosurePanel.add(dateContentWrapper);
 			dateDisclosurePanel.setOpen(false);
 		
-			dateInfos.add(dateContentWrapper); //modified, original: dateInfo.add(dateDisclosurePanel);
+			dateInfos.add(dateDisclosurePanel);
 			
 			dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
 			dateInfos.add(chosenResources);
@@ -754,7 +754,6 @@ private void createResourceTree() {
 	public void setRaplaDate(RaplaDate tmp) {
 
 		this.tmp = tmp;
-		//RaplaDate tmp = (RaplaDate) event.getSource();
 		dateList.setActive(tmp);
 		if(!(dateList.getActive() == -1)){
 			dateBegin.setValue(tmp.getBeginTime());
@@ -769,6 +768,18 @@ private void createResourceTree() {
 		}
 		
 
+	}
+
+	@Override
+	public void openEditView() {
+		try {
+			dateDisclosurePanel.setOpen(true);
+			buttonPlus.setStyleName("buttonsResourceDates");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 

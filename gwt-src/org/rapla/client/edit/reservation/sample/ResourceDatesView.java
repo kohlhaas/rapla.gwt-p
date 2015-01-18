@@ -52,6 +52,8 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 
 
 	void setRaplaDate(RaplaDate tmp);
+
+	void openEditView();
     
 }
 
