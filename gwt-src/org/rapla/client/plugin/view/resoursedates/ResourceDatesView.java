@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -56,6 +57,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	Label buttonPlus;
 	// TO-DO: Is this really a Label? Or should it be a Button? Can a Label be
 	// used, too?
+	
+	Label endText;
+	HorizontalPanel end;
 
 	DateBox dateBegin;
 	DateBox dateEnd;
@@ -81,6 +85,8 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	RadioButton monthly;
 	RadioButton year;
 	RadioButton noReccuring;
+	
+	HorizontalPanel repeatSettings;
 
 	@Override
 	public Widget createContent(){
@@ -169,14 +175,18 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		begin.add(beginTimeText);
 		begin.setCellVerticalAlignment(beginTimeText,
 				HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		begin.setCellWidth(beginText, "50px");
+		begin.setCellWidth(dateBegin, "170px");
+		begin.setCellWidth(timeBegin, "80px");
 
 		
 		// Datum und Uhrzeit ENDE
-		HorizontalPanel end = new HorizontalPanel();
-		end.setSpacing(4);
+		end = new HorizontalPanel();
+		end.setSpacing(5);
 		end.setStyleName("dateInfoLineComplete");
 		
-		Label endText = new Label("Ende: ");
+		endText = new Label("Ende: ");
 		endText.setStyleName("beschriftung");
 		end.add(endText);
 		end.setCellVerticalAlignment(endText, HasVerticalAlignment.ALIGN_MIDDLE);
@@ -195,8 +205,10 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		end.add(endTimeText);
 		end.setCellVerticalAlignment(endTimeText,
 				HasVerticalAlignment.ALIGN_MIDDLE);
-
+	
 		end.setCellWidth(endText, "50px");
+		end.setCellWidth(dateEnd, "170px");
+		end.setCellWidth(timeEnd, "80px");
 		
 		
 		cbWholeDay = new CheckBox("ganzt\u00E4gig");
@@ -252,10 +264,16 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		cbRepeatType.setStyleName("dateInfoLineLeft");
 
 		daily = new RadioButton("repeat","t\u00E4glich");
+		daily.addClickHandler(new RepeatClickHandler());
 		weekly = new RadioButton("repeat", "w\u00F6chentlich");
+		weekly.addClickHandler(new RepeatClickHandler());
 		monthly = new RadioButton("repeat", "monatlich");
+		monthly.addClickHandler(new RepeatClickHandler());
 		year = new RadioButton("repeat", "j\u00E4hrlich");
+		year.addClickHandler(new RepeatClickHandler());
 		noReccuring = new RadioButton("repeat", "keine Wiederholung");
+		noReccuring.addClickHandler(new RepeatClickHandler());
+		
 
 		repeat.add(daily);
 		repeat.add(weekly);
@@ -264,6 +282,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		repeat.add(noReccuring);
 
 		cbRepeatType.add(repeat);
+		repeatSettings = new HorizontalPanel();
+		repeatSettings.add(new Label(""));
+		//cbRepeatType.add(repeatSettings);
 		
 		HorizontalPanel addDateWithLabel = new HorizontalPanel();
 		addDate = new Button("Termin hinzuf\u00FCgen");
@@ -674,6 +695,100 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		
 	}
 	
+	class RepeatClickHandler implements ClickHandler{
+		boolean active = false;
+
+		@Override
+		public void onClick(ClickEvent event) {
+			
+			if(!(noReccuring.getValue()) & active){
+				//do nothing
+				
+			}else if(!(noReccuring.getValue()) & !active){
+				active = true;
+				end.remove(dateEnd);
+				
+				HorizontalPanel repeatSettings = new HorizontalPanel();
+				repeatSettings.setSpacing(5);
+				ListBox repeatType = new ListBox();
+				repeatType.addItem("Bis Datum");
+				repeatType.addItem("x Mal");
+				repeatSettings.add(repeatType);
+				repeatSettings.add(dateEnd);
+				
+				cbRepeatType.add(repeatSettings);
+			}else{
+				active = false;
+				end.insert(dateEnd, 1);
+			}	
+			
+		}
+		
+	}
+	
+
+	private void addDateWidget() {
+
+		RaplaDate addTermin = new RaplaDate();
+			
+		Date beginTmp = new Date(dateBegin.getValue().getTime() + timeBegin.getTime() + 3600000);
+		Date endTmp = new Date(dateEnd.getValue().getTime() + timeEnd.getTime() + 3600000);
+		
+		
+		if(beginTmp.after(endTmp)){
+		addDateInfo.setStyleName("error");	
+		addDateInfo.setText("Begin- nach Endtermin!");
+		}else{
+			addDateInfo.setStyleName("");
+			addDateInfo.setText("");
+			if(daily.getValue() || weekly.getValue() || monthly.getValue() || year.getValue()){
+				List<RaplaDate> tmp = new ArrayList<>();
+				int type;
+				if(daily.getValue()){
+					type = 1;
+				}else if (weekly.getValue()){
+					type = 2;
+				}else if( monthly.getValue()){
+					type = 3;
+				}else{
+					type = 4;
+				}
+				tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, type);
+				try {
+					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
+					addTermin = new RaplaDate(tmp);
+					dateList.add(addTermin);
+					addTermin.addClickHandler(new RaplaDateClickHandler());
+					clearDateTimeInputFields();
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else{
+			try {	
+				addTermin = new RaplaDate(beginTmp, endTmp, true);
+				addTermin.addClickHandler(new RaplaDateClickHandler());
+				dateList.add(addTermin);
+				clearDateTimeInputFields();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+		}
+	}
+	private void clearDateTimeInputFields(){
+		dateBegin.setValue(null);
+		dateEnd.setValue(null);
+		timeEnd.setValue((long) -3600000);
+		timeBegin.setValue((long) -3600000);
+		cbWholeDay.setValue(false);
+		rewriteDate.setVisible(false);
+		buttonGarbageCan.setStyleName("buttonsResourceDates");
+		noReccuring.setValue(true);
+		cbRepeatType.setOpen(false);
+	}
+	
 	@Override
 	public void updateContent() {
 		// TODO Auto-generated method stub
@@ -763,67 +878,4 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	public void setToBeReservedResources(ArrayList<List<String>> toBeReservedResources) {
 		this.toBeReservedResources = toBeReservedResources;
 	}
-
-	private void addDateWidget() {
-
-		RaplaDate addTermin = new RaplaDate();
-			
-		Date beginTmp = new Date(dateBegin.getValue().getTime() + timeBegin.getTime() + 3600000);
-		Date endTmp = new Date(dateEnd.getValue().getTime() + timeEnd.getTime() + 3600000);
-		
-		
-		if(beginTmp.after(endTmp)){
-		addDateInfo.setStyleName("error");	
-		addDateInfo.setText("Begin- nach Endtermin!");
-		}else{
-			addDateInfo.setStyleName("");
-			addDateInfo.setText("");
-			if(daily.getValue() || weekly.getValue() || monthly.getValue() || year.getValue()){
-				List<RaplaDate> tmp = new ArrayList<>();
-				int type;
-				if(daily.getValue()){
-					type = 1;
-				}else if (weekly.getValue()){
-					type = 2;
-				}else if( monthly.getValue()){
-					type = 3;
-				}else{
-					type = 4;
-				}
-				tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, type);
-				try {
-					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
-					addTermin = new RaplaDate(tmp);
-					dateList.add(addTermin);
-					addTermin.addClickHandler(new RaplaDateClickHandler());
-					clearDateTimeInputFields();
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}else{
-			try {	
-				addTermin = new RaplaDate(beginTmp, endTmp, true);
-				addTermin.addClickHandler(new RaplaDateClickHandler());
-				dateList.add(addTermin);
-				clearDateTimeInputFields();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			}
-		}
-	}
-	private void clearDateTimeInputFields(){
-		dateBegin.setValue(null);
-		dateEnd.setValue(null);
-		timeEnd.setValue((long) -3600000);
-		timeBegin.setValue((long) -3600000);
-		cbWholeDay.setValue(false);
-		rewriteDate.setVisible(false);
-		buttonGarbageCan.setStyleName("buttonsResourceDates");
-		noReccuring.setValue(true);
-		cbRepeatType.setOpen(false);
-	}
-
 }
