@@ -22,7 +22,7 @@ import org.rapla.framework.internal.RaplaLocaleImpl;
 public class ReservationPresenterTest {
 
   @Inject
-  ReservationPresenter controller;
+  ReservationPresenter presenter;
   
   ClientFacade facade;
   
@@ -40,20 +40,20 @@ public class ReservationPresenterTest {
     }
   
   @Test
-  public void shouldCallShowOnEdit(Reservation event,ReservationView editView) throws RaplaException {
+  public void shouldCallShowOnEdit(Reservation event, ReservationView editView) throws RaplaException {
     boolean isNew = false;
     // WHEN
-    controller.edit(event, isNew);
+    presenter.edit(event, isNew);
     
     // THEN
     // test if presenter is called
-    verify(editView).setPresenter(controller);
+    verify(editView).setPresenter(presenter);
 
     // test if event is shown
     verify(editView).show(event);
     
     // WHEN
-    controller.onSaveButtonClicked();
+    presenter.onSaveButtonClicked();
     
     // THEN
     // test if store is called
@@ -64,14 +64,24 @@ public class ReservationPresenterTest {
   public void testDelete( Reservation event) throws RaplaException {
     boolean isNew = false;
     // WHEN
-    controller.edit(event, isNew);
+    presenter.edit(event, isNew);
     
     // WHEN
-    controller.onDeleteButtonClicked();
+    presenter.onDeleteButtonClicked();
     
     // THEN
     // test if remove is called
     verify(facade).remove( event );
-    
+   
   }
+  
+  @Test
+  public void newEvent(Reservation event){
+	  boolean isNew=true;
+	  
+	  presenter.edit(event, isNew);
+	 
+  }
+  
+  
 }

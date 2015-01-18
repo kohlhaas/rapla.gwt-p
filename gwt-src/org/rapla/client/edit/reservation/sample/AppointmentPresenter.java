@@ -1,6 +1,7 @@
 package org.rapla.client.edit.reservation.sample;
 
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
+import org.rapla.components.util.DateTools;
 import org.rapla.entities.RaplaType;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
@@ -15,6 +16,7 @@ import org.rapla.framework.logger.Logger;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
 import javax.inject.Inject;
+
 import java.util.*;
 
 public class AppointmentPresenter implements Presenter {
@@ -41,7 +43,9 @@ public class AppointmentPresenter implements Presenter {
     public void newAppointmentButtonPressed() {
         Appointment newAppointment;
         try {
-            newAppointment = facade.newAppointment(new Date(), new Date());
+            Date startDate = new Date(facade.today().getTime() + DateTools.MILLISECONDS_PER_HOUR * 8);
+            Date endDate = new Date(startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
+            newAppointment = facade.newAppointment(startDate, endDate);
             reservation.addAppointment(newAppointment);
             List<Appointment> appointmentList = Arrays.asList(reservation.getAppointments());
             view.updateAppointmentList(appointmentList, appointmentList.size() - 1);
@@ -50,7 +54,8 @@ public class AppointmentPresenter implements Presenter {
         }
     }
 
-    /**
+   
+	/**
      * gets all conflicts for the existing reservation, if a new appButton has been pressed, a new app will be added to
      * the reservation.. conflicts in this reservation will be shown. Else it returns NULL
      *
@@ -192,6 +197,10 @@ public class AppointmentPresenter implements Presenter {
         }
         return null;
     }
+    
+    public Reservation getReservation() {
+		return reservation;
+	}
 
 }
 
