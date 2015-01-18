@@ -187,6 +187,7 @@ public class AppointmentPresenter implements Presenter {
 
     /**
      *  possible keys are reservation(Veranstaltungstyp), person(..) and resource(ressourcetypes), returns null if an error has happened
+     *  Obergruppen(TYPEN = REssourcenTypen, VeranstaltungsTypen..)
      * example : resourceTypes: rooms, persons, objects|things ||| resources: rooms = chairs,tables... ; persons = age,semestre...; things: pen,beamer...
      */
     private DynamicType[] getDynamicTypes(String name){
@@ -201,6 +202,13 @@ public class AppointmentPresenter implements Presenter {
     public Reservation getReservation() {
 		return reservation;
 	}
+
+    /**
+     * every Classification exist of: DynamicType(take a look above), Attributes...Names
+     * Attributes are the properties of the ObjectType
+     * DynamicType is the ObjectType
+     * ...
+     */
 
 }
 
