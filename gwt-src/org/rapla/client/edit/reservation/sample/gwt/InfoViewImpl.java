@@ -27,22 +27,22 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<IsWidget>{
+public class InfoViewImpl extends AbstractView<Presenter> implements
+		InfoView<IsWidget> {
 
 	private Panel contentPanel;
 
 	private VerticalPanel contentLeft;
 	private VerticalPanel contentRight;
-	private HorizontalPanel infoTab; 
+	private HorizontalPanel infoTab;
 	private ListBox eventTypesListBox;
 	private Tree resources;
 	private TextBox titelInput;
 	private TextBox vorlesungsStundenInput;
 	private ListBox studiengangListBox;
 	private Collection<String> studiengangListBoxAuswahl;
-	
-	private int height, width; //might need a method to transfer values 
-	
+
+	private int height, width; // might need a method to transfer values
 
 	@Override
 	public IsWidget provideContent() {
@@ -54,13 +54,12 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 	public void show() {
 		width = (int) (Window.getClientWidth() * 0.9) / 2;
 
-		 
-		height = (int) (Window.getClientHeight() * 0.90 * 0.80); 
-		
+		height = (int) (Window.getClientHeight() * 0.90 * 0.80);
+
 		contentPanel = new SimplePanel();
-		    contentPanel.clear(); 
-	 
-	    infoTab = new HorizontalPanel();
+		contentPanel.clear();
+
+		infoTab = new HorizontalPanel();
 		contentLeft = new VerticalPanel();
 		contentRight = new VerticalPanel();
 		contentLeft.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -95,7 +94,7 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 		titelInput = new TextBox();
 		titelPanel.add(title, (width / 3) + "px");
 		titelPanel.add(titelInput, (width / 3) + "px");
-		 titelPanel.setWidth(width + "px");
+		titelPanel.setWidth(width + "px");
 
 		final Label vorlesungsStunden = new Label("Vorlesungsstunden");
 		final Label vorlesungsStundenMessage = new Label("");
@@ -103,7 +102,7 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 		vorlesungsStundenInput.addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				//to be implemented
+				// to be implemented
 
 			}
 		});
@@ -144,51 +143,50 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 		contentRight.add(vorlesungsStundenPanel);
 		contentRight.add(studiengangPanel);
 
-		
-		
 		infoTab.add(contentLeft);
 		infoTab.add(contentRight);
-		
+
 		infoTab.setCellWidth(contentLeft, width + "px");
 		infoTab.setCellWidth(contentRight, width + "px");
 		contentPanel.add(infoTab);
-	
-		
+
 	}
 
 	@Override
 	public void update(List appointments) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 
+	}
+
+	// @Override
+	// public void update(List<Allocatable> persons) {
+	// // TODO Auto-generated method stub
+	//
+	// }
 
 	@Override
 	public void hide() {
 		contentPanel.setVisible(false);
-		
+
 	}
-	
+
 	@Override
 	public String getTitelInput() {
 		// TODO Auto-generated method stub
 		return titelInput.getText();
 	}
 
-
 	@Override
-	public Attribute getVorlesungsStundenInput() {
-		
-		return null;
-	}
+	public String getVorlesungsStundenInput() {
 
+		return this.vorlesungsStundenInput.getText();
+	}
 
 	@Override
 	public String getSelectedEventType() {
 		return eventTypesListBox.getSelectedItemText();
 	}
-    
+
+	@Override
 	public void setEventTypes(List<String> eventTypes) {
 
 		for (int i = 0; i < eventTypes.size(); i++) {
@@ -197,9 +195,7 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 
 	}
 
-	
-
-
+	@Override
 	public void setSelectedEventType(String select) {
 		for (int i = 0; i < eventTypesListBox.getItemCount(); i++) {
 			if (eventTypesListBox.getItemText(i).equals(select)) {
@@ -208,7 +204,7 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 		}
 	}
 
-	
+	@Override
 	public void setDynamicFields(Attribute[] attributes) {
 
 		for (int i = 0; i < attributes.length; i++) {
@@ -224,6 +220,37 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 	public void setConstraintKeys(String[] constraintKeys) {
 	}
 
-	
+	@Override
+	public void setTitelInput(String reservationName) {
+		this.titelInput.setText(reservationName);
 
+	}
+
+	@Override
+	public void setVorlesungsStundenInput(String input) {
+		this.vorlesungsStundenInput.setText(input);
+
+	}
+
+	@Override
+	public int getItemCountOfListBoxStudiengang() {
+		return this.studiengangListBox.getItemCount();
+	}
+
+	@Override
+	public String getItemTextOfListBoxStudiengang(int index) {
+		return this.studiengangListBox.getItemText(index);
+	}
+
+	@Override
+	public void setSelectedIndexOfListBoxStudiengang(int index) {
+		this.studiengangListBox.setSelectedIndex(index);
+	}
+
+	@Override
+	public void setContentOfListBoxStudiengang(List<String> content) {
+		for (String item : content) {
+			this.studiengangListBox.addItem(item);
+		}
+	}
 }

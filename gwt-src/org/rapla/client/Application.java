@@ -153,7 +153,7 @@ public class Application implements DetailSelectEventHandler, ApplicationView.Pr
         public void handle()
         {
             try {
-                final Reservation event = facade.newReservation();
+                Reservation event = facade.newReservation();
          
                 Date selectedDate =facade.today();
                 Date time = new Date (DateTools.MILLISECONDS_PER_MINUTE * calendarOptions.getWorktimeStartMinutes());

@@ -7,19 +7,29 @@ import org.rapla.entities.dynamictype.Attribute;
 
 public interface ReservationView<W> extends View<Presenter> {
 
-  public interface Presenter {
-    void onSaveButtonClicked();
-    void onDeleteButtonClicked();
-    void changeEventName(String newEvent);
-    boolean isDeleteButtonEnabled();
-    void onCancelButtonClicked();
-	void onTabChanged(int selectedTab);
+	public interface Presenter {
+		void onSaveButtonClicked();
 
-  }
+		void onDeleteButtonClicked();
 
-  void show(Reservation event);
-  void hide();
-  void addSubView(ReservationEditSubView<W> view);
-  void update(ReservationEditSubView tempView);
+		void changeEventName(String newEvent);
+
+		boolean isDeleteButtonEnabled();
+
+		void onCancelButtonClicked();
+
+		void onTabChanged(int selectedTab);
+
+	}
+
+	void show(Reservation event);
+
+	void hide();
+
+	void addSubView(ReservationEditSubView<W> view);
+
+	void update(ReservationEditSubView tempView);
+
+	ReservationEditSubView getCurrentSubView();
 
 }

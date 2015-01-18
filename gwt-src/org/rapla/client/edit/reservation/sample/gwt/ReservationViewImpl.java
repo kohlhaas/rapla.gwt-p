@@ -261,6 +261,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
 
+	@Override
+	public ReservationEditSubView getCurrentSubView() {
+		return currentView;
+	}
+
+
 
 	
     
