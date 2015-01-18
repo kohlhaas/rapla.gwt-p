@@ -179,7 +179,7 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 
 	@Override
 	public Attribute getVorlesungsStundenInput() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

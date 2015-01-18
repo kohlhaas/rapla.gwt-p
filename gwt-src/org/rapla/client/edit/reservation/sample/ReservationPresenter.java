@@ -443,7 +443,7 @@ public class ReservationPresenter implements ReservationController,Presenter {
 			logger.warn( "Termine: " + builder.toString());
 		}
 
-	//	logger.warn("reservationname: " + view.getTitelInput());
+		logger.warn("reservationname: " + ((InfoView) infoViewPresenter.getView()).getTitelInput());
 
 	}
 
