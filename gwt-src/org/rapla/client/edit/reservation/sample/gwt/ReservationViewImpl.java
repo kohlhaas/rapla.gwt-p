@@ -202,7 +202,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         final Locale locale = getRaplaLocale().getLocale();
 
         /**
-         * SEHR UNSAUBER, nur grob, bitte ggf. verbessern
+         * SEHR UNSAUBER, nur grob, bitte ggf. verbessern --> ggf. in eigene Klasse oder Presenter
          */
         for (DynamicType dynamicType : dynamicTypes) {
             eventType.addItem(dynamicType.getName(locale));
