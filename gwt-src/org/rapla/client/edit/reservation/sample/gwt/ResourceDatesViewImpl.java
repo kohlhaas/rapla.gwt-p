@@ -307,8 +307,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 					
 				  @Override
 				  public void onOpen(OpenEvent<DisclosurePanel> event) {
-				    dateDisclosurePanel.setOpen(false);
-					buttonPlus.setStyleName("buttonsResourceDatesClickable");
+				   getPresenter().onResourcesAdded();
 				  }
 			});
 			
@@ -340,7 +339,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 		    dateDisclosurePanel = new DisclosurePanel();
 		    dateDisclosurePanel.add(dateContentWrapper);
 			dateDisclosurePanel.setOpen(false);
-			dateInfos.add(dateDisclosurePanel);
+		
+			dateInfos.add(dateContentWrapper); //modified, original: dateInfo.add(dateDisclosurePanel);
 			
 			dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
 			dateInfos.add(chosenResources);
@@ -724,6 +724,20 @@ private void createResourceTree() {
 			beginTimeText.setVisible(true);
 			endTimeText.setVisible(true);
 	}
+	}
+
+	@Override
+	public void clearInputFields() {
+		if(buttonGarbageCan.getStyleName().equals("buttonsResourceDatesClickable")){
+			dateList.removeDate(dateList.getActive());
+			clearDateTimeInputFields();
+			buttonGarbageCan.setStyleName("buttonsResourceDates");			
+	}}
+
+	@Override
+	public void addResources() {
+			dateDisclosurePanel.setOpen(false);
+			buttonPlus.setStyleName("buttonsResourceDatesClickable");		
 	}
 
 

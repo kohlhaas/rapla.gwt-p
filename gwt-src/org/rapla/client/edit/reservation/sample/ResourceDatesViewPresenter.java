@@ -40,8 +40,8 @@ public class ResourceDatesViewPresenter implements Presenter{
 
 	@Override
 	public void onGarbageCanButtonClicked() {
-		// TODO Auto-generated method stub
-		
+		view.clearInputFields();
+			
 	}
 
 	@Override
@@ -68,6 +68,11 @@ public class ResourceDatesViewPresenter implements Presenter{
 	public void onAddDateClicked() {
 		view.addDateWidget();
 		
+	}
+
+	@Override
+	public void onResourcesAdded() {
+		view.addResources();
 	}
 
 }
