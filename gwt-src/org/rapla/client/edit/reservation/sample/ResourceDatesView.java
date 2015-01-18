@@ -31,7 +31,6 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
     void update(List<Appointment> appointments);
     //add  methoden des alten infoViewInterface
 
-	void setHeightAndWidth(int height, int width);
 	void show();
 
 	void addDateWidget();

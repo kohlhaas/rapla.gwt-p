@@ -52,11 +52,11 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 
 	@Override
 	public void show() {
-		
-		 
-		height = (int) (Window.getClientHeight() * 0.90); //to be deleted
-		width = (int) (Window.getClientWidth() * 0.90); //to be deleted
+		width = (int) (Window.getClientWidth() * 0.9) / 2;
 
+		 
+		height = (int) (Window.getClientHeight() * 0.90 * 0.80); 
+		
 		contentPanel = new SimplePanel();
 		    contentPanel.clear(); 
 	 
@@ -162,12 +162,7 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 		
 	}
 	
-	@Override
-	public void setHeightAndWidth(int height, int width){
-		this.height = height;
-		this.width = width;
-		
-	}
+
 
 	@Override
 	public void hide() {

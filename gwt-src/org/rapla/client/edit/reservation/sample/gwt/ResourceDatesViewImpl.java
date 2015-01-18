@@ -92,8 +92,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	@Override
 	public void show() {
 		
-		 height = (int) (Window.getClientHeight() * 0.90 * 0.80);//to be deleted
-		 width = (int) (Window.getClientWidth() * 0.90 * 0.80);  //to be deleted
+		 height = (int) (Window.getClientHeight() * 0.90 * 0.80);
+		 width = (int) (Window.getClientWidth() * 0.90 * 0.80);  
 
 		
 		contentPanel = new SimplePanel();
@@ -513,10 +513,10 @@ private void createResourceTree() {
 		
 	}
 
-	private CheckBox createCB(String name, String categorie){
+	private CheckBox createCB(String name, String category){
 		
 		CheckBox helper = new CheckBox(name);
-		helper.setTitle(categorie);
+		helper.setTitle(category);
 		helper.addClickHandler(new ClickHandler(){
 
 			@Override
@@ -535,7 +535,7 @@ private void createResourceTree() {
 			
 		});
 		
-		if(isChosenResource(name, categorie)){
+		if(isChosenResource(name, category)){
 			helper.setValue(true);
 		}
 		
@@ -636,12 +636,6 @@ private void createResourceTree() {
 		
 	}
 
-	@Override
-	public void setHeightAndWidth(int height, int width) {
-
-		this.height = height;
-		this.width = width;
-	}
 	
 	
 	@Override
@@ -694,6 +688,7 @@ private void createResourceTree() {
 			}
 		}
 	}
+	
 	private void clearDateTimeInputFields(){
 		dateBegin.setValue(null);
 		dateEnd.setValue(null);
