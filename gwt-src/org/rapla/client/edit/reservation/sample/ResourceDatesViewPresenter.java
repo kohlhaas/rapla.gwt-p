@@ -3,8 +3,11 @@ package org.rapla.client.edit.reservation.sample;
 import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.sample.ResourceDatesView.Presenter;
+import org.rapla.client.edit.reservation.sample.gwt.RaplaDate;
 import org.rapla.entities.domain.Reservation;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 
 public class ResourceDatesViewPresenter implements Presenter{
@@ -73,6 +76,13 @@ public class ResourceDatesViewPresenter implements Presenter{
 	@Override
 	public void onResourcesAdded() {
 		view.addResources();
+	}
+
+	@Override
+	public void onAddTerminButtonClicked(ClickEvent event) {
+		RaplaDate tmp = (RaplaDate) event.getSource();
+		view.setRaplaDate(tmp);
+		
 	}
 
 }

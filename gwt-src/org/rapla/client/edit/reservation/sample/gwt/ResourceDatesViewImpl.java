@@ -81,6 +81,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	RadioButton year;
 	RadioButton noReccuring;
 	int height, width;
+	RaplaDate tmp;
 
 
 	@Override
@@ -669,7 +670,10 @@ private void createResourceTree() {
 					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
 					addTermin = new RaplaDate(tmp);
 					dateList.add(addTermin);
-				//	addTermin.addClickHandler(new RaplaDateClickHandler());
+					addTermin.addClickHandler(new ClickHandler(){
+						public void onClick(ClickEvent e) {
+			                getPresenter().onAddTerminButtonClicked(e);
+			            }});
 					clearDateTimeInputFields();
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
@@ -678,7 +682,10 @@ private void createResourceTree() {
 			}else{
 			try {	
 				addTermin = new RaplaDate(beginTmp, endTmp, true);
-			//	addTermin.addClickHandler(new RaplaDateClickHandler());
+				addTermin.addClickHandler(new ClickHandler(){
+					public void onClick(ClickEvent e) {
+		                getPresenter().onAddTerminButtonClicked(e);
+		            }});
 				dateList.add(addTermin);
 				clearDateTimeInputFields();
 			} catch (ParseException e) {
@@ -738,6 +745,30 @@ private void createResourceTree() {
 	public void addResources() {
 			dateDisclosurePanel.setOpen(false);
 			buttonPlus.setStyleName("buttonsResourceDatesClickable");		
+	}
+
+	
+	
+
+	@Override
+	public void setRaplaDate(RaplaDate tmp) {
+
+		this.tmp = tmp;
+		//RaplaDate tmp = (RaplaDate) event.getSource();
+		dateList.setActive(tmp);
+		if(!(dateList.getActive() == -1)){
+			dateBegin.setValue(tmp.getBeginTime());
+			dateEnd.setValue(tmp.getEndTime());
+			timeBegin.setValue((long)-3600000 + tmp.getStartHourMinute());
+			timeEnd.setValue((long)-3600000 + tmp.getEndHourMinute());
+			buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
+			rewriteDate.setVisible(true);
+		}else{
+			clearDateTimeInputFields();
+			buttonGarbageCan.setStyleName("buttonsResourceDates");
+		}
+		
+
 	}
 
 

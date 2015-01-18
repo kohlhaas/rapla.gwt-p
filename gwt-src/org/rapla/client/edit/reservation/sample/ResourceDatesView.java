@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.rapla.client.base.View;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView.Presenter;
+import org.rapla.client.edit.reservation.sample.gwt.RaplaDate;
 import org.rapla.entities.domain.Appointment;
+
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditSubView<W> {
     public interface Presenter
@@ -23,6 +26,8 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 		void onAddDateClicked();
 
 		void onResourcesAdded();
+
+		void onAddTerminButtonClicked(ClickEvent event);
 
 
     }
@@ -44,6 +49,9 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 	void clearInputFields();
 
 	void addResources();
+
+
+	void setRaplaDate(RaplaDate tmp);
     
 }
 
