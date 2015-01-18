@@ -5,6 +5,8 @@ import javax.inject.Inject;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView.Presenter;
 import org.rapla.entities.domain.Reservation;
 
+import com.google.gwt.user.client.ui.CheckBox;
+
 public class ResourceDatesViewPresenter implements Presenter{
 
     private ResourceDatesView view;
@@ -44,9 +46,10 @@ public class ResourceDatesViewPresenter implements Presenter{
 
 	@Override
 	public void onWholeDaySelected() {
-		// TODO Auto-generated method stub
 		
+		view.setVisiblityOfDateElements();
 	}
+	
 
 	@Override
 	public void onButtonPlusClicked() {

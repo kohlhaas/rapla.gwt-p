@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -51,6 +52,10 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 
 	@Override
 	public void show() {
+		
+		 
+		height = (int) (Window.getClientHeight() * 0.90); //to be deleted
+		width = (int) (Window.getClientWidth() * 0.90); //to be deleted
 
 		contentPanel = new SimplePanel();
 		    contentPanel.clear(); 
@@ -173,7 +178,7 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 	@Override
 	public String getTitelInput() {
 		// TODO Auto-generated method stub
-		return null;
+		return titelInput.getText();
 	}
 
 
@@ -189,6 +194,40 @@ public class InfoViewImpl extends AbstractView<Presenter>  implements InfoView<I
 		return eventTypesListBox.getSelectedItemText();
 	}
     
+	public void setEventTypes(List<String> eventTypes) {
+
+		for (int i = 0; i < eventTypes.size(); i++) {
+			eventTypesListBox.addItem((String) eventTypes.get(i).toString());
+		}
+
+	}
+
+	
+
+
+	public void setSelectedEventType(String select) {
+		for (int i = 0; i < eventTypesListBox.getItemCount(); i++) {
+			if (eventTypesListBox.getItemText(i).equals(select)) {
+				eventTypesListBox.setItemSelected(i, true);
+			}
+		}
+	}
+
+	
+	public void setDynamicFields(Attribute[] attributes) {
+
+		for (int i = 0; i < attributes.length; i++) {
+
+			String name = attributes[i].toString();
+
+			eventTypesListBox.addItem(name);
+
+		}
+
+	}
+
+	public void setConstraintKeys(String[] constraintKeys) {
+	}
 
 	
 

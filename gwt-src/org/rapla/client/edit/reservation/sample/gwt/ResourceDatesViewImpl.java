@@ -59,6 +59,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 
 	SmallTimeBox timeBegin;
 	SmallTimeBox timeEnd;
+	Label beginTimeText;
+	Label endTimeText;
 
 	Tree resourceTree;
 	
@@ -90,9 +92,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	@Override
 	public void show() {
 		
-		 
-		height = (int) (Window.getClientHeight() * 0.90); //to be deleted
-		width = (int) (Window.getClientWidth() * 0.90); //to be deleted
+		 height = (int) (Window.getClientHeight() * 0.90 * 0.80);//to be deleted
+		 width = (int) (Window.getClientWidth() * 0.90 * 0.80);  //to be deleted
+
 		
 		contentPanel = new SimplePanel();
 		contentPanel.clear();
@@ -711,6 +713,23 @@ private void createResourceTree() {
 		addDateWidget();		
 	}
 
+	@Override
+	public void setVisiblityOfDateElements() {
+
+		if( cbWholeDay.getValue()){
+			timeBegin.setVisible(false);
+			timeEnd.setVisible(false);
+			timeEnd.setValue((long) (3600000*23)-60);
+			beginTimeText.setVisible(false);
+			endTimeText.setVisible(false);
+		}else{
+			timeBegin.setVisible(true);
+			timeEnd.setVisible(true);
+			timeEnd.setValue((long) -3600000);
+			beginTimeText.setVisible(true);
+			endTimeText.setVisible(true);
+	}
+	}
 
 
 }
