@@ -128,11 +128,21 @@
 	border: 1px solid #c2c2c2;
 	cursor: pointer;
 }
-.singleDate:active {
+
+.singleDateClicked {
+	width: 300px;
+	padding: 2px;
+ 	margin-bottom: 2px;
+	overflow-x: hidden;
 	padding: 1px;
 	border: 1px solid #c2c2c2;
 	background-color: #f0eded;
-	}
+}
+.singleDateClicked:hover {
+	padding: 1px;
+	border: 1px solid #c2c2c2;
+	cursor: pointer;
+		}
 
 .singleDateSign {
 	width: 10px;

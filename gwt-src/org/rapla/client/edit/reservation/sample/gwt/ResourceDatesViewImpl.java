@@ -821,9 +821,12 @@ private void createResourceTree() {
 			timeEnd.setValue((long)-3600000 + tmp.getEndHourMinute());
 			buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
 			rewriteDate.setVisible(true);
+			tmp.setStyleName("singleDateClicked");
 		}else{
 			clearDateTimeInputFields();
 			buttonGarbageCan.setStyleName("buttonsResourceDates");
+			tmp.removeStyleName("singleDateClicked");
+			tmp.setStyleName("singleDate");
 		}
 		
 

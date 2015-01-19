@@ -96,6 +96,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 			if (sd.calculateLectureHours == true)
 				vorlesungsStunden = vorlesungsStunden
 						+ sd.getVorlesungsstunden();
+			sd.removeStyleName("singleDate");
 			helper.add(sd);
 		}
 		this.beginTime = raplaDates.get(0).getBeginTime();
