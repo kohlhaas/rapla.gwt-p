@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.mockito.cglib.transform.impl.AddPropertyTransformer;
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView.Presenter;
@@ -73,7 +74,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	DisclosurePanel cbRepeatType;
 	
 	Label addDateInfo;
-	Button addDate;
 	Button rewriteDate;
 	
 	HorizontalPanel repeat;
@@ -116,6 +116,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			firstDateListWidget.add(explainer);	
 			dateList.add(firstDateListWidget);
 			
+			
 			buttonBar = new FlowPanel();
 			buttonBar.setHeight(height + "px");
 			buttonBar.setStyleName("datesButtonBar");
@@ -138,7 +139,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			// Image buttonPlus = new Image("button_plus.png");
 			buttonPlus = new Label("+");
 			buttonPlus.setTitle("Termin erstellen");
-			buttonPlus.setStyleName("buttonsResourceDatesClickable");
+			buttonPlus.setStyleName("buttonsResourceDates");
 
 			// TO-DO: Is this really a Label? Or should it be a Button? Can a Label
 			// be used, too?
@@ -270,14 +271,11 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			cbRepeatType.add(repeat);
 			
 			HorizontalPanel addDateWithLabel = new HorizontalPanel();
-			addDate = new Button("Termin hinzuf\u00FCgen");
 			rewriteDate = new Button("Termin \u00FCberschreiben");
 			rewriteDate.setVisible(false);
 			addDateInfo = new Label();
-			addDateWithLabel.add(addDate);
 			addDateWithLabel.add(rewriteDate);
 			addDateWithLabel.add(addDateInfo);
-			addDateWithLabel.setCellVerticalAlignment(addDate, HasVerticalAlignment.ALIGN_MIDDLE);
 			addDateWithLabel.setCellVerticalAlignment(rewriteDate, HasVerticalAlignment.ALIGN_MIDDLE);
 			addDateWithLabel.setCellVerticalAlignment(addDateInfo, HasVerticalAlignment.ALIGN_MIDDLE);
 			
@@ -289,16 +287,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 				}
 				
 			});
-			
-			addDate.addClickHandler(new ClickHandler(){
-
-				@Override
-				public void onClick(ClickEvent event) {
-					getPresenter().onAddDateClicked();
-				}
-				
-			});
-		
 
 			// Ausgewählte Ressourcen laden
 			chosenResources = new FlowPanel();
@@ -357,7 +345,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 		    dateContentWrapper.add(addDateWithLabel);
 		    dateDisclosurePanel = new DisclosurePanel();
 		    dateDisclosurePanel.add(dateContentWrapper);
-			dateDisclosurePanel.setOpen(false);
+		    dateDisclosurePanel.setOpen(true);
 		
 			dateInfos.add(dateDisclosurePanel);
 			
@@ -756,8 +744,8 @@ private void createResourceTree() {
 	}
 	
 	private void clearDateTimeInputFields(){
-		dateBegin.setValue(null);
-		dateEnd.setValue(null);
+		dateBegin.setValue(new Date(System.currentTimeMillis()));
+		dateEnd.setValue(new Date(System.currentTimeMillis()));
 		timeEnd.setValue((long) -3600000);
 		timeBegin.setValue((long) -3600000);
 		cbWholeDay.setValue(false);
@@ -841,8 +829,13 @@ private void createResourceTree() {
 	@Override
 	public void openEditView() {
 		try {
+			if(!dateDisclosurePanel.isOpen()){
 			dateDisclosurePanel.setOpen(true);
 			buttonPlus.setStyleName("buttonsResourceDates");
+			}else{
+				addDateWidget();
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
