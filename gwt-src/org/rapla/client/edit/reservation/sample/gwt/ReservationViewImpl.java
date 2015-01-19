@@ -64,8 +64,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     TextBox tb;
 
     ListBox language = new ListBox();
+    Button course = new Button("Studiengang");
     String chosenEventType = "";
     String chosenLanguage = "";
+    Boolean activateCourseButton = false;
 
 
     public void show(Reservation event) {
@@ -207,22 +209,47 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         for (DynamicType dynamicType : dynamicTypes) {
             eventType.addItem(dynamicType.getName(locale));
         }
+        chosenEventType = eventType.getSelectedValue();
+        if(chosenEventType.equalsIgnoreCase(null)){
+        	eventType.setItemSelected(0, true);
+        	chosenEventType = eventType.getSelectedValue();
+        }
+        if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
+        	activateCourseButton = true;
+        }
+        
         eventType.addChangeHandler(new ChangeHandler() {
+        	
             @Override
             public void onChange(ChangeEvent event) {
                 language.clear();
+                if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
+                	removeCourseButton();
+                	
+                }
+            	if(chosenEventType.equalsIgnoreCase("Prüfung")){
+            		initLanguageListBox();
+            		
+            	}
                 for (DynamicType dynamicType : dynamicTypes) {
                     chosenEventType = eventType.getSelectedValue();
                     if (dynamicType.getName(locale).equals(chosenEventType)) {
+                    			
                         for (Attribute attribute : dynamicType.getAttributes()) {
                             language.addItem(attribute.getName(locale));
                         }
                     }
                 }
+                if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
+                	activateCourseButton=true;
+                	initCourseButton();
+                }
+                
             }
         });
+        
         row1.add(eventType);
-        initLanguageListBox();
+        
     }
 
     private void initLanguageListBox() {
@@ -236,7 +263,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
 
         //Study course
-        Button course = new Button("Studiengang");
+    	if(activateCourseButton){
+    		        
         course.setStyleName("course");
         course.addClickHandler(new ClickHandler() {
             @Override
@@ -280,6 +308,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         });
 
         coursePanel.setVisible(false);
+        //activateCourseButton = false;
+    	}
+    }
+    
+    private void removeCourseButton(){
+    	row1.remove(course);
+    	generalInformation.remove(coursePanel);
     }
 
     private void initLabelEventNameInGrid() {
