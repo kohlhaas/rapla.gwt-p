@@ -15,6 +15,8 @@ import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
@@ -52,7 +54,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     FlowPanel content;
     FlowPanel contentRes = new FlowPanel();
-    FlowPanel subView = new FlowPanel();
+    List<TabPanelRapla> tabPanelRaplas = new ArrayList<>();
     FlowPanel generalInformation;
     FlowPanel row1;
     FlowPanel part2;
@@ -192,7 +194,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void structuringPanels() {
         popup.add(tabPanel);
         tabPanel.add(content, "Allgemeine Informationen");
-        tabPanel.add(subView, "Termin- und Ressourcenplanung");
+//        tabPanel.add(subView, "Termin- und Ressourcenplanung");
+        for (TabPanelRapla tabPanelRapla : tabPanelRaplas) {
+            tabPanel.add(tabPanelRapla.getTab(),tabPanelRapla.getName());
+        }
         tabPanel.selectTab(0);
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
@@ -500,9 +505,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     //Method to insert the AppointmentView as SubView to the ReservationView
     @Override
-    public void addSubView(ReservationEditSubView<IsWidget> view) {
+    public void addSubView(String name,ReservationEditSubView<IsWidget> view) {
         IsWidget provideContent = view.provideContent();
-        subView.add(provideContent.asWidget());
+        FlowPanel flowPanel = new FlowPanel();
+        flowPanel.add(provideContent.asWidget());
+        TabPanelRapla panelRapla = new TabPanelRapla(name,flowPanel);
+        tabPanelRaplas.add(panelRapla);
     }
 
 }

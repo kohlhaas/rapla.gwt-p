@@ -34,10 +34,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     FlowPanel startFields, endFields;
     Label startTimeColon, endTimeColon;
     ListBox appointmentList;
-    ListBox dynamicTypeList = new ListBox();
-    ListBox allocatableList = new ListBox();
-    Button nextFreeApp = new Button();
-    TextBox nextFreeAppTB = new TextBox();
 
     DateTimeFormat df = DateTimeFormat.getFormat("dd.MM.yyyy");
     DateTimeFormat hoursFormat = DateTimeFormat.getFormat("HH");
