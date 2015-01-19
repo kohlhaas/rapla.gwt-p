@@ -128,7 +128,6 @@ public class AppointmentPresenter implements Presenter {
     public void addResourceButtonPressed(int selectedIndex, String resourceTypeName, Locale locale) {
         DynamicType raplaTypeKey = null;
 
-        //TODO: very vague, needs proper error handling, ex; allocatable from map == null? ClassCastException??..
         Map<DynamicType, List<Allocatable>> sortedResources = this.getSortedAllocatables();
         for (DynamicType type : sortedResources.keySet()) {
             if (type.getName(locale).equals(resourceTypeName)) {
@@ -146,8 +145,8 @@ public class AppointmentPresenter implements Presenter {
      */
     public Map<DynamicType, List<Allocatable>> getSortedAllocatables() {
         Map<DynamicType, List<Allocatable>> sortedResources = new HashMap<>();
-        Allocatable[] resources = getAllocatables();
-        for (Allocatable resource : resources) {
+        Allocatable[] allResources = getAllocatables();
+        for (Allocatable resource : allResources) {
             DynamicType type = resource.getClassification().getType();
             if (!sortedResources.containsKey(type)) {
                 sortedResources.put(type, new ArrayList<Allocatable>());

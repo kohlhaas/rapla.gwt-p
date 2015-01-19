@@ -217,6 +217,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         /**
          * here you got all underCategories "Technik --> Elektrotechnik,Informatik...| Wirtschaft --> BWl ..."
          * depending on the study category u chosed
+         * i dont know if its really smart to do it this way, but he has f.e very nested attributes.. and given so, a map could be wrong
          */
 
         allCoursesLB.addChangeHandler(new ChangeHandler() {
