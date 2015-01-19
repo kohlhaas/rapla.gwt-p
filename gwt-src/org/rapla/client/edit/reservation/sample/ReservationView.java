@@ -19,7 +19,7 @@ public interface ReservationView<W> extends View<Presenter> {
     boolean isDeleteButtonEnabled();
     void onCancelButtonClicked();
     DynamicType[] getAllEventTypes();
-    Category[] getCategory(Locale locale, String studiengänge);
+    Category[] getCategory(Locale locale, String studiengaenge);
   }
 
   void show(Reservation event);
