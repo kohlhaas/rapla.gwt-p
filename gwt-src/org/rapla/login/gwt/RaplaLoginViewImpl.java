@@ -22,6 +22,7 @@ public class RaplaLoginViewImpl implements LoginView
 
     public RaplaLoginViewImpl() {
         StyleInjector.inject("Rapla.css", true);
+        StyleInjector.inject("mwi.css", true);
     }
 
     public void showLogin() {
