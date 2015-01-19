@@ -222,6 +222,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         allCoursesLB.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
+                allCoursesValuesLB.clear();
                 String selectedValue = allCoursesLB.getSelectedValue();
                 for (Category category : allCourses) {
                     if (selectedValue.equals(category.getName(locale))) {
