@@ -11,6 +11,9 @@
   z-index:1002;
   overflow: auto;
 }
+.dateBoxPopup { 
+        z-index: 1003;
+} 
 
 .cancelButton, .deleteButton, .saveButton{
 	float: left !important;

@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.user.datepicker.client.DatePicker;
 import com.blogspot.ctasada.gwt.eureka.client.ui.*;
 
 public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements ResourceDatesView<IsWidget>{
@@ -83,6 +85,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	int height, width;
 	RaplaDate tmp;
 
+	HorizontalPanel end;
 
 	@Override
 	public IsWidget provideContent() {
@@ -163,22 +166,27 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 					HasVerticalAlignment.ALIGN_MIDDLE);
 
 			dateBegin = new DateBox();
+			dateBegin.setValue(new Date(System.currentTimeMillis()));
 			dateBegin.setStyleName("dateInput");
 			dateBegin.setFormat(new DateBox.DefaultFormat(dateFormat));
 			begin.add(dateBegin);
 
 			timeBegin = new SmallTimeBox(new Date(-3600000));
 			begin.add(timeBegin);
-			final Label beginTimeText = new Label("Uhr");
+			beginTimeText = new Label("Uhr");
 			beginTimeText.setStyleName("beschriftung");
 			begin.add(beginTimeText);
 			begin.setCellVerticalAlignment(beginTimeText,
 					HasVerticalAlignment.ALIGN_MIDDLE);
 
+			begin.setCellWidth(beginText, "50px");
+			begin.setCellWidth(dateBegin, "180px");
+			begin.setCellWidth(timeBegin, "80px");
+			begin.setCellWidth(beginTimeText, "50px");
 			
 			// Datum und Uhrzeit ENDE
-			HorizontalPanel end = new HorizontalPanel();
-			end.setSpacing(4);
+			end = new HorizontalPanel();
+			end.setSpacing(5);
 			end.setStyleName("dateInfoLineComplete");
 			
 			Label endText = new Label("Ende: ");
@@ -187,6 +195,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			end.setCellVerticalAlignment(endText, HasVerticalAlignment.ALIGN_MIDDLE);
 
 			dateEnd = new DateBox();
+			dateEnd.setValue(new Date(System.currentTimeMillis()));
 			dateEnd.setStyleName("dateInput");
 			dateEnd.setFormat(new DateBox.DefaultFormat(dateFormat));
 			end.add(dateEnd);
@@ -195,7 +204,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			timeEnd.setTitle("endTime");
 			end.add(timeEnd.asWidget());
 
-			final Label endTimeText = new Label("Uhr");
+			endTimeText = new Label("Uhr");
 			endTimeText.setStyleName("beschriftung");
 			end.add(endTimeText);
 			end.setCellVerticalAlignment(endTimeText,
@@ -203,6 +212,10 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 
 			end.setCellWidth(endText, "50px");
 			
+			end.setCellWidth(endText, "50px");
+			end.setCellWidth(dateEnd, "180px");
+			end.setCellWidth(timeEnd, "80px");
+			end.setCellWidth(endTimeText, "50px");
 			
 			cbWholeDay = new CheckBox("ganzt\u00E4gig");
 			begin.add(cbWholeDay);
@@ -238,10 +251,15 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			cbRepeatType.setStyleName("dateInfoLineLeft");
 
 			daily = new RadioButton("repeat","t\u00E4glich");
+			daily.addClickHandler(new RepeatClickHandler());
 			weekly = new RadioButton("repeat", "w\u00F6chentlich");
+			weekly.addClickHandler(new RepeatClickHandler());
 			monthly = new RadioButton("repeat", "monatlich");
+			monthly.addClickHandler(new RepeatClickHandler());
 			year = new RadioButton("repeat", "j\u00E4hrlich");
+			year.addClickHandler(new RepeatClickHandler());
 			noReccuring = new RadioButton("repeat", "keine Wiederholung");
+			noReccuring.addClickHandler(new RepeatClickHandler());
 
 			repeat.add(daily);
 			repeat.add(weekly);
@@ -637,7 +655,48 @@ private void createResourceTree() {
 		
 	}
 
-	
+
+	class RepeatClickHandler implements ClickHandler{
+		boolean active = false;
+		Label blank;
+		HorizontalPanel repeatSettings;
+		ListBox repeatType;
+
+		@Override
+		public void onClick(ClickEvent event) {
+			
+			if(!(noReccuring.getValue())){
+					if(end.getWidgetCount() <= 5){
+					active = true;
+					end.remove(dateEnd);
+					blank = new Label("");
+					end.insert(blank,1);
+					end.setCellWidth(blank, "180px");
+					repeatType = new ListBox();
+					repeatType.addItem("Bis Datum");
+					repeatType.addItem("x Mal");
+					end.add(repeatType);
+					end.setCellVerticalAlignment(repeatType, HasVerticalAlignment.ALIGN_MIDDLE);
+					end.add(dateEnd);
+					cbRepeatType.add(repeatSettings);
+					}
+					
+			}if(noReccuring.getValue()){
+				active = false;
+				end.remove(1);
+				//end.remove(repeatType);
+				//end.remove(dateEnd);
+				end.insert(dateEnd, 1);
+				end.setCellWidth(dateEnd, "180px");
+				end.remove(4);
+				end.remove(4);
+				noReccuring.setValue(false);
+				cbRepeatType.setOpen(false);
+			}
+			
+		}
+		
+	}
 	
 	@Override
 	public void addDateWidget() {
