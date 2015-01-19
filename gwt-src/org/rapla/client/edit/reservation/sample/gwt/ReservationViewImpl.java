@@ -10,6 +10,7 @@ import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
+import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
@@ -57,6 +58,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel part2;
     FlowPanel coursePanel;
 
+
     Grid grid;
 
     VerticalPanel upDown;
@@ -64,6 +66,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     TextBox tb;
 
     ListBox language = new ListBox();
+    ListBox allCoursesLB = new ListBox();
+    ListBox allCoursesValuesLB = new ListBox();
     Button course = new Button("Studiengang");
     Button ausblenden = null;
     String chosenEventType = "";
@@ -203,65 +207,113 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void initEventTypeListBox() {
         // Eventtype
-        final ListBox eventType = new ListBox();
-        eventType.setStyleName("eventtype");
-        final DynamicType[] dynamicTypes = getPresenter().getAllEventTypes();
+        final ListBox eventTypeLB = new ListBox();
+        eventTypeLB.setStyleName("eventtype");
+        final DynamicType[] eventTypes = getPresenter().getAllEventTypes();
         final Locale locale = getRaplaLocale().getLocale();
-         
+
+        final Category[] allCourses = getPresenter().getCategory(locale, "Studiengänge");
+        /**
+         * here you got all categories like Allgemein, Wirtschaft, Technik etc.
+         */
+        for (Category category : allCourses) {
+            allCoursesLB.addItem(category.getName(locale));
+        }
+
+        /**
+         * here you got all underCategories "Technik --> Elektrotechnik,Informatik...| Wirtschaft --> BWl ..."
+         * depending on the study category u chosed
+         * i dont know if its really smart to do it this way, but he has f.e very nested attributes.. and given so, a map could be wrong
+         */
+
+        allCoursesLB.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                allCoursesValuesLB.clear();
+                String selectedValue = allCoursesLB.getSelectedValue();
+                for (Category category : allCourses) {
+                    if (selectedValue.equals(category.getName(locale))) {
+                        for (Category underCategory : category.getCategories()) {
+                            allCoursesValuesLB.addItem(underCategory.getName(locale));
+                        }
+
+                    }
+                }
+            }
+
+        });
+
+        /**
+         *
+         */
+        row1.add(allCoursesValuesLB);
+        row1.add(allCoursesLB);
 
         /**
          * SEHR UNSAUBER, nur grob, bitte ggf. verbessern --> ggf. in eigene Klasse oder Presenter
          */
-        for (DynamicType dynamicType : dynamicTypes) {
-            eventType.addItem(dynamicType.getName(locale));
+        for (DynamicType dynamicType : eventTypes) {
+            eventTypeLB.addItem(dynamicType.getName(locale));
         }
-        row1.add(eventType);
+        row1.add(eventTypeLB);
         
-        chosenEventType = eventType.getSelectedValue();
-        if(chosenEventType.equalsIgnoreCase(null)){
-        	eventType.setItemSelected(0, true);
-        	chosenEventType = eventType.getSelectedValue();
+
+        chosenEventType = eventTypeLB.getSelectedValue();
+        if (chosenEventType.equalsIgnoreCase(null)) {
+            eventTypeLB.setItemSelected(0, true);
+            chosenEventType = eventTypeLB.getSelectedValue();
+
         }
+
         if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
         	initCourseButton();
         	//boolean changedLehrveranstaltung = false;
+        	//actviateCourseButton = true;
+
         }
-        
-        eventType.addChangeHandler(new ChangeHandler() {
-        	
+
+        eventTypeLB.addChangeHandler(new ChangeHandler() {
+
             @Override
             public void onChange(ChangeEvent event) {
             	//changedLehrveranstaltung = true;
+            	
                 language.clear();
+                
                 if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
                 	removeCourseButton();
                 	buttonRemoved = true;
                
                 }
-            	if(chosenEventType.equalsIgnoreCase("Prüfung")){
-            		initLanguageListBox();
-            		
-            	}
-            
-                for (DynamicType dynamicType : dynamicTypes) {
-                    chosenEventType = eventType.getSelectedValue();
+
+
+                if (chosenEventType.equalsIgnoreCase("Prüfung")) {
+                    initLanguageListBox();
+
+                }
+                for (DynamicType dynamicType : eventTypes) {
+                    chosenEventType = eventTypeLB.getSelectedValue();
+                    
                     if (dynamicType.getName(locale).equals(chosenEventType)) {
-                    			
+
                         for (Attribute attribute : dynamicType.getAttributes()) {
                             language.addItem(attribute.getName(locale));
                         }
                     }
                 }
-                if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung") ){
-                	initCourseButton();
-                	
+
+                if (chosenEventType.equalsIgnoreCase("Lehrveranstaltung")) {
+                    //activateCourseButton = true;
+                    initCourseButton();
+
                 }
-                
+
             }
         });
-        
-        
-        
+
+
+        //row1.add(eventTypeLB);
+
     }
 
     private void initLanguageListBox() {
@@ -298,30 +350,29 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
     });
 
-        
 
 
-        TreeItem root = new TreeItem();
-        root.setText("root");
-        root.addTextItem("item0");
-        root.addTextItem("item1");
-        root.addTextItem("item2");
 
-        // Add a CheckBox to the tree
-        TreeItem item = new TreeItem(new CheckBox("item3"));
-        root.addItem(item);
+            TreeItem root = new TreeItem();
+            root.setText("root");
+            root.addTextItem("item0");
+            root.addTextItem("item1");
+            root.addTextItem("item2");
 
-        t = new Tree();
-        t.addItem(root);
+            // Add a CheckBox to the tree
+            TreeItem item = new TreeItem(new CheckBox("item3"));
+            root.addItem(item);
 
-        coursePanel.add(t);
-    	
 
+            t = new Tree();
+            t.addItem(root);
+
+
+            coursePanel.add(t);
     	
         ausblenden = new Button("ausblenden");
         coursePanel.add(ausblenden);
     	
-    
         ausblenden.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent e) {
@@ -329,10 +380,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             }
         });
 
-        coursePanel.setVisible(false);
-        //activateCourseButton = false;
-    	
+            coursePanel.setVisible(false);
+            //activateCourseButton = false;
+        
+
     }
+
     
     private void removeCourseButton(){
     	row1.remove(course);

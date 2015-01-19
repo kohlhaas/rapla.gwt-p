@@ -61,44 +61,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         appointmentPanel.addStyleName("appointment-panel");
         content.add(appointmentPanel);
 
-/**
- * thats how you can get all "RessourcenTypen" and the single resources
- * all ressourcetypes
- */
-
-        Locale locale = getRaplaLocale().getLocale();
-        DynamicType[] dynamicTypes = getPresenter().getResourceTypes();
-        for (DynamicType dynamicType : dynamicTypes) {
-            dynamicTypeList.addItem(dynamicType.getName(locale));
-        }
-
-        /**
-         * all ressources
-         */
-        for (Allocatable allocatable : getPresenter().getAllocatables()) {
-            allocatableList.addItem(allocatable.getName(locale));
-        }
-
-
-        content.add(dynamicTypeList);
-        content.add(allocatableList);
-        nextFreeApp.setText("nextFreeApp");
-        nextFreeApp.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Date date = getPresenter().nextFreeDateButtonPressed(new Date(), new Date());
-                nextFreeAppTB.setText(date.toString());
-            }
-        });
-
-        content.add(nextFreeApp);
-        content.add(nextFreeAppTB);
-
-        /**
-         *
-         *
-         */
-
         // "Add appointment" Button
         Button addAppointment = new Button("Termin hinzufügen");
         addAppointment.setStyleName("add-appointment");
@@ -219,9 +181,9 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         });
 
         Locale locale = getRaplaLocale().getLocale();
-        Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = getPresenter().sortResources(resources);
-        for (RaplaType<Allocatable> resourceTypes : sortedResources.keySet()) {
-            String resourceTypeName = resourceTypes.getLocalName();
+        Map<DynamicType, List<Allocatable>> sortedResources = getPresenter().getSortedAllocatables();
+        for (DynamicType resourceTypes : sortedResources.keySet()) {
+            String resourceTypeName = resourceTypes.getName(locale);
             resourceTypesList.addItem(resourceTypeName);
             ListBox resourceList = new ListBox();
             resourceList.setVisibleItemCount(7);

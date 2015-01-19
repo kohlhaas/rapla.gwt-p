@@ -2,7 +2,6 @@ package org.rapla.client.edit.reservation.sample;
 
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.components.util.DateTools;
-import org.rapla.entities.RaplaType;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
@@ -16,9 +15,14 @@ import org.rapla.framework.logger.Logger;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
 import javax.inject.Inject;
-
 import java.util.*;
 
+/**
+ * every Classification exist of: DynamicType(take a look above), Attributes...Names
+ * Attributes are the properties of the ObjectType
+ * DynamicType is the ObjectType
+ * ...
+ */
 public class AppointmentPresenter implements Presenter {
     @Inject
     ClientFacade facade;
@@ -54,8 +58,8 @@ public class AppointmentPresenter implements Presenter {
         }
     }
 
-   
-	/**
+
+    /**
      * gets all conflicts for the existing reservation, if a new appButton has been pressed, a new app will be added to
      * the reservation.. conflicts in this reservation will be shown. Else it returns NULL
      *
@@ -92,7 +96,7 @@ public class AppointmentPresenter implements Presenter {
             logger.error("error while using facade: ", e);
             return null;
         } catch (Exception e) {
-            logger.error("error while getting nextAlloDate: ", e);
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -125,44 +129,48 @@ public class AppointmentPresenter implements Presenter {
     }
 
     @Override
-    public void addResourceButtonPressed(int selectedIndex, String resourceTypeName) {
-        try {
-            RaplaType<Allocatable> raplaTypeKey = null;
+    public void addResourceButtonPressed(int selectedIndex, String resourceTypeName, Locale locale) {
+        logger.info("calling addResourceButtonPressed");
 
-            //TODO: very vague, needs proper error handling, ex; allocatable from map == null? ClassCastException??..
-            Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = this.sortResources(Arrays.asList(facade.getAllocatables()));
-            for (RaplaType<Allocatable> raplaType : sortedResources.keySet()) {
-                if (raplaType.getLocalName().equals(resourceTypeName)) {
-                    raplaTypeKey = raplaType;
-                }
+        DynamicType dynamicType = null;
+
+        Map<DynamicType, List<Allocatable>> sortedResources = this.getSortedAllocatables();
+        for (DynamicType type : sortedResources.keySet()) {
+            if (type.getName(locale).equals(resourceTypeName)) {
+                dynamicType = type;
             }
-            List<Allocatable> allocatables = sortedResources.get(raplaTypeKey);
-            this.reservation.addAllocatable(allocatables.get(selectedIndex));
-            view.updateBookedResources((Arrays.asList(reservation.getAppointments())));
-        } catch (RaplaException e) {
-            logger.error("error while using facade: ", e);
         }
+        List<Allocatable> allocatables = sortedResources.get(dynamicType);
+        logger.info("saving Allocatable with name: " + allocatables.get(selectedIndex).getName(locale));
+        this.reservation.addAllocatable(allocatables.get(selectedIndex));
+        view.updateBookedResources((Arrays.asList(reservation.getAppointments())));
     }
 
     @Override
-    public Map<RaplaType<Allocatable>, List<Allocatable>> sortResources(List<Allocatable> resources) {
-        Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = new HashMap<RaplaType<Allocatable>, List<Allocatable>>();
-        for (Allocatable resource : resources) {
-            RaplaType<Allocatable> resourceType = resource.getRaplaType();
-            if (!sortedResources.containsKey(resourceType)) {
-                sortedResources.put(resourceType, new ArrayList<Allocatable>());
+    /**
+     * returns a map(K,V) with a Type and the corespondent Resources
+     */
+    public Map<DynamicType, List<Allocatable>> getSortedAllocatables() {
+        logger.info("calling getSortedAllo");
+        Map<DynamicType, List<Allocatable>> sortedResources = new HashMap<>();
+        Allocatable[] allResources = getAllocatables();
+        for (Allocatable resource : allResources) {
+            DynamicType type = resource.getClassification().getType();
+            if (!sortedResources.containsKey(type)) {
+                sortedResources.put(type, new ArrayList<Allocatable>());
             }
-            sortedResources.get(resourceType).add(resource);
+            sortedResources.get(type).add(resource);
         }
+        logger.info("returning sortedAllocatable Map with Size: " + sortedResources.size());
         return sortedResources;
     }
 
-
+    @Override
     /**
      * all allocatable are under types, returns null if an error has happened
      * example : resourceTypes: rooms, persons, objects|things ||| resources: rooms = chairs,tables... ; persons = age,semestre...; things: pen,beamer...
      */
-    public Allocatable [] getAllocatables(){
+    public Allocatable[] getAllocatables() {
         try {
             return facade.getAllocatables();
         } catch (RaplaException e) {
@@ -171,26 +179,28 @@ public class AppointmentPresenter implements Presenter {
         return null;
     }
 
+    @Override
     /**
      * @return all "Veranslatungstypen" eventTypes
      */
-    public DynamicType[] getEventTypes(){
+    public DynamicType[] getEventTypes() {
         return getDynamicTypes("reservation");
     }
 
+    @Override
     /**
      * @return all "Ressourcen Typen" resourcestypes
      */
-    public DynamicType[] getResourceTypes(){
+    public DynamicType[] getResourceTypes() {
         return getDynamicTypes("resource");
     }
 
     /**
-     *  possible keys are reservation(Veranstaltungstyp), person(..) and resource(ressourcetypes), returns null if an error has happened
-     *  Obergruppen(TYPEN = REssourcenTypen, VeranstaltungsTypen..)
+     * possible keys are reservation(Veranstaltungstyp), person(..) and resource(ressourcetypes), returns null if an error has happened
+     * Obergruppen(TYPEN = REssourcenTypen, VeranstaltungsTypen..)
      * example : resourceTypes: rooms, persons, objects|things ||| resources: rooms = chairs,tables... ; persons = age,semestre...; things: pen,beamer...
      */
-    private DynamicType[] getDynamicTypes(String name){
+    private DynamicType[] getDynamicTypes(String name) {
         try {
             return facade.getDynamicTypes(name);
         } catch (RaplaException e) {
@@ -198,17 +208,10 @@ public class AppointmentPresenter implements Presenter {
         }
         return null;
     }
-    
-    public Reservation getReservation() {
-		return reservation;
-	}
 
-    /**
-     * every Classification exist of: DynamicType(take a look above), Attributes...Names
-     * Attributes are the properties of the ObjectType
-     * DynamicType is the ObjectType
-     * ...
-     */
+    public Reservation getReservation() {
+        return reservation;
+    }
 
 }
 
