@@ -761,6 +761,12 @@ private void createResourceTree() {
 		timeEnd.setValue((long) -3600000);
 		timeBegin.setValue((long) -3600000);
 		cbWholeDay.setValue(false);
+		timeBegin.setVisible(true);
+		timeEnd.setVisible(true);
+		timeEnd.setValue((long) -3600000);
+		beginTimeText.setVisible(true);
+		endTimeText.setVisible(true);
+		
 		rewriteDate.setVisible(false);
 		buttonGarbageCan.setStyleName("buttonsResourceDates");
 		noReccuring.setValue(true);
