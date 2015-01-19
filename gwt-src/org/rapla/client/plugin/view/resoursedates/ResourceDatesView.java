@@ -164,6 +164,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
 		dateBegin = new DateBox();
+		dateBegin.setValue(new Date(System.currentTimeMillis()));
 		dateBegin.setStyleName("dateInput");
 		dateBegin.setFormat(new DateBox.DefaultFormat(dateFormat));
 		begin.add(dateBegin);
@@ -179,6 +180,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		begin.setCellWidth(beginText, "50px");
 		begin.setCellWidth(dateBegin, "170px");
 		begin.setCellWidth(timeBegin, "80px");
+		begin.setCellWidth(beginTimeText, "50px");
 
 		
 		// Datum und Uhrzeit ENDE
@@ -209,6 +211,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		end.setCellWidth(endText, "50px");
 		end.setCellWidth(dateEnd, "170px");
 		end.setCellWidth(timeEnd, "80px");
+		end.setCellWidth(endTimeText, "50px");
 		
 		
 		cbWholeDay = new CheckBox("ganzt\u00E4gig");
@@ -697,30 +700,39 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	
 	class RepeatClickHandler implements ClickHandler{
 		boolean active = false;
+		Label blank;
+		HorizontalPanel repeatSettings;
+		ListBox repeatType;
 
 		@Override
 		public void onClick(ClickEvent event) {
 			
-			if(!(noReccuring.getValue()) & active){
-				//do nothing
-				
-			}else if(!(noReccuring.getValue()) & !active){
-				active = true;
-				end.remove(dateEnd);
-				
-				HorizontalPanel repeatSettings = new HorizontalPanel();
-				repeatSettings.setSpacing(5);
-				ListBox repeatType = new ListBox();
-				repeatType.addItem("Bis Datum");
-				repeatType.addItem("x Mal");
-				repeatSettings.add(repeatType);
-				repeatSettings.add(dateEnd);
-				
-				cbRepeatType.add(repeatSettings);
-			}else{
+			if(!(noReccuring.getValue())){
+					if(end.getWidgetCount() <= 5){
+					active = true;
+					end.remove(dateEnd);
+					blank = new Label("");
+					end.insert(blank,1);
+					end.setCellWidth(blank, "170px");
+					repeatType = new ListBox();
+					repeatType.addItem("Bis Datum");
+					repeatType.addItem("x Mal");
+					end.add(repeatType);
+					end.setCellVerticalAlignment(repeatType, HasVerticalAlignment.ALIGN_MIDDLE);
+					end.add(dateEnd);
+					cbRepeatType.add(repeatSettings);
+					}
+					
+			}if(noReccuring.getValue()){
 				active = false;
+				end.remove(1);
+				//end.remove(repeatType);
+				//end.remove(dateEnd);
 				end.insert(dateEnd, 1);
-			}	
+				end.setCellWidth(dateEnd, "170px");
+				end.remove(4);
+				end.remove(4);
+			}
 			
 		}
 		
