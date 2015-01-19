@@ -2,6 +2,7 @@ package org.rapla.client.edit.reservation.sample;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.rapla.client.base.View;
@@ -22,11 +23,11 @@ public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubV
         Date nextFreeDateButtonPressed(Date startDate, Date endDate);
         void appointmentSelected(int selectedIndex);
         void removeAppointmentButtonPressed(int selectedIndex);
-        void addResourceButtonPressed(int selectedIndex, String resourceTypeName);
+        public void addResourceButtonPressed(int selectedIndex, String resourceTypeName, Locale locale);
         DynamicType[] getEventTypes();
         DynamicType[] getResourceTypes();
         Allocatable[] getAllocatables();
-        Map<RaplaType<Allocatable>, List<Allocatable>> sortResources(List<Allocatable> resources);
+        public Map<DynamicType, List<Allocatable>> getSortedAllocatables();
     }
 
     void show(Reservation reservation);

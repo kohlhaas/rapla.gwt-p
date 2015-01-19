@@ -125,34 +125,34 @@ public class AppointmentPresenter implements Presenter {
     }
 
     @Override
-    public void addResourceButtonPressed(int selectedIndex, String resourceTypeName) {
-        try {
-            RaplaType<Allocatable> raplaTypeKey = null;
+    public void addResourceButtonPressed(int selectedIndex, String resourceTypeName, Locale locale) {
+        DynamicType raplaTypeKey = null;
 
-            //TODO: very vague, needs proper error handling, ex; allocatable from map == null? ClassCastException??..
-            Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = this.sortResources(Arrays.asList(facade.getAllocatables()));
-            for (RaplaType<Allocatable> raplaType : sortedResources.keySet()) {
-                if (raplaType.getLocalName().equals(resourceTypeName)) {
-                    raplaTypeKey = raplaType;
-                }
+        //TODO: very vague, needs proper error handling, ex; allocatable from map == null? ClassCastException??..
+        Map<DynamicType, List<Allocatable>> sortedResources = this.getSortedAllocatables();
+        for (DynamicType type : sortedResources.keySet()) {
+            if (type.getName(locale).equals(resourceTypeName)) {
+                raplaTypeKey = type;
             }
-            List<Allocatable> allocatables = sortedResources.get(raplaTypeKey);
-            this.reservation.addAllocatable(allocatables.get(selectedIndex));
-            view.updateBookedResources((Arrays.asList(reservation.getAppointments())));
-        } catch (RaplaException e) {
-            logger.error("error while using facade: ", e);
         }
+        List<Allocatable> allocatables = sortedResources.get(raplaTypeKey);
+        this.reservation.addAllocatable(allocatables.get(selectedIndex));
+        view.updateBookedResources((Arrays.asList(reservation.getAppointments())));
     }
 
     @Override
-    public Map<RaplaType<Allocatable>, List<Allocatable>> sortResources(List<Allocatable> resources) {
-        Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = new HashMap<RaplaType<Allocatable>, List<Allocatable>>();
+    /**
+     * returns a map(K,V) with a Type and the corespondent Resources
+     */
+    public Map<DynamicType, List<Allocatable>> getSortedAllocatables() {
+        Map<DynamicType, List<Allocatable>> sortedResources = new HashMap<>();
+        Allocatable[] resources = getAllocatables();
         for (Allocatable resource : resources) {
-            RaplaType<Allocatable> resourceType = resource.getRaplaType();
-            if (!sortedResources.containsKey(resourceType)) {
-                sortedResources.put(resourceType, new ArrayList<Allocatable>());
+            DynamicType type = resource.getClassification().getType();
+            if (!sortedResources.containsKey(type)) {
+                sortedResources.put(type, new ArrayList<Allocatable>());
             }
-            sortedResources.get(resourceType).add(resource);
+            sortedResources.get(type).add(resource);
         }
         return sortedResources;
     }

@@ -219,9 +219,9 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         });
 
         Locale locale = getRaplaLocale().getLocale();
-        Map<RaplaType<Allocatable>, List<Allocatable>> sortedResources = getPresenter().sortResources(resources);
-        for (RaplaType<Allocatable> resourceTypes : sortedResources.keySet()) {
-            String resourceTypeName = resourceTypes.getLocalName();
+        Map<DynamicType, List<Allocatable>> sortedResources = getPresenter().getSortedAllocatables();
+        for (DynamicType resourceTypes : sortedResources.keySet()) {
+            String resourceTypeName = resourceTypes.getName(locale);
             resourceTypesList.addItem(resourceTypeName);
             ListBox resourceList = new ListBox();
             resourceList.setVisibleItemCount(7);
