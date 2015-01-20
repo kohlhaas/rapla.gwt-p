@@ -45,8 +45,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     TextBox eventNameTB;
 
     ListBox language = new ListBox();
-    ListBox allCoursesLB = new ListBox();
-    ListBox allCoursesValuesLB = new ListBox();
     Button course = new Button("Studiengang");
     Button hideButton = null;
     String chosenEventType = "";
@@ -294,8 +292,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         		buttonRemoved = false;
         	}
             coursePanel.setVisible(true);
-
-
         }
     });
         final Locale locale = getRaplaLocale().getLocale();
@@ -329,7 +325,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
          */
 
   
-    	
         hideButton = new Button("Eingabe bestätigen");
         coursePanel.add(hideButton);
     	
