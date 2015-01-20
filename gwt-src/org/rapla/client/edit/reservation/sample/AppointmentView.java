@@ -17,7 +17,7 @@ public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubV
     public interface Presenter {
         Conflict[] getConflicts();
         void newAppointmentButtonPressed();
-        Date nextFreeDateButtonPressed(Date startDate, Date endDate);
+        Date[] nextFreeDateButtonPressed(Date startDate, Date endDate);
         void appointmentSelected(int selectedIndex);
         void removeAppointmentButtonPressed(int selectedIndex);
         void addResourceButtonPressed(int selectedIndex, String resourceTypeName, Locale locale);

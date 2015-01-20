@@ -3,16 +3,18 @@ package org.rapla.client.edit.reservation.sample.gwt;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
+
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
-import org.rapla.entities.RaplaType;
 import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import javax.inject.Inject;
+
 import java.util.*;
 
 public class AppointmentViewImpl extends AbstractView<Presenter> implements AppointmentView<IsWidget> {
@@ -21,8 +23,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     AppointmentFormater formatter;
 
     FlowPanel content = new FlowPanel();
-    RadioButton[] selectRepeat = new RadioButton[5];
-    FlowPanel selectRepeatPanel;
+    ListBox selectRepeat;
 
     FlowPanel appointmentPanel;
     FlowPanel resourcePanel;
@@ -63,7 +64,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         // "Add appointment" Button
         Button addAppointment = new Button("Termin hinzufügen");
-        addAppointment.setStyleName("add-appointment");
+        addAppointment.addStyleName("add-appointment");
         addAppointment.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -75,7 +76,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         // Appointment List
         appointmentList = new ListBox();
         updateAppointmentList(appointments, appointments.size() - 1);
-        appointmentList.setStyleName("appointment-list");
+        appointmentList.addStyleName("appointment-list");
         appointmentList.setVisibleItemCount(7);
         appointmentPanel.add(appointmentList);
         appointmentOptionsPanel = new FlowPanel();
@@ -89,14 +90,13 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         //fire change event to update appointment options panel
         DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
 
-
         // Resources Panel
         resourcePanel = new FlowPanel();
         resourcePanel.addStyleName("resource-panel");
         content.add(resourcePanel);
 
         resourceTypesList = new ListBox();
-        resourceTypesList.setStyleName("resources-types");
+        resourceTypesList.addStyleName("resources-types");
         resourcePanel.add(resourceTypesList);
         resourceListsPanel = new FlowPanel();
         resourceListsPanel.addStyleName("resources-lists");
@@ -104,32 +104,80 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         resourceLists = new HashMap<String, ListBox>();
         updateResources(resources);
     }
+    
+    private Date getStartDate() {
+		Date startDate = startDateField.getValue();
+       	startDate.setHours(startHourField.getValue());
+       	startDate.setMinutes(startMinuteField.getValue());
+       	return startDate;
+	}
+    
+    private Date getEndDate() {
+		Date endDate = endDateField.getValue();
+       	endDate.setHours(endHourField.getValue());
+       	endDate.setMinutes(endMinuteField.getValue());
+       	return endDate;
+	}
+    
+    private void setStartDate(Date date) {
+    	startDateField.setValue(date);
+    	startHourField.setValue(date.getHours());
+    	startMinuteField.setValue(date.getMinutes());
+	}
+    private void setEndDate(Date date) {
+    	endDateField.setValue(date);
+    	endHourField.setValue(date.getHours());
+    	endMinuteField.setValue(date.getMinutes());
+	}
 
-    public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
+	public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
         // Rechte Seite des Termin Panels
 
         // Create Panels and Widgets
         appointmentOptionsPanel.clear();
-        appointmentOptionsPanel.setStyleName("appointment-options");
+        appointmentOptionsPanel.addStyleName("appointment-options");
         appointmentPanel.add(appointmentOptionsPanel);
 
         // Repeat Radio Buttons
-        initRadioButtonRepeat();
-
+        selectRepeat = new ListBox();
+        selectRepeat.addItem("Nicht wiederholen");
+        selectRepeat.addItem("Täglich");
+        selectRepeat.addItem("Wöchentlich");
+        selectRepeat.addItem("Monatlich");
+        selectRepeat.addItem("Jährlich");
+        appointmentOptionsPanel.add(selectRepeat);
+        
         // Einzeltermine Button
         convertToSingleEventsButton = new Button("In Einzeltermine umwandeln");
         appointmentOptionsPanel.add(convertToSingleEventsButton);
 
         // Formular zur Zeit- & Datumswahl 
         appointmentDatesForm = new FlowPanel();
-        appointmentDatesForm.setStyleName("appointment-date-form");
+        appointmentDatesForm.addStyleName("appointment-date-form");
         appointmentOptionsPanel.add(appointmentDatesForm);
 
         initStartDateFields();
         initEndDateFields();
+        // "next free appointment" Button
+        nextFreeApp.setText("nächste freie Veranstaltung");
+        nextFreeApp.addStyleName("next-free-appointment");
+        appointmentDatesForm.add(nextFreeApp);
+        nextFreeApp.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+				Date[] dates = getPresenter().nextFreeDateButtonPressed(getStartDate(), getEndDate());
+				if (dates != null) {
+			        setStartDate(dates[0]);
+			        setEndDate(dates[1]);
+				}
+				else {
+					// TODO: Show popup that no free appointment is available 
+				}
+            }			
+        });
 
         Button removeAppointment = new Button("Termin löschen");
-        removeAppointment.setStyleName("remove-appointment");
+        removeAppointment.addStyleName("remove-appointment");
         removeAppointment.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -140,10 +188,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         // Fill in data from appointment object
         // Check the box according to selected appointment
-        Repeating repeat = selectedAppointment.getRepeating();
-        RadioButton checked = getCheckedRadioButton(repeat);
-
-        checked.setValue(true);
+        selectRepeat(selectedAppointment.getRepeating());
         // Fill text fields
         startDateField.setValue(selectedAppointment.getStart());
         startHourField.setText(hoursFormat.format(selectedAppointment.getStart()));
@@ -154,7 +199,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     }
 
-    public void updateAppointmentList(List<Appointment> appointments, int focus) {
+	public void updateAppointmentList(List<Appointment> appointments, int focus) {
         appointmentList.clear();
         for (Appointment a : appointments) {
             String appointmentLabel = df.format(a.getStart()) + " "; // + " - " + df.format(a.getEnd());
@@ -166,7 +211,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     @Override
     public void updateResources(List<Allocatable> resources) {
-        resourceLists.clear();
+    	resourceLists.clear();
         resourceTypesList.clear();
         resourceTypesList.addChangeHandler(new ChangeHandler() {
             @Override
@@ -215,26 +260,26 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     //TODO: startDate and EndDate is kind of redundant, maybe using a method for both ?
     private void initStartDateFields() {
         startFields = new FlowPanel();
-        startFields.setStyleName("start-datetime");
+        startFields.addStyleName("start-datetime");
         appointmentDatesForm.add(startFields);
 
         startDateField = new DateBox();
         startDateField.setFormat(new DateBox.DefaultFormat(df));
-        startDateField.setStyleName("date-field");
+        startDateField.addStyleName("date-field");
         startFields.add(startDateField);
 
         startHourField = new IntegerBox();
-        startHourField.setStyleName("time-field");
+        startHourField.addStyleName("time-field");
         startHourField.setMaxLength(2);
         startHourField.setVisibleLength(2);
         startFields.add(startHourField);
 
         startTimeColon = new Label(" : ");
-        startTimeColon.setStyleName("time-field");
+        startTimeColon.addStyleName("time-field");
         startFields.add(startTimeColon);
 
         startMinuteField = new IntegerBox();
-        startMinuteField.setStyleName("time-field");
+        startMinuteField.addStyleName("time-field");
         startMinuteField.setMaxLength(2);
         startMinuteField.setVisibleLength(2);
         startFields.add(startMinuteField);
@@ -242,67 +287,67 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     private void initEndDateFields() {
         endFields = new FlowPanel();
-        endFields.setStyleName("end-datetime");
+        endFields.addStyleName("end-datetime");
         appointmentDatesForm.add(endFields);
 
         //endDateField = new TextBox();
         endDateField = new DateBox();
         endDateField.setFormat(new DateBox.DefaultFormat(df));
-        endDateField.setStyleName("date-field");
+        endDateField.addStyleName("date-field");
 
         endFields.add(endDateField);
 
         endHourField = new IntegerBox();
-        endHourField.setStyleName("time-field");
+        endHourField.addStyleName("time-field");
         endHourField.setMaxLength(2);
         endHourField.setVisibleLength(2);
         endFields.add(endHourField);
 
         endTimeColon = new Label(" : ");
-        endTimeColon.setStyleName("time-field");
+        endTimeColon.addStyleName("time-field");
         endFields.add(endTimeColon);
 
         endMinuteField = new IntegerBox();
-        endMinuteField.setStyleName("time-field");
+        endMinuteField.addStyleName("time-field");
         endMinuteField.setMaxLength(2);
         endMinuteField.setVisibleLength(2);
         endFields.add(endMinuteField);
     }
-
-    private RadioButton getCheckedRadioButton(Repeating repeat) {
-        RadioButton checked = selectRepeat[0];
-        if (repeat != null) {
-            switch (repeat.getType()) {
+    
+    private void selectRepeat(Repeating repeating) {
+    	if (repeating != null) {
+            switch (repeating.getType()) {
                 case DAILY:
-                    checked = selectRepeat[1];
+                    selectRepeat.setItemSelected(1, true);
                     break;
                 case MONTHLY:
-                    checked = selectRepeat[2];
+                	selectRepeat.setItemSelected(2, true);
                     break;
                 case WEEKLY:
-                    checked = selectRepeat[3];
+                	selectRepeat.setItemSelected(3, true);
                     break;
                 case YEARLY:
-                    checked = selectRepeat[4];
+                	selectRepeat.setItemSelected(4, true);
                     break;
             }
-
         }
-        return checked;
-    }
-
-    private void initRadioButtonRepeat() {
-        selectRepeat[0] = new RadioButton("select-repeat", "Nicht wiederholen");
-        selectRepeat[1] = new RadioButton("select-repeat", "Täglich");
-        selectRepeat[2] = new RadioButton("select-repeat", "Wöchentlich");
-        selectRepeat[3] = new RadioButton("select-repeat", "Monatlich");
-        selectRepeat[4] = new RadioButton("select-repeat", "Jährlich");
-        selectRepeat[0].setValue(true);
-        selectRepeatPanel = new FlowPanel();
-        appointmentOptionsPanel.add(selectRepeatPanel);
-        for (RadioButton repeatButton : selectRepeat) {
-            selectRepeatPanel.add(repeatButton);
-        }
+    	else {
+    		selectRepeat.setItemSelected(0, true);
+    	}
+	}
+    private RepeatingType getSelectedRepeat() {
+    	switch (selectRepeat.getSelectedIndex()) {
+    		case 1:
+    			return Repeating.DAILY;
+    		case 2:
+    			return Repeating.WEEKLY;
+    		case 3:
+    			return Repeating.MONTHLY;
+    		case 4:
+    			return Repeating.YEARLY;
+    		default:
+    			return null;
+    	}
     }
 
 

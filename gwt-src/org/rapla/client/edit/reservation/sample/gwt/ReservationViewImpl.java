@@ -58,8 +58,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     public void show(Reservation event) {
 
-//        TODO: using the type in the name of the method or variable ... YES OR NO? Example:  initEventTypeListBox or initEventTypeLB or initEventType || content or contentPanel or PContent --> s. Hungarian Notation
-
     	/*Structuring GUI*/
 
         initRaplaPopupPanel();
@@ -76,7 +74,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         structuringPanels();
 
         /* Filling structure */
-        initEventTypeListBox();
+        initEventTypeListBoxes();
         //initCourseButton();
         initLabelEventNameInGrid();
         initEventNameTextBox();
@@ -171,7 +169,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         initTabs();
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
-        // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
 
         generalInformation.add(row1);
         generalInformation.add(coursePanel);
@@ -191,14 +188,15 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tabPanel.selectTab(0);
     }
 
-    private void initEventTypeListBox() {
+    private void initEventTypeListBoxes() {
         // Eventtype
-        final ListBox eventTypeLB = new ListBox();
-        eventTypeLB.setStyleName("eventtype");
         final DynamicType[] eventTypes = getPresenter().getAllEventTypes();
         final Locale locale = getRaplaLocale().getLocale();
+        final ListBox eventTypeLB = new ListBox();
 
-        
+        initLabelCurrentEventType(locale);
+
+        eventTypeLB.setStyleName("eventType");
 
         /**
          * SEHR UNSAUBER, nur grob, bitte ggf. verbessern --> ggf. in eigene Klasse oder Presenter
@@ -207,7 +205,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             eventTypeLB.addItem(dynamicType.getName(locale));
         }
         row1.add(eventTypeLB);
-        
 
         chosenEventType = eventTypeLB.getSelectedValue();
         if (chosenEventType.equalsIgnoreCase(null)) {
@@ -223,18 +220,26 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         }
 
+        mapDynamicTypesToChangeHandler(eventTypes, locale, eventTypeLB);
+
+
+        //row1.add(eventTypeLB);
+
+    }
+
+    private void mapDynamicTypesToChangeHandler(final DynamicType[] eventTypes, final Locale locale, final ListBox eventTypeLB) {
         eventTypeLB.addChangeHandler(new ChangeHandler() {
 
             @Override
             public void onChange(ChangeEvent event) {
             	//changedLehrveranstaltung = true;
-            	
+
                 language.clear();
-                
+
                 if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
                 	removeCourseButton();
                 	buttonRemoved = true;
-               
+
                 }
 
 
@@ -244,7 +249,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 }
                 for (DynamicType dynamicType : eventTypes) {
                     chosenEventType = eventTypeLB.getSelectedValue();
-                    
+
                     if (dynamicType.getName(locale).equals(chosenEventType)) {
 
                         for (Attribute attribute : dynamicType.getAttributes()) {
@@ -261,11 +266,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
             }
         });
-
-
-        //row1.add(eventTypeLB);
-
     }
+
+    private void initLabelCurrentEventType(Locale locale) {
+        String name = getPresenter().getEventType(locale);
+            Label label= new Label(name);
+            row1.add(label);
+        }
 
     private void initLanguageListBox() {
         // Language selection
@@ -281,7 +288,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
  */
         //Study course
     	
-    		        
         course.setStyleName("course");
         row1.add(course);
         
@@ -367,7 +373,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
             @Override
             public void onChange(ChangeEvent event) {
-                getPresenter().changeEventName(eventNameTB.getText());
+                getPresenter().changeReservationName(eventNameTB.getText());
             }
         });
         grid.setWidget(0, 1, eventNameTB);

@@ -26,7 +26,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     private ReservationView view;
     private AppointmentPresenter appointmentPresenter;
-    private Reservation event;
+    private Reservation reservation;
     boolean isNew;
 
     String tabName = "Termin- und Ressourcenplanung";
@@ -37,13 +37,13 @@ public class ReservationPresenter implements ReservationController, Presenter {
         this.view = view;
         view.setPresenter(this);
         this.appointmentPresenter = appointmentPresenter;
-        view.addSubView(tabName,appointmentPresenter.getView());
+        view.addSubView(tabName, appointmentPresenter.getView());
     }
 
 
     @Override
     public void edit(final Reservation event, boolean isNew) {
-        this.event = event;
+        this.reservation = event;
         this.isNew = isNew;
         appointmentPresenter.setReservation(event);
         view.show(event);
@@ -53,7 +53,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
     public void onSaveButtonClicked() {
         logger.info("save clicked");
         try {
-            facade.store(event);
+            facade.store(reservation);
         } catch (RaplaException e1) {
             logger.error(e1.getMessage(), e1);
         }
@@ -61,14 +61,14 @@ public class ReservationPresenter implements ReservationController, Presenter {
     }
 
     public String getCurrentReservationName(Locale locale) {
-        return event.getName(locale);
+        return reservation.getName(locale);
     }
 
     @Override
     public void onDeleteButtonClicked() {
         logger.info("delete clicked");
         try {
-            facade.remove(event);
+            facade.remove(reservation);
         } catch (RaplaException e1) {
             logger.error(e1.getMessage(), e1);
         }
@@ -95,20 +95,20 @@ public class ReservationPresenter implements ReservationController, Presenter {
     }
 
     /**
-     * @param Category Studiengänge, Benutzergruppen.
+     * @param searchCategory Studiengaenge, Benutzergruppen....
      * @return null if error
      */
-    public Category[] getCategory(Locale locale, String Category) {
+    public Category[] getCategory(Locale locale, String searchCategory) {
         Category courseCategory = null;
         Category superCategory = facade.getSuperCategory();
         Category[] categories = superCategory.getCategories();
         for (Category category : categories) {
-            if (category.getName(locale).equals(Category)) {
+            if (category.getName(locale).equals(searchCategory)) {
                 courseCategory = category;
             }
         }
         if (courseCategory == null) {
-            logger.error("there is no : " + Category);
+            logger.error("there is no : " + searchCategory);
         }
 
         if (courseCategory != null) {
@@ -118,11 +118,35 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
 
     @Override
-    public void changeEventName(String newName) {
+    public void changeReservationName(String newName) {
         logger.info("Name changed to " + newName);
-        Classification classification = event.getClassification();
+        Classification classification = reservation.getClassification();
         Attribute first = classification.getType().getAttributes()[0];
         classification.setValue(first, newName);
+    }
+
+    @Override
+    public void changeAttributes(Attribute [] attributes) {
+        logger.info("adding number of attributes: " + attributes.length);
+        Classification classification = reservation.getClassification();
+        DynamicType type = classification.getType();
+        for (Attribute attribute : attributes) {
+            type.addAttribute(attribute);
+        }
+    }
+
+
+    /**
+     * change String, but it will be added as parameter!
+     */
+    public String getEventType(Locale locale) {
+        if (!isNew) {
+            Classification classification = reservation.getClassification();
+            logger.info("returning Eventtype: " + classification.getType().getName());
+            return "current Event Type: "+classification.getType().getName(locale);
+        }
+        return "is new";
+
     }
 
 

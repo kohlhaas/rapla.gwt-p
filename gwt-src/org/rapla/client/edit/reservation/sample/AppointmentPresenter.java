@@ -82,7 +82,7 @@ public class AppointmentPresenter implements Presenter {
      * @param endDate
      * @return NULL if error
      */
-    public Date nextFreeDateButtonPressed(Date startDate, Date endDate) {
+    public Date[] nextFreeDateButtonPressed(Date startDate, Date endDate) {
         Appointment newAppointment;
         try {
             logger.info("accessing facade");
@@ -91,7 +91,15 @@ public class AppointmentPresenter implements Presenter {
             List<Allocatable> asList = Arrays.asList(facade.getAllocatables());
             FutureResult<Date> nextAllocatableDate = facade.getNextAllocatableDate(asList, newAppointment, calendarOptions);
             logger.info("next allo date: " + nextAllocatableDate.get().toString());
-            return nextAllocatableDate.get();
+            Date newStart = nextAllocatableDate.get();
+            if ( newStart != null)
+			{
+				newAppointment.move(newStart);
+				return new Date[] {newAppointment.getStart(), newAppointment.getEnd()};
+			}
+            else {
+            	return null;
+            }
         } catch (RaplaException e) {
             logger.error("error while using facade: ", e);
             return null;
