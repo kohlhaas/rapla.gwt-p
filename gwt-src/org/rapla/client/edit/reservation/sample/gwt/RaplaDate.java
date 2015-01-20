@@ -199,7 +199,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	}
 
 	public boolean isReccuringDate() {
-		return this.raplaDates.isEmpty();
+		return !(this.raplaDates.isEmpty());
 	}
 
 	public List<RaplaDate> getRaplaDateList() {

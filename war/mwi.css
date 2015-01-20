@@ -36,11 +36,17 @@
 }
 
 .gwt-TabBar .gwt-TabBarItem-wrapper {
-	width: 50%;
+	width: 130px;
 }
 
 .gwt-TabBar .gwt-TabBarItem {
 	font-size: 12pt;
+}
+.gwt-TabBar .gwt-TabBarItem-selected { 
+border-top: 2px solid black !important;
+border-left: 2px solid black !important;
+border-right: 2px solid black !important;
+	
 }
 
 .gwt-PopupPanel {
@@ -106,6 +112,20 @@
 	float: left;
 	width: 28px;
 	background-color: red;
+	border-radius: 50px;
+	color: white;
+	cursor: pointer;
+	height: 28px;
+	text-align: center;
+	font-size: 20px;
+	display: block;
+	margin-bottom: 3px;
+}
+
+.plusButtonResourceDatesClickable {
+	float: left;
+	width: 28px;
+	background-color: green;
 	border-radius: 50px;
 	color: white;
 	cursor: pointer;
@@ -295,6 +315,8 @@
 .singleDatesContainer{
 	width: 10px;
 	border: 1px solid #c2c2c2;
+	background-color: white;
+	
 	
 }
 .dateInput{

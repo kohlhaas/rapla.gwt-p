@@ -139,8 +139,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
      	popup.clear();
         
         bar = new TabBar();
-		bar.addTab("Veranstaltungsinfos");
+		bar.addTab("Veranstaltungsinformationen");
 		bar.addTab("Termine und Resourcen");
+		bar.setWidth(width + "px");
 	
 		cancel = new Button("abbrechen");
 		cancel.setStyleName("cancelButton");
@@ -172,7 +173,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 		layout = new VerticalPanel();
 		tabBarPanel = new FlowPanel();
 		buttonsPanel = new FlowPanel();
-
+		
 		tabBarPanel.add(bar);
         
 		bar.addSelectionHandler(new SelectionHandler<Integer>() {

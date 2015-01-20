@@ -86,6 +86,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	RaplaDate tmp;
 
 	HorizontalPanel end;
+	Label blank;
+	ListBox repeatType;
 
 	@Override
 	public IsWidget provideContent() {
@@ -111,7 +113,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			
 			FlowPanel firstDateListWidget = new FlowPanel();
 			firstDateListWidget.setStyleName("wildcardPanel");
-			Label explainer = new Label("Durch das Dr\u00FCcken des roten Plus-Buttons \u00F6ffnet sich das Fenster zur Erstellung von Terminen");
+			Label explainer = new Label("Durch das Dr\u00FCcken des Plus-Buttons lassen sich Termine erstellen");
 			explainer.setStyleName("wildcard");
 			firstDateListWidget.add(explainer);	
 			dateList.add(firstDateListWidget);
@@ -645,45 +647,47 @@ private void createResourceTree() {
 
 
 	class RepeatClickHandler implements ClickHandler{
-		boolean active = false;
-		Label blank;
-		HorizontalPanel repeatSettings;
-		ListBox repeatType;
+
 
 		@Override
 		public void onClick(ClickEvent event) {
 			
 			if(!(noReccuring.getValue())){
-					if(end.getWidgetCount() <= 5){
-					active = true;
-					end.remove(dateEnd);
-					blank = new Label("");
-					end.insert(blank,1);
-					end.setCellWidth(blank, "180px");
-					repeatType = new ListBox();
-					repeatType.addItem("Bis Datum");
-					repeatType.addItem("x Mal");
-					end.add(repeatType);
-					end.setCellVerticalAlignment(repeatType, HasVerticalAlignment.ALIGN_MIDDLE);
-					end.add(dateEnd);
-					cbRepeatType.add(repeatSettings);
-					}
+				setReccuringDateInputView();
+			}
 					
-			}if(noReccuring.getValue()){
-				active = false;
-				end.remove(1);
-				//end.remove(repeatType);
-				//end.remove(dateEnd);
-				end.insert(dateEnd, 1);
-				end.setCellWidth(dateEnd, "180px");
-				end.remove(4);
-				end.remove(4);
-				noReccuring.setValue(false);
-				cbRepeatType.setOpen(false);
+			if(noReccuring.getValue()){
+				resetDateInputView();
 			}
 			
 		}
 		
+	}
+	public void setReccuringDateInputView(){
+		if(end.getWidgetCount() <= 5){
+		end.remove(dateEnd);
+		blank = new Label("");
+		end.insert(blank,1);
+		end.setCellWidth(blank, "180px");
+		repeatType = new ListBox();
+		repeatType.addItem("Bis Datum");
+		repeatType.addItem("x Mal");
+		end.add(repeatType);
+		end.setCellVerticalAlignment(repeatType, HasVerticalAlignment.ALIGN_MIDDLE);
+		end.add(dateEnd);
+		}
+	}
+	
+	public void resetDateInputView(){
+		if(end.getWidgetCount() >= 5){
+		end.remove(1);
+		end.insert(dateEnd, 1);
+		end.setCellWidth(dateEnd, "180px");
+		end.remove(4);
+		end.remove(4);
+		noReccuring.setValue(false);
+		cbRepeatType.setOpen(false);
+		}
 	}
 	
 	@Override
@@ -758,6 +762,7 @@ private void createResourceTree() {
 		rewriteDate.setVisible(false);
 		buttonGarbageCan.setStyleName("buttonsResourceDates");
 		noReccuring.setValue(true);
+		resetDateInputView();
 		cbRepeatType.setOpen(false);
 	}
 
@@ -797,16 +802,16 @@ private void createResourceTree() {
 	@Override
 	public void addResources() {
 			dateDisclosurePanel.setOpen(false);
-			buttonPlus.setStyleName("buttonsResourceDatesClickable");		
+			buttonPlus.setStyleName("plusButtonResourceDatesClickable");		
 	}
 
 	
 	
 
 	@Override
-	public void setRaplaDate(RaplaDate tmp) {
+	public void setRaplaDate(RaplaDate temp) {
 
-		this.tmp = tmp;
+		this.tmp = temp;
 		dateList.setActive(tmp);
 		if(!(dateList.getActive() == -1)){
 			dateBegin.setValue(tmp.getBeginTime());
@@ -816,11 +821,18 @@ private void createResourceTree() {
 			buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
 			rewriteDate.setVisible(true);
 			tmp.setStyleName("singleDateClicked");
+			if(tmp.isReccuringDate()){
+				setReccuringDateInputView();
+			}
 		}else{
 			clearDateTimeInputFields();
 			buttonGarbageCan.setStyleName("buttonsResourceDates");
 			tmp.removeStyleName("singleDateClicked");
+			if(tmp.isReccuringDate()){	
+				tmp.setStyleName("singleDatesContainer");
+			}else{
 			tmp.setStyleName("singleDate");
+			}
 		}
 		
 
