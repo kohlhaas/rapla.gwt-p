@@ -3,8 +3,10 @@ package org.rapla.client.edit.reservation.sample.gwt;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
+
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
@@ -12,6 +14,7 @@ import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import javax.inject.Inject;
+
 import java.util.*;
 
 public class AppointmentViewImpl extends AbstractView<Presenter> implements AppointmentView<IsWidget> {
@@ -20,8 +23,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     AppointmentFormater formatter;
 
     FlowPanel content = new FlowPanel();
-    RadioButton[] selectRepeat = new RadioButton[5];
-    FlowPanel selectRepeatPanel;
+    ListBox selectRepeat;
 
     FlowPanel appointmentPanel;
     FlowPanel resourcePanel;
@@ -137,8 +139,14 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         appointmentPanel.add(appointmentOptionsPanel);
 
         // Repeat Radio Buttons
-        initRadioButtonRepeat();
-
+        selectRepeat = new ListBox();
+        selectRepeat.addItem("Nicht wiederholen");
+        selectRepeat.addItem("Täglich");
+        selectRepeat.addItem("Wöchentlich");
+        selectRepeat.addItem("Monatlich");
+        selectRepeat.addItem("Jährlich");
+        appointmentOptionsPanel.add(selectRepeat);
+        
         // Einzeltermine Button
         convertToSingleEventsButton = new Button("In Einzeltermine umwandeln");
         appointmentOptionsPanel.add(convertToSingleEventsButton);
@@ -180,10 +188,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         // Fill in data from appointment object
         // Check the box according to selected appointment
-        Repeating repeat = selectedAppointment.getRepeating();
-        RadioButton checked = getCheckedRadioButton(repeat);
-
-        checked.setValue(true);
+        selectRepeat(selectedAppointment.getRepeating());
         // Fill text fields
         startDateField.setValue(selectedAppointment.getStart());
         startHourField.setText(hoursFormat.format(selectedAppointment.getStart()));
@@ -194,7 +199,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     }
 
-    public void updateAppointmentList(List<Appointment> appointments, int focus) {
+	public void updateAppointmentList(List<Appointment> appointments, int focus) {
         appointmentList.clear();
         for (Appointment a : appointments) {
             String appointmentLabel = df.format(a.getStart()) + " "; // + " - " + df.format(a.getEnd());
@@ -308,41 +313,41 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endMinuteField.setVisibleLength(2);
         endFields.add(endMinuteField);
     }
-
-    private RadioButton getCheckedRadioButton(Repeating repeat) {
-        RadioButton checked = selectRepeat[0];
-        if (repeat != null) {
-            switch (repeat.getType()) {
+    
+    private void selectRepeat(Repeating repeating) {
+    	if (repeating != null) {
+            switch (repeating.getType()) {
                 case DAILY:
-                    checked = selectRepeat[1];
+                    selectRepeat.setItemSelected(1, true);
                     break;
                 case MONTHLY:
-                    checked = selectRepeat[2];
+                	selectRepeat.setItemSelected(2, true);
                     break;
                 case WEEKLY:
-                    checked = selectRepeat[3];
+                	selectRepeat.setItemSelected(3, true);
                     break;
                 case YEARLY:
-                    checked = selectRepeat[4];
+                	selectRepeat.setItemSelected(4, true);
                     break;
             }
-
         }
-        return checked;
-    }
-
-    private void initRadioButtonRepeat() {
-        selectRepeat[0] = new RadioButton("select-repeat", "Nicht wiederholen");
-        selectRepeat[1] = new RadioButton("select-repeat", "Täglich");
-        selectRepeat[2] = new RadioButton("select-repeat", "Wöchentlich");
-        selectRepeat[3] = new RadioButton("select-repeat", "Monatlich");
-        selectRepeat[4] = new RadioButton("select-repeat", "Jährlich");
-        selectRepeat[0].setValue(true);
-        selectRepeatPanel = new FlowPanel();
-        appointmentOptionsPanel.add(selectRepeatPanel);
-        for (RadioButton repeatButton : selectRepeat) {
-            selectRepeatPanel.add(repeatButton);
-        }
+    	else {
+    		selectRepeat.setItemSelected(0, true);
+    	}
+	}
+    private RepeatingType getSelectedRepeat() {
+    	switch (selectRepeat.getSelectedIndex()) {
+    		case 1:
+    			return Repeating.DAILY;
+    		case 2:
+    			return Repeating.WEEKLY;
+    		case 3:
+    			return Repeating.MONTHLY;
+    		case 4:
+    			return Repeating.YEARLY;
+    		default:
+    			return null;
+    	}
     }
 
 
