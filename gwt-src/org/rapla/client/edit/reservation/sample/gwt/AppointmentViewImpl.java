@@ -54,7 +54,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     FlowPanel startFields, endFields;
     Label startTimeColon, endTimeColon;
     CellList<Appointment> appointmentList;
-    ScrollPanel appointmentListScroll = new ScrollPanel();;
+    ScrollPanel appointmentListScroll;
     ListBox dynamicTypeList = new ListBox();
     ListBox allocatableList = new ListBox();
     Button nextFreeApp = new Button();
@@ -101,6 +101,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         // Appointment List
         //appointmentList = new CellList<>(null);
+        appointmentListScroll = new ScrollPanel();
         updateAppointmentList(appointments, appointments.size() - 1);
         appointmentListScroll.addStyleName("appointment-list-scroll");
         appointmentList.addStyleName("appointment-list");
