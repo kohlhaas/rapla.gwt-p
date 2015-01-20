@@ -427,7 +427,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onCancelButtonClicked();
                 }
             });
-            content.add(button);
+            popup.add(button);
         }
 
         if (getPresenter().isDeleteButtonEnabled()) {
@@ -439,7 +439,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onDeleteButtonClicked();
                 }
             });
-            content.add(button);
+            popup.add(button);
         }
 
         {
@@ -451,7 +451,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onSaveButtonClicked();
                 }
             });
-            content.add(button);
+            popup.add(button);
         }
     }
 
