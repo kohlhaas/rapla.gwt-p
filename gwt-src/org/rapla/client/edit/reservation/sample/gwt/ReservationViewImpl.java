@@ -37,17 +37,17 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     VerticalPanel upDown;
 
-    TextBox tb;
+    TextBox eventNameTB;
 
     ListBox language = new ListBox();
     ListBox allCoursesLB = new ListBox();
     ListBox allCoursesValuesLB = new ListBox();
     Button course = new Button("Studiengang");
-    Button ausblenden = null;
+    Button hideButton = null;
     String chosenEventType = "";
     String chosenLanguage = "";
     String chosenEventType1 = "";
-    Tree t;
+    Tree tree;
     boolean buttonRemoved = false;
     
 
@@ -285,10 +285,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     });
         final Locale locale = getRaplaLocale().getLocale();
         final Category[] allCourses = getPresenter().getCategory(locale, "Studiengänge");
-        t = new Tree();
+        tree = new Tree();
         TreeItem studiengangTreeItem = new TreeItem();
         studiengangTreeItem.setText("Studiengänge");
-        t.addItem(studiengangTreeItem);
+        tree.addItem(studiengangTreeItem);
         /**
          * here you got all categories like Allgemein, Wirtschaft, Technik etc.
          */
@@ -296,16 +296,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         for (Category category : allCourses) {
         	
             //allCoursesLB.addItem(category.getName(locale));
-        	t.addItem(new TreeItem());
-        	t.getItem(i).setText(category.getName(locale));
+        	tree.addItem(new TreeItem());
+        	tree.getItem(i).setText(category.getName(locale));
         	
         	for(Category underCategory : category.getCategories()){
-        		t.getItem(i).addItem(new TreeItem(new CheckBox(underCategory.getName(locale))));
+        		tree.getItem(i).addItem(new TreeItem(new CheckBox(underCategory.getName(locale))));
         	}
         	i++;
         	
         }
-        coursePanel.add(t);
+        coursePanel.add(tree);
 
         /**
          * here you got all underCategories "Technik --> Elektrotechnik,Informatik...| Wirtschaft --> BWl ..."
@@ -315,10 +315,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
   
     	
-        ausblenden = new Button("Eingabe bestätigen");
-        coursePanel.add(ausblenden);
+        hideButton = new Button("Eingabe bestätigen");
+        coursePanel.add(hideButton);
     	
-        ausblenden.addClickHandler(new ClickHandler() {
+        hideButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent e) {
                 coursePanel.setVisible(false);
@@ -334,8 +334,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     
     private void removeCourseButton(){
     	row1.remove(course);
-    	coursePanel.remove(t);
-    	coursePanel.remove(ausblenden);
+    	coursePanel.remove(tree);
+    	coursePanel.remove(hideButton);
     	
     }
 
@@ -348,16 +348,18 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void initEventNameTextBox() {
         //TextBox for insert eventname
-        tb = new TextBox();
-        tb.setStyleName("textbox");
-        tb.addChangeHandler(new ChangeHandler() {
+        eventNameTB = new TextBox();
+        Locale locale = getRaplaLocale().getLocale();
+        eventNameTB.setText(this.getPresenter().getCurrentReservationName(locale));
+        eventNameTB.setStyleName("textbox");
+        eventNameTB.addChangeHandler(new ChangeHandler() {
 
             @Override
             public void onChange(ChangeEvent event) {
-                getPresenter().changeEventName(tb.getText());
+                getPresenter().changeEventName(eventNameTB.getText());
             }
         });
-        grid.setWidget(0, 1, tb);
+        grid.setWidget(0, 1, eventNameTB);
 
     }
 
