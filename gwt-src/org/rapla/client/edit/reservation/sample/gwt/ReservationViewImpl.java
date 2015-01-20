@@ -25,6 +25,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
      */
 
     Panel popup;
+    FlowPanel headerPanel;
 
     TabPanel tabPanel; //Tabs for General Information and Appointment+Ressources-Planning
 
@@ -63,6 +64,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	/*Structuring GUI*/
 
         initRaplaPopupPanel();
+        initHeaderPanel();
         initTabPanel();
         initSaveDeleteCancelHPanel();
         initContentPanel();
@@ -77,6 +79,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         structuringPanels();
 
         /* Filling structure */
+        initCaptionLabel();
         initEventTypeListBoxes();
         //initCourseButton();
         initLabelEventNameInGrid();
@@ -115,6 +118,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void initTabPanel() {
         tabPanel = new TabPanel();
         tabPanel.addStyleName("tabPanel");
+    }
+    
+    private void initHeaderPanel(){
+    	headerPanel = new FlowPanel();
+    	headerPanel.setStyleName("headerPanel");
     }
     
     private void initSaveDeleteCancelHPanel(){
@@ -163,6 +171,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void clearPanels() {
         popup.clear();
+        headerPanel.clear();
         saveDeleteCancelHPanel.clear();
         tabPanel.clear();
         content.clear();
@@ -176,6 +185,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     private void structuringPanels() {
+    	popup.add(headerPanel);
         popup.add(tabPanel);
         popup.add(saveDeleteCancelHPanel);
         initTabs();
@@ -198,6 +208,15 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
 
         tabPanel.selectTab(0);
+    }
+    
+    private void initCaptionLabel(){
+    	Label captionLabel = new Label ("Veranstaltung anlegen");
+    	Label captionIcon = new Label();
+    	captionLabel.setStyleName("captionLabel");
+    	captionIcon.setStyleName("captionIcon");
+    	headerPanel.add(captionIcon);
+    	headerPanel.add(captionLabel);
     }
 
     private void initEventTypeListBoxes() {

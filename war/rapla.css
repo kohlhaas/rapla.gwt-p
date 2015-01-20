@@ -1,5 +1,29 @@
-/** Add css rules here for your application. */
+.headerPanel{
+	padding-bottom: 20px;
+	vertical-align: middle;
 
+}
+
+
+
+.captionLabel{
+	font-family: "Calibri";
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-weight: bold;
+	font-size: 25px;
+	color: white;
+	text-align: center;
+	background-color: cornflowerblue;
+}
+
+.captionLabel::before {
+	content: url('images/022 Document Add.png');
+	padding-right: 10px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+
+}
 
 .tabPanel {
 	padding-bottom: 10px;
