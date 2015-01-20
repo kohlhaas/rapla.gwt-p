@@ -31,7 +31,21 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     String tabName = "Termin- und Ressourcenplanung";
 
+    /**
+     * ich brauch einfunktion die den veranstaltungstyp speichert, eine funktion die die sprache speichert
 
+     eine funktion die alle verfügbaren sprachen holt (Daten)
+
+     und die daten sollen alle gespeichert werden, wenn ich auf speichern button klicke
+
+     eine funktion, die die geplanten vorlesungsstunden abspeichert
+
+     aber das sind eig. alles attribute oder?
+
+     ich brauch noch eine funktion die alle  Daten zu Attribut "Art" bei dem Veranstaltungstyp "Prüfungen" ausließt
+     * @param view
+     * @param appointmentPresenter
+     */
     @Inject
     public ReservationPresenter(ReservationView view, AppointmentPresenter appointmentPresenter) {
         this.view = view;
@@ -43,7 +57,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
     /**
      * TODO: have to add the depth or smth similiar to know it, else an another class
      */
-    public List<String>  getCategoryNames(Locale locale) {
+    public List<String> getCategoryNames(Locale locale) {
 
         List<String> stringList= new ArrayList<>();
         Category superCategory = facade.getSuperCategory();

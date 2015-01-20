@@ -206,6 +206,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         grid.clear();
         //upDown.clear();
         contentRes.clear();
+        allKeys.clear();
+        allLanguageLB.clear();
+
     }
 
     private void structuringPanels() {
