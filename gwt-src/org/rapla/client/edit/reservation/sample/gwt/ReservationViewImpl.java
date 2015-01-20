@@ -58,8 +58,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     public void show(Reservation event) {
 
-//        TODO: using the type in the name of the method or variable ... YES OR NO? Example:  initEventTypeListBox or initEventTypeLB or initEventType || content or contentPanel or PContent --> s. Hungarian Notation
-
     	/*Structuring GUI*/
 
         initRaplaPopupPanel();
@@ -76,7 +74,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         structuringPanels();
 
         /* Filling structure */
-        initEventTypeListBox();
+        initEventTypeListBoxes();
         //initCourseButton();
         initLabelEventNameInGrid();
         initEventNameTextBox();
@@ -189,7 +187,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tabPanel.selectTab(0);
     }
 
-    private void initEventTypeListBox() {
+    private void initEventTypeListBoxes() {
         // Eventtype
         final DynamicType[] eventTypes = getPresenter().getAllEventTypes();
         final Locale locale = getRaplaLocale().getLocale();
@@ -221,18 +219,26 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         }
 
+        mapDynamicTypesToChangeHandler(eventTypes, locale, eventTypeLB);
+
+
+        //row1.add(eventTypeLB);
+
+    }
+
+    private void mapDynamicTypesToChangeHandler(final DynamicType[] eventTypes, final Locale locale, final ListBox eventTypeLB) {
         eventTypeLB.addChangeHandler(new ChangeHandler() {
 
             @Override
             public void onChange(ChangeEvent event) {
             	//changedLehrveranstaltung = true;
-            	
+
                 language.clear();
-                
+
                 if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
                 	removeCourseButton();
                 	buttonRemoved = true;
-               
+
                 }
 
 
@@ -242,7 +248,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 }
                 for (DynamicType dynamicType : eventTypes) {
                     chosenEventType = eventTypeLB.getSelectedValue();
-                    
+
                     if (dynamicType.getName(locale).equals(chosenEventType)) {
 
                         for (Attribute attribute : dynamicType.getAttributes()) {
@@ -259,10 +265,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
             }
         });
-
-
-        //row1.add(eventTypeLB);
-
     }
 
     private void initLabelCurrentEventType(Locale locale) {

@@ -95,20 +95,20 @@ public class ReservationPresenter implements ReservationController, Presenter {
     }
 
     /**
-     * @param Category Studiengänge, Benutzergruppen.
+     * @param searchCourse Studiengänge, Benutzergruppen.
      * @return null if error
      */
-    public Category[] getCategory(Locale locale, String Category) {
+    public Category[] getCategory(Locale locale, String searchCourse) {
         Category courseCategory = null;
         Category superCategory = facade.getSuperCategory();
         Category[] categories = superCategory.getCategories();
         for (Category category : categories) {
-            if (category.getName(locale).equals(Category)) {
+            if (category.getName(locale).equals(searchCourse)) {
                 courseCategory = category;
             }
         }
         if (courseCategory == null) {
-            logger.error("there is no : " + Category);
+            logger.error("there is no : " + searchCourse);
         }
 
         if (courseCategory != null) {
