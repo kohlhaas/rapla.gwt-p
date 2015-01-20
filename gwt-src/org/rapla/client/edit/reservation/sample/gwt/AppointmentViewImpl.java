@@ -1,11 +1,27 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.CompositeCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.HasCell;
+import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.cell.client.ImageCell;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.text.shared.SafeHtmlRenderer;
+import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
+import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent.Handler;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
@@ -16,6 +32,7 @@ import org.rapla.entities.dynamictype.DynamicType;
 import javax.inject.Inject;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class AppointmentViewImpl extends AbstractView<Presenter> implements AppointmentView<IsWidget> {
 
@@ -34,7 +51,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     DateBox startDateField, endDateField;
     FlowPanel startFields, endFields;
     Label startTimeColon, endTimeColon;
-    ListBox appointmentList;
+    CellList<Appointment> appointmentList;
+    ScrollPanel appointmentListScroll = new ScrollPanel();;
     ListBox dynamicTypeList = new ListBox();
     ListBox allocatableList = new ListBox();
     Button nextFreeApp = new Button();
@@ -47,6 +65,10 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     private FlowPanel resourceListsPanel;
     private ListBox resourceTypesList;
     private Map<String, ListBox> resourceLists;
+    
+    ListDataProvider<Appointment> appointmentDataProvider = new ListDataProvider<>();
+    
+    SingleSelectionModel<Appointment> selectionModel;
 
 
     /**
@@ -74,21 +96,14 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         appointmentPanel.add(addAppointment);
 
         // Appointment List
-        appointmentList = new ListBox();
+        //appointmentList = new CellList<>(null);
         updateAppointmentList(appointments, appointments.size() - 1);
+        appointmentListScroll.addStyleName("appointment-list-scroll");
         appointmentList.addStyleName("appointment-list");
-        appointmentList.setVisibleItemCount(7);
-        appointmentPanel.add(appointmentList);
+        appointmentPanel.add(appointmentListScroll);
+        appointmentListScroll.add(appointmentList);
+        
         appointmentOptionsPanel = new FlowPanel();
-        appointmentList.addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent change) {
-                ListBox appointmentList = (ListBox) change.getSource();
-                getPresenter().appointmentSelected(appointmentList.getSelectedIndex());
-            }
-        });
-        //fire change event to update appointment options panel
-        DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
 
         // Resources Panel
         resourcePanel = new FlowPanel();
@@ -131,13 +146,19 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 	}
 
 	public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
-        // Rechte Seite des Termin Panels
-
         // Create Panels and Widgets
         appointmentOptionsPanel.clear();
         appointmentOptionsPanel.addStyleName("appointment-options");
         appointmentPanel.add(appointmentOptionsPanel);
-
+        
+        if (selectedAppointment == null) {
+        	Logger.getGlobal().info("### null appointment selected");
+        	return;
+        }
+        else {
+        	Logger.getGlobal().info("### appointment selected: "+ selectedAppointment.getStart());
+        }
+        
         // Repeat Radio Buttons
         selectRepeat = new ListBox();
         selectRepeat.addItem("Nicht wiederholen");
@@ -176,16 +197,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
             }			
         });
 
-        Button removeAppointment = new Button("Termin löschen");
-        removeAppointment.addStyleName("remove-appointment");
-        removeAppointment.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getPresenter().removeAppointmentButtonPressed(appointmentList.getSelectedIndex());
-            }
-        });
-        appointmentOptionsPanel.add(removeAppointment);
-
         // Fill in data from appointment object
         // Check the box according to selected appointment
         selectRepeat(selectedAppointment.getRepeating());
@@ -200,13 +211,60 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     }
 
 	public void updateAppointmentList(List<Appointment> appointments, int focus) {
-        appointmentList.clear();
-        for (Appointment a : appointments) {
-            String appointmentLabel = df.format(a.getStart()) + " "; // + " - " + df.format(a.getEnd());
-            appointmentList.addItem(appointmentLabel);
+		appointmentDataProvider.setList(appointments);
+		ProvidesKey<Appointment> keyProvider = new ProvidesKey<Appointment>() {
+			@Override
+			public String getKey(Appointment a) {
+				return a.getId();
+			}
+		};
+        List<HasCell<Appointment, ?>> row = new ArrayList<>();
+        TextCell labelCell = new TextCell();
+        ButtonImageCell iconCell = new ButtonImageCell();
+        Column<Appointment,String> labelColumn = new Column<Appointment,String>(labelCell) {
+			@Override
+			public String getValue(Appointment appointment) {
+				return df.format(appointment.getStart());
+			}
+        };
+        Column<Appointment,String> iconColumn = new Column<Appointment,String>(iconCell) {
+			@Override
+			public String getValue(Appointment appointment) {
+				return "images/black/080 Trash.png";
+			}
+        };
+        iconColumn.setFieldUpdater(new FieldUpdater<Appointment,String>() {
+			@Override
+			public void update(int index, Appointment object, String value) {
+				getPresenter().removeAppointmentButtonPressed(index);
+			}
+		});
+        row.add(labelColumn);
+        row.add(iconColumn);
+        CompositeCell<Appointment> appointmentCell = new CompositeCell<Appointment>(row);
+        appointmentList = new CellList<>(appointmentCell);
+        appointmentList.setRowCount(appointments.size());
+        appointmentDataProvider.addDataDisplay(appointmentList);
+        
+        if (selectionModel==null) {
+        	selectionModel = new SingleSelectionModel<Appointment>(keyProvider);
+	        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+				@Override
+				public void onSelectionChange(SelectionChangeEvent event) {
+					updateAppointmentOptionsPanel(selectionModel.getSelectedObject());
+				}
+			});
         }
-        appointmentList.setSelectedIndex(focus);
-        DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
+        appointmentList.setSelectionModel(selectionModel);
+        
+        if(focus>=0) {
+        	selectionModel.setSelected(appointments.get(focus), true);
+        	//Logger.getGlobal().info("### focus: " + selectionModel.isSelected(appointments.get(focus)));
+        }
+        else {
+        	selectionModel.setSelected(null, true);
+        }
+        appointmentListScroll.onResize();
     }
 
     @Override
