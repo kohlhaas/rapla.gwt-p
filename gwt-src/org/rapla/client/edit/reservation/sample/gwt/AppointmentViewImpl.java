@@ -8,7 +8,6 @@ import com.google.gwt.user.datepicker.client.DateBox;
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
-import org.rapla.entities.RaplaType;
 import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 
@@ -89,7 +88,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         //fire change event to update appointment options panel
         DomEvent.fireNativeEvent(Document.get().createChangeEvent(), appointmentList);
 
-
         // Resources Panel
         resourcePanel = new FlowPanel();
         resourcePanel.addStyleName("resource-panel");
@@ -104,8 +102,33 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         resourceLists = new HashMap<String, ListBox>();
         updateResources(resources);
     }
+    
+    private Date getStartDate() {
+		Date startDate = startDateField.getValue();
+       	startDate.setHours(startHourField.getValue());
+       	startDate.setMinutes(startMinuteField.getValue());
+       	return startDate;
+	}
+    
+    private Date getEndDate() {
+		Date endDate = endDateField.getValue();
+       	endDate.setHours(endHourField.getValue());
+       	endDate.setMinutes(endMinuteField.getValue());
+       	return endDate;
+	}
+    
+    private void setStartDate(Date date) {
+    	startDateField.setValue(date);
+    	startHourField.setValue(date.getHours());
+    	startMinuteField.setValue(date.getMinutes());
+	}
+    private void setEndDate(Date date) {
+    	endDateField.setValue(date);
+    	endHourField.setValue(date.getHours());
+    	endMinuteField.setValue(date.getMinutes());
+	}
 
-    public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
+	public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
         // Rechte Seite des Termin Panels
 
         // Create Panels and Widgets
@@ -127,6 +150,23 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         initStartDateFields();
         initEndDateFields();
+        // "next free appointment" Button
+        nextFreeApp.setText("nächste freie Veranstaltung");
+        nextFreeApp.addStyleName("next-free-appointment");
+        appointmentDatesForm.add(nextFreeApp);
+        nextFreeApp.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+				Date[] dates = getPresenter().nextFreeDateButtonPressed(getStartDate(), getEndDate());
+				if (dates != null) {
+			        setStartDate(dates[0]);
+			        setEndDate(dates[1]);
+				}
+				else {
+					// TODO: Show popup that no free appointment is available 
+				}
+            }			
+        });
 
         Button removeAppointment = new Button("Termin löschen");
         removeAppointment.addStyleName("remove-appointment");
@@ -166,7 +206,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     @Override
     public void updateResources(List<Allocatable> resources) {
-        resourceLists.clear();
+    	resourceLists.clear();
         resourceTypesList.clear();
         resourceTypesList.addChangeHandler(new ChangeHandler() {
             @Override
