@@ -21,6 +21,7 @@ public interface ReservationView<W> extends View<Presenter> {
     DynamicType[] getAllEventTypes();
     Category[] getCategory(Locale locale, String studiengaenge);
     String getCurrentReservationName(Locale locale);
+    String getEventType(Locale locale);
   }
 
   void show(Reservation event);

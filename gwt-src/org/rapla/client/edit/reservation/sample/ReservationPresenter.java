@@ -37,7 +37,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
         this.view = view;
         view.setPresenter(this);
         this.appointmentPresenter = appointmentPresenter;
-        view.addSubView(tabName,appointmentPresenter.getView());
+        view.addSubView(tabName, appointmentPresenter.getView());
     }
 
 
@@ -123,6 +123,18 @@ public class ReservationPresenter implements ReservationController, Presenter {
         Classification classification = event.getClassification();
         Attribute first = classification.getType().getAttributes()[0];
         classification.setValue(first, newName);
+    }
+
+    /**
+     */
+    public String getEventType(Locale locale) {
+        if (!isNew) {
+            Classification classification = event.getClassification();
+            logger.info("returning Eventtype: " + classification.getType().getName());
+            return "current Event Type: "+classification.getType().getName(locale);
+        }
+        return "is new";
+
     }
 
 

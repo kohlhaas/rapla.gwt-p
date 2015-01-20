@@ -171,7 +171,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         initTabs();
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
-        // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
 
         generalInformation.add(row1);
         generalInformation.add(coursePanel);
@@ -192,12 +191,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void initEventTypeListBox() {
         // Eventtype
-        final ListBox eventTypeLB = new ListBox();
-        eventTypeLB.setStyleName("eventtype");
         final DynamicType[] eventTypes = getPresenter().getAllEventTypes();
         final Locale locale = getRaplaLocale().getLocale();
+        final ListBox eventTypeLB = new ListBox();
 
-        
+        initLabelCurrentEventType(locale);
+        eventTypeLB.setStyleName("eventType");
 
         /**
          * SEHR UNSAUBER, nur grob, bitte ggf. verbessern --> ggf. in eigene Klasse oder Presenter
@@ -206,7 +205,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             eventTypeLB.addItem(dynamicType.getName(locale));
         }
         row1.add(eventTypeLB);
-        
 
         chosenEventType = eventTypeLB.getSelectedValue();
         if (chosenEventType.equalsIgnoreCase(null)) {
@@ -265,6 +263,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //row1.add(eventTypeLB);
 
     }
+
+    private void initLabelCurrentEventType(Locale locale) {
+        String name = getPresenter().getEventType(locale);
+            Label label= new Label(name);
+            row1.add(label);
+        }
 
     private void initLanguageListBox() {
         // Language selection
