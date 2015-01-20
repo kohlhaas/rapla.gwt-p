@@ -29,13 +29,15 @@ public class ReservationPresenter implements ReservationController, Presenter {
     private Reservation event;
     boolean isNew;
 
+    String tabName = "Termin- und Ressourcenplanung";
+
 
     @Inject
     public ReservationPresenter(ReservationView view, AppointmentPresenter appointmentPresenter) {
         this.view = view;
         view.setPresenter(this);
         this.appointmentPresenter = appointmentPresenter;
-        view.addSubView(appointmentPresenter.getView());
+        view.addSubView(tabName,appointmentPresenter.getView());
     }
 
 

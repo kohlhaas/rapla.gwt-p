@@ -15,6 +15,8 @@ import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
@@ -28,11 +30,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     FlowPanel content;
     FlowPanel contentRes = new FlowPanel();
-    FlowPanel subView = new FlowPanel();
     FlowPanel generalInformation;
     FlowPanel row1;
     FlowPanel part2;
     FlowPanel coursePanel;
+
+    List<TabPanelRapla> tabs =  new ArrayList<>();
 
 
     Grid grid;
@@ -167,9 +170,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void structuringPanels() {
         popup.add(tabPanel);
-        tabPanel.add(content, "Allgemeine Informationen");
-        tabPanel.add(subView, "Termin- und Ressourcenplanung");
-        tabPanel.selectTab(0);
+        initTabs();
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
         // content.add(subView); //Notiz Yvonne: Inhalt von SampleAppointmentViewImpl.java wird hier hinzugef�gt
@@ -179,6 +180,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         generalInformation.add(part2);
         part2.add(grid);
         part2.add(upDown);
+    }
+
+    private void initTabs(){
+        tabPanel.add(content, "Allgemeine Informationen");
+
+        for (TabPanelRapla tab : tabs) {
+            tabPanel.add(tab.getTab(),tab.getName());
+        }
+
+        tabPanel.selectTab(0);
     }
 
     private void initEventTypeListBox() {
@@ -451,9 +462,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     //Method to insert the AppointmentView as SubView to the ReservationView
     @Override
-    public void addSubView(ReservationEditSubView<IsWidget> view) {
-        IsWidget provideContent = view.provideContent();
-        subView.add(provideContent.asWidget());
+    public void addSubView(String tabName, ReservationEditSubView<IsWidget> view) {
+        IsWidget providedContent = view.provideContent();
+        FlowPanel flowPanel = new FlowPanel();
+        flowPanel.add(providedContent);
+        TabPanelRapla aTab= new TabPanelRapla(tabName,flowPanel);
+        tabs.add(aTab);
     }
 
 }

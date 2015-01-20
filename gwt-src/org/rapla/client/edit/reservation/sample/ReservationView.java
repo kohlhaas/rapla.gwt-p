@@ -25,5 +25,5 @@ public interface ReservationView<W> extends View<Presenter> {
 
   void show(Reservation event);
   void hide();
-  void addSubView(ReservationEditSubView<W> view);
+  void addSubView(String tabName,ReservationEditSubView<W> view);
 }
