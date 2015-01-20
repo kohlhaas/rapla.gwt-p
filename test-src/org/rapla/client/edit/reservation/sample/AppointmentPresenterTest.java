@@ -40,6 +40,16 @@ public class AppointmentPresenterTest {
       when(event.getAppointments()).thenReturn(new Appointment[1]);
       
   }
+  
+//  @Before
+//  public void setupReservation(){
+//	  try {
+//		event = facade.newReservation();
+//	} catch (RaplaException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+//  }
 
   public static class Module extends JukitoModule {
       protected void configureTest() {
@@ -96,7 +106,16 @@ public class AppointmentPresenterTest {
     
     // TODO: add test for return value in view
     
-        
+    // WHEN
+    presenter.appointmentSelected(0);
+    
+    // THEN
+    // test if getAppointments is called
+    Appointment[] appArray = verify(event, Mockito.times(4)).getAppointments();
+    
+    
+    // test if view is updated with the right Appointment
+    //verify(editView).updateAppointmentOptionsPanel(appArray[0]);
     
   }
   
