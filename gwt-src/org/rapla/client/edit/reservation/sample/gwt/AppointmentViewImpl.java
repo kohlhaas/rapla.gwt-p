@@ -22,6 +22,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
+
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
@@ -29,6 +30,7 @@ import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import javax.inject.Inject;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -46,7 +48,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     FlowPanel appointmentOptionsPanel;
     Button convertToSingleEventsButton;
     FlowPanel appointmentDatesForm;
-    IntegerBox startHourField, startMinuteField, endHourField, endMinuteField;
+    TextBox startHourField, startMinuteField, endHourField, endMinuteField;
     DateBox startDateField, endDateField;
     FlowPanel startFields, endFields;
     Label startTimeColon, endTimeColon;
@@ -121,27 +123,34 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     
     private Date getStartDate() {
 		Date startDate = startDateField.getValue();
-       	startDate.setHours(startHourField.getValue());
-       	startDate.setMinutes(startMinuteField.getValue());
+       	startDate.setHours(Integer.parseInt(startHourField.getValue()));
+       	startDate.setMinutes(Integer.parseInt(startMinuteField.getValue()));
        	return startDate;
 	}
     
-    private Date getEndDate() {
+    private Date getEndDate() { 
 		Date endDate = endDateField.getValue();
-       	endDate.setHours(endHourField.getValue());
-       	endDate.setMinutes(endMinuteField.getValue());
+       	endDate.setHours(Integer.parseInt(endHourField.getValue()));
+       	endDate.setMinutes(Integer.parseInt(endMinuteField.getValue()));
        	return endDate;
 	}
     
     private void setStartDate(Date date) {
     	startDateField.setValue(date);
-    	startHourField.setValue(date.getHours());
-    	startMinuteField.setValue(date.getMinutes());
+    	startHourField.setValue(addZero(date.getHours()));
+    	startMinuteField.setValue(addZero(date.getMinutes()));
 	}
     private void setEndDate(Date date) {
     	endDateField.setValue(date);
-    	endHourField.setValue(date.getHours());
-    	endMinuteField.setValue(date.getMinutes());
+    	endHourField.setValue(addZero(date.getHours()));
+    	endMinuteField.setValue(addZero(date.getMinutes()));
+	}
+
+	private String addZero(int n) {
+		if(n<10)
+			return "0"+n;
+		else
+			return ""+n;
 	}
 
 	public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
@@ -292,7 +301,9 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
                 resourceList.addItem(resource.getName(locale));
             }
         }
-
+        // TODO: Remove after demo; selects the second in list because looks nicer
+        if(sortedResources.keySet().size() > 1)
+        	resourceTypesList.setItemSelected(1, true);
         DomEvent.fireNativeEvent(Document.get().createChangeEvent(), resourceTypesList);
     }
 
@@ -322,7 +333,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         startDateField.addStyleName("date-field");
         startFields.add(startDateField);
 
-        startHourField = new IntegerBox();
+        startHourField = new TextBox();
         startHourField.addStyleName("time-field");
         startHourField.setMaxLength(2);
         startHourField.setVisibleLength(2);
@@ -332,7 +343,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         startTimeColon.addStyleName("time-field");
         startFields.add(startTimeColon);
 
-        startMinuteField = new IntegerBox();
+        startMinuteField = new TextBox();
         startMinuteField.addStyleName("time-field");
         startMinuteField.setMaxLength(2);
         startMinuteField.setVisibleLength(2);
@@ -351,7 +362,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         endFields.add(endDateField);
 
-        endHourField = new IntegerBox();
+        endHourField = new TextBox();
         endHourField.addStyleName("time-field");
         endHourField.setMaxLength(2);
         endHourField.setVisibleLength(2);
@@ -361,7 +372,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endTimeColon.addStyleName("time-field");
         endFields.add(endTimeColon);
 
-        endMinuteField = new IntegerBox();
+        endMinuteField = new TextBox();
         endMinuteField.addStyleName("time-field");
         endMinuteField.setMaxLength(2);
         endMinuteField.setVisibleLength(2);
