@@ -110,19 +110,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         upDown.add(down);  */
 
         initSaveDeleteCancelButtons();
-
-        /**
-         *
-         */
         final Locale locale = getRaplaLocale().getLocale();
-        final Category[] languagesCategory = getPresenter().getCategory(locale, "Sprachen");
-        for (Category language : languagesCategory) {
-            allLanguageLB.addItem(language.getName(locale));
-        }
-        row1.add(allLanguageLB);
 
         /**
-         * das sind die Namen für getCategory Werte (Methode von oben)
+         * das sind die Namen für getCategory Werte (Methode von unten), Theorethisch koentest du die beiden listboxen voneinander abhaengig machen
          */
         List<String> keys = getPresenter().getCategoryNames(locale);
         for (String key : keys) {
@@ -130,6 +121,17 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
 
         row1.add(allKeys);
+
+
+        /**
+         *
+         */
+        final Category[] languagesCategory = getPresenter().getCategory(locale, "Sprachen");
+        for (Category language : languagesCategory) {
+            allLanguageLB.addItem(language.getName(locale));
+        }
+        row1.add(allLanguageLB);
+
 
 
     }
