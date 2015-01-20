@@ -51,8 +51,13 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		this.infoViewPresenter = infoViewPresenter;
 		this.resourceDatesPresenter = resourceDatesPresenter;
 
+		// ((InfoView) infoViewPresenter.getView()).createContent();
+		// ((ResourceDatesView)
+		// resourceDatesPresenter.getView()).createContent();
+
 		view.addSubView(infoViewPresenter.getView());
 		view.addSubView(resourceDatesPresenter.getView());
+
 		// InfoView test2 = (InfoView) infoViewPresenter.getView();
 		// test2.hide();
 
@@ -67,8 +72,11 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		this.isNew = isNew;
 		infoViewPresenter.setReservation(event);
 		// resourceViewPresenter.setReservation(event);
-		view.show(event);
 
+		((InfoView) infoViewPresenter.getView()).createContent();
+		((ResourceDatesView) resourceDatesPresenter.getView()).createContent();
+
+		view.show(event);
 	}
 
 	@Override
@@ -87,26 +95,31 @@ public class ReservationPresenter implements ReservationController, Presenter {
 			logger.error(e1.getMessage(), e1);
 		}
 		view.hide();
+		view.setCurrentSubView(null);
 	}
 
 	public void saveTemporaryChanges() throws RaplaException {
-		saveTemporaryChanges(view.getCurrentSubView());
+		if (view.getCurrentSubView() != null)
+			saveTemporaryChanges(view.getCurrentSubView());
 	}
 
 	private void saveTemporaryChanges(ReservationEditSubView currentView)
 			throws RaplaException {
 
+		logger.info("Save temporary changes");
 		Classification classificationTmp = tempReservation.getClassification();
 		String reservationName;
 		Locale locale = raplaLocale.getLocale();
-
+		logger.info("...");
 		if (currentView instanceof InfoView) {
 
+			logger.info("1...");
 			reservationName = ((InfoView) currentView).getTitelInput();
 
 			// Set new Titel/Name for reservationTmp
 			Attribute first = classificationTmp.getType().getAttributes()[0];
 			classificationTmp.setValue(first, reservationName);
+			logger.info("2...");
 			// // DynamicType[] types;
 			// types = ReservationController.this
 			// .getFacade()
@@ -147,6 +160,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 			// }
 			// }
 
+			logger.info("3...");
 			// change reservation type
 			for (DynamicType type : facade
 					.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION)) {
@@ -214,6 +228,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 			// Attribute attrTmp = facade.newAttribute(AttributeType.INT);
 			// Allocatable resourceDuration = facade.newResource();
 
+			logger.info("4...");
 			// set Vorlesungstunden
 			if (tempReservation
 					.getClassification()
@@ -225,7 +240,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 						.parseInt(((InfoView) currentView)
 								.getVorlesungsStundenInput()));
 			}
-
+			logger.info("5...");
 			// classificationTmp = facade
 			// .getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE)[0]
 			// .newClassification();
@@ -286,7 +301,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 			// getCreateableDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
 
 		} else {
-			currentView = (ResourceDatesView) currentView;
+			// currentView = (ResourceDatesView) currentView;
 		}
 
 		// logger.log(Level.WARNING, "All Attributes - ");
@@ -315,12 +330,14 @@ public class ReservationPresenter implements ReservationController, Presenter {
 			logger.error(e1.getMessage(), e1);
 		}
 		view.hide();
+		view.setCurrentSubView(null);
 	}
 
 	@Override
 	public void onCancelButtonClicked() {
 		logger.info("cancel clicked");
 		view.hide();
+		view.setCurrentSubView(null);
 	}
 
 	@Override
@@ -338,6 +355,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
 	@Override
 	public void onTabChanged(int selectedTab) {
+		logger.info("Changed Tab");
 		try {
 			this.saveTemporaryChanges();
 		} catch (RaplaException e) {
@@ -345,6 +363,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 			e.printStackTrace();
 		}
 
+		logger.info("Saved temporary changes");
 		ReservationEditSubView tempView = infoViewPresenter.getView();
 
 		if (selectedTab == 0) {
@@ -354,30 +373,27 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		} else {
 
 		}
-
+		logger.info("update view");
 		view.update(tempView);
+		logger.info("updated view");
 
-		
-		if(tempView instanceof InfoView){
+		if (tempView instanceof InfoView) {
 			try {
 				((InfoView) tempView).setEventTypes(this.getEventTypes());
 			} catch (RaplaException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if(tempView instanceof ResourceDatesView){
-			
-		} else{
-			
+		} else if (tempView instanceof ResourceDatesView) {
+
+		} else {
+
 		}
-		
-		//this.loadPersonsIntoView(); not ready yet
+
+		// this.loadPersonsIntoView(); not ready yet
 		this.loadDataFromReservationToView();
-		
-		
 
 	}
-
 
 	public List<DynamicType> getCreateableDynamicTypes(String classificationType)
 			throws RaplaException {
@@ -503,10 +519,10 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		return constraintKeys;
 	}
 
-
 	private void loadPersonsIntoView() {
-		 loadPersonsIntoView(view.getCurrentSubView());
+		loadPersonsIntoView(view.getCurrentSubView());
 	}
+
 	private void loadPersonsIntoView(ReservationEditSubView view) {
 
 		if (view instanceof InfoView) {
@@ -529,12 +545,13 @@ public class ReservationPresenter implements ReservationController, Presenter {
 	}
 
 	protected void loadDataFromReservationToView() {
-		loadDataFromReservationToView(view.getCurrentSubView());
+		if (view.getCurrentSubView() != null)
+			loadDataFromReservationToView(view.getCurrentSubView());
 	}
 
 	private void loadDataFromReservationToView(
 			ReservationEditSubView currentView) {
-
+		logger.info("Load data from reservation");
 		Locale locale = this.raplaLocale.getLocale();
 		Classification classificationTmp = tempReservation.getClassification();
 
@@ -558,8 +575,9 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		}
 
 		if (currentView instanceof InfoView) {
-			String reservationName = tempReservation.getClassification()
-					.getAttribute("title").getName(locale);
+			Attribute tmpAttribute = classificationTmp.getAttribute("title");
+			String reservationName = (String) classificationTmp.getValue(
+					tmpAttribute).toString();
 
 			if (reservationName != null) {
 				((InfoView) currentView).setTitelInput(reservationName);
