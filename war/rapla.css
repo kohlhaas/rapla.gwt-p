@@ -2,6 +2,88 @@
 
 
 
+
+.tabBar {
+	/*background-color: white;*/
+	
+	border-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: silver;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	background-color: white;
+}
+ .gwt-TabBarItem {
+
+  box-shadow: 4px 1px 7px silver;
+  background-color: cornflowerblue;
+  opacity: 0.8;
+  color: white;
+  border-width: 1px;
+  border-color: silver;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+  padding-left: 10px;
+  padding-top: 2px;
+  padding-bottom: 1px;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding-right: 5px;
+  font-size: 17px;
+  font-family: "Calibri";
+  cursor: pointer;
+ 
+} 
+
+.gwt-TabBarItem-selected {
+	
+	background-color: cornflowerblue;
+	opacity: 1;
+	cursor: default;
+} 
+
+
+.gwt-TabPanelBottom {
+    background-color: white;
+    box-shadow: 4px 4px 7px silver;
+
+    padding-top: 1px;
+    margin: 0px 0px 3px 0px;
+}
+
+
+/* .gwt-TabPanel {
+  margin-top: 4px;
+}
+
+.gwt-TabPanelBottom {
+  background-color: #E8E8E8;
+}
+
+.gwt-TabBar {
+  padding-top: 2px;
+  border-bottom: 4px solid #878787;
+  background-color: #fff;
+}
+
+.gwt-TabBarItem {
+  padding: 4px;
+  cursor: pointer;
+  background-color: #e8e8e8;
+  border-bottom: 2px solid white;
+  margin-right: 2px;
+}
+
+.gwt-TabBarItem-selected {
+  padding: 4px;
+  font-weight: bold;
+  cursor: default;
+
+  background-color: #878787;
+  border-bottom: 2px solid #87ffff;
+  margin-right: 2px;
+} */
 .tabPanel {
 	padding: 5px; 
 }
@@ -21,6 +103,7 @@
 }
 
 .taInfo {
+	padding-right: 5px;
 	width: 100%
 }
 

@@ -182,6 +182,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void initTabs(){
         tabPanel.add(content, "Allgemeine Informationen");
+        tabPanel.getTabBar().setStyleName("tabBar");
 
         for (TabPanelRapla tab : tabs) {
             tabPanel.add(tab.getTab(),tab.getName());
