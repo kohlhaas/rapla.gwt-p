@@ -196,6 +196,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         final ListBox eventTypeLB = new ListBox();
 
         initLabelCurrentEventType(locale);
+
         eventTypeLB.setStyleName("eventType");
 
         /**
@@ -284,7 +285,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
  */
         //Study course
     	
-    		        
         course.setStyleName("course");
         row1.add(course);
         
