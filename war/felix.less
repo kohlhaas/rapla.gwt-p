@@ -5,7 +5,6 @@
 #raplaPopup {
 	top: 10%;
 	height: auto;
-	border-width: 4px;
 }
 .gwt-TabPanelBottom {
 	padding-right: 25px !important;
@@ -80,16 +79,29 @@
 .resource-panel {
 	display: block;
 	margin-top: 15px;
-	.resources-types {
+	.resource-toolbar {
 		display: block;
+		.resources-types {
+			display: inline-block;
+			margin-right: 10px;
+		}
+		.add-resource {
+			display: inline-block;
+		}
 	}
+	
 	.resources-lists {
-		margin-top: 10px;
+		margin: 10px 10px 0 0;
+		display: inline-block;
 		.resources-list {
 			min-width: 300px;
 			option {
 				padding-right: 10px;
 			}
 		}
+	}
+	.booked-resources {
+		display: inline-block;
+		min-width: 300px;
 	}
 }

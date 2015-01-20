@@ -6,7 +6,9 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
+
 import org.rapla.client.base.AbstractView;
+import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
@@ -469,7 +471,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
 
         if (getPresenter().isDeleteButtonEnabled()) {
-            Button button = new Button("Loeschen");
+            Button button = new Button("Löschen");
             button.addClickHandler(new ClickHandler() {
 
                 @Override
@@ -493,6 +495,30 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 }
             });
             saveDeleteCancelHPanel.add(button);
+        }
+        
+        {
+        	Button button = new Button("Rückgängig");
+        	button.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					if (HistoryManager.getInstance().canUndo())
+						HistoryManager.getInstance().undo();
+				}
+			});
+        	saveDeleteCancelHPanel.add(button);
+        }
+        
+        {
+        	Button button = new Button("Wiederholen");
+        	button.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					if (HistoryManager.getInstance().canRedo())
+						HistoryManager.getInstance().redo();
+				}
+			});
+        	saveDeleteCancelHPanel.add(button);
         }
     }
 

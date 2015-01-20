@@ -22,13 +22,16 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
+
 import org.rapla.client.base.AbstractView;
+import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import javax.inject.Inject;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -46,12 +49,12 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     FlowPanel appointmentOptionsPanel;
     Button convertToSingleEventsButton;
     FlowPanel appointmentDatesForm;
-    IntegerBox startHourField, startMinuteField, endHourField, endMinuteField;
+    TextBox startHourField, startMinuteField, endHourField, endMinuteField;
     DateBox startDateField, endDateField;
     FlowPanel startFields, endFields;
     Label startTimeColon, endTimeColon;
     CellList<Appointment> appointmentList;
-    ScrollPanel appointmentListScroll = new ScrollPanel();;
+    ScrollPanel appointmentListScroll;
     ListBox dynamicTypeList = new ListBox();
     ListBox allocatableList = new ListBox();
     Button nextFreeApp = new Button();
@@ -68,6 +71,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     ListDataProvider<Appointment> appointmentDataProvider = new ListDataProvider<>();
     
     SingleSelectionModel<Appointment> selectionModel;
+
+	ListBox bookedResources = new ListBox();
 
 
     /**
@@ -96,6 +101,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         // Appointment List
         //appointmentList = new CellList<>(null);
+        appointmentListScroll = new ScrollPanel();
         updateAppointmentList(appointments, appointments.size() - 1);
         appointmentListScroll.addStyleName("appointment-list-scroll");
         appointmentList.addStyleName("appointment-list");
@@ -109,39 +115,64 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         resourcePanel.addStyleName("resource-panel");
         content.add(resourcePanel);
 
+        FlowPanel resourceToolbar = new FlowPanel();
+        resourceToolbar.addStyleName("resource-toolbar");
         resourceTypesList = new ListBox();
         resourceTypesList.addStyleName("resources-types");
-        resourcePanel.add(resourceTypesList);
+        resourceToolbar.add(resourceTypesList);
+        Button addResource = new Button("Ressource hinzufügen");
+        addResource.addStyleName("add-resource");
+        resourceToolbar.add(addResource);
+        resourcePanel.add(resourceToolbar);
+        
         resourceListsPanel = new FlowPanel();
         resourceListsPanel.addStyleName("resources-lists");
         resourcePanel.add(resourceListsPanel);
         resourceLists = new HashMap<String, ListBox>();
+        bookedResources.addStyleName("booked-resources");
+        bookedResources.setVisibleItemCount(7);
+        resourcePanel.add(bookedResources);
+        updateBookedResources(Arrays.asList(reservation.getResources()));
+        addResource.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				String resourceType = resourceTypesList.getSelectedItemText();
+				getPresenter().addResourceButtonPressed(resourceLists.get(resourceType).getSelectedIndex(), resourceType, getRaplaLocale().getLocale());
+			}
+		});
         updateResources(resources);
     }
     
     private Date getStartDate() {
 		Date startDate = startDateField.getValue();
-       	startDate.setHours(startHourField.getValue());
-       	startDate.setMinutes(startMinuteField.getValue());
+       	startDate.setHours(Integer.parseInt(startHourField.getValue()));
+       	startDate.setMinutes(Integer.parseInt(startMinuteField.getValue()));
        	return startDate;
 	}
     
-    private Date getEndDate() {
+    private Date getEndDate() { 
 		Date endDate = endDateField.getValue();
-       	endDate.setHours(endHourField.getValue());
-       	endDate.setMinutes(endMinuteField.getValue());
+       	endDate.setHours(Integer.parseInt(endHourField.getValue()));
+       	endDate.setMinutes(Integer.parseInt(endMinuteField.getValue()));
        	return endDate;
 	}
     
     private void setStartDate(Date date) {
     	startDateField.setValue(date);
-    	startHourField.setValue(date.getHours());
-    	startMinuteField.setValue(date.getMinutes());
+    	startHourField.setValue(addZero(date.getHours()));
+    	startMinuteField.setValue(addZero(date.getMinutes()));
 	}
     private void setEndDate(Date date) {
     	endDateField.setValue(date);
-    	endHourField.setValue(date.getHours());
-    	endMinuteField.setValue(date.getMinutes());
+    	endHourField.setValue(addZero(date.getHours()));
+    	endMinuteField.setValue(addZero(date.getMinutes()));
+	}
+
+	private String addZero(int n) {
+		if(n<10)
+			return "0"+n;
+		else
+			return ""+n;
 	}
 
 	public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
@@ -203,7 +234,11 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endDateField.setValue(selectedAppointment.getEnd());
         endHourField.setText(hoursFormat.format(selectedAppointment.getEnd()));
         endMinuteField.setText(minutesFormat.format(selectedAppointment.getEnd()));
-
+        
+        HistoryManager.getInstance().trackWidget(startHourField);
+        HistoryManager.getInstance().trackWidget(startMinuteField);
+        HistoryManager.getInstance().trackWidget(endHourField);
+        HistoryManager.getInstance().trackWidget(endMinuteField);
     }
 
 	public void updateAppointmentList(List<Appointment> appointments, int focus) {
@@ -292,7 +327,9 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
                 resourceList.addItem(resource.getName(locale));
             }
         }
-
+        // TODO: Remove after demo; selects the second in list because looks nicer
+        if(sortedResources.keySet().size() > 1)
+        	resourceTypesList.setItemSelected(1, true);
         DomEvent.fireNativeEvent(Document.get().createChangeEvent(), resourceTypesList);
     }
 
@@ -322,7 +359,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         startDateField.addStyleName("date-field");
         startFields.add(startDateField);
 
-        startHourField = new IntegerBox();
+        startHourField = new TextBox();
         startHourField.addStyleName("time-field");
         startHourField.setMaxLength(2);
         startHourField.setVisibleLength(2);
@@ -332,7 +369,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         startTimeColon.addStyleName("time-field");
         startFields.add(startTimeColon);
 
-        startMinuteField = new IntegerBox();
+        startMinuteField = new TextBox();
         startMinuteField.addStyleName("time-field");
         startMinuteField.setMaxLength(2);
         startMinuteField.setVisibleLength(2);
@@ -351,7 +388,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         endFields.add(endDateField);
 
-        endHourField = new IntegerBox();
+        endHourField = new TextBox();
         endHourField.addStyleName("time-field");
         endHourField.setMaxLength(2);
         endHourField.setVisibleLength(2);
@@ -361,7 +398,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endTimeColon.addStyleName("time-field");
         endFields.add(endTimeColon);
 
-        endMinuteField = new IntegerBox();
+        endMinuteField = new TextBox();
         endMinuteField.addStyleName("time-field");
         endMinuteField.setMaxLength(2);
         endMinuteField.setVisibleLength(2);
@@ -429,8 +466,10 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     @Override
     public void updateBookedResources(List<Allocatable> resources) {
-        // TODO Auto-generated method stub
-
+        bookedResources.clear();
+        for(Allocatable resource : resources) {
+        	bookedResources.addItem(resource.getName(getRaplaLocale().getLocale()));
+        }
     }
 
 

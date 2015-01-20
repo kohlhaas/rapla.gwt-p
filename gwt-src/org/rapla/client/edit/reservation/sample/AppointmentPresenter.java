@@ -158,7 +158,7 @@ public class AppointmentPresenter implements Presenter {
         List<Allocatable> allocatables = sortedResources.get(dynamicType);
         logger.info("saving Allocatable with name: " + allocatables.get(selectedIndex).getName(locale));
         this.reservation.addAllocatable(allocatables.get(selectedIndex));
-        view.updateBookedResources((Arrays.asList(reservation.getAppointments())));
+        view.updateBookedResources((Arrays.asList(reservation.getResources())));
     }
 
     @Override
