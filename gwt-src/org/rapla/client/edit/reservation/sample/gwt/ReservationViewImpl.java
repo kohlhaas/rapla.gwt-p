@@ -38,7 +38,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel part2;
     FlowPanel coursePanel;
     
-    HorizontalPanel saveDeleteCancelHPanel;
+    FlowPanel saveDeleteCancelPanel;
+    FlowPanel historyMgmtPanel;
 
     List<TabPanelRapla> tabs =  new ArrayList<>();
 
@@ -68,7 +69,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         initRaplaPopupPanel();
         initHeaderPanel();
         initTabPanel();
-        initSaveDeleteCancelHPanel();
+        initSaveDeleteCancelPanel();
         initContentPanel();
         initGeneralInformationPanel();
         initRow1();
@@ -127,9 +128,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	headerPanel.setStyleName("headerPanel");
     }
     
-    private void initSaveDeleteCancelHPanel(){
-    	saveDeleteCancelHPanel = new HorizontalPanel();
-    	saveDeleteCancelHPanel.addStyleName("saveDeleteCancelHPanel");
+    private void initSaveDeleteCancelPanel(){
+    	saveDeleteCancelPanel = new FlowPanel();
+    	saveDeleteCancelPanel.addStyleName("saveDeleteCancelPanel");
     }
 
     private void initContentPanel() {
@@ -174,7 +175,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void clearPanels() {
         popup.clear();
         headerPanel.clear();
-        saveDeleteCancelHPanel.clear();
+        saveDeleteCancelPanel.clear();
         tabPanel.clear();
         content.clear();
         generalInformation.clear();
@@ -189,7 +190,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void structuringPanels() {
     	popup.add(headerPanel);
         popup.add(tabPanel);
-        popup.add(saveDeleteCancelHPanel);
+        popup.add(saveDeleteCancelPanel);
         initTabs();
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
@@ -467,7 +468,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onCancelButtonClicked();
                 }
             });
-            saveDeleteCancelHPanel.add(button);
+            saveDeleteCancelPanel.add(button);
         }
 
         if (getPresenter().isDeleteButtonEnabled()) {
@@ -479,7 +480,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onDeleteButtonClicked();
                 }
             });
-            saveDeleteCancelHPanel.add(button);
+            saveDeleteCancelPanel.add(button);
         }
 
         {
@@ -494,10 +495,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onSaveButtonClicked();
                 }
             });
-            saveDeleteCancelHPanel.add(button);
+            saveDeleteCancelPanel.add(button);
         }
         
         {
+        	historyMgmtPanel = new FlowPanel();
+        	historyMgmtPanel.addStyleName("history-mgmt");
+        	popup.add(historyMgmtPanel);
         	Button button = new Button("Rückgängig");
         	button.addClickHandler(new ClickHandler() {
 				@Override
@@ -506,7 +510,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 						HistoryManager.getInstance().undo();
 				}
 			});
-        	saveDeleteCancelHPanel.add(button);
+        	historyMgmtPanel.add(button);
         }
         
         {
@@ -518,7 +522,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 						HistoryManager.getInstance().redo();
 				}
 			});
-        	saveDeleteCancelHPanel.add(button);
+        	historyMgmtPanel.add(button);
         }
     }
 
