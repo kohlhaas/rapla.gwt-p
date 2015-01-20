@@ -20,6 +20,7 @@ import org.rapla.entities.dynamictype.DynamicType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
     /**
@@ -37,9 +38,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel row1;
     FlowPanel part2;
     FlowPanel coursePanel;
-    
-    FlowPanel saveDeleteCancelPanel;
-    FlowPanel historyMgmtPanel;
+
+    HorizontalPanel saveDeleteCancelHPanel;
 
     List<TabPanelRapla> tabs =  new ArrayList<>();
 
@@ -51,14 +51,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     TextBox eventNameTB;
 
     ListBox language = new ListBox();
+    ListBox allLanguageLB = new ListBox();
+    ListBox allKeys = new ListBox();
+    ListBox allKeys2 = new ListBox();
     Button course = new Button("Studiengang");
     Button hideButton = null;
     String chosenEventType = "";
     String chosenLanguage = "";
-    String chosenEventType1 = "";
     Tree tree;
     boolean buttonRemoved = false;
-    
+
 
 
 
@@ -69,7 +71,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         initRaplaPopupPanel();
         initHeaderPanel();
         initTabPanel();
-        initSaveDeleteCancelPanel();
+        initSaveDeleteCancelHPanel();
         initContentPanel();
         initGeneralInformationPanel();
         initRow1();
@@ -109,6 +111,26 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         initSaveDeleteCancelButtons();
 
+        /**
+         *
+         */
+        final Locale locale = getRaplaLocale().getLocale();
+        final Category[] languagesCategory = getPresenter().getCategory(locale, "Sprachen");
+        for (Category language : languagesCategory) {
+            allLanguageLB.addItem(language.getName(locale));
+        }
+        row1.add(allLanguageLB);
+
+        /**
+         * das sind die Namen für getCategory Werte (Methode von oben)
+         */
+        List<String> keys = getPresenter().getCategoryNames(locale);
+        for (String key : keys) {
+            allKeys.addItem(key);
+        }
+
+        row1.add(allKeys);
+
 
     }
 
@@ -122,15 +144,15 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tabPanel = new TabPanel();
         tabPanel.addStyleName("tabPanel");
     }
-    
+
     private void initHeaderPanel(){
     	headerPanel = new FlowPanel();
     	headerPanel.setStyleName("headerPanel");
     }
-    
-    private void initSaveDeleteCancelPanel(){
-    	saveDeleteCancelPanel = new FlowPanel();
-    	saveDeleteCancelPanel.addStyleName("saveDeleteCancelPanel");
+
+    private void initSaveDeleteCancelHPanel(){
+    	saveDeleteCancelHPanel = new HorizontalPanel();
+    	saveDeleteCancelHPanel.addStyleName("saveDeleteCancelHPanel");
     }
 
     private void initContentPanel() {
@@ -175,7 +197,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void clearPanels() {
         popup.clear();
         headerPanel.clear();
-        saveDeleteCancelPanel.clear();
+        saveDeleteCancelHPanel.clear();
         tabPanel.clear();
         content.clear();
         generalInformation.clear();
@@ -190,7 +212,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void structuringPanels() {
     	popup.add(headerPanel);
         popup.add(tabPanel);
-        popup.add(saveDeleteCancelPanel);
+        popup.add(saveDeleteCancelHPanel);
         initTabs();
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
@@ -212,7 +234,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         tabPanel.selectTab(0);
     }
-    
+
     private void initCaptionLabel(){
     	Label captionLabel = new Label ("Veranstaltung anlegen");
     	Label captionIcon = new Label();
@@ -305,7 +327,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void initLabelCurrentEventType(Locale locale) {
         String name = getPresenter().getEventType(locale);
             Label label= new Label(name);
-            row1.add(label);
+        row1.add(label);
         }
 
     private void initLanguageListBox() {
@@ -321,10 +343,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
  * Make that method smaller please
  */
         //Study course
-    	
+
         course.setStyleName("course");
         row1.add(course);
-        
+
         course.addClickHandler(new ClickHandler() {
         @Override
         public void onClick(ClickEvent e) {
@@ -346,16 +368,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
          */
         int i = 0;
         for (Category category : allCourses) {
-        	
+
             //allCoursesLB.addItem(category.getName(locale));
         	tree.addItem(new TreeItem());
         	tree.getItem(i).setText(category.getName(locale));
-        	
+
         	for(Category underCategory : category.getCategories()){
         		tree.getItem(i).addItem(new TreeItem(new CheckBox(underCategory.getName(locale))));
         	}
         	i++;
-        	
+
         }
         coursePanel.add(tree);
 
@@ -365,10 +387,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
          * i dont know if its really smart to do it this way, but he has f.e very nested attributes.. and given so, a map could be wrong
          */
 
-  
+
         hideButton = new Button("Eingabe bestätigen");
         coursePanel.add(hideButton);
-    	
+
         hideButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent e) {
@@ -378,16 +400,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
             coursePanel.setVisible(false);
             //activateCourseButton = false;
-        
+
 
     }
 
-    
+
     private void removeCourseButton(){
     	row1.remove(course);
     	coursePanel.remove(tree);
     	coursePanel.remove(hideButton);
-    	
+
     }
 
     private void initLabelEventNameInGrid() {
@@ -436,11 +458,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         upDown.add(upButton);
 
     }
-    
+
     private void initDownButton(){
     	Button downButton = new Button("-");
     	downButton.setStyleName("downButton");
-    	upDown.add(downButton);
+        upDown.add(downButton);
     }
 
     private void initLabelInfo() {
@@ -468,7 +490,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onCancelButtonClicked();
                 }
             });
-            saveDeleteCancelPanel.add(button);
+            saveDeleteCancelHPanel.add(button);
         }
 
         if (getPresenter().isDeleteButtonEnabled()) {
@@ -480,7 +502,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onDeleteButtonClicked();
                 }
             });
-            saveDeleteCancelPanel.add(button);
+            saveDeleteCancelHPanel.add(button);
         }
 
         {
@@ -490,18 +512,15 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 @Override
                 public void onClick(ClickEvent e) {
                 	//Attributes [] selectedAttributes = new Attributes();
-                	
+
                 	//getPresenter().changeAttributes(attributes);
                     getPresenter().onSaveButtonClicked();
                 }
             });
-            saveDeleteCancelPanel.add(button);
+            saveDeleteCancelHPanel.add(button);
         }
-        
+
         {
-        	historyMgmtPanel = new FlowPanel();
-        	historyMgmtPanel.addStyleName("history-mgmt");
-        	popup.add(historyMgmtPanel);
         	Button button = new Button("Rückgängig");
         	button.addClickHandler(new ClickHandler() {
 				@Override
@@ -510,9 +529,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 						HistoryManager.getInstance().undo();
 				}
 			});
-        	historyMgmtPanel.add(button);
+        	saveDeleteCancelHPanel.add(button);
         }
-        
+
         {
         	Button button = new Button("Wiederholen");
         	button.addClickHandler(new ClickHandler() {
@@ -522,7 +541,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 						HistoryManager.getInstance().redo();
 				}
 			});
-        	historyMgmtPanel.add(button);
+        	saveDeleteCancelHPanel.add(button);
         }
     }
 

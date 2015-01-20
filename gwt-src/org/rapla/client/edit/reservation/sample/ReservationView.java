@@ -10,6 +10,7 @@ import org.rapla.entities.dynamictype.DynamicType;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public interface ReservationView<W> extends View<Presenter> {
 
@@ -24,6 +25,7 @@ public interface ReservationView<W> extends View<Presenter> {
     String getCurrentReservationName(Locale locale);
     String getEventType(Locale locale);
     void changeAttributes(Attribute[] attributes);
+    List<String>  getCategoryNames(Locale locale);
   }
 
   void show(Reservation event);

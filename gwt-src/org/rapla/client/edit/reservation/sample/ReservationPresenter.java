@@ -13,7 +13,7 @@ import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 
 import javax.inject.Inject;
-import java.util.Locale;
+import java.util.*;
 
 public class ReservationPresenter implements ReservationController, Presenter {
 
@@ -40,6 +40,20 @@ public class ReservationPresenter implements ReservationController, Presenter {
         view.addSubView(tabName, appointmentPresenter.getView());
     }
 
+    /**
+     * TODO: have to add the depth or smth similiar to know it, else an another class
+     */
+    public List<String>  getCategoryNames(Locale locale) {
+
+        List<String> stringList= new ArrayList<>();
+        Category superCategory = facade.getSuperCategory();
+        Category[] categories = superCategory.getCategories();
+        for (Category category : categories) {
+            String name = category.getName(locale);
+            stringList.add(name);
+        }
+        return stringList;
+    }
 
     @Override
     public void edit(final Reservation event, boolean isNew) {
@@ -126,7 +140,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
     }
 
     @Override
-    public void changeAttributes(Attribute [] attributes) {
+    public void changeAttributes(Attribute[] attributes) {
         logger.info("adding number of attributes: " + attributes.length);
         Classification classification = reservation.getClassification();
         DynamicType type = classification.getType();
@@ -143,7 +157,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
         if (!isNew) {
             Classification classification = reservation.getClassification();
             logger.info("returning Eventtype: " + classification.getType().getName());
-            return "current Event Type: "+classification.getType().getName(locale);
+            return "current Event Type: " + classification.getType().getName(locale);
         }
         return "is new";
 
