@@ -71,6 +71,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     
     SingleSelectionModel<Appointment> selectionModel;
 
+	ListBox bookedResources = new ListBox();
+
 
     /**
      * save an appointment by calling : "getPresenter().newAppointmentButtonPressed(dateStart, dateEnd)"
@@ -111,13 +113,31 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         resourcePanel.addStyleName("resource-panel");
         content.add(resourcePanel);
 
+        FlowPanel resourceToolbar = new FlowPanel();
+        resourceToolbar.addStyleName("resource-toolbar");
         resourceTypesList = new ListBox();
         resourceTypesList.addStyleName("resources-types");
-        resourcePanel.add(resourceTypesList);
+        resourceToolbar.add(resourceTypesList);
+        Button addResource = new Button("Ressource hinzufügen");
+        addResource.addStyleName("add-resource");
+        resourceToolbar.add(addResource);
+        resourcePanel.add(resourceToolbar);
+        
         resourceListsPanel = new FlowPanel();
         resourceListsPanel.addStyleName("resources-lists");
         resourcePanel.add(resourceListsPanel);
         resourceLists = new HashMap<String, ListBox>();
+        bookedResources.addStyleName("booked-resources");
+        bookedResources.setVisibleItemCount(7);
+        resourcePanel.add(bookedResources);
+        updateBookedResources(Arrays.asList(reservation.getResources()));
+        addResource.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				String resourceType = resourceTypesList.getSelectedItemText();
+				getPresenter().addResourceButtonPressed(resourceLists.get(resourceType).getSelectedIndex(), resourceType, getRaplaLocale().getLocale());
+			}
+		});
         updateResources(resources);
     }
     
@@ -440,8 +460,10 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     @Override
     public void updateBookedResources(List<Allocatable> resources) {
-        // TODO Auto-generated method stub
-
+        bookedResources.clear();
+        for(Allocatable resource : resources) {
+        	bookedResources.addItem(resource.getName(getRaplaLocale().getLocale()));
+        }
     }
 
 
