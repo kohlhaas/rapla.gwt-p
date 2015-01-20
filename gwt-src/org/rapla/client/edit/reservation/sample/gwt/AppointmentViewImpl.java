@@ -63,7 +63,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         // "Add appointment" Button
         Button addAppointment = new Button("Termin hinzufügen");
-        addAppointment.setStyleName("add-appointment");
+        addAppointment.addStyleName("add-appointment");
         addAppointment.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -75,7 +75,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         // Appointment List
         appointmentList = new ListBox();
         updateAppointmentList(appointments, appointments.size() - 1);
-        appointmentList.setStyleName("appointment-list");
+        appointmentList.addStyleName("appointment-list");
         appointmentList.setVisibleItemCount(7);
         appointmentPanel.add(appointmentList);
         appointmentOptionsPanel = new FlowPanel();
@@ -96,7 +96,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         content.add(resourcePanel);
 
         resourceTypesList = new ListBox();
-        resourceTypesList.setStyleName("resources-types");
+        resourceTypesList.addStyleName("resources-types");
         resourcePanel.add(resourceTypesList);
         resourceListsPanel = new FlowPanel();
         resourceListsPanel.addStyleName("resources-lists");
@@ -110,7 +110,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         // Create Panels and Widgets
         appointmentOptionsPanel.clear();
-        appointmentOptionsPanel.setStyleName("appointment-options");
+        appointmentOptionsPanel.addStyleName("appointment-options");
         appointmentPanel.add(appointmentOptionsPanel);
 
         // Repeat Radio Buttons
@@ -122,14 +122,14 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         // Formular zur Zeit- & Datumswahl 
         appointmentDatesForm = new FlowPanel();
-        appointmentDatesForm.setStyleName("appointment-date-form");
+        appointmentDatesForm.addStyleName("appointment-date-form");
         appointmentOptionsPanel.add(appointmentDatesForm);
 
         initStartDateFields();
         initEndDateFields();
 
         Button removeAppointment = new Button("Termin löschen");
-        removeAppointment.setStyleName("remove-appointment");
+        removeAppointment.addStyleName("remove-appointment");
         removeAppointment.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -215,26 +215,26 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     //TODO: startDate and EndDate is kind of redundant, maybe using a method for both ?
     private void initStartDateFields() {
         startFields = new FlowPanel();
-        startFields.setStyleName("start-datetime");
+        startFields.addStyleName("start-datetime");
         appointmentDatesForm.add(startFields);
 
         startDateField = new DateBox();
         startDateField.setFormat(new DateBox.DefaultFormat(df));
-        startDateField.setStyleName("date-field");
+        startDateField.addStyleName("date-field");
         startFields.add(startDateField);
 
         startHourField = new IntegerBox();
-        startHourField.setStyleName("time-field");
+        startHourField.addStyleName("time-field");
         startHourField.setMaxLength(2);
         startHourField.setVisibleLength(2);
         startFields.add(startHourField);
 
         startTimeColon = new Label(" : ");
-        startTimeColon.setStyleName("time-field");
+        startTimeColon.addStyleName("time-field");
         startFields.add(startTimeColon);
 
         startMinuteField = new IntegerBox();
-        startMinuteField.setStyleName("time-field");
+        startMinuteField.addStyleName("time-field");
         startMinuteField.setMaxLength(2);
         startMinuteField.setVisibleLength(2);
         startFields.add(startMinuteField);
@@ -242,28 +242,28 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     private void initEndDateFields() {
         endFields = new FlowPanel();
-        endFields.setStyleName("end-datetime");
+        endFields.addStyleName("end-datetime");
         appointmentDatesForm.add(endFields);
 
         //endDateField = new TextBox();
         endDateField = new DateBox();
         endDateField.setFormat(new DateBox.DefaultFormat(df));
-        endDateField.setStyleName("date-field");
+        endDateField.addStyleName("date-field");
 
         endFields.add(endDateField);
 
         endHourField = new IntegerBox();
-        endHourField.setStyleName("time-field");
+        endHourField.addStyleName("time-field");
         endHourField.setMaxLength(2);
         endHourField.setVisibleLength(2);
         endFields.add(endHourField);
 
         endTimeColon = new Label(" : ");
-        endTimeColon.setStyleName("time-field");
+        endTimeColon.addStyleName("time-field");
         endFields.add(endTimeColon);
 
         endMinuteField = new IntegerBox();
-        endMinuteField.setStyleName("time-field");
+        endMinuteField.addStyleName("time-field");
         endMinuteField.setMaxLength(2);
         endMinuteField.setVisibleLength(2);
         endFields.add(endMinuteField);
