@@ -18,7 +18,9 @@ import org.rapla.entities.dynamictype.DynamicType;
 import java.util.Locale;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
-
+    /**
+     * please use smth like hungarian Notation or make the vars better readable
+     */
 
     Panel popup;
 
@@ -264,7 +266,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void initCourseButton() {
 
-
+/**
+ * Make that method smaller please
+ */
         //Study course
     	
     		        
