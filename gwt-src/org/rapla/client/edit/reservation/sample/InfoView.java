@@ -24,6 +24,7 @@ public interface InfoView<W> extends View<Presenter>, ReservationEditSubView<W> 
 
 	void update(List<Appointment> appointments);
 
+	void createContent();
 	void show();
 
 	String getTitelInput();

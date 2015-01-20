@@ -94,7 +94,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	}
 
 	@Override
-	public void show() {
+	public void createContent() {
 		
 		 height = (int) (Window.getClientHeight() * 0.90 * 0.80);
 		 width = (int) (Window.getClientWidth() * 0.90 * 0.80);  
@@ -840,6 +840,12 @@ private void createResourceTree() {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+
+	@Override
+	public void show() {
+		contentPanel.setVisible(true);
 		
 	}
 

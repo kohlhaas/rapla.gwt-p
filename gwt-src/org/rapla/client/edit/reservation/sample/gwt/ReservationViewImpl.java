@@ -53,12 +53,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-import org.rapla.client.edit.reservation.sample.InfoView; 
+import org.rapla.client.edit.reservation.sample.InfoView;
 
+public class ReservationViewImpl extends AbstractView<Presenter> implements
+		ReservationView<IsWidget> {
 
-public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
-    
-	//for general popup
+	// for general popup
 	private FlowPanel mainPanel;
 	private VerticalPanel layout;
 	private FlowPanel tabBarPanel;
@@ -67,22 +67,22 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 	private TabBar bar;
 	private Button cancel, save, delete;
 	private int height, width;
-	
-	//for info tab 
+
+	// for info tab
 	private VerticalPanel contentLeft;
 	private VerticalPanel contentRight;
-	private HorizontalPanel infoTab; 
+	private HorizontalPanel infoTab;
 	private ListBox eventTypesListBox;
 	private Tree resources;
 	private TextBox titelInput;
 	private TextBox vorlesungsStundenInput;
 	private ListBox studiengangListBox;
 	private Collection<String> studiengangListBoxAuswahl;
-	
-	//for resources and dates tab
+
+	// for resources and dates tab
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
 	private ArrayList<List<String>> reservedResources = new ArrayList<List<String>>();
-	
+
 	FlowPanel mainContent;
 	TerminList dateList;
 	FlowPanel buttonBar;
@@ -96,92 +96,92 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 	DateBox dateBegin;
 	DateBox dateEnd;
 
-//	SmallTimeBox timeBegin;
-//	SmallTimeBox timeEnd;
+	// SmallTimeBox timeBegin;
+	// SmallTimeBox timeEnd;
 
 	Tree resourceTree;
-	
+
 	CheckBox cbWholeDay;
 
 	FlowPanel chosenResources;
 	DisclosurePanel dateDisclosurePanel;
 	DisclosurePanel cbRepeatType;
-	
+
 	Label addDateInfo;
 	Button addDate;
 	Button rewriteDate;
-	
+
 	HorizontalPanel repeat;
 	RadioButton daily;
 	RadioButton weekly;
 	RadioButton monthly;
 	RadioButton year;
 	RadioButton noReccuring;
-	
-	ReservationEditSubView currentView; 
+
+	ReservationEditSubView currentView;
 	Panel currentTabContent;
-    
-    public void show(Reservation event)
-    {
-        popup = RootPanel.get("raplaPopup");
-        popup.setVisible(true);
-      
-        //popup.setGlassEnabled(true);
-		//popup.setAnimationEnabled(true);
-        //	popup.setAnimationType(PopupPanel.AnimationType.ROLL_DOWN);
-        
-        
+	//private DisclosurePanel subView;
+
+	public void show(Reservation event) {
+		popup = RootPanel.get("raplaPopup");
+		popup.setVisible(true);
+
+		// popup.setGlassEnabled(true);
+		// popup.setAnimationEnabled(true);
+		// popup.setAnimationType(PopupPanel.AnimationType.ROLL_DOWN);
+
 		height = (int) (Window.getClientHeight() * 0.90);
 		width = (int) (Window.getClientWidth() * 0.90);
 		popup.setHeight(height + "px");
 		popup.setWidth(width + "px");
-		
-     	popup.clear();
-        
-        bar = new TabBar();
+
+		popup.clear();
+
+		bar = new TabBar();
 		bar.addTab("Veranstaltungsinfos");
 		bar.addTab("Termine und Resourcen");
-	
+
 		cancel = new Button("abbrechen");
 		cancel.setStyleName("cancelButton");
 		cancel.addClickHandler(new ClickHandler() {
-            
-            @Override
-            public void onClick(ClickEvent e) {
-                getPresenter().onCancelButtonClicked();
-            }});
+
+			@Override
+			public void onClick(ClickEvent e) {
+				getPresenter().onCancelButtonClicked();
+			}
+		});
 
 		save = new Button("speichern");
 		save.setStyleName("saveButton");
 		save.addClickHandler(new ClickHandler() {
-            
-            @Override
-            public void onClick(ClickEvent e) {
-                getPresenter().onSaveButtonClicked();
-            }});
+
+			@Override
+			public void onClick(ClickEvent e) {
+				getPresenter().onSaveButtonClicked();
+			}
+		});
 
 		delete = new Button("l\u00F6schen");
 		delete.setStyleName("deleteButton");
 		delete.addClickHandler(new ClickHandler() {
-            
-            @Override
-            public void onClick(ClickEvent e) {
-                getPresenter().onDeleteButtonClicked();
-            }});
+
+			@Override
+			public void onClick(ClickEvent e) {
+				getPresenter().onDeleteButtonClicked();
+			}
+		});
 
 		layout = new VerticalPanel();
 		tabBarPanel = new FlowPanel();
 		buttonsPanel = new FlowPanel();
 
 		tabBarPanel.add(bar);
-        
+
 		bar.addSelectionHandler(new SelectionHandler<Integer>() {
 			public void onSelection(SelectionEvent<Integer> event) {
 				getPresenter().onTabChanged(bar.getSelectedTab());
 			}
 		});
-		
-		
 
 		buttonsPanel.add(cancel);
 		buttonsPanel.add(save);
@@ -194,80 +194,75 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 		layout.setCellHeight(tabBarPanel, "50px");
 
 		popup.add(layout);
-		
-		
 
-
-	
 		bar.selectTab(0);
 
+	}
+
+	public void update(ReservationEditSubView tempView) {
+		//
+		// if (currentTabContent != null) {
+		// currentTabContent.clear();
+		// }
+
+		if (tempView instanceof InfoView) {
+			// ((InfoView) currentView).show();
+			if (currentView != null)
+				((ResourceDatesView) this.currentView).hide();
+			currentTabContent = (Panel) ((InfoView) tempView).provideContent();
+			((InfoView) tempView).show();
+
+		} else if (tempView instanceof ResourceDatesView) {
+			// ((ResourceDatesView) currentView).show();
+			if (currentView != null)
+				((InfoView) this.currentView).hide();
+			currentTabContent = (Panel) ((ResourceDatesView) tempView)
+					.provideContent();
+			((ResourceDatesView) tempView).show();
+
+		}
+
+		this.currentView = tempView;
 		
-        }
-    
-       
-     public void update(ReservationEditSubView tempView ){
-    	
-    	 if(currentTabContent != null){
-    		 currentTabContent.clear();
-    	 }
-    	 
-    	 this.currentView =  tempView; 
-    	 
-    	 if(currentView instanceof InfoView ){
-    		 ((InfoView) currentView).show(); 
-        	currentTabContent = (Panel) ((InfoView) currentView).provideContent();
-        	 
-    	 }else if(currentView instanceof ResourceDatesView){
-    		 ((ResourceDatesView) currentView).show(); 
-    		 
-    		 currentTabContent = (Panel) ((ResourceDatesView) currentView).provideContent();
-    	   
-        	 
-    	 }
-    	 
-    	 
-    	 popup.add(currentTabContent);
-    	 
-    	
-     }
-    
+		if (currentTabContent != null) {
+			popup.add(currentTabContent);
+		}
 
-    public void mapFromReservation(Reservation event) {
-        Locale locale = getRaplaLocale().getLocale();
-      // tb.setText( event.getName( locale));
-     //   contentRes.clear();
-        Allocatable[] resources = event.getAllocatables();
-        {
-            StringBuilder builder = new StringBuilder();
-            for ( Allocatable res:resources)
-            {
-                builder.append( res.getName( locale));
-            }
-          //  contentRes.add(new Label("Ressourcen: " +builder.toString() ));
+	}
 
-        }
-    }
-    
-    public void hide()
-    {
-        popup.setVisible(false);
-    }
+	public void mapFromReservation(Reservation event) {
+		Locale locale = getRaplaLocale().getLocale();
+		// tb.setText( event.getName( locale));
+		// contentRes.clear();
+		Allocatable[] resources = event.getAllocatables();
+		{
+			StringBuilder builder = new StringBuilder();
+			for (Allocatable res : resources) {
+				builder.append(res.getName(locale));
+			}
+			// contentRes.add(new Label("Ressourcen: " +builder.toString() ));
 
+		}
+	}
 
-    @Override
-    public void addSubView(ReservationEditSubView<IsWidget> view) {
-        IsWidget provideContent = view.provideContent();
-     //   subView.add( provideContent.asWidget());
-    }
+	public void hide() {
+		popup.setVisible(false);
+	}
 
+	@Override
+	public void addSubView(ReservationEditSubView<IsWidget> view) {
+		IsWidget provideContent = view.provideContent();
+		// subView.add( provideContent.asWidget());
+	}
 
 	@Override
 	public ReservationEditSubView getCurrentSubView() {
 		return currentView;
 	}
 
+	@Override
+	public void setCurrentSubView(ReservationEditSubView currentSubView) {
+		this.currentView = currentSubView;
+	}
 
-
-	
-    
 }

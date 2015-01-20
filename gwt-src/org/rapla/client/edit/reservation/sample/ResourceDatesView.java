@@ -32,6 +32,7 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 
     }
 
+    void createContent();
 
     void hide();
     

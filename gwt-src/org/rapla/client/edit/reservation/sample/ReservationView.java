@@ -32,4 +32,6 @@ public interface ReservationView<W> extends View<Presenter> {
 
 	ReservationEditSubView getCurrentSubView();
 
+	void setCurrentSubView(ReservationEditSubView currentSubView);
+
 }

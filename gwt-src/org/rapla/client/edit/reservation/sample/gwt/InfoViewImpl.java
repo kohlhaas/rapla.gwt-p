@@ -51,7 +51,7 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 	}
 
 	@Override
-	public void show() {
+	public void createContent() {
 		width = (int) (Window.getClientWidth() * 0.9) / 2;
 
 		height = (int) (Window.getClientHeight() * 0.90 * 0.80);
@@ -252,5 +252,11 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 		for (String item : content) {
 			this.studiengangListBox.addItem(item);
 		}
+	}
+
+	@Override
+	public void show() {
+		contentPanel.setVisible(true);
+		
 	}
 }
