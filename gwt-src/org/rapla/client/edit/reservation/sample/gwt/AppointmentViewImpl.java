@@ -239,7 +239,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
 //    public void mapFromReservation(Reservation event) {
 //        Locale locale = getRaplaLocale().getLocale();
-//        tb.setText(event.getName(locale));
+//        eventNameTB.setText(event.getName(locale));
 //        contentRes.clear();
 //        
 //        {

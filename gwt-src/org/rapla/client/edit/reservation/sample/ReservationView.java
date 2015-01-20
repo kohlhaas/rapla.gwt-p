@@ -20,9 +20,10 @@ public interface ReservationView<W> extends View<Presenter> {
     void onCancelButtonClicked();
     DynamicType[] getAllEventTypes();
     Category[] getCategory(Locale locale, String studiengaenge);
+    String getCurrentReservationName(Locale locale);
   }
 
   void show(Reservation event);
   void hide();
-  void addSubView(ReservationEditSubView<W> view);
+  void addSubView(String tabName,ReservationEditSubView<W> view);
 }
