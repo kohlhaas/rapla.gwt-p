@@ -127,7 +127,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     @Override
     public void changeAttributes(Attribute [] attributes) {
-        logger.info("Name changed to " + attributes.length);
+        logger.info("adding number of attributes: " + attributes.length);
         Classification classification = reservation.getClassification();
         DynamicType type = classification.getType();
         for (Attribute attribute : attributes) {
