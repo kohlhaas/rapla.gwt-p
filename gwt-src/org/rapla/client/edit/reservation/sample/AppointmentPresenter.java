@@ -133,7 +133,14 @@ public class AppointmentPresenter implements Presenter {
         Appointment selectedAppointment = reservation.getAppointments()[selectedIndex];
         logger.info("removing app toString: " + selectedAppointment.toString());
         this.reservation.removeAppointment(selectedAppointment);
-        this.view.updateAppointmentList(Arrays.asList(reservation.getAppointments()), selectedIndex - 1);
+        int focus;
+        if(reservation.getAppointments().length < 1)
+        	focus = -1;
+        else if (selectedIndex ==  reservation.getAppointments().length)
+        	focus = selectedIndex - 1;
+        else
+        	focus = selectedIndex;
+        this.view.updateAppointmentList(Arrays.asList(reservation.getAppointments()), focus);
     }
 
     @Override

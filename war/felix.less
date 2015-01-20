@@ -1,4 +1,15 @@
 /* FELIX STYLES */
+.gwt-TabPanel  {
+	width: 100%;
+}
+#raplaPopup {
+	top: 10%;
+	height: auto;
+	border-width: 4px;
+}
+.gwt-TabPanelBottom {
+	padding-right: 25px !important;
+}
 .dateBoxPopup {
 	z-index: 1003;
 }
@@ -8,11 +19,29 @@
 		display: block;
 		margin: 0 0 10px 0;
 	}
-	.appointment-list {
+	.appointment-list-scroll {
 		display: inline-block;
-		min-width: 150px;
-		option {
-			padding-right: 10px;
+		height: 180px;
+		border: 1px solid gray;
+		.appointment-list {
+			min-width: 150px;
+			>div:first-of-type {
+				// the row:
+				>div {
+					display: block;
+					padding: 4px 8px;
+					cursor: default;
+					// the label:
+					>span:first-of-type {
+
+					}
+					// the remove-button:
+					>span:nth-of-type(2) {
+						float:right;
+						cursor: pointer;
+					}
+				}
+			}
 		}
 	}
 
