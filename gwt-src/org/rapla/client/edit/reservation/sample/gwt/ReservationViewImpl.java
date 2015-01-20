@@ -15,37 +15,9 @@ import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
-
-    private static class MyDialog extends DialogBox {
-
-        public MyDialog() {
-            // Set the dialog box's caption.
-            setText("My First Dialog");
-
-            // Enable animation.
-            setAnimationEnabled(true);
-
-            // Enable glass background.
-            setGlassEnabled(true);
-
-            // DialogBox is a SimplePanel, so you have to set its widget property to
-            // whatever you want its contents to be.
-
-
-            Button ok = new Button("OK");
-            ok.addClickHandler(new ClickHandler() {
-                public void onClick(ClickEvent event) {
-                    MyDialog.this.hide();
-                }
-            });
-            setWidget(ok);
-        }
-    }
 
 
     Panel popup;
@@ -54,7 +26,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     FlowPanel content;
     FlowPanel contentRes = new FlowPanel();
-    List<TabPanelRapla> tabPanelRaplas = new ArrayList<>();
+    FlowPanel subView = new FlowPanel();
     FlowPanel generalInformation;
     FlowPanel row1;
     FlowPanel part2;
@@ -194,10 +166,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void structuringPanels() {
         popup.add(tabPanel);
         tabPanel.add(content, "Allgemeine Informationen");
-//        tabPanel.add(subView, "Termin- und Ressourcenplanung");
-        for (TabPanelRapla tabPanelRapla : tabPanelRaplas) {
-            tabPanel.add(tabPanelRapla.getTab(),tabPanelRapla.getName());
-        }
+        tabPanel.add(subView, "Termin- und Ressourcenplanung");
         tabPanel.selectTab(0);
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
@@ -217,42 +186,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         final DynamicType[] eventTypes = getPresenter().getAllEventTypes();
         final Locale locale = getRaplaLocale().getLocale();
 
-        final Category[] allCourses = getPresenter().getCategory(locale, "Studiengänge");
-        /**
-         * here you got all categories like Allgemein, Wirtschaft, Technik etc.
-         */
-        for (Category category : allCourses) {
-            allCoursesLB.addItem(category.getName(locale));
-        }
-
-        /**
-         * here you got all underCategories "Technik --> Elektrotechnik,Informatik...| Wirtschaft --> BWl ..."
-         * depending on the study category u chosed
-         * i dont know if its really smart to do it this way, but he has f.e very nested attributes.. and given so, a map could be wrong
-         */
-
-        allCoursesLB.addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent event) {
-                allCoursesValuesLB.clear();
-                String selectedValue = allCoursesLB.getSelectedValue();
-                for (Category category : allCourses) {
-                    if (selectedValue.equals(category.getName(locale))) {
-                        for (Category underCategory : category.getCategories()) {
-                            allCoursesValuesLB.addItem(underCategory.getName(locale));
-                        }
-
-                    }
-                }
-            }
-
-        });
-
-        /**
-         *
-         */
-        row1.add(allCoursesValuesLB);
-        row1.add(allCoursesLB);
+        
 
         /**
          * SEHR UNSAUBER, nur grob, bitte ggf. verbessern --> ggf. in eigene Klasse oder Presenter
@@ -336,7 +270,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     		        
         course.setStyleName("course");
         row1.add(course);
-        //course.addClickHandler(courseButtonOnClick);
         
         course.addClickHandler(new ClickHandler() {
         @Override
@@ -348,34 +281,41 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             coursePanel.setVisible(true);
 
 
-            //new MyDialog().show();
-           /*
-              this method returns all "Veranstaltungstypen" in a DynamicType array, ask if you want only Veranstaltungstyp with name "Studiengang"
-             */
         }
     });
+        final Locale locale = getRaplaLocale().getLocale();
+        final Category[] allCourses = getPresenter().getCategory(locale, "Studiengänge");
+        t = new Tree();
+        TreeItem studiengangTreeItem = new TreeItem();
+        studiengangTreeItem.setText("Studiengänge");
+        t.addItem(studiengangTreeItem);
+        /**
+         * here you got all categories like Allgemein, Wirtschaft, Technik etc.
+         */
+        int i = 0;
+        for (Category category : allCourses) {
+        	
+            //allCoursesLB.addItem(category.getName(locale));
+        	t.addItem(new TreeItem());
+        	t.getItem(i).setText(category.getName(locale));
+        	
+        	for(Category underCategory : category.getCategories()){
+        		t.getItem(i).addItem(new TreeItem(new CheckBox(underCategory.getName(locale))));
+        	}
+        	i++;
+        	
+        }
+        coursePanel.add(t);
 
+        /**
+         * here you got all underCategories "Technik --> Elektrotechnik,Informatik...| Wirtschaft --> BWl ..."
+         * depending on the study category u chosed
+         * i dont know if its really smart to do it this way, but he has f.e very nested attributes.. and given so, a map could be wrong
+         */
 
-
-
-            TreeItem root = new TreeItem();
-            root.setText("root");
-            root.addTextItem("item0");
-            root.addTextItem("item1");
-            root.addTextItem("item2");
-
-            // Add a CheckBox to the tree
-            TreeItem item = new TreeItem(new CheckBox("item3"));
-            root.addItem(item);
-
-
-            t = new Tree();
-            t.addItem(root);
-
-
-            coursePanel.add(t);
+  
     	
-        ausblenden = new Button("ausblenden");
+        ausblenden = new Button("Eingabe bestätigen");
         coursePanel.add(ausblenden);
     	
         ausblenden.addClickHandler(new ClickHandler() {
@@ -505,12 +445,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     //Method to insert the AppointmentView as SubView to the ReservationView
     @Override
-    public void addSubView(String name,ReservationEditSubView<IsWidget> view) {
+    public void addSubView(ReservationEditSubView<IsWidget> view) {
         IsWidget provideContent = view.provideContent();
-        FlowPanel flowPanel = new FlowPanel();
-        flowPanel.add(provideContent.asWidget());
-        TabPanelRapla panelRapla = new TabPanelRapla(name,flowPanel);
-        tabPanelRaplas.add(panelRapla);
+        subView.add(provideContent.asWidget());
     }
 
 }

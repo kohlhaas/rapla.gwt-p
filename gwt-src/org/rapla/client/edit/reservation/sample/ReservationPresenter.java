@@ -3,6 +3,7 @@ package org.rapla.client.edit.reservation.sample;
 import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.Category;
+import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
@@ -13,7 +14,7 @@ import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 
 import javax.inject.Inject;
-import java.util.Locale;
+import java.util.*;
 
 public class ReservationPresenter implements ReservationController, Presenter {
 
@@ -28,7 +29,6 @@ public class ReservationPresenter implements ReservationController, Presenter {
     private AppointmentPresenter appointmentPresenter;
     private Reservation event;
     boolean isNew;
-    String tabName = "Termin- und Ressourcenplanung";
 
 
     @Inject
@@ -36,7 +36,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
         this.view = view;
         view.setPresenter(this);
         this.appointmentPresenter = appointmentPresenter;
-        view.addSubView(tabName, appointmentPresenter.getView());
+        view.addSubView(appointmentPresenter.getView());
     }
 
 
@@ -90,25 +90,26 @@ public class ReservationPresenter implements ReservationController, Presenter {
     }
 
     /**
-     * @param courses Studiengänge, Benutzergruppen.
+     * @param Category Studiengänge, Benutzergruppen.
      * @return null if error
      */
-    public Category[] getCategory(Locale locale, String courses) {
+    public Category[] getCategory(Locale locale, String Category) {
         Category courseCategory = null;
         Category superCategory = facade.getSuperCategory();
         Category[] categories = superCategory.getCategories();
         for (Category category : categories) {
-            if (category.getName(locale).equals(courses)) {
+            if (category.getName(locale).equals(Category)) {
                 courseCategory = category;
             }
         }
         if (courseCategory == null) {
-            logger.error("there is no : " + courses);
+            logger.error("there is no : " + Category);
         }
 
         if (courseCategory != null) {
             return courseCategory.getCategories();
-        } else return null;
+        }
+        else return null;
     }
 
 
