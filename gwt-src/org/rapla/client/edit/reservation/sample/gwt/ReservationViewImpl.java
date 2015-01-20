@@ -372,7 +372,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
             @Override
             public void onChange(ChangeEvent event) {
-                getPresenter().changeEventName(eventNameTB.getText());
+                getPresenter().changeReservationName(eventNameTB.getText());
             }
         });
         grid.setWidget(0, 1, eventNameTB);
