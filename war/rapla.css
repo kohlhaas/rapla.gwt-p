@@ -1,10 +1,121 @@
-/** Add css rules here for your application. */
+.headerPanel{
+	padding-bottom: 20px;
+	vertical-align: middle;
+
+}
 
 
+
+.captionLabel{
+	font-family: "Calibri";
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-weight: bold;
+	font-size: 25px;
+	color: white;
+	text-align: center;
+	background-color: cornflowerblue;
+}
+
+.captionLabel::before {
+	content: url('images/022 Document Add.png');
+	padding-right: 10px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+
+}
 
 .tabPanel {
-	padding: 5px; 
+	padding-bottom: 10px;
+
 }
+.content{
+	padding-left: 5px;
+
+}
+
+.tabBar {
+	/*background-color: white;*/
+	
+	border-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: silver;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	background-color: white;
+}
+ .gwt-TabBarItem {
+
+  box-shadow: 4px 1px 7px silver;
+  background-color: cornflowerblue;
+  opacity: 0.8;
+  color: white;
+  border-width: 1px;
+  border-color: silver;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+  padding-left: 10px;
+  padding-top: 2px;
+  padding-bottom: 1px;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding-right: 5px;
+  font-size: 17px;
+  font-family: "Calibri";
+  cursor: pointer;
+ 
+} 
+
+.gwt-TabBarItem-selected {
+	
+	background-color: cornflowerblue;
+	opacity: 1;
+	cursor: default;
+} 
+
+
+.gwt-TabPanelBottom {
+    background-color: white;
+    box-shadow: 4px 4px 7px silver;
+
+    padding-top: 1px;
+    margin: 0px 0px 3px 0px;
+}
+
+
+/* .gwt-TabPanel {
+  margin-top: 4px;
+}
+
+.gwt-TabPanelBottom {
+  background-color: #E8E8E8;
+}
+
+.gwt-TabBar {
+  padding-top: 2px;
+  border-bottom: 4px solid #878787;
+  background-color: #fff;
+}
+
+.gwt-TabBarItem {
+  padding: 4px;
+  cursor: pointer;
+  background-color: #e8e8e8;
+  border-bottom: 2px solid white;
+  margin-right: 2px;
+}
+
+.gwt-TabBarItem-selected {
+  padding: 4px;
+  font-weight: bold;
+  cursor: default;
+
+  background-color: #878787;
+  border-bottom: 2px solid #87ffff;
+  margin-right: 2px;
+} */
+
 
 .textbox {
 	height: 100%;
@@ -28,9 +139,12 @@
 	width: 100%;
 }
 
+.part2 {
+	padding-right: 15px;
+}
 
 .eventType {
-	margin: 0 5px 10px 5px;
+	margin: 0 5px 10px 0px;
 	text-align: center;
 }
 .language {
@@ -46,7 +160,7 @@
 
 
 .eventname {
-	padding-left: 5px;
+
 	color: #777777;
 	margin-right: 5px;
 	
@@ -55,7 +169,7 @@
 
 
 .planhour {
-	margin-left: 5px;
+	
 	margin-right: 5px;
 	height: 100%;
 	
@@ -64,6 +178,11 @@
 
 .up::before{
 	content: url('images/triangledown_klein.png');
+
+}
+
+.downButton {
+	
 
 }
 
@@ -133,7 +252,7 @@ h1 {
   width: 50%;
   height: 50%;
   padding: 16px;
-  border: 6px solid orange;
+  border: 1px solid cornflowerblue;
   background-color: white;
   z-index:1002;
   overflow: auto;

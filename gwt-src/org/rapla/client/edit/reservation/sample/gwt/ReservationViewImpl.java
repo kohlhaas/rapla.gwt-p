@@ -25,6 +25,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
      */
 
     Panel popup;
+    FlowPanel headerPanel;
 
     TabPanel tabPanel; //Tabs for General Information and Appointment+Ressources-Planning
 
@@ -34,6 +35,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel row1;
     FlowPanel part2;
     FlowPanel coursePanel;
+    
+    HorizontalPanel saveDeleteCancelHPanel;
 
     List<TabPanelRapla> tabs =  new ArrayList<>();
 
@@ -61,19 +64,22 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	/*Structuring GUI*/
 
         initRaplaPopupPanel();
+        initHeaderPanel();
         initTabPanel();
+        initSaveDeleteCancelHPanel();
         initContentPanel();
         initGeneralInformationPanel();
         initRow1();
         initCoursePanel();
         initPart2Panel();
         initSecondGrid();
-        initUpDownPanel();
+        //initUpDownPanel();
 
         clearPanels();
         structuringPanels();
 
         /* Filling structure */
+        initCaptionLabel();
         initEventTypeListBoxes();
         //initCourseButton();
         initLabelEventNameInGrid();
@@ -82,7 +88,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         initTextBoxPlannedHoursInGrid();
 
 
-        initUpButton();
+       // initUpButton();
+       // initDownButton();
         initLabelInfo();
         initTextAreaInfo();
     
@@ -112,6 +119,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tabPanel = new TabPanel();
         tabPanel.addStyleName("tabPanel");
     }
+    
+    private void initHeaderPanel(){
+    	headerPanel = new FlowPanel();
+    	headerPanel.setStyleName("headerPanel");
+    }
+    
+    private void initSaveDeleteCancelHPanel(){
+    	saveDeleteCancelHPanel = new HorizontalPanel();
+    	saveDeleteCancelHPanel.addStyleName("saveDeleteCancelHPanel");
+    }
 
     private void initContentPanel() {
         content = new FlowPanel();
@@ -137,6 +154,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void initPart2Panel() {
         //Second part of the structure
         part2 = new FlowPanel();
+        part2.setStyleName("part2");
 
     }
 
@@ -153,6 +171,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void clearPanels() {
         popup.clear();
+        headerPanel.clear();
+        saveDeleteCancelHPanel.clear();
         tabPanel.clear();
         content.clear();
         generalInformation.clear();
@@ -160,12 +180,14 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         coursePanel.clear();
         part2.clear();
         grid.clear();
-        upDown.clear();
+        //upDown.clear();
         contentRes.clear();
     }
 
     private void structuringPanels() {
+    	popup.add(headerPanel);
         popup.add(tabPanel);
+        popup.add(saveDeleteCancelHPanel);
         initTabs();
         content.add(generalInformation);
         content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
@@ -174,17 +196,27 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         generalInformation.add(coursePanel);
         generalInformation.add(part2);
         part2.add(grid);
-        part2.add(upDown);
+        //part2.add(upDown);
     }
 
     private void initTabs(){
         tabPanel.add(content, "Allgemeine Informationen");
+        tabPanel.getTabBar().setStyleName("tabBar");
 
         for (TabPanelRapla tab : tabs) {
             tabPanel.add(tab.getTab(),tab.getName());
         }
 
         tabPanel.selectTab(0);
+    }
+    
+    private void initCaptionLabel(){
+    	Label captionLabel = new Label ("Veranstaltung anlegen");
+    	Label captionIcon = new Label();
+    	captionLabel.setStyleName("captionLabel");
+    	captionIcon.setStyleName("captionIcon");
+    	headerPanel.add(captionIcon);
+    	headerPanel.add(captionLabel);
     }
 
     private void initEventTypeListBoxes() {
@@ -401,6 +433,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         upDown.add(upButton);
 
     }
+    
+    private void initDownButton(){
+    	Button downButton = new Button("-");
+    	downButton.setStyleName("downButton");
+    	upDown.add(downButton);
+    }
 
     private void initLabelInfo() {
         Label info = new Label("Sonstige Veranstaltungsinformationen:");
@@ -427,7 +465,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onCancelButtonClicked();
                 }
             });
-            popup.add(button);
+            saveDeleteCancelHPanel.add(button);
         }
 
         if (getPresenter().isDeleteButtonEnabled()) {
@@ -439,7 +477,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     getPresenter().onDeleteButtonClicked();
                 }
             });
-            popup.add(button);
+            saveDeleteCancelHPanel.add(button);
         }
 
         {
@@ -448,10 +486,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
                 @Override
                 public void onClick(ClickEvent e) {
+                	//Attributes [] selectedAttributes = new Attributes();
+                	
+                	//getPresenter().changeAttributes(attributes);
                     getPresenter().onSaveButtonClicked();
                 }
             });
-            popup.add(button);
+            saveDeleteCancelHPanel.add(button);
         }
     }
 
