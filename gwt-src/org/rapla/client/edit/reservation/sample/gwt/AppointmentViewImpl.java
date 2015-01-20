@@ -24,6 +24,7 @@ import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import org.rapla.client.base.AbstractView;
+import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.entities.domain.*;
@@ -232,7 +233,11 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endDateField.setValue(selectedAppointment.getEnd());
         endHourField.setText(hoursFormat.format(selectedAppointment.getEnd()));
         endMinuteField.setText(minutesFormat.format(selectedAppointment.getEnd()));
-
+        
+        HistoryManager.getInstance().trackWidget(startHourField);
+        HistoryManager.getInstance().trackWidget(startMinuteField);
+        HistoryManager.getInstance().trackWidget(endHourField);
+        HistoryManager.getInstance().trackWidget(endMinuteField);
     }
 
 	public void updateAppointmentList(List<Appointment> appointments, int focus) {
