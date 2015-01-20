@@ -145,6 +145,14 @@
 		}
 
 .singleDateSign {
+	width: 5px;
+	float: left;
+	vertical-align: middle;
+	display: block;
+	margin-top: 7px;
+	
+}
+.multiDateSign {
 	width: 10px;
 	float: left;
 	vertical-align: middle;
@@ -160,19 +168,19 @@
 }
 
 .singleDateInfos {
-	width: 225px;
+	width: 215px;
 	float: right;
 }
 .multiDateInfos {
-	width: 265px;
+	width: 255px;
 	float: left;
 }
 
 .singleDateDateLabel {
 	font-size: 110%;
 	font-weight: bold;
+	font	
 }
-
 .InfoHorizontalPanel {
 	background: #eee;
 	border: 1px solid #DDD;
@@ -286,6 +294,8 @@
 }
 .singleDatesContainer{
 	width: 10px;
+	border: 1px solid #c2c2c2;
+	
 }
 .dateInput{
 	font-weight: bold;

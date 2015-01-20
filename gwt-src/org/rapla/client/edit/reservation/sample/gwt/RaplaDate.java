@@ -28,6 +28,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	private DateTimeFormat sdfToDay = DateTimeFormat.getFormat("dd.MM.yyyy");
 	private Date beginTime, endTime;
 	private boolean calculateLectureHours;
+	Label element;
 
 	private List<RaplaDate> raplaDates = new ArrayList<>();
 	private DisclosurePanel singleDatesContainer = new DisclosurePanel();
@@ -57,7 +58,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 
 		main.setStyleName("singleDate");
 
-		Label element = new Label("\u25CF");
+		element = new Label(" ");
 		element.setStyleName("singleDateSign");
 
 		FlowPanel times = new FlowPanel();
@@ -96,6 +97,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 			if (sd.calculateLectureHours == true)
 				vorlesungsStunden = vorlesungsStunden
 						+ sd.getVorlesungsstunden();
+			sd.element.setStyleName("multiDateSign");
 			sd.removeStyleName("singleDate");
 			helper.add(sd);
 		}
