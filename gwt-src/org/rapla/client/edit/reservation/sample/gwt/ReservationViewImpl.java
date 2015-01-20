@@ -54,7 +54,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     ListBox allLanguageLB = new ListBox();
     ListBox allKeys = new ListBox();
     ListBox allKeys2 = new ListBox();
-    Button course = new Button("Studiengang");
+    Button course = new Button("Studiengang auswählen");
     Button hideButton = null;
     String chosenEventType = "";
     String chosenLanguage = "";
@@ -126,11 +126,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         /**
          *
          */
-        final Category[] languagesCategory = getPresenter().getCategory(locale, "Sprachen");
-        for (Category language : languagesCategory) {
-            allLanguageLB.addItem(language.getName(locale));
-        }
-        row1.add(allLanguageLB);
+        
+
 
 
 
@@ -225,6 +222,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         part2.add(grid);
         //part2.add(upDown);
     }
+    
+
 
     private void initTabs(){
         tabPanel.add(content, "Allgemeine Informationen");
@@ -246,6 +245,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	headerPanel.add(captionLabel);
     }
 
+    
+
+    
+    
     private void initEventTypeListBoxes() {
         // Eventtype
         final DynamicType[] eventTypes = getPresenter().getAllEventTypes();
@@ -272,7 +275,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
 
         if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
+        	initAllLanguageLB();
         	initCourseButton();
+        	
         	//boolean changedLehrveranstaltung = false;
         	//actviateCourseButton = true;
 
@@ -296,6 +301,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
                 if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
                 	removeCourseButton();
+                	removeAllLanguageLB();
                 	buttonRemoved = true;
 
                 }
@@ -318,11 +324,32 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
                 if (chosenEventType.equalsIgnoreCase("Lehrveranstaltung")) {
                     //activateCourseButton = true;
+                	initAllLanguageLB();
                     initCourseButton();
+                    
 
                 }
 
             }
+        });
+    }
+    
+    private void initAllLanguageLB(){
+    	final Locale locale = getRaplaLocale().getLocale();
+        final Category[] languagesCategory = getPresenter().getCategory(locale, "Sprachen");
+        
+        allLanguageLB.addItem("Veranstaltungssprache auswählen");
+        
+        for (Category language : languagesCategory) {
+            allLanguageLB.addItem(language.getName(locale));
+        }
+        row1.add(allLanguageLB);
+        
+        allLanguageLB.addChangeHandler(new ChangeHandler(){
+        	
+        	public void onChange(ChangeEvent event){
+        		allLanguageLB.removeItem(0);
+        	}
         });
     }
 
@@ -404,6 +431,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             //activateCourseButton = false;
 
 
+    }
+    
+    private void removeAllLanguageLB(){
+    	row1.remove(allLanguageLB);
     }
 
 
