@@ -112,7 +112,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			
 			FlowPanel firstDateListWidget = new FlowPanel();
 			firstDateListWidget.setStyleName("wildcardPanel");
-			Label explainer = new Label("Durch das Dr\u00FCcken des roten Plus-Buttons \u00F6ffnet sich das Fenster zur Erstellung von Terminen");
+			Label explainer = new Label("Durch das Dr\u00FCcken des Plus-Buttons bei ausgef\u00FCllten Termindaten, wird ein Termin hinzugef\u00FCgt");
 			explainer.setStyleName("wildcard");
 			firstDateListWidget.add(explainer);	
 			dateList.add(firstDateListWidget);
