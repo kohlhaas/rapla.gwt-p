@@ -56,10 +56,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     ListBox allKeys2 = new ListBox();
     Button course = new Button("Studiengang auswählen");
     Button hideButton = null;
+    Label planhour;
     String chosenEventType = "";
     String chosenLanguage = "";
     Tree tree;
     boolean buttonRemoved = false;
+    boolean changedToLehrveranstaltung;
 
 
 
@@ -280,6 +282,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
         	initAllLanguageLB();
         	initCourseButton();
+        	initLabelPlannedHoursInGrid();
+        	initTextBoxPlannedHoursInGrid();
         	
         	//boolean changedLehrveranstaltung = false;
         	//actviateCourseButton = true;
@@ -305,6 +309,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
                 	removeCourseButton();
                 	removeAllLanguageLB();
+                	removePlannedHoursLabelTB();
+                	
                 	buttonRemoved = true;
 
                 }
@@ -327,8 +333,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
                 if (chosenEventType.equalsIgnoreCase("Lehrveranstaltung")) {
                     //activateCourseButton = true;
+                	changedToLehrveranstaltung = true;
                 	initAllLanguageLB();
                     initCourseButton();
+                    grid.resizeRows(2);
+                    initLabelPlannedHoursInGrid();
+                    initTextBoxPlannedHoursInGrid();
                     
 
                 }
@@ -341,12 +351,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	final Locale locale = getRaplaLocale().getLocale();
         final Category[] languagesCategory = getPresenter().getCategory(locale, "Sprachen");
         
-        allLanguageLB.addItem("Veranstaltungssprache auswählen");
+        if(!changedToLehrveranstaltung){
+        	allLanguageLB.addItem("Veranstaltungssprache auswählen");
         
-        for (Category language : languagesCategory) {
-            allLanguageLB.addItem(language.getName(locale));
+        	for (Category language : languagesCategory) {
+        		allLanguageLB.addItem(language.getName(locale));
+        	}
+        	
         }
         row1.add(allLanguageLB);
+        
         
         allLanguageLB.addChangeHandler(new ChangeHandler(){
         	
@@ -447,6 +461,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	coursePanel.remove(hideButton);
 
     }
+    
+    private void removePlannedHoursLabelTB(){
+    	grid.removeRow(1);
+    }
 
     private void initLabelEventNameInGrid() {
         //Label eventname
@@ -473,7 +491,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     private void initLabelPlannedHoursInGrid() {
-        Label planhour = new Label("geplante Vorlesungsstunden");
+        planhour = new Label("geplante Vorlesungsstunden");
         planhour.setStyleName("planhour");
         grid.setWidget(1, 0, planhour);
     }
