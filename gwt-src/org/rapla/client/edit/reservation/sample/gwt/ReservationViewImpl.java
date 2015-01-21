@@ -49,6 +49,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     TextBox eventNameTB;
 
     ListBox language = new ListBox();
+    ListBox examinationTypeLB;
     ListBox allLanguageLB = new ListBox();
     ListBox allKeys = new ListBox();
     ListBox allKeys2 = new ListBox();
@@ -87,6 +88,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         /* Filling structure */
         initCaptionLabel();
         initEventTypeListBoxes();
+        
         //initCourseButton();
         initLabelEventNameInGrid();
         initEventNameTextBox();
@@ -112,16 +114,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         initSaveDeleteCancelButtons();
         final Locale locale = getRaplaLocale().getLocale();
-//
-//        /**
-//         * das sind die Namen für getCategory Werte (Methode von unten), Theorethisch koentest du die beiden listboxen voneinander abhaengig machen
-//         */
-//        List<String> keys = getPresenter().getCategoryNames(locale);
-//        for (String key : keys) {
-//            allKeys.addItem(key);
-//        }
-//
-//        row1.add(allKeys);
+
+        /**
+         * das sind die Namen für getCategory Werte (Methode von unten), Theorethisch koentest du die beiden listboxen voneinander abhaengig machen
+         */
+/*        List<String> keys = getPresenter().getCategoryNames(locale);
+        for (String key : keys) {
+            allKeys.addItem(key);
+        }
+
+       row1.add(allKeys);*/
 
 
         /**
@@ -333,6 +335,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
                 if (chosenEventType.equalsIgnoreCase("Prüfung")) {
                     //ausblenden für präsi: initLanguageListBox();
+                	removeExaminationTypeLB();
 
                 }
                 for (DynamicType dynamicType : eventTypes) {
@@ -357,12 +360,29 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     
 
                 }
+                
+                if(chosenEventType.equalsIgnoreCase("Prüfung")){
+                	initExaminationTypeLB();
+                }
 
             }
         });
     }
     
+    private void initExaminationTypeLB(){
+    	examinationTypeLB = new ListBox();
+    	//examinationTypeLB.setStyleName("examinationTypeLB");
+    	final Locale locale = getRaplaLocale().getLocale();
+    	final Category[] examinationTypesCategory = getPresenter().getCategory(locale, "Prüfungsart");
+    	
+    	for(Category art : examinationTypesCategory){
+    		examinationTypeLB.addItem(art.getName(locale));
+    	}
+    	row1.add(examinationTypeLB);
+    }
+    
     private void initAllLanguageLB(){
+    	//examinationTypeLB.setStyleName("allLanguage");
     	final Locale locale = getRaplaLocale().getLocale();
         final Category[] languagesCategory = getPresenter().getCategory(locale, "Sprachen");
         
@@ -484,6 +504,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         coursePanel.remove(tree);
         coursePanel.remove(hideButton);
 
+    }
+    
+    private void removeExaminationTypeLB(){
+    	row1.remove(examinationTypeLB);
     }
     
     private void removePlannedHoursLabelTB(){

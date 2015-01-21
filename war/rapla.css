@@ -155,6 +155,14 @@
 	margin: 0 5px 10px 0px;
 	text-align: center;
 }
+
+.examinationTypeLB {
+	margin: 0 5px 10px 5px;
+}
+
+.allLanguage {
+	margin: 0 5px 10px 5px;
+}
 .language {
 	margin: 0 5px 10px 5px;
 }
