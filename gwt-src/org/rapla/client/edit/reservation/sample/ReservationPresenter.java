@@ -13,7 +13,10 @@ import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class ReservationPresenter implements ReservationController, Presenter {
 
@@ -32,19 +35,13 @@ public class ReservationPresenter implements ReservationController, Presenter {
     String tabName = "Termin- und Ressourcenplanung";
 
     /**
-     * ich brauch einfunktion die den veranstaltungstyp speichert, eine funktion die die sprache speichert
-
-     eine funktion die alle verfügbaren sprachen holt (Daten)
-
-     und die daten sollen alle gespeichert werden, wenn ich auf speichern button klicke
-
-     eine funktion, die die geplanten vorlesungsstunden abspeichert
-
-     aber das sind eig. alles attribute oder?
-
-     ich brauch noch eine funktion die alle  Daten zu Attribut "Art" bei dem Veranstaltungstyp "Prüfungen" ausließt
-     * @param view
-     * @param appointmentPresenter
+     * ich brauch einfunktion die den veranstaltungstyp speichert,
+     * eine funktion die die sprache speichert
+     * eine funktion die alle verfügbaren sprachen holt (Daten) --> done
+     * und die daten sollen alle gespeichert werden, wenn ich auf speichern button klick
+     * eine funktion, die die geplanten vorlesungsstunden abspeichert
+     * aber das sind eig. alles attribute oder?
+     * ich brauch noch eine funktion die alle  Daten zu Attribut "Art" bei dem Veranstaltungstyp "Prüfungen" ausließt
      */
     @Inject
     public ReservationPresenter(ReservationView view, AppointmentPresenter appointmentPresenter) {
@@ -59,7 +56,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
      */
     public List<String> getCategoryNames(Locale locale) {
 
-        List<String> stringList= new ArrayList<>();
+        List<String> stringList = new ArrayList<>();
         Category superCategory = facade.getSuperCategory();
         Category[] categories = superCategory.getCategories();
         for (Category category : categories) {
@@ -153,16 +150,47 @@ public class ReservationPresenter implements ReservationController, Presenter {
         classification.setValue(first, newName);
     }
 
-    @Override
-    public void changeAttributes(Attribute[] attributes) {
-        logger.info("adding number of attributes: " + attributes.length);
+    /**
+     * for now only if depth =1+
+     * for now you have to save the original type and not as string or smth similiar
+     * TODO: need a way to get the type and only save the specific type etc.., for now its only objects and thats not save
+     *
+     * @param attributeNames
+     * @param locale
+     */
+    public void changeAttributes(Map<String, Object> attributeNames, Locale locale) {
+        logger.info("adding number of attributes: " + attributeNames.size());
+
         Classification classification = reservation.getClassification();
         DynamicType type = classification.getType();
+        Attribute[] attributes = type.getAttributes();
         for (Attribute attribute : attributes) {
-            type.addAttribute(attribute);
+            for (Map.Entry<String, Object> entry : attributeNames.entrySet()) {
+                if (entry.getKey().equalsIgnoreCase((attribute.getName(locale)))) {
+                    classification.setValue(attribute, entry.getValue());
+                }
+            }
         }
+
     }
 
+    /**
+     * @return all current Values as a String
+     */
+    public List<String> getAllCurrentAttributes(Locale locale) {
+        List<String> list = new ArrayList<>();
+        Classification classification = reservation.getClassification();
+        DynamicType type = classification.getType();
+        for (Attribute attribute : type.getAttributes()) {
+            String valueAsString = classification.getValueAsString(attribute, locale);
+            if (valueAsString == null || valueAsString.isEmpty()) {
+                valueAsString= "not defined yet";
+            }
+            list.add(attribute.getName(locale) + " : " + valueAsString);
+        }
+        logger.info("all attributes length: " + list.size());
+        return list;
+    }
 
     /**
      * change String, but it will be added as parameter!
@@ -176,7 +204,6 @@ public class ReservationPresenter implements ReservationController, Presenter {
         return "is new";
 
     }
-
 
     @Override
     public boolean isDeleteButtonEnabled() {
