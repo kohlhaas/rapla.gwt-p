@@ -128,12 +128,20 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
         row1.add(allLanguageLB);
 
-
+/**
+ * about current attributes
+ */
         for (String s : getPresenter().getAllCurrentAttributes(locale)) {
             allCurrentAttributes.addItem(s);
         }
+        Label labelCurrentAttributes = new Label("Current Attributes");
+        row1.add(labelCurrentAttributes);
         row1.add(allCurrentAttributes);
     }
+    /**
+     *
+     */
+
 
     private void initRaplaPopupPanel() {
         popup = RootPanel.get("raplaPopup");
