@@ -27,6 +27,7 @@ public interface ReservationView<W> extends View<Presenter> {
     void changeAttributes(Map<String, Object> attributeNames, Locale locale);
     List<String>  getCategoryNames(Locale locale);
     List<String> getAllCurrentAttributes(Locale locale);
+
   }
 
   void show(Reservation event);

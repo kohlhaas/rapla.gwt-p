@@ -23,6 +23,8 @@ public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubV
         void addResourceButtonPressed(int selectedIndex, String resourceTypeName, Locale locale);
         Allocatable[] getAllocatables();
         Map<DynamicType, List<Allocatable>> getSortedAllocatables();
+		DynamicType[] getEventTypes();
+		DynamicType[] getResourceTypes();
     }
 
     void show(Reservation reservation);
