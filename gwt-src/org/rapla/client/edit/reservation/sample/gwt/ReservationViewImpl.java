@@ -51,7 +51,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     ListBox language = new ListBox();
     ListBox allLanguageLB = new ListBox();
     ListBox allKeys = new ListBox();
-    ListBox allAttributes = new ListBox();
+    ListBox allCurrentAttributes = new ListBox();
     Button course = new Button("Studiengang");
     Button hideButton = null;
     String chosenEventType = "";
@@ -129,10 +129,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         row1.add(allLanguageLB);
 
 
-//        for (String s : getPresenter().getAllCurrentAttributes(locale)) {
-//            allAttributes.addItem(s);
-//        }
-//        row1.add(allAttributes);
+        for (String s : getPresenter().getAllCurrentAttributes(locale)) {
+            allCurrentAttributes.addItem(s);
+        }
+        row1.add(allCurrentAttributes);
     }
 
     private void initRaplaPopupPanel() {
@@ -210,7 +210,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         contentRes.clear();
         allKeys.clear();
         allLanguageLB.clear();
-        allAttributes.clear();
+        allCurrentAttributes.clear();
 
     }
 

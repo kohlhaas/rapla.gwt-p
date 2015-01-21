@@ -174,17 +174,23 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     }
 
+    /**
+     * @return all current Values as a String
+     */
     public List<String> getAllCurrentAttributes(Locale locale) {
         List<String> list = new ArrayList<>();
         Classification classification = reservation.getClassification();
         DynamicType type = classification.getType();
         for (Attribute attribute : type.getAttributes()) {
-//            list.add(classification.set);
+            String valueAsString = classification.getValueAsString(attribute, locale);
+            if (valueAsString == null || valueAsString.isEmpty()) {
+                valueAsString= "not defined yet";
+            }
+            list.add(attribute.getName(locale) + " : " + valueAsString);
         }
         logger.info("all attributes length: " + list.size());
         return list;
     }
-
 
     /**
      * change String, but it will be added as parameter!
