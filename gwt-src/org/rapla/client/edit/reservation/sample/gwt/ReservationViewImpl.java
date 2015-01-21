@@ -38,6 +38,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     FlowPanel coursePanel;
 
     HorizontalPanel saveDeleteCancelHPanel;
+    FlowPanel historyMgmtPanel;
 
     List<TabPanelRapla> tabs = new ArrayList<>();
 
@@ -623,6 +624,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
 
         {
+        	historyMgmtPanel = new FlowPanel();
+        	historyMgmtPanel.addStyleName("history-mgmt");
+        	popup.add(historyMgmtPanel);
             Button button = new Button("Rückgängig");
             button.addClickHandler(new ClickHandler() {
                 @Override
@@ -632,6 +636,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 }
             });
             saveDeleteCancelHPanel.add(button);
+            historyMgmtPanel.add(button);
         }
 
         {
@@ -644,6 +649,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 }
             });
             saveDeleteCancelHPanel.add(button);
+            historyMgmtPanel.add(button);
         }
     }
 
