@@ -62,6 +62,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     Tree tree;
     boolean buttonRemoved = false;
     boolean changedToLehrveranstaltung;
+    boolean firstChange = true;
     
 
     public void show(Reservation event) {
@@ -132,13 +133,15 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 /**
  * about current attributes
  */
+      /*  //für Präsentation ausblenden
+        
         for (String s : getPresenter().getAllCurrentAttributes(locale)) {
             allCurrentAttributes.addItem(s);
         }
         Label labelCurrentAttributes = new Label("Current Attributes");
         row1.add(labelCurrentAttributes);
-        row1.add(allCurrentAttributes);
-    }
+        row1.add(allCurrentAttributes);*/
+    } 
     /**
      *
      */
@@ -252,6 +255,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     private void initCaptionLabel() {
+    	//getPresenter().isReservationNew();
         Label captionLabel = new Label("Veranstaltung anlegen");
         Label captionIcon = new Label();
         captionLabel.setStyleName("captionLabel");
@@ -270,7 +274,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         final Locale locale = getRaplaLocale().getLocale();
         final ListBox eventTypeLB = new ListBox();
 
-        initLabelCurrentEventType(locale);
+        //initLabelCurrentEventType(locale);
 
         eventTypeLB.setStyleName("eventType");
 
@@ -328,7 +332,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
 
                 if (chosenEventType.equalsIgnoreCase("Prüfung")) {
-                    initLanguageListBox();
+                    //ausblenden für präsi: initLanguageListBox();
 
                 }
                 for (DynamicType dynamicType : eventTypes) {
@@ -337,7 +341,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     if (dynamicType.getName(locale).equals(chosenEventType)) {
 
                         for (Attribute attribute : dynamicType.getAttributes()) {
-                            language.addItem(attribute.getName(locale));
+                            //language.addItem(attribute.getName(locale));
                         }
                     }
                 }
@@ -363,6 +367,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         final Category[] languagesCategory = getPresenter().getCategory(locale, "Sprachen");
         
         if(!changedToLehrveranstaltung){
+        	
         	allLanguageLB.addItem("Veranstaltungssprache auswählen");
         
         	for (Category language : languagesCategory) {
@@ -373,26 +378,34 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         row1.add(allLanguageLB);
         
         
+        
+        
         allLanguageLB.addChangeHandler(new ChangeHandler(){
         	
         	public void onChange(ChangeEvent event){
-        		allLanguageLB.removeItem(0);
+        		if(firstChange){
+        			allLanguageLB.removeItem(0);;
+        		}
+        		
+        		firstChange = false;
         	}
         });
     }
 
-    private void initLabelCurrentEventType(Locale locale) {
+    //ausblenden für präsi
+/*    private void initLabelCurrentEventType(Locale locale) {
         String name = getPresenter().getEventType(locale);
         Label label = new Label(name);
         row1.add(label);
-    }
+    }*/
 
-    private void initLanguageListBox() {
+    //ausblenden für präsi
+/*    private void initLanguageListBox() {
         // Language selection
         chosenLanguage = language.getSelectedValue();
         language.setStyleName("language");
         row1.add(language);
-    }
+    }*/
 
     private void initCourseButton() {
 
