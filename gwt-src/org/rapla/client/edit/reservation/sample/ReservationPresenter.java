@@ -35,13 +35,13 @@ public class ReservationPresenter implements ReservationController, Presenter {
     String tabName = "Termin- und Ressourcenplanung";
 
     /**
-     * ich brauch einfunktion die den veranstaltungstyp speichert,
-     * eine funktion die die sprache speichert
+     * ich brauch einfunktion die den veranstaltungstyp speichert, -->
+     * eine funktion die die sprache speichert --> s.unten.
      * eine funktion die alle verfügbaren sprachen holt (Daten) --> done
-     * und die daten sollen alle gespeichert werden, wenn ich auf speichern button klick
-     * eine funktion, die die geplanten vorlesungsstunden abspeichert
+     * und die daten sollen alle gespeichert werden, wenn ich auf speichern button klick --> theo. done
+     * eine funktion, die die geplanten vorlesungsstunden abspeichert --> s. unten
      * aber das sind eig. alles attribute oder?
-     * ich brauch noch eine funktion die alle  Daten zu Attribut "Art" bei dem Veranstaltungstyp "Prüfungen" ausließt
+     * ich brauch noch eine funktion die alle  Daten zu Attribut "Art" bei dem Veranstaltungstyp "Prüfungen" ausließt --> s.unten
      */
     @Inject
     public ReservationPresenter(ReservationView view, AppointmentPresenter appointmentPresenter) {
