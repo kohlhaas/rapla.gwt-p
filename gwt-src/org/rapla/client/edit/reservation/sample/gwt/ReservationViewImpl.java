@@ -585,7 +585,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void initSaveDeleteCancelButtons() {
         //Standard Buttons
         {
-            Button button = new Button("Cancel");
+            Button button = new Button("Abbrechen");
             button.addClickHandler(new ClickHandler() {
 
                 @Override
