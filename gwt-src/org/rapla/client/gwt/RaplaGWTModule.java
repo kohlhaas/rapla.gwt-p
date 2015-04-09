@@ -3,6 +3,7 @@ package org.rapla.client.gwt;
 import javax.inject.Singleton;
 
 import org.rapla.AppointmentFormaterImpl;
+import org.rapla.client.ActivityManager;
 import org.rapla.client.ApplicationView;
 import org.rapla.components.util.CommandScheduler;
 import org.rapla.components.xmlbundle.I18nBundle;
@@ -40,6 +41,7 @@ public class RaplaGWTModule implements GinModule{
         binder.bind( EventBus.class).to( SimpleEventBus.class).in(Singleton.class);
         
         binder.bind( ApplicationView.class).to(ApplicationViewImpl.class);
+        binder.bind( ActivityManager.class).to(ActivityManagerImpl.class).in(Singleton.class);
         
     }
 }

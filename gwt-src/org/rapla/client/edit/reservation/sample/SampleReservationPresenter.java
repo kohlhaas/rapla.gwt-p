@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.edit.reservation.sample.SampleReservationView.Presenter;
+import org.rapla.client.event.DetailEndEvent;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
@@ -11,6 +12,8 @@ import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
+
+import com.google.web.bindery.event.shared.EventBus;
 
 public class SampleReservationPresenter implements ReservationController,Presenter {
 
@@ -20,6 +23,8 @@ public class SampleReservationPresenter implements ReservationController,Present
     RaplaLocale raplaLocale;
     @Inject
     ClientFacade facade;
+    @Inject
+    EventBus eventBus;
     
     private SampleReservationView view;
     private SampleAppointmentPresenter appointmentPresenter;
@@ -52,7 +57,7 @@ public class SampleReservationPresenter implements ReservationController,Present
         } catch (RaplaException e1) {
             logger.error( e1.getMessage(), e1);
         }
-        view.hide();
+        fireEventAndCloseView();
     }
 
     @Override
@@ -63,13 +68,18 @@ public class SampleReservationPresenter implements ReservationController,Present
         } catch (RaplaException e1) {
             logger.error( e1.getMessage(), e1);
         }
-        view.hide();
+        fireEventAndCloseView();
     }
+
+	private void fireEventAndCloseView() {
+		eventBus.fireEvent(new DetailEndEvent(event));
+        view.hide();
+	}
 
     @Override
     public void onCancelButtonClicked() {
         logger.info("cancel clicked");
-        view.hide();
+        fireEventAndCloseView();
     }
 
     

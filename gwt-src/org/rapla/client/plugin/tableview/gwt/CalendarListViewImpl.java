@@ -47,13 +47,13 @@ public class CalendarListViewImpl extends AbstractView<org.rapla.client.plugin.t
 
     @Override
     public void update(Collection<Reservation> result) {
-        data.getList().clear();
+    	final List<Reservation> list = data.getList();
+        list.clear();
         for (Reservation event : result)
         {
-            List<Reservation> list = data.getList();
             list.add(event);
         }
-        list.setPageSize(data.getList().size());
+        this.list.setPageSize(data.getList().size());
     }
 
     @Override
