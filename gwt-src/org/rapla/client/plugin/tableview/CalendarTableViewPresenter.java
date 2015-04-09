@@ -1,5 +1,6 @@
 package org.rapla.client.plugin.tableview;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
@@ -12,11 +13,14 @@ import org.rapla.entities.User;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.ClassificationFilter;
+import org.rapla.facade.CalendarSelectionModel;
 import org.rapla.facade.ClientFacade;
+import org.rapla.framework.RaplaException;
 import org.rapla.framework.logger.Logger;
 import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
+import com.google.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class CalendarTableViewPresenter<W> implements Presenter, CalendarPlugin {
@@ -28,6 +32,9 @@ public class CalendarTableViewPresenter<W> implements Presenter, CalendarPlugin 
     private ClientFacade facade;
     @Inject
     private EventBus eventBus;
+    
+    @Inject
+    private CalendarSelectionModel model;
 
     @Inject
     public CalendarTableViewPresenter(CalendarTableView view) {
@@ -55,24 +62,35 @@ public class CalendarTableViewPresenter<W> implements Presenter, CalendarPlugin 
 
     @Override
     public void updateContent() {
-        Allocatable[] allocatables = null;
-        Date start = null;
-        Date end = null;
-        User user = null;
-        ClassificationFilter[] reservationFilters = null;
-        FutureResult<Collection<Reservation>> reservationsAsync = facade.getReservationsAsync(user, allocatables, start, end, reservationFilters);
-        reservationsAsync.get( new AsyncCallback<Collection<Reservation>>() {
-            
-            @Override
-            public void onSuccess(Collection<Reservation> result) {
-                logger.info(result.size() + " Reservations loaded.");
-                view.update(result);                }
-            
-            @Override
-            public void onFailure(Throwable e) {
-                logger.error(e.getMessage(), e.getCause());
-            }
-        });
+//        Allocatable[] allocatables = null;
+//        Date start = null;
+//        Date end = null;
+//        User user = null;
+
+        try {
+            Reservation[] reservations;
+            reservations = model.getReservations();
+            Collection<Reservation> result = Arrays.asList( reservations);
+            logger.info(result.size() + " Reservations loaded.");
+            view.update(result);                
+        } catch (RaplaException e) {
+            logger.error(e.getMessage(), e);
+        }
+        
+//        ClassificationFilter[] reservationFilters = null;
+//        FutureResult<Collection<Reservation>> reservationsAsync = facade.getReservationsAsync(user, allocatables, start, end, reservationFilters);
+//        reservationsAsync.get( new AsyncCallback<Collection<Reservation>>() {
+//            
+//            @Override
+//            public void onSuccess(Collection<Reservation> result) {
+//                logger.info(result.size() + " Reservations loaded.");
+//                view.update(result);                }
+//            
+//            @Override
+//            public void onFailure(Throwable e) {
+//                logger.error(e.getMessage(), e.getCause());
+//            }
+//        });
 
     }
 
