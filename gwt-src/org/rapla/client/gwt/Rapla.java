@@ -1,12 +1,16 @@
 package org.rapla.client.gwt;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.rapla.client.Application;
+import org.rapla.framework.RaplaException;
+import org.rapla.rest.gwtjsonrpc.client.ExceptionDeserializer;
 import org.rapla.rest.gwtjsonrpc.client.impl.AbstractJsonProxy;
 import org.rapla.rest.gwtjsonrpc.client.impl.EntryPointFactory;
 import org.rapla.storage.dbrm.LoginTokens;
+import org.rapla.storage.dbrm.RaplaExceptionDeserializer;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -43,8 +47,15 @@ public class Rapla implements EntryPoint {
                 return  url;
             }
         });
+        AbstractJsonProxy.setExceptionDeserializer(new ExceptionDeserializer() {
+			@Override
+			public Exception deserialize(String exception, String message, List<String> parameter) {
+				final RaplaExceptionDeserializer raplaExceptionDeserializer = new RaplaExceptionDeserializer();
+				final RaplaException deserializedException = raplaExceptionDeserializer.deserializeException(exception, message, parameter);
+				return deserializedException;
+			}
+		});
     }
-    
     private LoginTokens getValidToken() {
         String tokenString = Cookies.getCookie(LOGIN_COOKIE);
         if (tokenString != null)
