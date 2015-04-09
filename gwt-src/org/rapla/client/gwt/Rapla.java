@@ -79,14 +79,15 @@ public class Rapla implements EntryPoint {
         {
             AbstractJsonProxy.setAuthThoken(token.getAccessToken());
             final MainInjector injector = GWT.create(MainInjector.class);
-            Application app = injector.getApplication();
-            app.createApplication();
+            Bootstrap bootstrap = injector.getBootstrap();
+            bootstrap.load();
         } 
         else
         {
             Window.Location.replace("login.html");
         }
     }
+    
    
 
 

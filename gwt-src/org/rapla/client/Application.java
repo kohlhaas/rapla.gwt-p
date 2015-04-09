@@ -1,8 +1,6 @@
 package org.rapla.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -25,13 +23,9 @@ import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.ModificationEvent;
 import org.rapla.facade.ModificationListener;
-import org.rapla.facade.internal.FacadeImpl;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
-import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
-import org.rapla.rest.gwtjsonrpc.common.FutureResult;
-import org.rapla.rest.gwtjsonrpc.common.VoidResult;
 
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -76,50 +70,28 @@ public class Application implements ApplicationView.Presenter {
 	    }
 	}
 
-	public void createApplication() {
-        FacadeImpl facadeImpl = (FacadeImpl) facade;
-        facadeImpl.setCachingEnabled( false );
-        FutureResult<VoidResult> load = facadeImpl.load();
-        logger.info("Loading resources");
-        load.get( new AsyncCallback<VoidResult>() {
-            
-            @Override
-            public void onSuccess(VoidResult result) {
-               try {
-            	   activityManager.get().init();
-                   Collection<Allocatable> allocatables = Arrays.asList(facade.getAllocatables());
-                   logger.info("loaded " + allocatables.size() + " resources. Starting application");
-                   start();
-               } catch (RaplaException e) {
-                   onFailure(e);
+	public void start() {
+       try {
+    	   activityManager.get().init();
+           // Test for the resources
+           List<String> names = new ArrayList<String>();
+           for ( CalendarPlugin plugin:viewPluginPresenter)
+           {
+               names.add( plugin.getName());
+           }
+           mainView.show( names );
+           viewChanged();
+           facade.addModificationListener( new ModificationListener() {
+               
+               @Override
+               public void dataChanged(ModificationEvent evt) throws RaplaException {
+                   viewChanged();
                }
-            }
-            
-            @Override
-            public void onFailure(Throwable e) {
-                logger.error(e.getMessage(), e);
-                
-            }
-        });
+           });
+       } catch (RaplaException e) {
+           logger.error(e.getMessage(), e);
+       }
 	}
-
-    private void start()  {
-        // Test for the resources
-        List<String> names = new ArrayList<String>();
-	    for ( CalendarPlugin plugin:viewPluginPresenter)
-	    {
-	        names.add( plugin.getName());
-	    }
-	    mainView.show( names );
-		viewChanged();
-		facade.addModificationListener( new ModificationListener() {
-            
-            @Override
-            public void dataChanged(ModificationEvent evt) throws RaplaException {
-                viewChanged();
-            }
-        });
-    }
 
 	private void viewChanged() {
 	    mainView.replaceContent( selectedView );
