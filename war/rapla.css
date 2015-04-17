@@ -60,3 +60,28 @@ h1 {
 	margin-right: 50px;
 	font-size: 20px;
 }
+
+.week.table {
+	padding-top: 20px;	
+}
+
+.week.table table{
+	width: 100%;
+}
+
+.week.table td{
+	width: 14%;
+}
+
+/* Event style */
+.event {
+	background-color: rgb(237, 237, 237);
+	height: 100%;
+	border-radius: 3px;
+}
+.week.table .event.dragging{
+	cursor: pointer;
+}
+.event.dragging {
+	background-color: rgba(237, 237, 237, 0.47);
+}
