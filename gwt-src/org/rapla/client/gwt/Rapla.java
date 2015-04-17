@@ -84,7 +84,7 @@ public class Rapla implements EntryPoint {
         } 
         else
         {
-            Window.Location.replace("login.html");
+            Window.Location.replace("../rapla?page=auth");
         }
     }
     
