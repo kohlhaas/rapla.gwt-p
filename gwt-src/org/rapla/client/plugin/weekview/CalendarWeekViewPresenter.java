@@ -94,6 +94,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         //            }
         weekview.setLocale(raplaLocale.getLocale());
         weekview.setToDate(model.getSelectedDate());
+        weekview.setWorktime(8, 18);
         model.setStartDate(weekview.getStartDate());
         model.setEndDate(weekview.getEndDate());
 
@@ -492,12 +493,12 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             {
             }
 
-            public void putBlock(Block block, int startMinute)
+            void putBlock(Block block, int startMinute)
             {
                 map.put(startMinute, block);
             }
 
-            Block getBlock(Integer startMinute)
+            public Block getBlock(Integer startMinute)
             {
                 return map.get(startMinute);
             }
@@ -507,7 +508,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 return lastEnd;
             }
 
-            public void setLastEnd(int lastEnd)
+            void setLastEnd(int lastEnd)
             {
                 this.lastEnd = lastEnd;
             }
