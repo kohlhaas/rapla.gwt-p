@@ -3,8 +3,8 @@ package org.rapla.client.plugin.weekview.gwt;
 import java.util.Collection;
 
 import org.rapla.client.base.AbstractView;
-import org.rapla.client.plugin.view.ElementWrapper;
-import org.rapla.client.plugin.view.Event;
+import org.rapla.client.gwt.util.ElementWrapper;
+import org.rapla.client.gwt.view.Event;
 import org.rapla.client.plugin.weekview.CalendarWeekView;
 import org.rapla.entities.domain.Reservation;
 
@@ -89,9 +89,16 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                         element.getStyle().clearBackgroundColor();
                         final String rowString = event.getDataTransfer().getData("row");
                         final String columnString = event.getDataTransfer().getData("column");
-                        final Widget widget = grid.getWidget(Integer.parseInt(rowString), Integer.parseInt(columnString));
-                        Event source = (Event) widget;
-                        update(row, column, source);
+                        final int sourceRow = Integer.parseInt(rowString);
+                        final int sourceColumn = Integer.parseInt(columnString);
+                        // only do something whenever the place has been changed
+                        if (sourceRow != row || sourceColumn != column)
+                        {
+                            final Widget widget = grid.getWidget(sourceRow, sourceColumn);
+                            Event source = (Event) widget;
+                            // TODO: call controller to update event
+                            grid.setWidget(row, column, source);
+                        }
                     }
                 }, DropEvent.getType());
             }
@@ -103,10 +110,18 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     {
         grid.clear();
         setupTable();
-        final Event flowPanel = new Event();
-        final HTML html = new HTML("Test");
-        flowPanel.add(html);
-        grid.setWidget(3, 3, flowPanel);
+        {
+            final Event flowPanel = new Event();
+            final HTML html = new HTML("Test");
+            flowPanel.add(html);
+            grid.setWidget(3, 3, flowPanel);
+        }
+        {
+            final Event flowPanel = new Event();
+            final HTML html = new HTML("Test2");
+            flowPanel.add(html);
+            grid.setWidget(4, 3, flowPanel);
+        }
         //        grid.getFlexCellFormatter().setRowSpan(3, 3, 2);
     }
 
@@ -115,41 +130,4 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     {
         return grid;
     }
-
-    private void update(final int row, final int column, Event source)
-    {
-        grid.setWidget(row, column, source);
-    }
-
-    //    @Override
-    //    public void dropFinished(DragEndEvent event, Event source)
-    //    {
-    //        final NativeEvent nativeElement = event.getNativeEvent();
-    //        // problem if browser is made smaller
-    //        final int absoluteLeft = nativeElement.getClientX();
-    //        final int absoluteTop = nativeElement.getClientY();
-    //        // calculate drop area
-    //        final int gridAbsoluteLeft = grid.getElement().getOffsetLeft();
-    //        final int gridAbsoluteTop = grid.getElement().getOffsetTop();
-    //        final int gridOffsetWidth = grid.getElement().getClientWidth();
-    //        final int gridOffsetHeight = grid.getElement().getClientHeight();
-    //        // 
-    //        // 7 days + 1 empty (left top)
-    //        final int daysDisplayed = 7 + 1;
-    //        // 10 hours + 1 empty (left top)
-    //        final int hoursDisplayed = 10 + 1;
-    //        // calculate relative from table origin
-    //        final int left = absoluteLeft - gridAbsoluteLeft;
-    //        final int top = absoluteTop - gridAbsoluteTop;
-    //        if (left < 0 || top < 0 || left > gridOffsetWidth || top > gridOffsetHeight)
-    //        {
-    //            return;
-    //        }
-    //        // calc cell
-    //        final int gridElementLeft = (left / (gridOffsetWidth / daysDisplayed));
-    //        final int gridElementTop = (top / (gridOffsetHeight / hoursDisplayed));
-    //        grid.setWidget(gridElementTop, gridElementLeft, source);
-    //        event.stopPropagation();
-    //
-    //    }
 }
