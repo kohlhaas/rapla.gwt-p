@@ -2,25 +2,18 @@ package org.rapla.client.plugin.tableview;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 
 import javax.inject.Inject;
 
 import org.rapla.client.base.CalendarPlugin;
 import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.plugin.tableview.CalendarTableView.Presenter;
-import org.rapla.entities.User;
-import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Reservation;
-import org.rapla.entities.dynamictype.ClassificationFilter;
 import org.rapla.facade.CalendarSelectionModel;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.logger.Logger;
-import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
-import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
-import com.google.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class CalendarTableViewPresenter<W> implements Presenter, CalendarPlugin {

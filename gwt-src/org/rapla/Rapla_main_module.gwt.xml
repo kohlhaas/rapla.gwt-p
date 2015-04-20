@@ -20,6 +20,9 @@
   <source path='entities/storage'/>
   <source path='entities/storage/internal'/>
   <source path='components/xmlbundle'/>
+  <source path='components/calendarview'/>
+  <source path='plugin/abstractcalendar'/>
+  <source path='plugin/abstractcalendar/server'/>
   <source path='components/xmlbundle/impl'/> 
   <source path='framework'/>
   <source path='framework/logger'/>
