@@ -24,6 +24,8 @@
   <source path='plugin/abstractcalendar'/>
   <source path='plugin/abstractcalendar/server'/>
   <source path='components/xmlbundle/impl'/> 
+  <source path='gui/toolkit'/>
+  <source path='gui/internal/view'/>
   <source path='framework'/>
   <source path='framework/logger'/>
   <source path='facade'/>

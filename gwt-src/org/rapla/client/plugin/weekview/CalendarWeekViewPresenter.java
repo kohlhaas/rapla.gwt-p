@@ -1,6 +1,5 @@
 package org.rapla.client.plugin.weekview;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -12,7 +11,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.rapla.client.base.CalendarPlugin;
 import org.rapla.client.event.DetailSelectEvent;
@@ -51,7 +49,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     ClientFacade facade;
 
     @Inject
-    Provider<HTMLRaplaBuilder> builderProvider;
+    HTMLRaplaBuilder builderProvider;
 
     @Inject
     private RaplaLocale raplaLocale;
@@ -95,7 +93,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         //                throw new ServletException( ex );
         //            }
         weekview.setLocale(raplaLocale.getLocale());
-        weekview.setTimeZone(raplaLocale.getTimeZone());
         weekview.setToDate(model.getSelectedDate());
         model.setStartDate(weekview.getStartDate());
         model.setEndDate(weekview.getEndDate());
@@ -151,7 +148,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     protected RaplaBuilder createBuilder() throws RaplaException
     {
         //RaplaBuilder builder = super.createBuilder();
-        RaplaBuilder builder = builderProvider.get();
+        RaplaBuilder builder =builderProvider;//.get();
         Date startDate = facade.today();
         Date endDate = DateTools.addDays(startDate, 7);
         builder.setFromModel(model, startDate, endDate);
@@ -326,7 +323,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 if (fullHour || minuteOfDay == minMinute)
                 {
                     int rowspan = calcRowspan(minuteOfDay, ((minuteOfDay / 60) + 1) * 60);
-                    String timeString = formatTime(minuteOfDay, useAM_PM);
+                    String timeString = AbstractCalendar.formatTime(minuteOfDay, useAM_PM,locale);
                     timelist.add( new RowSlot( timeString, rowspan));
                 }
                 for (int day = 0; day < columns; day++)
@@ -340,8 +337,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                         Block block = slot.getBlock(minuteOfDay);
                         if (block != null)
                         {
-                            blockCalendar.setTime(block.getEnd());
-                            int endMinute = Math.min(maxMinute, blockCalendar.get(Calendar.HOUR_OF_DAY) * 60 + blockCalendar.get(Calendar.MINUTE));
+                            int endMinute = Math.min(maxMinute, DateTools.getMinuteOfDay(block.getEnd().getTime()));
                             int rowspan = calcRowspan(minuteOfDay, endMinute);
                             if (block instanceof HTMLRaplaBlock)
                             {
@@ -416,9 +412,8 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
         protected String createColumnHeader(int i)
         {
-            blockCalendar.setTime(getStartDate());
-            blockCalendar.add(Calendar.DATE, i);
-            String headerName = AbstractCalendar.formatDayOfWeekDateMonth(blockCalendar.getTime(), locale, timeZone);
+            Date date = DateTools.addDays(getStartDate(), i);
+            String headerName = AbstractCalendar.formatDayOfWeekDateMonth(date, locale);
             return headerName;
         }
 
@@ -428,11 +423,8 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         {
             checkBlock(block);
             HTMLDaySlot multiSlot = daySlots[column];
-            blockCalendar.setTime(block.getStart());
-
-            int startMinute = Math.max(minMinute, (blockCalendar.get(Calendar.HOUR_OF_DAY) * 60 + blockCalendar.get(Calendar.MINUTE)));
-            blockCalendar.setTime(block.getEnd());
-            int endMinute = (Math.min(maxMinute, blockCalendar.get(Calendar.HOUR_OF_DAY) * 60 + blockCalendar.get(Calendar.MINUTE)));
+            int startMinute = Math.max(minMinute, DateTools.getMinuteOfDay( block.getStart().getTime()));
+            int endMinute = (Math.min(maxMinute, DateTools.getMinuteOfDay( block.getEnd().getTime())));
             blocks.add(block);
             //            startBlock.add( startMinute);
             //       endBlock.add( endMinute);
@@ -442,22 +434,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
         }
 
-        private String formatTime(int minuteOfDay, boolean useAM_PM)
-        {
-            blockCalendar.set(Calendar.MINUTE, minuteOfDay % 60);
-            int hour = minuteOfDay / 60;
-            blockCalendar.set(Calendar.HOUR_OF_DAY, hour);
-            SimpleDateFormat format = new SimpleDateFormat(useAM_PM ? "h:mm" : "H:mm", locale);
-            format.setTimeZone(blockCalendar.getTimeZone());
-            if (useAM_PM && hour == 12 && minuteOfDay % 60 == 0)
-            {
-                return format.format(blockCalendar.getTime()) + " PM";
-            }
-            else
-            {
-                return format.format(blockCalendar.getTime());
-            }
-        }
 
         static public class HTMLDaySlot extends ArrayList<Slot>
         {
