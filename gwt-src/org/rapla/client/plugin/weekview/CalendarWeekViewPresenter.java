@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -20,6 +19,7 @@ import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.plugin.weekview.CalendarWeekView.Presenter;
 import org.rapla.components.calendarview.Block;
 import org.rapla.components.calendarview.Builder;
+import org.rapla.components.calendarview.Builder.PreperationResult;
 import org.rapla.components.calendarview.html.AbstractHTMLView;
 import org.rapla.components.util.DateTools;
 import org.rapla.components.xmlbundle.I18nBundle;
@@ -239,7 +239,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             return getDaysInView();
         }
 
-        public void rebuild()
+        public void rebuild(Builder b)
         {
             int columns = getColumnCount();
             blocks.clear();
@@ -257,34 +257,22 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             int start = startMinutes;
             int end = endMinutes;
             minuteBlock.clear();
-            Iterator<Builder> it = builders.iterator();
-            while (it.hasNext())
-            {
-                Builder b = it.next();
-                b.prepareBuild(getStartDate(), getEndDate());
-                start = Math.min(b.getMinMinutes(), start);
-                end = Math.max(b.getMaxMinutes(), end);
-                if (start < 0)
-                    throw new IllegalStateException("builder.getMin() is smaller than 0");
-                if (end > 24 * 60)
-                    throw new IllegalStateException("builder.getMax() is greater than 24");
-            }
-            minMinute = start;
-            maxMinute = end;
+            PreperationResult prepareBuild = b.prepareBuild(getStartDate(), getEndDate());
+            start = Math.min(prepareBuild.getMinMinutes(), start);
+            end = Math.max(prepareBuild.getMaxMinutes(), end);
+            if (start < 0)
+                throw new IllegalStateException("builder.getMin() is smaller than 0");
+            if (end > 24 * 60)
+                throw new IllegalStateException("builder.getMax() is greater than 24");
+            
+            int minMinute = start;
+            int maxMinute = end;
             for (int i = 0; i < daySlots.length; i++)
             {
                 daySlots[i] = new HTMLDaySlot(2, headerNames[i]);
             }
 
-            it = builders.iterator();
-            while (it.hasNext())
-            {
-                Builder b = it.next();
-                if (b.isEnabled())
-                {
-                    b.build(this);
-                }
-            }
+            b.build(this, prepareBuild.getBlocks());
             boolean useAM_PM = getRaplaLocale().isAmPmFormat();
             for (int minuteOfDay = minMinute; minuteOfDay < maxMinute; minuteOfDay++)
             {
