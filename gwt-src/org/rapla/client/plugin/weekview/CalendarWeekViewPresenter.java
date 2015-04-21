@@ -103,8 +103,15 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         
         String weeknumber = i18n.format("calendarweek.abbreviation", startDate);
         weekView.setWeeknumber( weeknumber );
-        RaplaBuilder builder = createBuilder();
+        RaplaBuilder builder = builderProvider;
+        builder.setNonFilteredEventsVisible(false);
         builder.setFromModel(model, startDate, endDate);
+        GroupAllocatablesStrategy strategy = new GroupAllocatablesStrategy(raplaLocale.getLocale());
+        boolean compactColumns = getCalendarOptions().isCompactColumns() ||  builder.getAllocatables().size() ==0 ;
+        //compactColumns = false;
+        strategy.setFixedSlotsEnabled( !compactColumns);
+        strategy.setResolveConflictsEnabled(true);
+        builder.setBuildStrategy(strategy);
         weekView.rebuild(builder);
             //String calendarviewHTML = weekview.getHtml();
             //this.view.update(calendarviewHTML);
@@ -112,7 +119,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
     private void configure(HTMLWeekViewPresenter weekView) throws RaplaException
     {
-        CalendarOptions opt = RaplaComponent.getCalendarOptions( facade.getUser(), facade);
+        CalendarOptions opt = getCalendarOptions();
         weekView.setRowsPerHour( opt.getRowsPerHour() );
         weekView.setWorktimeMinutes(opt.getWorktimeStartMinutes(), opt.getWorktimeEndMinutes() );
         weekView.setFirstWeekday( opt.getFirstDayOfWeek());
@@ -126,6 +133,11 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         weekView.setExcludeDays( excludeDays );
         weekView.setLocale(raplaLocale);
         weekView.setToDate(model.getSelectedDate());
+    }
+
+    private CalendarOptions getCalendarOptions() throws RaplaException
+    {
+        return RaplaComponent.getCalendarOptions( facade.getUser(), facade);
     }
 
     //    protected HTMLWeekView createCalendarView() {
@@ -144,20 +156,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         return calendarOptions.getDaysInWeekview();
     }
 
-    protected RaplaBuilder createBuilder() throws RaplaException
-    {
-        //RaplaBuilder builder = super.createBuilder();
-        RaplaBuilder builder =builderProvider;//.get();
-        builder.setNonFilteredEventsVisible(false);
-
-        GroupAllocatablesStrategy strategy = new GroupAllocatablesStrategy(raplaLocale.getLocale());
-        //        boolean compactColumns = getCalendarOptions().isCompactColumns() ||  builder.getAllocatables().size() ==0 ;
-        //        strategy.setFixedSlotsEnabled( !compactColumns);
-        strategy.setResolveConflictsEnabled(true);
-        builder.setBuildStrategy(strategy);
-
-        return builder;
-    }
 
     public int getIncrementSize()
     {
