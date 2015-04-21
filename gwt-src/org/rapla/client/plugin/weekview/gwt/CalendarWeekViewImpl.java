@@ -1,5 +1,6 @@
 package org.rapla.client.plugin.weekview.gwt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.rapla.client.base.AbstractView;
@@ -41,9 +42,10 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
 
     private void setupTable(List<HTMLDaySlot> daylist, List<RowSlot> timelist, String weeknumber)
     {
-        grid.setText(0, 0, weeknumber);
+        final boolean[][] spanCells;
         FlexCellFormatter flexCellFormatter = grid.getFlexCellFormatter();
         {
+            grid.setText(0, 0, weeknumber);
             int actualColumnCount = 1;
             for (int i = 0; i < daylist.size(); i++)
             {
@@ -53,7 +55,6 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                 flexCellFormatter.setColSpan(0, actualColumnCount, slotCount);
                 flexCellFormatter.setAlignment(0, actualColumnCount, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_TOP);
                 actualColumnCount += slotCount;
-
             }
             int actualRowCount = 1;
             for (RowSlot timeEntry : timelist)
@@ -65,15 +66,77 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                 flexCellFormatter.setAlignment(actualRowCount, 0, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_TOP);
                 actualRowCount += rowspan;
             }
-
-            // Drag and Drop support
-            for (int i = 1; i < actualColumnCount; i++)
+            spanCells = new boolean[actualRowCount][actualColumnCount];
+            int header = 0;
+            spanCells[0][header] = false;
+            for (final HTMLDaySlot daySlot : daylist)
             {
-                final int column = i;
-                for (int j = 1; j < actualRowCount; j++)
+                header++;
+                spanCells[0][header] = false;
+                int slotCount = Math.max(1, daySlot.size());
+                for (int i = 1; i < slotCount; i++)
                 {
-                    final int row = j;
-                    grid.setText(row, column, i+":"+j);
+                    header++;
+                    spanCells[0][header] = true;
+                }
+            }
+            int timeentry = 0;
+            for (RowSlot rowSlot : timelist)
+            {
+                timeentry++;
+                spanCells[timeentry][0] = false;
+                final int rowspan = rowSlot.getRowspan();
+                for (int i = 1; i < rowspan; i++)
+                {
+                    timeentry++;
+                    spanCells[timeentry][0] = true;
+                }
+            }
+            {
+                int column = 1;
+                // create events
+                for (final HTMLDaySlot daySlot : daylist)
+                {
+                    for (final Slot slot : daySlot)
+                    {
+                        final int lastEnd = slot.getLastEnd();
+                        for (int slotMinute = 0; slotMinute < lastEnd; slotMinute++)
+                        {
+                            final Block block = slot.getBlock(slotMinute);
+                            if (block != null && block instanceof HTMLRaplaBlock)
+                            {
+                                final HTMLRaplaBlock htmlBlock = (HTMLRaplaBlock) block;
+                                final int blockRow = htmlBlock.getRow();
+                                final int blockColumn = calcColumn(spanCells, blockRow, column);
+                                final Event event = new Event(htmlBlock);
+                                grid.setWidget(blockRow, blockColumn, event);
+                                final int rowCount = htmlBlock.getRowCount();
+                                for (int i = 1; i < rowCount; i++)
+                                {
+                                    spanCells[blockRow + i][blockColumn] = true;
+                                }
+                                flexCellFormatter.setRowSpan(blockRow, blockColumn, rowCount);
+                            }
+                        }
+                    }
+                    column++;
+                }
+            }
+            // Drag and Drop support
+            for (int j = 1; j < actualRowCount; j++)
+            {
+                final int row = j;
+                for (int i = 1; i < actualColumnCount; i++)
+                {
+                    if (spanCells[row][i])
+                    {
+                        continue;
+                    }
+                    final int column = calcColumn(spanCells, row, i);
+                    if (!grid.isCellPresent(row, column))
+                    {
+                        grid.setText(row, column, row + ":" + column);
+                    }
                     final Element element = grid.getCellFormatter().getElement(row, column);
                     final ElementWrapper elementWrapper = new ElementWrapper(element);
                     elementWrapper.onAttach();
@@ -125,32 +188,20 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                 }
             }
         }
+    }
 
+    private int calcColumn(final boolean[][] spanCells, final int row, final int column)
+    {
+        int numSpanCellsToRemove = 0;
+        final boolean[] columns = spanCells[row];
+        for (int i = 0; i < column; i++)
         {
-            int column = 1;
-            // create events
-            for (final HTMLDaySlot daySlot : daylist)
+            if (columns[i])
             {
-                for (final Slot slot : daySlot)
-                {
-                    final int lastEnd = slot.getLastEnd();
-                    for (int slotMinute = 0; slotMinute < lastEnd; slotMinute++)
-                    {
-                        final Block block = slot.getBlock(slotMinute);
-                        if (block != null && block instanceof HTMLRaplaBlock)
-                        {
-                            final HTMLRaplaBlock htmlBlock = (HTMLRaplaBlock) block;
-                            final int blockRow = htmlBlock.getRow();
-                            final Event event = new Event(htmlBlock);
-                            grid.setWidget(blockRow, column, event);
-                            final int rowCount = htmlBlock.getRowCount();
-                            flexCellFormatter.setRowSpan(blockRow, column, rowCount);
-                        }
-                    }
-                }
-                column++;
+                numSpanCellsToRemove++;
             }
         }
+        return column - numSpanCellsToRemove;
     }
 
     @Override
@@ -163,6 +214,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     public void update(List<HTMLDaySlot> daylist, List<RowSlot> timelist, String weeknumber)
     {
         grid.clear();
+        grid.removeAllRows();
         setupTable(daylist, timelist, weeknumber);
     }
 }
