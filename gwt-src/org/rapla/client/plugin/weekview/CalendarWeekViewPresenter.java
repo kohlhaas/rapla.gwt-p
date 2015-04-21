@@ -57,10 +57,9 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
     @Inject
     private RaplaLocale raplaLocale;
-    
+
     @Inject
     private @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n;
-    
 
     @Inject
     public CalendarWeekViewPresenter(CalendarWeekView view)
@@ -81,7 +80,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         return view.provideContent();
     }
 
-
     @Override
     public void selectReservation(Reservation selectedObject)
     {
@@ -100,44 +98,44 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         Date endDate = weekView.getEndDate();
         model.setStartDate(startDate);
         model.setEndDate(endDate);
-        
+
         String weeknumber = i18n.format("calendarweek.abbreviation", startDate);
-        weekView.setWeeknumber( weeknumber );
+        weekView.setWeeknumber(weeknumber);
         RaplaBuilder builder = builderProvider;
         builder.setNonFilteredEventsVisible(false);
         builder.setFromModel(model, startDate, endDate);
         GroupAllocatablesStrategy strategy = new GroupAllocatablesStrategy(raplaLocale.getLocale());
-        boolean compactColumns = getCalendarOptions().isCompactColumns() ||  builder.getAllocatables().size() ==0 ;
+        boolean compactColumns = getCalendarOptions().isCompactColumns() || builder.getAllocatables().size() == 0;
         //compactColumns = false;
-        strategy.setFixedSlotsEnabled( !compactColumns);
+        strategy.setFixedSlotsEnabled(!compactColumns);
         strategy.setResolveConflictsEnabled(true);
         builder.setBuildStrategy(strategy);
         weekView.rebuild(builder);
-            //String calendarviewHTML = weekview.getHtml();
-            //this.view.update(calendarviewHTML);
+        //String calendarviewHTML = weekview.getHtml();
+        //this.view.update(calendarviewHTML);
     }
 
     private void configure(HTMLWeekViewPresenter weekView) throws RaplaException
     {
         CalendarOptions opt = getCalendarOptions();
-        weekView.setRowsPerHour( opt.getRowsPerHour() );
-        weekView.setWorktimeMinutes(opt.getWorktimeStartMinutes(), opt.getWorktimeEndMinutes() );
-        weekView.setFirstWeekday( opt.getFirstDayOfWeek());
+        weekView.setRowsPerHour(opt.getRowsPerHour());
+        weekView.setWorktimeMinutes(opt.getWorktimeStartMinutes(), opt.getWorktimeEndMinutes());
+        weekView.setFirstWeekday(opt.getFirstDayOfWeek());
         int days = getDays(opt);
-        weekView.setDaysInView( days);
+        weekView.setDaysInView(days);
         Set<Integer> excludeDays = opt.getExcludeDays();
-        if ( days <3)
+        if (days < 3)
         {
             excludeDays = new HashSet<Integer>();
         }
-        weekView.setExcludeDays( excludeDays );
+        weekView.setExcludeDays(excludeDays);
         weekView.setLocale(raplaLocale);
         weekView.setToDate(model.getSelectedDate());
     }
 
     private CalendarOptions getCalendarOptions() throws RaplaException
     {
-        return RaplaComponent.getCalendarOptions( facade.getUser(), facade);
+        return RaplaComponent.getCalendarOptions(facade.getUser(), facade);
     }
 
     //    protected HTMLWeekView createCalendarView() {
@@ -156,7 +154,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         return calendarOptions.getDaysInWeekview();
     }
 
-
     public int getIncrementSize()
     {
         return Calendar.WEEK_OF_YEAR;
@@ -174,7 +171,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         HTMLDaySlot[] daySlots;
         ArrayList<Block> blocks = new ArrayList<Block>();
         String weeknumber;
-        
+
         public HTMLWeekViewPresenter(CalendarWeekView view)
         {
             this.view = view;
@@ -195,7 +192,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         {
             m_rowsPerHour = rows;
         }
-        
+
         public void setWeeknumber(String weeknumber)
         {
             this.weeknumber = weeknumber;
@@ -282,16 +279,16 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                     minuteBlock.add(minuteOfDay);
                 }
             }
-            
+
             List<HTMLDaySlot> daylist = new ArrayList<>();
             for (int i = 0; i < daySlots.length; i++)
             {
                 if (isExcluded(i))
                     continue;
-                daylist.add( daySlots[i]);
+                daylist.add(daySlots[i]);
             }
             List<RowSlot> timelist = new ArrayList<>();
-            
+
             int row = 0;
             for (Integer minuteOfDay : minuteBlock)
             {
@@ -306,7 +303,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 {
                     int rowspan = calcRowspan(minuteOfDay, ((minuteOfDay / 60) + 1) * 60);
                     String timeString = getRaplaLocale().formatTime(minuteOfDay);
-                    timelist.add( new RowSlot( timeString, rowspan));
+                    timelist.add(new RowSlot(timeString, rowspan));
                 }
                 for (int day = 0; day < columns; day++)
                 {
@@ -323,17 +320,17 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                             int rowspan = calcRowspan(minuteOfDay, endMinute);
                             if (block instanceof HTMLRaplaBlock)
                             {
-                               ((HTMLRaplaBlock)block).setRowCount(rowspan);
-                               ((HTMLRaplaBlock)block).setRow(row);
+                                ((HTMLRaplaBlock) block).setRowCount(rowspan);
+                                ((HTMLRaplaBlock) block).setRow(row);
                             }
                             slot.setLastEnd(endMinute);
                         }
                     }
                 }
             }
-            view.update( daylist, timelist, weeknumber);
+            view.update(daylist, timelist, weeknumber);
         }
-        
+
         static public class RowSlot
         {
             public RowSlot(String rowname, int rowspan)
@@ -341,24 +338,27 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 this.rowname = rowname;
                 this.rowspan = rowspan;
             }
+
             String rowname;
             int rowspan;
+
             public String getRowname()
             {
                 return rowname;
             }
+
             public int getRowspan()
             {
                 return rowspan;
             }
-            
+
         }
 
         private int calcRowspan(int start, int end)
         {
             if (start == end)
             {
-                return 0;
+                return 1;
             }
             SortedSet<Integer> tailSet = minuteBlock.tailSet(start);
             int col = 0;
@@ -395,8 +395,8 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         {
             checkBlock(block);
             HTMLDaySlot multiSlot = daySlots[column];
-            int startMinute = Math.max(minMinute, DateTools.getMinuteOfDay( block.getStart().getTime()));
-            int endMinute = (Math.min(maxMinute, DateTools.getMinuteOfDay( block.getEnd().getTime())));
+            int startMinute = Math.max(minMinute, DateTools.getMinuteOfDay(block.getStart().getTime()));
+            int endMinute = (Math.min(maxMinute, DateTools.getMinuteOfDay(block.getEnd().getTime())));
             blocks.add(block);
             //            startBlock.add( startMinute);
             //       endBlock.add( endMinute);
@@ -405,7 +405,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             multiSlot.putBlock(block, slot, startMinute);
 
         }
-
 
         static public class HTMLDaySlot extends ArrayList<Slot>
         {
@@ -440,12 +439,11 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             {
                 return get(index);
             }
-            
+
             public String getHeader()
             {
                 return header;
             }
-            
 
             public boolean isEmpty()
             {
@@ -472,6 +470,11 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             public Block getBlock(Integer startMinute)
             {
                 return map.get(startMinute);
+            }
+
+            public Collection<Block> getBlocks()
+            {
+                return map.values();
             }
 
             public int getLastEnd()

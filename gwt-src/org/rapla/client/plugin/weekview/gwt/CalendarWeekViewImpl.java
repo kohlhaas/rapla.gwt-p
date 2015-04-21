@@ -1,5 +1,6 @@
 package org.rapla.client.plugin.weekview.gwt;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.rapla.client.base.AbstractView;
@@ -40,32 +41,44 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
         grid.setStyleName("week table");
     }
 
-    private void setupTable(List<HTMLDaySlot> daylist, List<RowSlot> timelist, String weeknumber)
+    private void setupTable(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final String weeknumber)
     {
-        FlexCellFormatter flexCellFormatter = grid.getFlexCellFormatter();
+        final FlexCellFormatter flexCellFormatter = grid.getFlexCellFormatter();
         grid.setText(0, 0, weeknumber);
-        int actualColumnCount = createXAchsis(daylist, flexCellFormatter);
-        int actualRowCount = createYAchsis(timelist, flexCellFormatter);
+        final int actualColumnCount = createXAchsis(daylist, flexCellFormatter);
+        final int actualRowCount = createYAchsis(timelist, flexCellFormatter);
         final boolean[][] spanCells = new boolean[actualRowCount][actualColumnCount];
         initSpanCells(daylist, timelist, spanCells);
         createEvents(daylist, spanCells, flexCellFormatter);
         createDragAndDropSupport(spanCells, actualColumnCount, actualRowCount);
     }
 
+    /**
+     * Simple class replacing the informations transfered in the <code>DataTransfer</code> object whenever this object has no setData method.<br/>
+     * This object should not be used whenever possible.<br/>
+     * At the moment this object is only used by the IE.
+     */
     private static final class OriginSupport
     {
         int row;
         int colum;
     }
 
-    protected void createDragAndDropSupport(final boolean[][] spanCells, int actualColumnCount, int actualRowCount)
+    /**
+     * Creates the needed drag and drop listener within the table.
+     * 
+     * @param spanCells the information which cells have a span (so are not within the table)
+     * @param columnCount the column count 
+     * @param rowCount the row count
+     */
+    private void createDragAndDropSupport(final boolean[][] spanCells, final int columnCount, final int rowCount)
     {
         final OriginSupport originSupport = new OriginSupport();
         // Drag and Drop support
-        for (int j = 1; j < actualRowCount; j++)
+        for (int j = 1; j < rowCount; j++)
         {
             final int row = j;
-            for (int i = 1; i < actualColumnCount; i++)
+            for (int i = 1; i < columnCount; i++)
             {
                 if (spanCells[row][i])
                 {
@@ -82,7 +95,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                 elementWrapper.addDomHandler(new DragStartHandler()
                 {
                     @Override
-                    public void onDragStart(DragStartEvent event)
+                    public void onDragStart(final DragStartEvent event)
                     {
                         final DataTransfer dataTransfer = event.getDataTransfer();
                         try
@@ -90,7 +103,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                             dataTransfer.setData("row", row + "");
                             dataTransfer.setData("column", column + "");
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
                             originSupport.row = row;
                             originSupport.colum = column;
@@ -100,7 +113,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                 elementWrapper.addDomHandler(new DragOverHandler()
                 {
                     @Override
-                    public void onDragOver(DragOverEvent event)
+                    public void onDragOver(final DragOverEvent event)
                     {
                         element.getStyle().setBackgroundColor("#ffa");
                     }
@@ -108,7 +121,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                 elementWrapper.addDomHandler(new DragLeaveHandler()
                 {
                     @Override
-                    public void onDragLeave(DragLeaveEvent event)
+                    public void onDragLeave(final DragLeaveEvent event)
                     {
                         element.getStyle().clearBackgroundColor();
                     }
@@ -116,7 +129,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                 elementWrapper.addDomHandler(new DropHandler()
                 {
                     @Override
-                    public void onDrop(DropEvent event)
+                    public void onDrop(final DropEvent event)
                     {
                         element.getStyle().clearBackgroundColor();
                         int sourceRow;
@@ -129,7 +142,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                             sourceRow = Integer.parseInt(rowString);
                             sourceColumn = Integer.parseInt(columnString);
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
                             sourceColumn = originSupport.colum;
                             sourceRow = originSupport.row;
@@ -138,7 +151,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                         if (sourceRow != row || sourceColumn != column)
                         {
                             final Widget widget = grid.getWidget(sourceRow, sourceColumn);
-                            Event source = (Event) widget;
+                            final Event source = (Event) widget;
                             // TODO: call controller to update event
                             grid.setWidget(row, column, source);
                         }
@@ -148,40 +161,34 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
         }
     }
 
-    protected void createEvents(List<HTMLDaySlot> daylist, final boolean[][] spanCells, FlexCellFormatter flexCellFormatter)
+    private void createEvents(final List<HTMLDaySlot> daylist, final boolean[][] spanCells, final FlexCellFormatter flexCellFormatter)
     {
         // create events
         int column = 1;
-        for (int daySlotNumber = 0; daySlotNumber < daylist.size(); daySlotNumber++)
+        for (final HTMLDaySlot daySlot : daylist)
         {
-            HTMLDaySlot daySlot = daylist.get(daySlotNumber);
             if (daySlot.isEmpty())
             {
                 column++;
             }
             else
             {
-                for (int slotNumber = 0; slotNumber < daySlot.size(); slotNumber++)
+                for (final Slot slot : daySlot)
                 {
-                    final Slot slot = daySlot.get(slotNumber);
-                    final int lastEnd = slot.getLastEnd();
-                    for (int slotMinute = 0; slotMinute < lastEnd; slotMinute++)
+                    final Collection<Block> blocks = slot.getBlocks();
+                    for (final Block block : blocks)
                     {
-                        final Block block = slot.getBlock(slotMinute);
-                        if (block != null && block instanceof HTMLRaplaBlock)
+                        final HTMLRaplaBlock htmlBlock = (HTMLRaplaBlock) block;
+                        final int blockRow = htmlBlock.getRow();
+                        final int blockColumn = calcColumn(spanCells, blockRow, column);
+                        final Event event = new Event(htmlBlock);
+                        grid.setWidget(blockRow, blockColumn, event);
+                        final int rowCount = htmlBlock.getRowCount();
+                        for (int i = 1; i < rowCount; i++)
                         {
-                            final HTMLRaplaBlock htmlBlock = (HTMLRaplaBlock) block;
-                            final int blockRow = htmlBlock.getRow();
-                            final int blockColumn = calcColumn(spanCells, blockRow, column);
-                            final Event event = new Event(htmlBlock);
-                            grid.setWidget(blockRow, blockColumn, event);
-                            final int rowCount = htmlBlock.getRowCount();
-                            for (int i = 1; i < rowCount; i++)
-                            {
-                                spanCells[blockRow + i][column] = true;
-                            }
-                            flexCellFormatter.setRowSpan(blockRow, blockColumn, rowCount);
+                            spanCells[blockRow + i][column] = true;
                         }
+                        flexCellFormatter.setRowSpan(blockRow, blockColumn, rowCount);
                     }
                     column++;
                 }
@@ -189,7 +196,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
         }
     }
 
-    protected void initSpanCells(List<HTMLDaySlot> daylist, List<RowSlot> timelist, final boolean[][] spanCells)
+    private void initSpanCells(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final boolean[][] spanCells)
     {
         int header = 0;
         spanCells[0][header] = false;// left top corner
@@ -198,7 +205,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
             header++;
             // headername is never one
             spanCells[0][header] = false;
-            int slotCount = Math.max(1, daySlot.size());
+            final int slotCount = Math.max(1, daySlot.size());
             for (int i = 1; i < slotCount; i++)
             {// span is one
                 header++;
@@ -206,7 +213,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
             }
         }
         int timeentry = 0;
-        for (RowSlot rowSlot : timelist)
+        for (final RowSlot rowSlot : timelist)
         {
             timeentry++;
             spanCells[timeentry][0] = false;
@@ -219,14 +226,14 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
         }
     }
 
-    protected int createYAchsis(List<RowSlot> timelist, FlexCellFormatter flexCellFormatter)
+    private int createYAchsis(final List<RowSlot> timelist, final FlexCellFormatter flexCellFormatter)
     {
         int actualRowCount = 1;
-        for (RowSlot timeEntry : timelist)
+        for (final RowSlot timeEntry : timelist)
         {
-            String rowname = timeEntry.getRowname();
+            final String rowname = timeEntry.getRowname();
             grid.setText(actualRowCount, 0, rowname);
-            int rowspan = timeEntry.getRowspan();
+            final int rowspan = timeEntry.getRowspan();
             flexCellFormatter.setRowSpan(actualRowCount, 0, rowspan);
             flexCellFormatter.setAlignment(actualRowCount, 0, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_TOP);
             actualRowCount += rowspan;
@@ -234,13 +241,13 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
         return actualRowCount;
     }
 
-    protected int createXAchsis(List<HTMLDaySlot> daylist, FlexCellFormatter flexCellFormatter)
+    private int createXAchsis(final List<HTMLDaySlot> daylist, final FlexCellFormatter flexCellFormatter)
     {
         int actualColumnCount = 1;
         for (int i = 0; i < daylist.size(); i++)
         {
-            HTMLDaySlot htmlDaySlot = daylist.get(i);
-            int slotCount = Math.max(1, htmlDaySlot.size());
+            final HTMLDaySlot htmlDaySlot = daylist.get(i);
+            final int slotCount = Math.max(1, htmlDaySlot.size());
             final int column = i + 1;
             grid.setText(0, column, htmlDaySlot.getHeader());
             flexCellFormatter.setColSpan(0, column, slotCount);
@@ -271,7 +278,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     }
 
     @Override
-    public void update(List<HTMLDaySlot> daylist, List<RowSlot> timelist, String weeknumber)
+    public void update(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final String weeknumber)
     {
         grid.clear();
         grid.removeAllRows();
