@@ -65,12 +65,15 @@ h1 {
 	padding-top: 20px;	
 }
 
-.week.table table{
-	width: 100%;
+.week.table td, .week.table tr {
+	border-color: black;
+	border: 1px solid; 
+	height: 19px;
+	padding: 1px;
 }
 
-.week.table td{
-	width: 14%;
+.week.table table{
+	width: 100%;
 }
 
 /* Event style */
