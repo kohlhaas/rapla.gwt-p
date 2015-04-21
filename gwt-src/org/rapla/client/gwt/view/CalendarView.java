@@ -184,11 +184,12 @@ public class CalendarView extends FlexTable
                         final Event event = new Event(htmlBlock);
                         this.setWidget(blockRow, blockColumn, event);
                         final int rowCount = htmlBlock.getRowCount();
-                        for (int i = 1; i < rowCount; i++)
+                        final int maxRowCount = Math.min(rowCount, spanCells.length - blockRow);
+                        for (int i = 1; i < maxRowCount; i++)
                         {
                             spanCells[blockRow + i][column] = true;
                         }
-                        flexCellFormatter.setRowSpan(blockRow, blockColumn, rowCount);
+                        flexCellFormatter.setRowSpan(blockRow, blockColumn, maxRowCount);
                     }
                     column++;
                 }
