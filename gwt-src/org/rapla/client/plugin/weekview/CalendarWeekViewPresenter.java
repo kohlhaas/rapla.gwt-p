@@ -5,25 +5,29 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.rapla.client.base.CalendarPlugin;
 import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.plugin.weekview.CalendarWeekView.Presenter;
-import org.rapla.components.calendarview.AbstractCalendar;
 import org.rapla.components.calendarview.Block;
 import org.rapla.components.calendarview.Builder;
 import org.rapla.components.calendarview.html.AbstractHTMLView;
 import org.rapla.components.util.DateTools;
+import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.CalendarSelectionModel;
 import org.rapla.facade.ClientFacade;
+import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
@@ -53,6 +57,10 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
     @Inject
     private RaplaLocale raplaLocale;
+    
+    @Inject
+    private @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n;
+    
 
     @Inject
     public CalendarWeekViewPresenter(CalendarWeekView view)
@@ -73,6 +81,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         return view.provideContent();
     }
 
+
     @Override
     public void selectReservation(Reservation selectedObject)
     {
@@ -83,61 +92,43 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     }
 
     @Override
-    public void updateContent()
+    public void updateContent() throws RaplaException
     {
-        HTMLWeekViewPresenter weekview = new HTMLWeekViewPresenter(view);
-        //            try {
-        //                configureView();
-        //            } catch (RaplaException ex) {
-        //                logger.error("Can't configure view ", ex);
-        //                throw new ServletException( ex );
-        //            }
-        weekview.setLocale(raplaLocale.getLocale());
-        weekview.setToDate(model.getSelectedDate());
-        model.setStartDate(weekview.getStartDate());
-        model.setEndDate(weekview.getEndDate());
-
-        try
+        HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view);
+        CalendarOptions opt = RaplaComponent.getCalendarOptions( facade.getUser(), facade);
+        weekView.setRowsPerHour( opt.getRowsPerHour() );
+        weekView.setWorktimeMinutes(opt.getWorktimeStartMinutes(), opt.getWorktimeEndMinutes() );
+        weekView.setFirstWeekday( opt.getFirstDayOfWeek());
+        int days = getDays(opt);
+        weekView.setDaysInView( days);
+        Set<Integer> excludeDays = opt.getExcludeDays();
+        if ( days <3)
         {
-            RaplaBuilder builder = createBuilder();
-            weekview.rebuild(builder);
+            excludeDays = new HashSet<Integer>();
+        }
+        weekView.setExcludeDays( excludeDays );
+        weekView.setLocale(raplaLocale);
+        weekView.setToDate(model.getSelectedDate());
+        model.setStartDate(weekView.getStartDate());
+        model.setEndDate(weekView.getEndDate());
+
+        String weeknumber = i18n.format(i18n.getString("calendarweek.abbreviation"), weekView.getStartDate());
+        weekView.setWeeknumber( weeknumber );
+        RaplaBuilder builder = createBuilder();
+        weekView.rebuild(builder);
             //String calendarviewHTML = weekview.getHtml();
             //this.view.update(calendarviewHTML);
-        }
-        catch (RaplaException ex)
-        {
-            logger.error("Can't create builder ", ex);
-        }
     }
 
     //    protected HTMLWeekView createCalendarView() {
     //        HTMLWeekView weekView = new HTMLWeekView()
     //        {
     //            public void rebuild() {
-    //                setWeeknumber(MessageFormat.format(getString("calendarweek.abbreviation"), getStartDate()));
     //                super.rebuild();
     //            }
     //        };
     //        return weekView;
     //    }
-
-    //    protected void configureView() {
-    //        HTMLWeekView weekView = (HTMLWeekView) view;
-    //        CalendarOptions opt = getCalendarOptions();
-    //        weekView.setRowsPerHour( opt.getRowsPerHour() );
-    //        weekView.setWorktimeMinutes(opt.getWorktimeStartMinutes(), opt.getWorktimeEndMinutes() );
-    //        weekView.setFirstWeekday( opt.getFirstDayOfWeek());
-    //        int days = getDays(opt);
-    //        weekView.setDaysInView( days);
-    //        Set<Integer> excludeDays = opt.getExcludeDays();
-    //        if ( days <3)
-    //        {
-    //            excludeDays = new HashSet<Integer>();
-    //        }
-    //        weekView.setExcludeDays( excludeDays );
-    //       
-    //    }
-    //    
 
     /** overide this for daily views*/
     protected int getDays(CalendarOptions calendarOptions)
@@ -179,11 +170,8 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         int m_rowsPerHour = 2;
         HTMLDaySlot[] daySlots;
         ArrayList<Block> blocks = new ArrayList<Block>();
-        //ArrayList<Integer> blockStart = new ArrayList<Integer>();
-        //ArrayList<Integer> blockSize = new ArrayList<Integer>();
-
         String weeknumber;
-
+        
         public HTMLWeekViewPresenter(CalendarWeekView view)
         {
             this.view = view;
@@ -203,6 +191,11 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         public void setRowsPerHour(int rows)
         {
             m_rowsPerHour = rows;
+        }
+        
+        public void setWeeknumber(String weeknumber)
+        {
+            this.weeknumber = weeknumber;
         }
 
         public int getRowsPerHour()
@@ -289,7 +282,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                     b.build(this);
                 }
             }
-            boolean useAM_PM = org.rapla.components.calendarview.AbstractCalendar.isAmPmFormat(locale);
+            boolean useAM_PM = getRaplaLocale().isAmPmFormat();
             for (int minuteOfDay = minMinute; minuteOfDay < maxMinute; minuteOfDay++)
             {
                 boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
@@ -316,14 +309,12 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 {
                     break;
                 }
-                //System.out.println("Start row " + row / m_rowsPerHour  + ":" + row % m_rowsPerHour +" " + timeString );
-
                 boolean fullHour = (minuteOfDay) % 60 == 0;
                 boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
                 if (fullHour || minuteOfDay == minMinute)
                 {
                     int rowspan = calcRowspan(minuteOfDay, ((minuteOfDay / 60) + 1) * 60);
-                    String timeString = AbstractCalendar.formatTime(minuteOfDay, useAM_PM,locale);
+                    String timeString = getRaplaLocale().formatTime(minuteOfDay);
                     timelist.add( new RowSlot( timeString, rowspan));
                 }
                 for (int day = 0; day < columns; day++)
@@ -394,16 +385,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             return col;
         }
 
-        public String getWeeknumber()
-        {
-            return weeknumber;
-        }
-
-        public void setWeeknumber(String weeknumber)
-        {
-            this.weeknumber = weeknumber;
-        }
-
         protected void printBlock(StringBuffer result, @SuppressWarnings("unused") int firstEventMarkerId, Block block)
         {
             String string = block.toString();
@@ -413,7 +394,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         protected String createColumnHeader(int i)
         {
             Date date = DateTools.addDays(getStartDate(), i);
-            String headerName = AbstractCalendar.formatDayOfWeekDateMonth(date, locale);
+            String headerName = getRaplaLocale().formatDayOfWeekDateMonth(date);
             return headerName;
         }
 
