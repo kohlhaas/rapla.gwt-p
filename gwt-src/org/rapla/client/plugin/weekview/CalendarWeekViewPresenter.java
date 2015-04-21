@@ -50,10 +50,10 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     private CalendarSelectionModel model;
 
     @Inject
-    ClientFacade facade;
+    private ClientFacade facade;
 
     @Inject
-    HTMLRaplaBuilder builderProvider;
+    private HTMLRaplaBuilder builderProvider;
 
     @Inject
     private RaplaLocale raplaLocale;
@@ -261,7 +261,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 throw new IllegalStateException("builder.getMin() is smaller than 0");
             if (end > 24 * 60)
                 throw new IllegalStateException("builder.getMax() is greater than 24");
-            
+
             int minMinute = start;
             int maxMinute = end;
             for (int i = 0; i < daySlots.length; i++)
@@ -487,6 +487,43 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 this.lastEnd = lastEnd;
             }
 
+        }
+    }
+
+    @Override
+    public void selectDate(Date newDate)
+    {
+        model.setSelectedDate(newDate);
+        updateInternal();
+    }
+
+    @Override
+    public void next()
+    {
+        final Date selectedDate = model.getSelectedDate();
+        final Date nextDate = DateTools.addDays(selectedDate, 7);
+        model.setSelectedDate(nextDate);
+        updateInternal();
+    }
+
+    @Override
+    public void previous()
+    {
+        final Date selectedDate = model.getSelectedDate();
+        final Date nextDate = DateTools.subDays(selectedDate, 7);
+        model.setSelectedDate(nextDate);
+        updateInternal();
+    }
+
+    private void updateInternal()
+    {
+        try
+        {
+            updateContent();
+        }
+        catch (RaplaException e)
+        {
+            logger.error(e.getMessage(), e);
         }
     }
 
