@@ -95,6 +95,23 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     public void updateContent() throws RaplaException
     {
         HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view);
+        configure(weekView);
+        Date startDate = weekView.getStartDate();
+        Date endDate = weekView.getEndDate();
+        model.setStartDate(startDate);
+        model.setEndDate(endDate);
+        
+        String weeknumber = i18n.format("calendarweek.abbreviation", startDate);
+        weekView.setWeeknumber( weeknumber );
+        RaplaBuilder builder = createBuilder();
+        builder.setFromModel(model, startDate, endDate);
+        weekView.rebuild(builder);
+            //String calendarviewHTML = weekview.getHtml();
+            //this.view.update(calendarviewHTML);
+    }
+
+    private void configure(HTMLWeekViewPresenter weekView) throws RaplaException
+    {
         CalendarOptions opt = RaplaComponent.getCalendarOptions( facade.getUser(), facade);
         weekView.setRowsPerHour( opt.getRowsPerHour() );
         weekView.setWorktimeMinutes(opt.getWorktimeStartMinutes(), opt.getWorktimeEndMinutes() );
@@ -109,15 +126,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         weekView.setExcludeDays( excludeDays );
         weekView.setLocale(raplaLocale);
         weekView.setToDate(model.getSelectedDate());
-        model.setStartDate(weekView.getStartDate());
-        model.setEndDate(weekView.getEndDate());
-
-        String weeknumber = i18n.format(i18n.getString("calendarweek.abbreviation"), weekView.getStartDate());
-        weekView.setWeeknumber( weeknumber );
-        RaplaBuilder builder = createBuilder();
-        weekView.rebuild(builder);
-            //String calendarviewHTML = weekview.getHtml();
-            //this.view.update(calendarviewHTML);
     }
 
     //    protected HTMLWeekView createCalendarView() {
@@ -140,9 +148,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     {
         //RaplaBuilder builder = super.createBuilder();
         RaplaBuilder builder =builderProvider;//.get();
-        Date startDate = facade.today();
-        Date endDate = DateTools.addDays(startDate, 7);
-        builder.setFromModel(model, startDate, endDate);
         builder.setNonFilteredEventsVisible(false);
 
         GroupAllocatablesStrategy strategy = new GroupAllocatablesStrategy(raplaLocale.getLocale());

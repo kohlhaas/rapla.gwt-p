@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.rapla.components.util.DateTools;
+import org.rapla.components.util.DateTools.DateWithoutTimezone;
 import org.rapla.framework.internal.AbstractRaplaLocale;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -65,16 +66,12 @@ public class GWTRaplaLocale extends AbstractRaplaLocale {
 	    return format.format(date, timezoneG);
 	}
 
-	public String formatTimestamp(Date timestamp, TimeZone timezone) {
-		throw new UnsupportedOperationException("Not supported in gwt. Please call on server");
-	}
-
 	public String getWeekday(Date date) {
 		DateTimeFormat format = DateTimeFormat.getFormat("EE");
 	    return format.format( date, timezoneG );
 	}
 
-	public String getMonth(Date date) {
+	public String formatMonth(Date date) {
 		DateTimeFormat format = DateTimeFormat.getFormat("MMMMM");
 	    return format.format( date, timezoneG );
 	}
@@ -88,16 +85,8 @@ public class GWTRaplaLocale extends AbstractRaplaLocale {
 		return DateTools.getTimeZone();
 	}
 
-	public TimeZone getSystemTimeZone() {
-		throw new UnsupportedOperationException("Not supported in gwt. Please call on server");
-	}
-
-	public TimeZone getImportExportTimeZone() {
-		throw new UnsupportedOperationException("Not supported in gwt. Please call on server");
-	}
-
 	public Locale getLocale() {
-		// FIXME needs to be replaced by real locale
+		// FIssXME needs to be replaced by real locale
 		return Locale.GERMANY;
 	}
 
@@ -106,6 +95,91 @@ public class GWTRaplaLocale extends AbstractRaplaLocale {
        throw new UnsupportedOperationException();
     }
 
+    
+    public String formatDateMonth(Date date ) {
+        DateWithoutTimezone date2 = DateTools.toDate( date.getTime());
+        return date2.month + "/" + date2.day;
+    }
+  
+    @Override
+    public String formatDayOfWeekDateMonth(Date date)
+    {
+        int weekday = DateTools.getWeekday( date);
+        String datePart = getWeekdayName(weekday).substring(0,2);
+        String dateOfMonthPart = formatDateMonth( date  );
+        return datePart + " " + dateOfMonthPart ;
+    }
 
+    @Override
+    public boolean isAmPmFormat()
+    {
+        return false;
+    }
+
+    @Override
+    public String getWeekdayName(int weekday)
+    {
+        String result;
+        switch (weekday)
+          {
+              case 1: result= "sunday";break;
+              case 2: result= "monday";break;
+              case 3: result= "tuesday";break;
+              case 4: result= "wednesday";break;
+              case 5: result= "thursday";break;
+              case 6: result= "friday";break;
+              case 7: result= "saturday";break;
+              default: throw new IllegalArgumentException("Weekday " + weekday + " not supported.");
+          }
+        return result;
+    }
+
+   
+
+
+    @Override
+    public String formatMonthYear(Date date)
+    {
+        int year = DateTools.toDate( date.getTime()).year;
+        String result = formatMonth( date ) + " " + year;
+        return result;
+    }
+
+    public String formatTime(int minuteOfDay) {
+        boolean useAM_PM = isAmPmFormat();
+        int minute = minuteOfDay%60;
+        int hour = minuteOfDay/60;
+        String displayedHour = "" + (useAM_PM ? hour %12 : hour);
+        String displayedMinute = minute > 9 ? ""+ minute : "0"+minute ;
+        String string = displayedHour + ":" + displayedMinute;
+        if (useAM_PM ) {
+            if ( hour >= 12)
+            {
+                string += " PM";
+            }
+            else
+            {
+                string += " AM";
+            }
+        }
+        return string;
+    }
+
+    public String formatHour(int hour) {
+        boolean useAM_PM = isAmPmFormat();
+        String displayedHour = "" + (useAM_PM ? hour %12 : hour);
+        String string = displayedHour;
+        if (useAM_PM ) {
+            if ( hour >= 12)
+            {
+                string += " PM";
+            }
+            else
+            {
+                string += " AM";
+            }
+        }
+        return string;
+    }
 
 }
