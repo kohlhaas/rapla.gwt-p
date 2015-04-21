@@ -1,6 +1,5 @@
 package org.rapla.client.plugin.weekview.gwt;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.rapla.client.base.AbstractView;
@@ -13,6 +12,7 @@ import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPr
 import org.rapla.components.calendarview.Block;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
+import com.google.gwt.dom.client.DataTransfer;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragLeaveHandler;
@@ -52,8 +52,15 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
         createDragAndDropSupport(spanCells, actualColumnCount, actualRowCount);
     }
 
+    private static final class OriginSupport
+    {
+        int row;
+        int colum;
+    }
+
     protected void createDragAndDropSupport(final boolean[][] spanCells, int actualColumnCount, int actualRowCount)
     {
+        final OriginSupport originSupport = new OriginSupport();
         // Drag and Drop support
         for (int j = 1; j < actualRowCount; j++)
         {
@@ -77,8 +84,17 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                     @Override
                     public void onDragStart(DragStartEvent event)
                     {
-                        event.getDataTransfer().setData("row", row + "");
-                        event.getDataTransfer().setData("column", column + "");
+                        final DataTransfer dataTransfer = event.getDataTransfer();
+                        try
+                        {
+                            dataTransfer.setData("row", row + "");
+                            dataTransfer.setData("column", column + "");
+                        }
+                        catch (Exception e)
+                        {
+                            originSupport.row = row;
+                            originSupport.colum = column;
+                        }
                     }
                 }, DragStartEvent.getType());
                 elementWrapper.addDomHandler(new DragOverHandler()
@@ -103,10 +119,21 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
                     public void onDrop(DropEvent event)
                     {
                         element.getStyle().clearBackgroundColor();
-                        final String rowString = event.getDataTransfer().getData("row");
-                        final String columnString = event.getDataTransfer().getData("column");
-                        final int sourceRow = Integer.parseInt(rowString);
-                        final int sourceColumn = Integer.parseInt(columnString);
+                        int sourceRow;
+                        int sourceColumn;
+                        final DataTransfer dataTransfer = event.getDataTransfer();
+                        try
+                        {
+                            final String rowString = dataTransfer.getData("row");
+                            final String columnString = dataTransfer.getData("column");
+                            sourceRow = Integer.parseInt(rowString);
+                            sourceColumn = Integer.parseInt(columnString);
+                        }
+                        catch (Exception e)
+                        {
+                            sourceColumn = originSupport.colum;
+                            sourceRow = originSupport.row;
+                        }
                         // only do something whenever the place has been changed
                         if (sourceRow != row || sourceColumn != column)
                         {
