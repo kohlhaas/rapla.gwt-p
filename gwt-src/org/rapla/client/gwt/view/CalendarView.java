@@ -14,6 +14,8 @@ import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.TableCellElement;
+import com.google.gwt.event.dom.client.DragEnterEvent;
+import com.google.gwt.event.dom.client.DragEnterHandler;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragLeaveHandler;
 import com.google.gwt.event.dom.client.DragOverEvent;
@@ -94,6 +96,17 @@ public class CalendarView extends FlexTable
             }
         }
         // Drag and Drop support
+        addDomHandler(new DragEnterHandler()
+        {
+            
+            @Override
+            public void onDragEnter(DragEnterEvent event)
+            {
+                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+                final Element tc = CalendarView.this.getEventTargetCell(event2);
+                tc.getStyle().setBackgroundColor("#ffa");
+            }
+        }, DragEnterEvent.getType());
         addDomHandler(new DragOverHandler()
         {
             @Override
@@ -106,6 +119,9 @@ public class CalendarView extends FlexTable
             @Override
             public void onDragLeave(DragLeaveEvent event)
             {
+                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+                final Element tc = CalendarView.this.getEventTargetCell(event2);
+                tc.getStyle().clearBackgroundColor();
             }
         }, DragLeaveEvent.getType());
         addDomHandler(new DragStartHandler()
@@ -133,6 +149,7 @@ public class CalendarView extends FlexTable
             {
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element targetCell = CalendarView.this.getEventTargetCell(event2);
+                targetCell.getStyle().clearBackgroundColor();
                 final TableCellElement td = TableCellElement.as(targetCell);
                 final Element tr = td.getParentElement();
                 final int column = DOM.getChildIndex(tr, td);
