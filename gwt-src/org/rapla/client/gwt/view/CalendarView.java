@@ -108,6 +108,7 @@ public class CalendarView extends FlexTable
                             originSupport.row = row;
                             originSupport.colum = column;
                         }
+                        event.stopPropagation();
                     }
                 }, DragStartEvent.getType());
                 elementWrapper.addDomHandler(new DragOverHandler()
@@ -116,6 +117,7 @@ public class CalendarView extends FlexTable
                     public void onDragOver(final DragOverEvent event)
                     {
                         element.getStyle().setBackgroundColor("#ffa");
+                        event.stopPropagation();
                     }
                 }, DragOverEvent.getType());
                 elementWrapper.addDomHandler(new DragLeaveHandler()
@@ -124,6 +126,7 @@ public class CalendarView extends FlexTable
                     public void onDragLeave(final DragLeaveEvent event)
                     {
                         element.getStyle().clearBackgroundColor();
+                        event.stopPropagation();
                     }
                 }, DragLeaveEvent.getType());
                 elementWrapper.addDomHandler(new DropHandler()
@@ -155,6 +158,7 @@ public class CalendarView extends FlexTable
                             // TODO: call controller to update event
                             CalendarView.this.setWidget(row, column, source);
                         }
+                        event.stopPropagation();
                     }
                 }, DropEvent.getType());
             }
