@@ -262,15 +262,15 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             if (end > 24 * 60)
                 throw new IllegalStateException("builder.getMax() is greater than 24");
 
-            int minMinute = start;
-            int maxMinute = end;
+            minMinute = start;
+            maxMinute = end;
             for (int i = 0; i < daySlots.length; i++)
             {
                 daySlots[i] = new HTMLDaySlot(2, headerNames[i]);
             }
 
             b.build(this, prepareBuild.getBlocks());
-            boolean useAM_PM = getRaplaLocale().isAmPmFormat();
+            //            boolean useAM_PM = getRaplaLocale().isAmPmFormat();
             for (int minuteOfDay = minMinute; minuteOfDay < maxMinute; minuteOfDay++)
             {
                 boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
@@ -298,7 +298,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                     break;
                 }
                 boolean fullHour = (minuteOfDay) % 60 == 0;
-                boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
+                //                boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
                 if (fullHour || minuteOfDay == minMinute)
                 {
                     int rowspan = calcRowspan(minuteOfDay, ((minuteOfDay / 60) + 1) * 60);
