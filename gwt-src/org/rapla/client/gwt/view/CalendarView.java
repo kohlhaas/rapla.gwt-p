@@ -105,6 +105,7 @@ public class CalendarView extends FlexTable
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element tc = CalendarView.this.getEventTargetCell(event2);
                 tc.getStyle().setBackgroundColor("#ffa");
+                event.stopPropagation();
             }
         }, DragEnterEvent.getType());
         addDomHandler(new DragOverHandler()
@@ -112,6 +113,7 @@ public class CalendarView extends FlexTable
             @Override
             public void onDragOver(DragOverEvent event)
             {
+                event.stopPropagation();
             }
         }, DragOverEvent.getType());
         addDomHandler(new DragLeaveHandler()
@@ -122,6 +124,7 @@ public class CalendarView extends FlexTable
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element tc = CalendarView.this.getEventTargetCell(event2);
                 tc.getStyle().clearBackgroundColor();
+                event.stopPropagation();
             }
         }, DragLeaveEvent.getType());
         addDomHandler(new DragStartHandler()
@@ -156,6 +159,7 @@ public class CalendarView extends FlexTable
                 final Element tbody = tr.getParentElement();
                 final int row = DOM.getChildIndex(tbody, tr);
                 setWidget(row, column, originSupport.event);
+                event.stopPropagation();
             }
         }, DropEvent.getType());
     }
