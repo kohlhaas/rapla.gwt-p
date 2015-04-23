@@ -3,6 +3,8 @@ package org.rapla.client.plugin.weekview.gwt;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.gwt.view.CalendarView;
 import org.rapla.client.gwt.view.NavigatorView;
@@ -10,6 +12,7 @@ import org.rapla.client.gwt.view.NavigatorView.NavigatorAction;
 import org.rapla.client.plugin.weekview.CalendarWeekView;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
+import org.rapla.framework.logger.Logger;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -21,10 +24,11 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     private final CalendarView calendar;
     private final NavigatorView navigatorView;
 
-    public CalendarWeekViewImpl()
+    @Inject
+    public CalendarWeekViewImpl(Logger logger)
     {
         navigatorView = new NavigatorView("week", this);
-        calendar = new CalendarView("week");
+        calendar = new CalendarView("week", logger);
     }
 
     @Override

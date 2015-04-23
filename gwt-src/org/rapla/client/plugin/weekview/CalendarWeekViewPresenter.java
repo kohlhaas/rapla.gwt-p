@@ -92,7 +92,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     @Override
     public void updateContent() throws RaplaException
     {
-        HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view);
+        HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view, logger);
         configure(weekView);
         Date startDate = weekView.getStartDate();
         Date endDate = weekView.getEndDate();
@@ -103,7 +103,12 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         weekView.setWeeknumber(weeknumber);
         RaplaBuilder builder = builderProvider;
         builder.setNonFilteredEventsVisible(false);
-        builder.setFromModel(model, startDate, endDate);
+        {
+            long time = System.currentTimeMillis();
+            builder.setFromModel(model, startDate, endDate);
+            logger.info("events loaded took  " + (System.currentTimeMillis() - time) + " ms");
+        }
+        
         GroupAllocatablesStrategy strategy = new GroupAllocatablesStrategy(raplaLocale.getLocale());
         boolean compactColumns = getCalendarOptions().isCompactColumns() || builder.getAllocatables().size() == 0;
         //compactColumns = false;
@@ -171,10 +176,12 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         HTMLDaySlot[] daySlots;
         ArrayList<Block> blocks = new ArrayList<Block>();
         String weeknumber;
+        Logger logger;
 
-        public HTMLWeekViewPresenter(CalendarWeekView view)
+        public HTMLWeekViewPresenter(CalendarWeekView view, Logger logger)
         {
             this.view = view;
+            this.logger = logger;
         }
 
         /** The granularity of the selection rows.
@@ -239,38 +246,47 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         public void rebuild(Builder b)
         {
             int columns = getColumnCount();
-            blocks.clear();
-            daySlots = new HTMLDaySlot[columns];
-
-            String[] headerNames = new String[columns];
-
-            for (int i = 0; i < columns; i++)
             {
-                String headerName = createColumnHeader(i);
-                headerNames[i] = headerName;
+                long time = System.currentTimeMillis();
+                PreperationResult prepareBuild;
+                {
+                    
+                    blocks.clear();
+                    daySlots = new HTMLDaySlot[columns];
+        
+                    String[] headerNames = new String[columns];
+        
+                    for (int i = 0; i < columns; i++)
+                    {
+                        String headerName = createColumnHeader(i);
+                        headerNames[i] = headerName;
+                    }
+        
+                    // calculate the blocks
+                    int start = startMinutes;
+                    int end = endMinutes;
+                    minuteBlock.clear();
+                    prepareBuild = b.prepareBuild(getStartDate(), getEndDate());
+                    start = Math.min(prepareBuild.getMinMinutes(), start);
+                    end = Math.max(prepareBuild.getMaxMinutes(), end);
+                    if (start < 0)
+                        throw new IllegalStateException("builder.getMin() is smaller than 0");
+                    if (end > 24 * 60)
+                        throw new IllegalStateException("builder.getMax() is greater than 24");
+        
+                    minMinute = start;
+                    maxMinute = end;
+                    for (int i = 0; i < daySlots.length; i++)
+                    {
+                        daySlots[i] = new HTMLDaySlot(2, headerNames[i]);
+                    }
+                }
+                {
+                    b.build(this, prepareBuild.getBlocks());
+                }
+                logger.info("building took  " + (System.currentTimeMillis() - time) + " ms");
             }
 
-            // calculate the blocks
-            int start = startMinutes;
-            int end = endMinutes;
-            minuteBlock.clear();
-            PreperationResult prepareBuild = b.prepareBuild(getStartDate(), getEndDate());
-            start = Math.min(prepareBuild.getMinMinutes(), start);
-            end = Math.max(prepareBuild.getMaxMinutes(), end);
-            if (start < 0)
-                throw new IllegalStateException("builder.getMin() is smaller than 0");
-            if (end > 24 * 60)
-                throw new IllegalStateException("builder.getMax() is greater than 24");
-
-            minMinute = start;
-            maxMinute = end;
-            for (int i = 0; i < daySlots.length; i++)
-            {
-                daySlots[i] = new HTMLDaySlot(2, headerNames[i]);
-            }
-
-            b.build(this, prepareBuild.getBlocks());
-            //            boolean useAM_PM = getRaplaLocale().isAmPmFormat();
             for (int minuteOfDay = minMinute; minuteOfDay < maxMinute; minuteOfDay++)
             {
                 boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
@@ -288,47 +304,56 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 daylist.add(daySlots[i]);
             }
             List<RowSlot> timelist = new ArrayList<>();
-
-            int row = 0;
-            for (Integer minuteOfDay : minuteBlock)
             {
-                row++;
-                if (minuteBlock.last().equals(minuteOfDay))
+                long time = System.currentTimeMillis();
+                
+                int row = 0;
+                for (Integer minuteOfDay : minuteBlock)
                 {
-                    break;
-                }
-                boolean fullHour = (minuteOfDay) % 60 == 0;
-                //                boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
-                if (fullHour || minuteOfDay == minMinute)
-                {
-                    int rowspan = calcRowspan(minuteOfDay, ((minuteOfDay / 60) + 1) * 60);
-                    String timeString = getRaplaLocale().formatTime(minuteOfDay);
-                    timelist.add(new RowSlot(timeString, rowspan));
-                }
-                for (int day = 0; day < columns; day++)
-                {
-                    if (isExcluded(day))
-                        continue;
-
-                    for (int slotnr = 0; slotnr < daySlots[day].size(); slotnr++)
+                    row++;
+                    if (minuteBlock.last().equals(minuteOfDay))
                     {
-                        Slot slot = daySlots[day].getSlotAt(slotnr);
-                        Block block = slot.getBlock(minuteOfDay);
-                        if (block != null)
+                        break;
+                    }
+                    boolean fullHour = (minuteOfDay) % 60 == 0;
+                    boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
+                    if (fullHour || minuteOfDay == minMinute)
+                    {
+                        int rowspan = calcRowspan(minuteOfDay, ((minuteOfDay / 60) + 1) * 60);
+                        String timeString = getRaplaLocale().formatTime(minuteOfDay);
+                        timelist.add(new RowSlot(timeString, rowspan));
+                    }
+                    for (int day = 0; day < columns; day++)
+                    {
+                        if (isExcluded(day))
+                            continue;
+    
+                        for (int slotnr = 0; slotnr < daySlots[day].size(); slotnr++)
                         {
-                            int endMinute = Math.min(maxMinute, DateTools.getMinuteOfDay(block.getEnd().getTime()));
-                            int rowspan = calcRowspan(minuteOfDay, endMinute);
-                            if (block instanceof HTMLRaplaBlock)
+                            Slot slot = daySlots[day].getSlotAt(slotnr);
+                            Block block = slot.getBlock(minuteOfDay);
+                            if (block != null)
                             {
-                                ((HTMLRaplaBlock) block).setRowCount(rowspan);
-                                ((HTMLRaplaBlock) block).setRow(row);
+                                int endMinute = Math.min(maxMinute, DateTools.getMinuteOfDay(block.getEnd().getTime()));
+                                int rowspan = calcRowspan(minuteOfDay, endMinute);
+                                if (block instanceof HTMLRaplaBlock)
+                                {
+                                    ((HTMLRaplaBlock) block).setRowCount(rowspan);
+                                    ((HTMLRaplaBlock) block).setRow(row);
+                                }
+                                slot.setLastEnd(endMinute);
                             }
-                            slot.setLastEnd(endMinute);
                         }
                     }
                 }
+                logger.info("tableprep took  " + (System.currentTimeMillis() - time) + " ms");
             }
-            view.update(daylist, timelist, weeknumber);
+            {
+                long time = System.currentTimeMillis();
+                view.update(daylist, timelist, weeknumber);
+                logger.info("update took  " + (System.currentTimeMillis() - time) + " ms");
+            }
+
         }
 
         static public class RowSlot
@@ -519,7 +544,9 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     {
         try
         {
+            long time = System.currentTimeMillis();
             updateContent();
+            logger.info("update interval  " + (System.currentTimeMillis() - time) + " ms");
         }
         catch (RaplaException e)
         {
