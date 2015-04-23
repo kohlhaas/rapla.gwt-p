@@ -1,17 +1,19 @@
 package org.rapla.client.gwt.view;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.rapla.client.gwt.util.ElementWrapper;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.Slot;
 import org.rapla.components.calendarview.Block;
+import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
-import com.google.gwt.dom.client.DataTransfer;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragLeaveHandler;
 import com.google.gwt.event.dom.client.DragOverEvent;
@@ -20,16 +22,21 @@ import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.Widget;
 
 public class CalendarView extends FlexTable
 {
-    public CalendarView(String tableStylePrefix)
+
+    private final Map<Element, Event> events = new HashMap<Element, Event>();
+    private final Logger logger;
+
+    public CalendarView(String tableStylePrefix, Logger logger)
     {
         super();
+        this.logger = logger;
         setStyleName(tableStylePrefix);
         addStyleName("table");
     }
@@ -54,14 +61,10 @@ public class CalendarView extends FlexTable
     }
 
     /**
-     * Simple class replacing the informations transfered in the <code>DataTransfer</code> object whenever this object has no setData method.<br/>
-     * This object should not be used whenever possible.<br/>
-     * At the moment this object is only used by the IE.
      */
     private static final class OriginSupport
     {
-        int row;
-        int colum;
+        private Event event;
     }
 
     /**
@@ -74,7 +77,6 @@ public class CalendarView extends FlexTable
     private void createDragAndDropSupport(final boolean[][] spanCells, final int columnCount, final int rowCount)
     {
         final OriginSupport originSupport = new OriginSupport();
-        // Drag and Drop support
         for (int j = 1; j < rowCount; j++)
         {
             final int row = j;
@@ -89,84 +91,61 @@ public class CalendarView extends FlexTable
                 {
                     this.setText(row, column, " ");
                 }
-                final Element element = this.getCellFormatter().getElement(row, column);
-                final ElementWrapper elementWrapper = new ElementWrapper(element);
-                elementWrapper.onAttach();
-                elementWrapper.addDomHandler(new DragStartHandler()
-                {
-                    @Override
-                    public void onDragStart(final DragStartEvent event)
-                    {
-                        final DataTransfer dataTransfer = event.getDataTransfer();
-                        try
-                        {
-                            dataTransfer.setData("row", row + "");
-                            dataTransfer.setData("column", column + "");
-                        }
-                        catch (final Exception e)
-                        {
-                            originSupport.row = row;
-                            originSupport.colum = column;
-                        }
-                        event.stopPropagation();
-                    }
-                }, DragStartEvent.getType());
-                elementWrapper.addDomHandler(new DragOverHandler()
-                {
-                    @Override
-                    public void onDragOver(final DragOverEvent event)
-                    {
-                        element.getStyle().setBackgroundColor("#ffa");
-                        event.stopPropagation();
-                    }
-                }, DragOverEvent.getType());
-                elementWrapper.addDomHandler(new DragLeaveHandler()
-                {
-                    @Override
-                    public void onDragLeave(final DragLeaveEvent event)
-                    {
-                        element.getStyle().clearBackgroundColor();
-                        event.stopPropagation();
-                    }
-                }, DragLeaveEvent.getType());
-                elementWrapper.addDomHandler(new DropHandler()
-                {
-                    @Override
-                    public void onDrop(final DropEvent event)
-                    {
-                        element.getStyle().clearBackgroundColor();
-                        int sourceRow;
-                        int sourceColumn;
-                        final DataTransfer dataTransfer = event.getDataTransfer();
-                        try
-                        {
-                            final String rowString = dataTransfer.getData("row");
-                            final String columnString = dataTransfer.getData("column");
-                            sourceRow = Integer.parseInt(rowString);
-                            sourceColumn = Integer.parseInt(columnString);
-                        }
-                        catch (final Exception e)
-                        {
-                            sourceColumn = originSupport.colum;
-                            sourceRow = originSupport.row;
-                        }
-                        // only do something whenever the place has been changed
-                        if (sourceRow != row || sourceColumn != column)
-                        {
-                            final Widget widget = CalendarView.this.getWidget(sourceRow, sourceColumn);
-                            final Event source = (Event) widget;
-                            // TODO: call controller to update event
-                            CalendarView.this.setWidget(row, column, source);
-                        }
-                        event.stopPropagation();
-                    }
-                }, DropEvent.getType());
             }
         }
+        // Drag and Drop support
+        addDomHandler(new DragOverHandler()
+        {
+            @Override
+            public void onDragOver(DragOverEvent event)
+            {
+            }
+        }, DragOverEvent.getType());
+        addDomHandler(new DragLeaveHandler()
+        {
+            @Override
+            public void onDragLeave(DragLeaveEvent event)
+            {
+            }
+        }, DragLeaveEvent.getType());
+        addDomHandler(new DragStartHandler()
+        {
+            @Override
+            public void onDragStart(final DragStartEvent event)
+            {
+                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+                final Element tc = CalendarView.this.getEventTargetCell(event2);
+                final Event myEvent = events.get(tc.getFirstChildElement());
+                originSupport.event = myEvent;
+                try
+                {// enable if needed
+                    event.setData("dragging", "start");
+                }
+                catch (Exception e)
+                {
+                }
+            }
+        }, DragStartEvent.getType());
+        addDomHandler(new DropHandler()
+        {
+            @Override
+            public void onDrop(final DropEvent event)
+            {
+                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+                final Element targetCell = CalendarView.this.getEventTargetCell(event2);
+                final TableCellElement td = TableCellElement.as(targetCell);
+                final Element tr = td.getParentElement();
+                final int column = DOM.getChildIndex(tr, td);
+                final Element tbody = tr.getParentElement();
+                final int row = DOM.getChildIndex(tbody, tr);
+                setWidget(row, column, originSupport.event);
+            }
+        }, DropEvent.getType());
     }
 
     private void createEvents(final List<HTMLDaySlot> daylist, final boolean[][] spanCells, final FlexCellFormatter flexCellFormatter)
     {
+        events.clear();
         // create events
         int column = 1;
         for (final HTMLDaySlot daySlot : daylist)
@@ -187,6 +166,7 @@ public class CalendarView extends FlexTable
                         final int blockColumn = calcColumn(spanCells, blockRow, column);
                         final Event event = new Event(htmlBlock);
                         this.setWidget(blockRow, blockColumn, event);
+                        events.put(event.getElement(), event);
                         final int rowCount = htmlBlock.getRowCount();
                         for (int i = 1; i < rowCount; i++)
                         {
