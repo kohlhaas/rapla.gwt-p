@@ -4,21 +4,25 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.FilterRegistration.Dynamic;
 
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.gwt.view.CalendarView;
+import org.rapla.client.gwt.view.CalendarView.Callback;
 import org.rapla.client.gwt.view.NavigatorView;
 import org.rapla.client.gwt.view.NavigatorView.NavigatorAction;
 import org.rapla.client.plugin.weekview.CalendarWeekView;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
+import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.Slot;
 import org.rapla.framework.logger.Logger;
+import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.weekview.CalendarWeekView.Presenter> implements CalendarWeekView<IsWidget>,
-        NavigatorAction
+        NavigatorAction, Callback
 {
 
     private final CalendarView calendar;
@@ -28,7 +32,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     public CalendarWeekViewImpl(Logger logger)
     {
         navigatorView = new NavigatorView("week", this);
-        calendar = new CalendarView("week", logger);
+        calendar = new CalendarView("week", logger, this);
     }
 
     @Override
@@ -62,5 +66,17 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     public void previous()
     {
         getPresenter().previous();
+    }
+
+    @Override
+    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, RowSlot rowSlot)
+    {
+        getPresenter().updateReservation(block, daySlot, rowSlot);
+    }
+
+    @Override
+    public void selectReservation(HTMLRaplaBlock block)
+    {
+        getPresenter().selectReservation(block);
     }
 }

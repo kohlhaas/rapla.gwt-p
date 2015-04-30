@@ -3,6 +3,7 @@ package org.rapla.client.plugin.weekview;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,12 +18,17 @@ import javax.inject.Named;
 import org.rapla.client.base.CalendarPlugin;
 import org.rapla.client.event.DetailSelectEvent;
 import org.rapla.client.plugin.weekview.CalendarWeekView.Presenter;
+import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
+import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
+import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.Slot;
 import org.rapla.components.calendarview.Block;
 import org.rapla.components.calendarview.Builder;
 import org.rapla.components.calendarview.Builder.PreperationResult;
 import org.rapla.components.calendarview.html.AbstractHTMLView;
 import org.rapla.components.util.DateTools;
 import org.rapla.components.xmlbundle.I18nBundle;
+import org.rapla.entities.domain.Appointment;
+import org.rapla.entities.domain.AppointmentBlock;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.CalendarSelectionModel;
@@ -60,7 +66,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
     @Inject
     private @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n;
-
+    
     @Inject
     public CalendarWeekViewPresenter(CalendarWeekView view)
     {
@@ -81,12 +87,18 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     }
 
     @Override
-    public void selectReservation(Reservation selectedObject)
+    public void selectReservation(HTMLRaplaBlock block)
     {
-        DetailSelectEvent event2 = new DetailSelectEvent(selectedObject);
-        eventBus.fireEvent(event2);
-        logger.info("selection changed");
+        final AppointmentBlock appointmentBlock = block.getAppointmentBlock();
+        final Appointment appointment = appointmentBlock.getAppointment();
+        eventBus.fireEvent(new DetailSelectEvent(appointment.getReservation()));
+    }
 
+    @Override
+    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, RowSlot rowSlot)
+    {
+        final Reservation reservation = block.getAppointmentBlock().getAppointment().getReservation();
+        
     }
 
     @Override
@@ -108,7 +120,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             builder.setFromModel(model, startDate, endDate);
             logger.info("events loaded took  " + (System.currentTimeMillis() - time) + " ms");
         }
-        
+
         GroupAllocatablesStrategy strategy = new GroupAllocatablesStrategy(raplaLocale.getLocale());
         boolean compactColumns = getCalendarOptions().isCompactColumns() || builder.getAllocatables().size() == 0;
         //compactColumns = false;
@@ -250,18 +262,17 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 long time = System.currentTimeMillis();
                 PreperationResult prepareBuild;
                 {
-                    
                     blocks.clear();
                     daySlots = new HTMLDaySlot[columns];
-        
+
                     String[] headerNames = new String[columns];
-        
+
                     for (int i = 0; i < columns; i++)
                     {
                         String headerName = createColumnHeader(i);
                         headerNames[i] = headerName;
                     }
-        
+
                     // calculate the blocks
                     int start = startMinutes;
                     int end = endMinutes;
@@ -273,7 +284,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                         throw new IllegalStateException("builder.getMin() is smaller than 0");
                     if (end > 24 * 60)
                         throw new IllegalStateException("builder.getMax() is greater than 24");
-        
+
                     minMinute = start;
                     maxMinute = end;
                     for (int i = 0; i < daySlots.length; i++)
@@ -306,28 +317,17 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             List<RowSlot> timelist = new ArrayList<>();
             {
                 long time = System.currentTimeMillis();
-                
+
                 int row = 0;
                 for (Integer minuteOfDay : minuteBlock)
                 {
                     row++;
-                    if (minuteBlock.last().equals(minuteOfDay))
-                    {
-                        break;
-                    }
-                    boolean fullHour = (minuteOfDay) % 60 == 0;
-                    boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
-                    if (fullHour || minuteOfDay == minMinute)
-                    {
-                        int rowspan = calcRowspan(minuteOfDay, ((minuteOfDay / 60) + 1) * 60);
-                        String timeString = getRaplaLocale().formatTime(minuteOfDay);
-                        timelist.add(new RowSlot(timeString, rowspan));
-                    }
+
                     for (int day = 0; day < columns; day++)
                     {
                         if (isExcluded(day))
                             continue;
-    
+
                         for (int slotnr = 0; slotnr < daySlots[day].size(); slotnr++)
                         {
                             Slot slot = daySlots[day].getSlotAt(slotnr);
@@ -345,6 +345,31 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                             }
                         }
                     }
+                    if (minuteBlock.last().equals(minuteOfDay))
+                    {
+                        break;
+                    }
+                    boolean fullHour = (minuteOfDay) % 60 == 0;
+                    boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
+                    if (fullHour || minuteOfDay == minMinute)
+                    {
+                        String timeString = getRaplaLocale().formatTime(minuteOfDay);
+                        int rowspan = calcRowspan(minuteOfDay, ((minuteOfDay / 60) + 1) * 60);
+                        List<Integer> rowTimes = new ArrayList<Integer>();
+                        for (int i = 0; i < m_rowsPerHour; i++)
+                        {
+                            final int startMinute = minuteOfDay + (60 / m_rowsPerHour) * i;
+                            final int endMinute = startMinute + (60 / m_rowsPerHour);
+                            int rowspanForTimeUnit = calcRowspan(startMinute, endMinute);
+                            if (rowspanForTimeUnit == 0)
+                            {
+                                rowspanForTimeUnit++;
+                            }
+                            rowTimes.add(rowspanForTimeUnit);
+                        }
+                        final RowSlot rowSlot = new RowSlot(timeString, rowspan, rowTimes);
+                        timelist.add(rowSlot);
+                    }
                 }
                 logger.info("tableprep took  " + (System.currentTimeMillis() - time) + " ms");
             }
@@ -358,14 +383,17 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
         static public class RowSlot
         {
-            public RowSlot(String rowname, int rowspan)
+
+            public RowSlot(final String rowname, final int rowspan, final List<Integer> rowTimes)
             {
                 this.rowname = rowname;
                 this.rowspan = rowspan;
+                this.rowTimes = Collections.unmodifiableList(rowTimes);
             }
 
-            String rowname;
-            int rowspan;
+            private final String rowname;
+            private final int rowspan;
+            private final List<Integer> rowTimes;
 
             public String getRowname()
             {
@@ -375,6 +403,11 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             public int getRowspan()
             {
                 return rowspan;
+            }
+
+            public List<Integer> getRowTimes()
+            {
+                return rowTimes;
             }
 
         }

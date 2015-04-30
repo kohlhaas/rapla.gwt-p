@@ -1,6 +1,8 @@
 package org.rapla.client.gwt.view;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,11 +11,16 @@ import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPr
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.Slot;
 import org.rapla.components.calendarview.Block;
+import org.rapla.entities.domain.Reservation;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.TableCellElement;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DragEndEvent;
+import com.google.gwt.event.dom.client.DragEndHandler;
 import com.google.gwt.event.dom.client.DragEnterEvent;
 import com.google.gwt.event.dom.client.DragEnterHandler;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
@@ -25,6 +32,7 @@ import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -32,13 +40,25 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 public class CalendarView extends FlexTable
 {
 
+    public static interface Callback
+    {
+        void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, RowSlot rowSlot);
+
+        void selectReservation(HTMLRaplaBlock block);
+
+    }
+
+    private static final String BACKGROUND_COLOR_TARGET = "#ffa";
     private final Map<Element, Event> events = new HashMap<Element, Event>();
     private final Logger logger;
+    private final List<Integer> extraDayColumns = new ArrayList<Integer>();
+    private final Callback callback;
 
-    public CalendarView(String tableStylePrefix, Logger logger)
+    public CalendarView(String tableStylePrefix, Logger logger, Callback callback)
     {
         super();
         this.logger = logger;
+        this.callback = callback;
         setStyleName(tableStylePrefix);
         addStyleName("table");
     }
@@ -54,12 +74,30 @@ public class CalendarView extends FlexTable
     {
         final FlexCellFormatter flexCellFormatter = this.getFlexCellFormatter();
         this.setText(0, 0, weeknumber);
+        setStyleNameFor(0, 0, "header topleft");
         final int actualColumnCount = createXAchsis(daylist, flexCellFormatter);
         final int actualRowCount = createYAchsis(timelist, flexCellFormatter);
+        final List<Integer> timeRows = calcTimeRows(timelist);
         final boolean[][] spanCells = new boolean[actualRowCount][actualColumnCount];
         initSpanCells(daylist, timelist, spanCells);
-        createEvents(daylist, spanCells, flexCellFormatter);
-        createDragAndDropSupport(spanCells, actualColumnCount, actualRowCount);
+        createEvents(daylist, spanCells, flexCellFormatter, timeRows);
+        createDragAndDropSupport(spanCells, actualColumnCount, actualRowCount, daylist, timelist);
+    }
+
+    private ArrayList<Integer> calcTimeRows(final List<RowSlot> timelist)
+    {
+        final ArrayList<Integer> timeRows = new ArrayList<Integer>();
+        int row = 0;
+        for (final RowSlot rowSlot : timelist)
+        {
+            final List<Integer> rowTimes = rowSlot.getRowTimes();
+            for (final Integer rowSpan : rowTimes)
+            {
+                timeRows.add(row + 1);
+                row += rowSpan;
+            }
+        }
+        return timeRows;
     }
 
     /**
@@ -67,6 +105,19 @@ public class CalendarView extends FlexTable
     private static final class OriginSupport
     {
         private Event event;
+        private Position point;
+    }
+
+    private static final class Position
+    {
+        private int column;
+        private int row;
+
+        @Override
+        public String toString()
+        {
+            return "Column: " + column + ", Row: " + row;
+        }
     }
 
     /**
@@ -76,36 +127,109 @@ public class CalendarView extends FlexTable
      * @param columnCount the column count 
      * @param rowCount the row count
      */
-    private void createDragAndDropSupport(final boolean[][] spanCells, final int columnCount, final int rowCount)
+    private void createDragAndDropSupport(final boolean[][] spanCells, final int columnCount, final int rowCount, final List<HTMLDaySlot> daylist,
+            final List<RowSlot> timelist)
     {
         final OriginSupport originSupport = new OriginSupport();
-        for (int j = 1; j < rowCount; j++)
+        final int rowCountFromWidget = getRowCount();
+        final int rows = spanCells.length;
+        for (Integer column : extraDayColumns)
         {
-            final int row = j;
-            for (int i = 1; i < columnCount; i++)
+            for (int row = 1; row < rows; row++)
             {
-                if (spanCells[row][i])
+                if (!spanCells[row][column])
                 {
-                    continue;
-                }
-                final int column = calcColumn(spanCells, row, i);
-                if (!this.isCellPresent(row, column))
-                {
-                    this.setText(row, column, " ");
+                    final int cellCountFromWidget = getCellCount(row);
+                    final int realColumn = calcColumn(spanCells, row, column);
+                    if (row > rowCountFromWidget || realColumn > cellCountFromWidget)
+                    {
+                        logger.error("to many rows or columns " + row + "/" + rowCountFromWidget + "-" + realColumn + "/" + cellCountFromWidget);
+                    }
+                    try
+                    {
+                        getCellFormatter().getElement(row, realColumn).setDraggable(Element.DRAGGABLE_TRUE);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.error("ASD-" + row + "/" + column);
+                    }
                 }
             }
         }
         // Drag and Drop support
         addDomHandler(new DragEnterHandler()
         {
-            
             @Override
             public void onDragEnter(DragEnterEvent event)
             {
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element tc = CalendarView.this.getEventTargetCell(event2);
-                tc.getStyle().setBackgroundColor("#ffa");
                 event.stopPropagation();
+                if (originSupport.event != null)
+                {
+                    if (!events.containsKey(tc.getFirstChildElement()))
+                    {
+                        tc.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                    }
+                }
+                else
+                {
+                    final Position newPosition = calcPosition(tc);
+                    logger.info("from: " + originSupport.point);
+                    logger.info("to: " + newPosition);
+                    clearAllDayMarks(spanCells);
+                    mark(originSupport.point, newPosition);
+                }
+            }
+
+            private void mark(Position p1, Position p2)
+            {
+                final int column1Normalized = normalize(spanCells, p1.row, p1.column);
+                final int column2Normalized = normalize(spanCells, p2.row, p2.column);
+                logger.info("comparing " + column1Normalized + ":" + column2Normalized);
+                if (column1Normalized == column2Normalized)
+                {
+                    final int startRow = Math.min(p1.row, p2.row);
+                    final int endRow = Math.max(p1.row, p2.row);
+                    for (int aRow = startRow; aRow <= endRow; aRow++)
+                    {
+                        if (!spanCells[aRow][column2Normalized])
+                        {
+                            final int column = calcColumn(spanCells, aRow, column2Normalized);
+                            logger.info("marking " + aRow + ":" + column);
+                            getCellFormatter().getElement(aRow, column).getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                        }
+                    }
+                }
+            }
+
+            private int normalize(boolean[][] spanCells, int row, int column)
+            {
+                int col = -1;
+                final boolean[] spans = spanCells[row];
+                logger.info("spans: " + spans);
+                for (int i = 0; i < spans.length; i++)
+                {
+                    final boolean isSpan = spans[i];
+                    if (!isSpan)
+                    {
+                        col++;
+                    }
+                    if (col == column)
+                    {
+                        if (!extraDayColumns.contains(col))
+                        {
+                            // update to the end of the day
+                            final int index = Collections.binarySearch(extraDayColumns, col);
+                            return extraDayColumns.get(-(index) - 1);
+                        }
+                        else
+                        {
+                            return i;
+                        }
+                    }
+                }
+                return column;
             }
         }, DragEnterEvent.getType());
         addDomHandler(new DragOverHandler()
@@ -121,12 +245,26 @@ public class CalendarView extends FlexTable
             @Override
             public void onDragLeave(DragLeaveEvent event)
             {
-                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                final Element tc = CalendarView.this.getEventTargetCell(event2);
-                tc.getStyle().clearBackgroundColor();
+                if (originSupport.event != null)
+                {
+                    com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+                    final Element tc = CalendarView.this.getEventTargetCell(event2);
+                    if (!events.containsKey(tc.getFirstChildElement()))
+                    {
+                        tc.getStyle().clearBackgroundColor();
+                    }
+                }
                 event.stopPropagation();
             }
         }, DragLeaveEvent.getType());
+        addDomHandler(new DragEndHandler()
+        {
+            @Override
+            public void onDragEnd(DragEndEvent event)
+            {
+                CalendarView.this.removeStyleName("dragging");
+            }
+        }, DragEndEvent.getType());
         addDomHandler(new DragStartHandler()
         {
             @Override
@@ -135,7 +273,19 @@ public class CalendarView extends FlexTable
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element tc = CalendarView.this.getEventTargetCell(event2);
                 final Event myEvent = events.get(tc.getFirstChildElement());
-                originSupport.event = myEvent;
+                if (myEvent != null)
+                {
+                    CalendarView.this.addStyleName("dragging");
+                    logger.info("event drag");
+                    originSupport.event = myEvent;
+                    originSupport.point = null;
+                }
+                else
+                {
+                    logger.info("new event drag");
+                    originSupport.point = calcPosition(tc);
+                    originSupport.event = null;
+                }
                 try
                 {// enable if needed
                     event.setData("dragging", "start");
@@ -150,21 +300,42 @@ public class CalendarView extends FlexTable
             @Override
             public void onDrop(final DropEvent event)
             {
-                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                final Element targetCell = CalendarView.this.getEventTargetCell(event2);
-                targetCell.getStyle().clearBackgroundColor();
-                final TableCellElement td = TableCellElement.as(targetCell);
-                final Element tr = td.getParentElement();
-                final int column = DOM.getChildIndex(tr, td);
-                final Element tbody = tr.getParentElement();
-                final int row = DOM.getChildIndex(tbody, tr);
-                setWidget(row, column, originSupport.event);
+                if (originSupport.event != null)
+                {
+                    com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+                    final Element targetCell = CalendarView.this.getEventTargetCell(event2);
+                    targetCell.getStyle().clearBackgroundColor();
+                    Position p = calcPosition(targetCell);
+                    HTMLDaySlot daySlot=null; 
+                    RowSlot rowSlot = null;
+                    callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, rowSlot);
+                }
+                else
+                {
+                    clearAllDayMarks(spanCells);
+                    Window.alert("new event popup creation needed");
+                }
+                originSupport.event = null;
+                originSupport.point = null;
                 event.stopPropagation();
             }
         }, DropEvent.getType());
     }
 
-    private void createEvents(final List<HTMLDaySlot> daylist, final boolean[][] spanCells, final FlexCellFormatter flexCellFormatter)
+    private static Position calcPosition(Element targetCell)
+    {
+        final Position position = new Position();
+        final TableCellElement td = TableCellElement.as(targetCell);
+        final Element tr = td.getParentElement();
+        final int column = DOM.getChildIndex(tr, td);
+        final Element tbody = tr.getParentElement();
+        final int row = DOM.getChildIndex(tbody, tr);
+        position.column = column;
+        position.row = row;
+        return position;
+    }
+
+    private void createEvents(final List<HTMLDaySlot> daylist, final boolean[][] spanCells, final FlexCellFormatter flexCellFormatter, List<Integer> timeRows)
     {
         events.clear();
         // create events
@@ -173,32 +344,157 @@ public class CalendarView extends FlexTable
         {
             if (daySlot.isEmpty())
             {
+                fillWithEmptyCellsInInterval(spanCells, column, 1, spanCells.length, timeRows, "empty emptyDayRow");
                 column++;
             }
             else
             {
                 for (final Slot slot : daySlot)
                 {
+                    int lastEndRow = 1;
                     final Collection<Block> blocks = slot.getBlocks();
                     for (final Block block : blocks)
                     {
                         final HTMLRaplaBlock htmlBlock = (HTMLRaplaBlock) block;
                         final int blockRow = htmlBlock.getRow();
+                        fillWithEmptyCellsInInterval(spanCells, column, lastEndRow, blockRow, timeRows, "empty");
                         final int blockColumn = calcColumn(spanCells, blockRow, column);
                         final Event event = new Event(htmlBlock);
+                        event.addDomHandler(new ClickHandler()
+                        {
+                            @Override
+                            public void onClick(ClickEvent event)
+                            {
+                                callback.selectReservation(htmlBlock);
+                                event.stopPropagation();
+                            }
+                        }, ClickEvent.getType());
                         this.setWidget(blockRow, blockColumn, event);
-                        events.put(event.getElement(), event);
+                        final Element element = event.getElement();
+                        events.put(element, event);
+                        final Element td = element.getParentElement();
+                        td.getStyle().setBackgroundColor(htmlBlock.getBackgroundColor());
+                        td.setClassName("eventTd");
+                        td.setDraggable(Element.DRAGGABLE_TRUE);
                         final int rowCount = htmlBlock.getRowCount();
                         for (int i = 1; i < rowCount; i++)
                         {
                             spanCells[blockRow + i][column] = true;
                         }
+                        flexCellFormatter.setVerticalAlignment(blockRow, blockColumn, HasVerticalAlignment.ALIGN_TOP);
                         flexCellFormatter.setRowSpan(blockRow, blockColumn, rowCount);
+                        lastEndRow = blockRow + rowCount;
                     }
+                    fillWithEmptyCellsInInterval(spanCells, column, lastEndRow, spanCells.length, timeRows, "empty");
                     column++;
                 }
+                fillWithEmptyCellsInInterval(spanCells, column, 1, spanCells.length, timeRows, "empty emptyDayRow");
+                column++;
             }
         }
+    }
+
+    // 1. fuellt die spanCells
+    // 2. fuellt die leere tds ein mit columns
+    private void fillWithEmptyCellsInInterval(final boolean[][] spanCells, final int column, final int startRow, final int endRow, List<Integer> timeRows,
+            final String styleName)
+    {
+        for (int row = startRow; row < endRow;)
+        {
+            final int nextTimeRow = getNextTimeRow(row, timeRows);
+            final int rowToUse = nextTimeRow == -1 ? endRow : Math.min(nextTimeRow, endRow);
+            final int rowSpan = rowToUse - row;
+            final int realColumn = calcColumn(spanCells, row, column);
+            setText(row, realColumn, "");// + rowSpan);
+            getFlexCellFormatter().setRowSpan(row, realColumn, rowSpan);
+            for (int blockRow = 1; blockRow < rowSpan; blockRow++)
+            {
+                final boolean[] bs = spanCells[row + blockRow];
+                if (bs == null)
+                {
+                    logger.error("Error " + bs + " - " + (row + blockRow));
+                }
+                bs[column] = true;
+            }
+            setStyleNameFor(row, realColumn, styleName);
+            row += rowSpan;
+        }
+    }
+
+    // does not work
+    //    private int getFirstElementThatIsGreater(int value,List<Integer> list )
+    //    {
+    //        int startIndex = 0;
+    //        int endIndex = list.size()-1;
+    //        int index=-1;
+    //        while (true)
+    //        {
+    //            int halfIndex = startIndex + (endIndex-startIndex ) / 2;
+    //            final Integer valueAt = list.get(halfIndex);
+    //            if ( valueAt == value)
+    //            {
+    //                index = halfIndex+1 ;
+    //                break;
+    //            }
+    //            if ( valueAt < value)
+    //            {
+    //                if (startIndex == halfIndex )
+    //                {
+    //                    break;
+    //                }
+    //                startIndex= halfIndex;
+    //               
+    //            }
+    //            if ( valueAt > value)
+    //            {
+    //                if (endIndex == halfIndex )
+    //                {
+    //                    break;
+    //                }
+    //                endIndex = halfIndex;
+    //                index = halfIndex;
+    //            }
+    //            if ( startIndex >= endIndex)
+    //            {
+    //                break;
+    //            }
+    //        }
+    //        if ( index >= list.size())
+    //        {
+    //            return -1;
+    //        }
+    //        return list.get(index);
+    //    }
+
+    private int getNextTimeRow(int startRow, List<Integer> timeRows)
+    {
+        //  return getFirstElementThatIsGreater(startRow, timeRows);
+        for (Integer integer : timeRows)
+        {
+            if (integer > startRow)
+            {
+                return integer;
+            }
+        }
+        return -1;
+        //        final int indexSearch = Collections.binarySearch(timeRows, startRow);
+        //        final int index;
+        //        // indexSearch >= 0 means theat startRow is found in timeRows list startRow is a value in timeRows 
+        //        // indexSearch returns the index of the found entry
+        //        if (indexSearch >= 0)
+        //        {
+        //            index = indexSearch + 1;
+        //        }
+        //        // indexSearch <0 means startRow is not found in timeRows -indexSearch-1 is the index at which startRow could be inserted to maintain the order 
+        //        else
+        //        {
+        //            index = (-indexSearch - 1) + 1;
+        //        }
+        //        if (index >= timeRows.size())
+        //        {
+        //            return -1;
+        //        }
+        //        return timeRows.get(index);
     }
 
     private void initSpanCells(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final boolean[][] spanCells)
@@ -220,13 +516,15 @@ public class CalendarView extends FlexTable
         int timeentry = 0;
         for (final RowSlot rowSlot : timelist)
         {
-            timeentry++;
-            spanCells[timeentry][0] = false;
-            final int rowspan = rowSlot.getRowspan();
-            for (int i = 1; i < rowspan; i++)
+            for (int span : rowSlot.getRowTimes())
             {
                 timeentry++;
-                spanCells[timeentry][0] = true;
+                spanCells[timeentry][0] = false;
+                for (int i = 1; i < span; i++)
+                {
+                    timeentry++;
+                    spanCells[timeentry][0] = true;
+                }
             }
         }
     }
@@ -236,30 +534,60 @@ public class CalendarView extends FlexTable
         int actualRowCount = 1;
         for (final RowSlot timeEntry : timelist)
         {
-            final String rowname = timeEntry.getRowname();
-            this.setText(actualRowCount, 0, rowname);
-            final int rowspan = timeEntry.getRowspan();
-            flexCellFormatter.setRowSpan(actualRowCount, 0, rowspan);
-            flexCellFormatter.setAlignment(actualRowCount, 0, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_TOP);
-            actualRowCount += rowspan;
+            boolean first = true;
+            for (Integer rowTime : timeEntry.getRowTimes())
+            {
+                final String rowname = first ? timeEntry.getRowname() : "_";
+                first = false;
+                this.setText(actualRowCount, 0, rowname);
+                setStyleNameFor(actualRowCount, 0, "header left");
+                final int rowspan = rowTime;
+                flexCellFormatter.setRowSpan(actualRowCount, 0, rowspan);
+                flexCellFormatter.setAlignment(actualRowCount, 0, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_TOP);
+                actualRowCount += rowspan;
+            }
         }
         return actualRowCount;
     }
 
     private int createXAchsis(final List<HTMLDaySlot> daylist, final FlexCellFormatter flexCellFormatter)
     {
+        extraDayColumns.clear();
         int actualColumnCount = 1;
         for (int i = 0; i < daylist.size(); i++)
         {
             final HTMLDaySlot htmlDaySlot = daylist.get(i);
-            final int slotCount = Math.max(1, htmlDaySlot.size());
+            final int slotCount = Math.max(1, htmlDaySlot.size() + 1);
             final int column = i + 1;
             this.setText(0, column, htmlDaySlot.getHeader());
+            setStyleNameFor(0, column, "header top");
             flexCellFormatter.setColSpan(0, column, slotCount);
             flexCellFormatter.setAlignment(0, column, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_TOP);
             actualColumnCount += slotCount;
+            extraDayColumns.add(actualColumnCount - 1);
         }
         return actualColumnCount;
+    }
+
+    private void setStyleNameFor(final int row, final int column, final String styleName)
+    {
+        getCellFormatter().getElement(row, column).setClassName(styleName);
+    }
+
+    private void clearAllDayMarks(final boolean[][] spanCells)
+    {
+        final int rows = spanCells.length;
+        for (final Integer dayColumn : extraDayColumns)
+        {
+            for (int row = 1; row < rows; row++)
+            {
+                if (!spanCells[row][dayColumn])
+                {
+                    final int column = calcColumn(spanCells, row, dayColumn);
+                    getCellFormatter().getElement(row, column).getStyle().clearBackgroundColor();
+                }
+            }
+        }
     }
 
     private int calcColumn(final boolean[][] spanCells, final int row, final int column)
@@ -275,5 +603,4 @@ public class CalendarView extends FlexTable
         }
         return column - numSpanCellsToRemove;
     }
-
 }
