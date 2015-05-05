@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.rapla.client.gwt.components.DateComponent;
 import org.rapla.components.util.DateTools;
+import org.rapla.framework.RaplaLocale;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -23,12 +24,12 @@ public class NavigatorView extends FlowPanel
         void previous();
     }
 
-    public NavigatorView(final String parentStyle, final NavigatorAction navigatorAction)
+    public NavigatorView(final String parentStyle, final NavigatorAction navigatorAction, final RaplaLocale raplaLocale)
     {
         super();
         setStyleName(parentStyle);
         addStyleName("navigator");
-        final DateComponent dateComponent = new DateComponent(null);
+        final DateComponent dateComponent = new DateComponent(new Date(), raplaLocale);
         dateComponent.addValueChangeHandler(new ValueChangeHandler<Date>()
         {
             @Override

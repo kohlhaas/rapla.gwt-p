@@ -14,6 +14,7 @@ import org.rapla.client.plugin.weekview.CalendarWeekView;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
 import org.rapla.framework.RaplaException;
+import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
@@ -29,9 +30,9 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     Logger logger;
     
     @Inject
-    public CalendarWeekViewImpl(Logger logger)
+    public CalendarWeekViewImpl(Logger logger, RaplaLocale locale)
     {
-        navigatorView = new NavigatorView("week", this);
+        navigatorView = new NavigatorView("week", this, locale);
         calendar = new WeekviewGWT("week", logger, this);
         this.logger = logger;
     }

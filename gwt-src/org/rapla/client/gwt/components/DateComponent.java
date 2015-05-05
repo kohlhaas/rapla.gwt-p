@@ -1,137 +1,102 @@
 package org.rapla.client.gwt.components;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import org.rapla.components.util.DateTools;
+import org.rapla.components.util.ParseDateException;
+import org.rapla.components.util.SerializableDateTimeFormat;
+import org.rapla.framework.RaplaLocale;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseWheelEvent;
-import com.google.gwt.event.dom.client.MouseWheelHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
-public class DateComponent extends FlowPanel implements HasValueChangeHandlers<Date>
+public class DateComponent extends SimplePanel implements ValueChangeHandler<String>, HasValueChangeHandlers<Date>
 {
-    private static final int ESCAPE = 27;
-    private Date date;
-    private final DatePicker datePicker = new DatePicker();
-    private final TextBox tb;
-    private final List<ValueChangeHandler<Date>> valueChangeHandlers = new ArrayList<ValueChangeHandler<Date>>();
-    private PopupPanel popup;
+    private final TextBox tb = new TextBox();
 
-    public DateComponent(final Date initDate)
+    public DateComponent(Date initDate, RaplaLocale locale)
     {
-        datePicker.setStyleName("datePicker");
-        datePicker.addValueChangeHandler(new ValueChangeHandler<Date>()
+        super();
+        tb.setStyleName("dateComponent");
+        add(tb);
+        tb.setValue(locale.formatDate(initDate), false);
+        if (!isHtml5DateInputSupported())
         {
-            @Override
-            public void onValueChange(ValueChangeEvent<Date> event)
+            final DatePicker datePicker = new DatePicker();
+            final PopupPanel popupPanel = new PopupPanel(true, true);
+            popupPanel.add(datePicker);
+            tb.addFocusHandler(new FocusHandler()
             {
-                setDate(event.getValue());
-            }
-        });
-        popup = new PopupPanel(true, true)
-        {
-            @Override
-            protected void onPreviewNativeEvent(NativePreviewEvent event)
-            {
-                if (Event.ONKEYUP == event.getTypeInt())
+                @Override
+                public void onFocus(FocusEvent event)
                 {
-                    if (event.getNativeEvent().getKeyCode() == ESCAPE)
+                    popupPanel.showRelativeTo(tb);
+                }
+            });
+            datePicker.addValueChangeHandler(new ValueChangeHandler<Date>()
+            {
+                @Override
+                public void onValueChange(ValueChangeEvent<Date> event)
+                {
+                    final Date value = event.getValue();
+                    final String newDate = DateTimeFormat.getFormat("yyyy-MM-dd").format(value);
+                    tb.setValue(newDate, true);
+                }
+            });
+            tb.addValueChangeHandler(new ValueChangeHandler<String>()
+            {
+                @Override
+                public void onValueChange(ValueChangeEvent<String> event)
+                {
+                    try
                     {
-                        // Dismiss when escape is pressed
-                        popup.hide();
+                        Date newValue = SerializableDateTimeFormat.INSTANCE.parseDate(event.getValue(), false);
+                        datePicker.setValue(newValue, false);
+                    }
+                    catch (Exception e)
+                    {
+                        GWT.log("error parsing date: " + event.getValue(), e);
                     }
                 }
-            }
-        };
-        popup.add(datePicker);
-        tb = new TextBox();
-        tb.addValueChangeHandler(new ValueChangeHandler<String>()
-        {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event)
-            {
-                // TODO Auto-generated method stub
-                //                setDate(value);
-            }
-        });
-        tb.addMouseWheelHandler(new MouseWheelHandler()
-        {
-            @Override
-            public void onMouseWheel(MouseWheelEvent event)
-            {
-                final int deltaY = event.getDeltaY();
-                final int cursorPos = tb.getCursorPos();
-                // TODO
-                if (cursorPos < 2)
-                {
-                    setDate(DateTools.addDays(date, deltaY));
-                }
-                else if (cursorPos < 5)
-                {
-                    setDate(DateTools.addMonths(date, deltaY));
-                }
-                else
-                {
-                    setDate(DateTools.addYears(date, deltaY));
-                }
-            }
-        });
-        this.add(tb);
-        final Button datePickerButton = new Button("picker");
-        datePickerButton.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent event)
-            {
-//                if (popup.isShowing())
-//                {
-//                    popup.hide();
-//                }
-//                else
-//                {
-                    popup.showRelativeTo(datePickerButton);
-//                }
-            }
-        });
-        add(datePickerButton);
-        setDate(initDate == null ? DateTools.cutDate(new Date()) : initDate);
+            });
+        }
+        tb.getElement().setAttribute("type", "date");
+        tb.addValueChangeHandler(this);
     }
 
-    private void setDate(Date value)
+    private native boolean isHtml5DateInputSupported()/*-{
+		var datefield = document.createElement("input")
+		datefield.setAttribute("type", "date")
+		return datefield.type == "date"
+    }-*/;
+
+    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<Date> handler)
     {
-        this.date = value;
-        this.datePicker.setValue(value, false);
-        this.tb.setValue(DateTools.formatDate(value), false);
-        ValueChangeEvent.fire(this, date);
+        return addHandler(handler, ValueChangeEvent.getType());
     }
 
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<Date> valueChangeHandler)
+    @Override
+    public void onValueChange(ValueChangeEvent<String> event)
     {
-        this.valueChangeHandlers.add(valueChangeHandler);
-        return new HandlerRegistration()
+        final String dateInIso = event.getValue();
+        try
         {
-            @Override
-            public void removeHandler()
-            {
-                valueChangeHandlers.remove(valueChangeHandler);
-            }
-        };
+            final Date newValue = SerializableDateTimeFormat.INSTANCE.parseDate(dateInIso, false);
+            ValueChangeEvent.fire(this, newValue);
+        }
+        catch (ParseDateException e)
+        {
+            GWT.log("error parsing date " + dateInIso, e);
+        }
     }
-
 }
