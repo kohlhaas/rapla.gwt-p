@@ -51,7 +51,6 @@ public class Bootstrap {
                {
                    Window.Location.replace("../rapla?page=auth");
                }
-               
            }
        });
 
