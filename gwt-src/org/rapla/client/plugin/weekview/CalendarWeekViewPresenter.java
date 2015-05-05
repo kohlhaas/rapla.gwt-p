@@ -111,7 +111,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
         Date newStartTime = new Date( minuteOfDay * DateTools.MILLISECONDS_PER_MINUTE);
         Date newStartDate = daySlot.getStartDate();
         Date newStart = DateTools.toDateTime( newStartDate, newStartTime);
-        logger.info("Moving to " + newStart);
         boolean keepTime = false;
         PopupContext context = new GWTPopupContext();
         reservationController.moveAppointment(appointmentBlock, newStart, context, keepTime);

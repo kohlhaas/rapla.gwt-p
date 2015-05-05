@@ -328,7 +328,6 @@ public class WeekviewGWT extends FlexTable
                 final Element targetCell = WeekviewGWT.this.getEventTargetCell(event2);
                 targetCell.getStyle().clearBackgroundColor();
                 Position p = calcPosition(targetCell);
-                // TODO 
                 final int column = normalize(spanCells, p.row, p.column);
                 final HTMLDaySlot daySlot = findDaySlot(column);
                 final Integer rowSlot = findRowSlot(p.row);
@@ -364,7 +363,7 @@ public class WeekviewGWT extends FlexTable
             column--;
             for (final HTMLDaySlot day : daylist)
             {
-                if (column <= day.size() + 1)
+                if (column < day.size() + 1)
                     return day;
                 column -= (day.size() + 1);
             }
