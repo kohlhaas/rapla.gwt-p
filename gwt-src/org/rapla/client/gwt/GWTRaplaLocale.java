@@ -62,7 +62,7 @@ public class GWTRaplaLocale extends AbstractRaplaLocale {
 	}
 
 	public String formatDateLong(Date date) {
-		DateTimeFormat format = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_LONG);
+	    DateTimeFormat format = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_LONG);
 	    return format.format(date, timezoneG);
 	}
 
