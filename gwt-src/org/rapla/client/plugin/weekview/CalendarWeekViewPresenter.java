@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -27,6 +28,8 @@ import org.rapla.components.calendarview.Builder.PreperationResult;
 import org.rapla.components.calendarview.html.AbstractHTMLView;
 import org.rapla.components.util.DateTools;
 import org.rapla.components.xmlbundle.I18nBundle;
+import org.rapla.entities.configuration.CalendarModelConfiguration;
+import org.rapla.entities.configuration.Preferences;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.AppointmentBlock;
 import org.rapla.facade.CalendarOptions;
@@ -46,13 +49,13 @@ import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 @Singleton
-public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
+public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin<W>
 {
 
     private CalendarWeekView<W> view;
     @Inject
     ReservationController reservationController;
-    
+
     @Inject
     private Logger logger;
     @Inject
@@ -71,11 +74,12 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
     @Inject
     private @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n;
-    
+
+    @SuppressWarnings("unchecked")
     @Inject
     public CalendarWeekViewPresenter(CalendarWeekView view)
     {
-        this.view = view;
+        this.view = (CalendarWeekView<W>) view;
         this.view.setPresenter(this);
     }
 
@@ -103,9 +107,9 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer minuteOfDay) throws RaplaException
     {
         AppointmentBlock appointmentBlock = block.getAppointmentBlock();
-        Date newStartTime = new Date( minuteOfDay * DateTools.MILLISECONDS_PER_MINUTE);
+        Date newStartTime = new Date(minuteOfDay * DateTools.MILLISECONDS_PER_MINUTE);
         Date newStartDate = daySlot.getStartDate();
-        Date newStart = DateTools.toDateTime( newStartDate, newStartTime);
+        Date newStart = DateTools.toDateTime(newStartDate, newStartTime);
         boolean keepTime = false;
         PopupContext context = new GWTPopupContext();
         reservationController.moveAppointment(appointmentBlock, newStart, context, keepTime);
@@ -115,13 +119,18 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     public void updateContent() throws RaplaException
     {
         final Date selectedDate = model.getSelectedDate();
-        HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view, logger, selectedDate);
+        List<String> calendarNames = new ArrayList<String>();
+        final Preferences preferences = facade.getPreferences();
+        Map<String, CalendarModelConfiguration> exportMap = preferences.getEntry(CalendarModelConfiguration.EXPORT_ENTRY);
+        calendarNames.addAll(exportMap.keySet());
+        Collections.sort(calendarNames);
+        calendarNames.add(0, i18n.getString("default"));
+        HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view, logger, selectedDate, calendarNames);
         configure(weekView);
         Date startDate = weekView.getStartDate();
         Date endDate = weekView.getEndDate();
         model.setStartDate(startDate);
         model.setEndDate(endDate);
-
         String weeknumber = i18n.format("calendarweek.abbreviation", startDate);
         weekView.setWeeknumber(weeknumber);
         RaplaBuilder builder = builderProvider;
@@ -189,7 +198,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
     static public class HTMLWeekViewPresenter extends AbstractHTMLView
     {
-        private CalendarWeekView view;
+        private CalendarWeekView<?> view;
 
         private int endMinutes;
         private int minMinute;
@@ -203,11 +212,14 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 
         private final Date selectedDate;
 
-        public HTMLWeekViewPresenter(CalendarWeekView<?> view, Logger logger, Date selectedDate)
+        private final List<String> calendarNames;
+
+        public HTMLWeekViewPresenter(CalendarWeekView<?> view, Logger logger, Date selectedDate, List<String> calendarNames)
         {
             this.view = view;
-            this.selectedDate=selectedDate;
+            this.selectedDate = selectedDate;
             this.logger = logger;
+            this.calendarNames = calendarNames;
         }
 
         /** The granularity of the selection rows.
@@ -304,7 +316,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                     maxMinute = end;
                     for (int i = 0; i < daySlots.length; i++)
                     {
-                        Date date = DateTools.addDays( startDate, i);
+                        Date date = DateTools.addDays(startDate, i);
                         daySlots[i] = new HTMLDaySlot(2, headerNames[i], date);
                     }
                 }
@@ -366,7 +378,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                         break;
                     }
                     boolean fullHour = (minuteOfDay) % 60 == 0;
-                    boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
+                    //                    boolean isLine = (minuteOfDay) % (60 / m_rowsPerHour) == 0;
                     if (fullHour || minuteOfDay == minMinute)
                     {
                         String timeString = getRaplaLocale().formatTime(minuteOfDay);
@@ -382,8 +394,8 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                                 rowspanForTimeUnit++;
                             }
                             SpanAndMinute spanAndMinute = new SpanAndMinute();
-                            spanAndMinute.minute=startMinute;
-                            spanAndMinute.rowspan=rowspanForTimeUnit;
+                            spanAndMinute.minute = startMinute;
+                            spanAndMinute.rowspan = rowspanForTimeUnit;
                             rowTimes.add(spanAndMinute);
                         }
                         final RowSlot rowSlot = new RowSlot(timeString, rowspan, rowTimes);
@@ -394,23 +406,28 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             }
             {
                 long time = System.currentTimeMillis();
-                view.update(daylist, timelist, weeknumber, selectedDate);
+                view.update(daylist, timelist, weeknumber, selectedDate, calendarNames);
                 logger.info("update took  " + (System.currentTimeMillis() - time) + " ms");
             }
 
         }
-        public static class SpanAndMinute{
+
+        public static class SpanAndMinute
+        {
             private int rowspan;
             private int minute;
+
             public int getMinute()
             {
                 return minute;
             }
+
             public int getRowspan()
             {
                 return rowspan;
             }
         }
+
         static public class RowSlot
         {
 
@@ -464,7 +481,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
             return col;
         }
 
-        protected void printBlock(StringBuffer result, @SuppressWarnings("unused") int firstEventMarkerId, Block block)
+        protected void printBlock(StringBuffer result, int firstEventMarkerId, Block block)
         {
             String string = block.toString();
             result.append(string);
@@ -507,7 +524,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
                 this.header = header;
                 this.startDate = startDate;
             }
-            
+
             public Date getStartDate()
             {
                 return startDate;
@@ -621,6 +638,20 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
         catch (RaplaException e)
         {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void changeCalendar(String newCalendarName)
+    {
+        try
+        {
+            model.load(newCalendarName == i18n.getString("default") ? null : newCalendarName);
+            updateContent();
+        }
+        catch (Exception e)
+        {
+            logger.error("error changing to calendar " + newCalendarName, e);
         }
     }
 }

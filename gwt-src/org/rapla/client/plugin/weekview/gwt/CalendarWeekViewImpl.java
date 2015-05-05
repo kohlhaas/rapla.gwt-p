@@ -18,8 +18,11 @@ import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.ListBox;
 
 public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.weekview.CalendarWeekView.Presenter> implements CalendarWeekView<IsWidget>,
         NavigatorAction, Callback
@@ -27,28 +30,55 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
 
     private final WeekviewGWT calendar;
     private final NavigatorView navigatorView;
+    private final ListBox calendars;
     Logger logger;
-    
+
     @Inject
     public CalendarWeekViewImpl(Logger logger, RaplaLocale locale)
     {
         navigatorView = new NavigatorView("week", this, locale);
         calendar = new WeekviewGWT("week", logger, this);
         this.logger = logger;
+        this.calendars = new ListBox();
+        calendars.addChangeHandler(new ChangeHandler()
+        {
+            @Override
+            public void onChange(ChangeEvent event)
+            {
+                getPresenter().changeCalendar(calendars.getSelectedValue());
+            }
+        });
     }
 
     @Override
     public IsWidget provideContent()
     {
         FlowPanel container = new FlowPanel();
+        container.add(calendars);
         container.add(navigatorView);
         container.add(calendar);
         return container;
     }
 
     @Override
-    public void update(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final String weeknumber, final Date selectedDate)
+    public void update(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final String weeknumber, final Date selectedDate,
+            final List<String> calendarNames)
     {
+        final String currentSelected = calendars.getSelectedValue();
+        calendars.clear();
+        for (String calendarName : calendarNames)
+        {
+            calendars.addItem(calendarName);
+        }
+        final int indexOf = calendarNames.indexOf(currentSelected);
+        if (indexOf >= 0)
+        {
+            calendars.setSelectedIndex(indexOf);
+        }
+        else
+        {
+            calendars.setSelectedIndex(0);
+        }
         navigatorView.setDate(selectedDate);
         calendar.update(daylist, timelist, weeknumber);
     }
@@ -72,7 +102,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     }
 
     @Override
-    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot) 
+    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot)
     {
         try
         {
