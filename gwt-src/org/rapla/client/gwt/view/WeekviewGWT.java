@@ -157,13 +157,13 @@ public class WeekviewGWT extends FlexTable
                 }
             }
         }
-        
-        for ( HandlerRegistration old:currentDomHandlers)
+
+        for (HandlerRegistration old : currentDomHandlers)
         {
             old.removeHandler();
         }
         currentDomHandlers.clear();
-        DragListener listener = new DragListener(spanCells,daylist,timelist);
+        DragListener listener = new DragListener(spanCells, daylist, timelist);
         // Drag and Drop support
         currentDomHandlers.add(addDomHandler(listener, DragEnterEvent.getType()));
         currentDomHandlers.add(addDomHandler(listener, DragOverEvent.getType()));
@@ -172,7 +172,6 @@ public class WeekviewGWT extends FlexTable
         currentDomHandlers.add(addDomHandler(listener, DragStartEvent.getType()));
         currentDomHandlers.add(addDomHandler(listener, DropEvent.getType()));
     }
-    
 
     private int normalize(boolean[][] spanCells, int row, int column)
     {
@@ -202,10 +201,11 @@ public class WeekviewGWT extends FlexTable
         }
         return column;
     }
+
     class DragListener implements DragEnterHandler, DragOverHandler, DragLeaveHandler, DragEndHandler, DragStartHandler, DropHandler
     {
         final private OriginSupport originSupport = new OriginSupport();
-        
+
         final private boolean[][] spanCells;
         final private Collection<RowSlot> timelist;
         final private Collection<HTMLDaySlot> daylist;
@@ -232,7 +232,7 @@ public class WeekviewGWT extends FlexTable
                         tc.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
                     }
                 }
-                else
+                else if (originSupport.point != null)
                 {
                     final Position newPosition = calcPosition(tc);
                     logger.info("from: " + originSupport.point);
@@ -250,7 +250,7 @@ public class WeekviewGWT extends FlexTable
             logger.info("comparing " + column1Normalized + ":" + column2Normalized);
             if (column1Normalized == column2Normalized)
             {
-                final int startRow = Math.min(p1.row, p2.row);
+                final int startRow = Math.max(1, Math.min(p1.row, p2.row));
                 final int endRow = Math.max(p1.row, p2.row);
                 for (int aRow = startRow; aRow <= endRow; aRow++)
                 {
@@ -263,7 +263,7 @@ public class WeekviewGWT extends FlexTable
                 }
             }
         }
-        
+
         @Override
         public void onDragLeave(DragLeaveEvent event)
         {
@@ -278,13 +278,13 @@ public class WeekviewGWT extends FlexTable
             }
             event.stopPropagation();
         }
-        
+
         @Override
         public void onDragOver(DragOverEvent event)
         {
             event.stopPropagation();
         }
-        
+
         @Override
         public void onDragEnd(DragEndEvent event)
         {
@@ -318,7 +318,7 @@ public class WeekviewGWT extends FlexTable
             {
             }
         }
-        
+
         @Override
         public void onDrop(final DropEvent event)
         {
@@ -334,7 +334,7 @@ public class WeekviewGWT extends FlexTable
                 logger.info("day" + daySlot.getHeader() + " - " + rowSlot);
                 callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, rowSlot);
             }
-            else
+            else if (originSupport.point != null)
             {
                 clearAllDayMarks(spanCells);
                 Window.alert("new event popup creation needed");
@@ -370,7 +370,6 @@ public class WeekviewGWT extends FlexTable
             return null;
         }
 
-        
     }
 
     private static Position calcPosition(Element targetCell)
