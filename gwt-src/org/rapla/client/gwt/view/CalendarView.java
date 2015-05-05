@@ -11,7 +11,6 @@ import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPr
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.Slot;
 import org.rapla.components.calendarview.Block;
-import org.rapla.entities.domain.Reservation;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
@@ -42,7 +41,7 @@ public class CalendarView extends FlexTable
 
     public static interface Callback
     {
-        void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, RowSlot rowSlot);
+        void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot);
 
         void selectReservation(HTMLRaplaBlock block);
 
@@ -283,8 +282,8 @@ public class CalendarView extends FlexTable
                     // TODO 
                     final int column = normalize(spanCells, p.row, p.column);
                     final HTMLDaySlot daySlot = findDaySlot(column);
-                    final RowSlot rowSlot = findRowSlot(p.row);
-                    logger.info("day" + daySlot.getHeader() + " - " + rowSlot.getRowname());
+                    final Integer rowSlot = findRowSlot(p.row);
+                    logger.info("day" + daySlot.getHeader() + " - " + rowSlot);
                     callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, rowSlot);
                 }
                 else
@@ -297,14 +296,14 @@ public class CalendarView extends FlexTable
                 event.stopPropagation();
             }
 
-            private RowSlot findRowSlot(int row)
+            private Integer findRowSlot(int row)
             {
                 // header remove
                 row--;
                 for (RowSlot rowSlot : timelist)
                 {
                     if (row < rowSlot.getRowspan())
-                        return rowSlot;
+                        return rowSlot.getRowTimes().get(row);
                     row -= rowSlot.getRowspan();
                 }
                 return null;

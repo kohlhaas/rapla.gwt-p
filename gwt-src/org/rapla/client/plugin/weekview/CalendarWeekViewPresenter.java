@@ -95,7 +95,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
     }
 
     @Override
-    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, RowSlot rowSlot)
+    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot)
     {
         final Reservation reservation = block.getAppointmentBlock().getAppointment().getReservation();
         

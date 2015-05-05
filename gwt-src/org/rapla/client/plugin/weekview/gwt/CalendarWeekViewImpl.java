@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.FilterRegistration.Dynamic;
 
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.gwt.view.CalendarView;
@@ -14,7 +13,6 @@ import org.rapla.client.gwt.view.NavigatorView.NavigatorAction;
 import org.rapla.client.plugin.weekview.CalendarWeekView;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
-import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.Slot;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
@@ -69,7 +67,7 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     }
 
     @Override
-    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, RowSlot rowSlot)
+    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot)
     {
         getPresenter().updateReservation(block, daySlot, rowSlot);
     }
