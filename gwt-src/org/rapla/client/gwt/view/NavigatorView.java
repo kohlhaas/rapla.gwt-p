@@ -24,12 +24,14 @@ public class NavigatorView extends FlowPanel
         void previous();
     }
 
+    private final DateComponent dateComponent;
+
     public NavigatorView(final String parentStyle, final NavigatorAction navigatorAction, final RaplaLocale raplaLocale)
     {
         super();
         setStyleName(parentStyle);
         addStyleName("navigator");
-        final DateComponent dateComponent = new DateComponent(new Date(), raplaLocale);
+        dateComponent = new DateComponent(new Date(), raplaLocale);
         dateComponent.addValueChangeHandler(new ValueChangeHandler<Date>()
         {
             @Override
@@ -77,4 +79,8 @@ public class NavigatorView extends FlowPanel
         this.add(nextButton);
     }
 
+    public void setDate(Date date)
+    {
+        this.dateComponent.setDate(date);
+    }
 }

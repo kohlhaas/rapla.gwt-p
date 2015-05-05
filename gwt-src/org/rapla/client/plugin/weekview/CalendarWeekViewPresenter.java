@@ -46,6 +46,7 @@ import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBuilder;
 
 import com.google.web.bindery.event.shared.EventBus;
+import com.sun.media.sound.ModelAbstractChannelMixer;
 
 @Singleton
 public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, ModificationListener
@@ -110,7 +111,8 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
     @Override
     public void updateContent() throws RaplaException
     {
-        HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view, logger);
+        final Date selectedDate = model.getSelectedDate();
+        HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view, logger, selectedDate);
         configure(weekView);
         Date startDate = weekView.getStartDate();
         Date endDate = weekView.getEndDate();
@@ -196,9 +198,12 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
         String weeknumber;
         Logger logger;
 
-        public HTMLWeekViewPresenter(CalendarWeekView view, Logger logger)
+        private final Date selectedDate;
+
+        public HTMLWeekViewPresenter(CalendarWeekView<?> view, Logger logger, Date selectedDate)
         {
             this.view = view;
+            this.selectedDate=selectedDate;
             this.logger = logger;
         }
 
@@ -381,7 +386,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
             }
             {
                 long time = System.currentTimeMillis();
-                view.update(daylist, timelist, weeknumber);
+                view.update(daylist, timelist, weeknumber, selectedDate);
                 logger.info("update took  " + (System.currentTimeMillis() - time) + " ms");
             }
 
