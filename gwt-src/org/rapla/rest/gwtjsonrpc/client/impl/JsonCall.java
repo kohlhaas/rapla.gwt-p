@@ -14,6 +14,11 @@
 
 package org.rapla.rest.gwtjsonrpc.client.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.rapla.rest.gwtjsonrpc.client.ExceptionDeserializer;
 import org.rapla.rest.gwtjsonrpc.client.JsonUtil;
 import org.rapla.rest.gwtjsonrpc.client.RemoteJsonException;
 import org.rapla.rest.gwtjsonrpc.client.ServerUnavailableException;
@@ -184,6 +189,9 @@ public abstract class JsonCall<T> implements RequestCallback {
         processResponse(sc, responseText, statusText, contentType);
         if (callbackContainer.caught == null)
             return callbackContainer.result;
+        if(callbackContainer.caught instanceof Exception) {
+        	throw (Exception)callbackContainer.caught;
+        }
         throw new Exception(callbackContainer.caught);
     }
     class CallbackContainer implements AsyncCallback<T>
@@ -241,10 +249,24 @@ public abstract class JsonCall<T> implements RequestCallback {
             }
 
             if (r.error() != null) {
-                final String errmsg = r.error().message();
+            	Exception e = null;
+            	final ExceptionDeserializer exceptionDeserializer = proxy.getExceptionDeserializer();
+				if(exceptionDeserializer != null){
+            		final RpcError error = r.error();
+					final Data data = error.data();
+					final String exception = data != null ? data.exception() : null;
+					final String message = error.message();
+					String[] paramObj = data.params();
+					final List<String> parameter = paramObj != null ? Arrays.asList(paramObj) : null;
+					e = exceptionDeserializer.deserialize(exception, message, parameter);
+            	}
+				if(e == null) {
+					final String errmsg = r.error().message();
+					e=new RemoteJsonException(errmsg, r.error().code(),
+	                        new JSONObject(r.error()).get("data"));
+				}
                 RpcCompleteEvent.fire(this);
-                callback.onFailure(new RemoteJsonException(errmsg, r.error().code(),
-                        new JSONObject(r.error()).get("data")));
+                callback.onFailure(e);
                 return;
             }
 
@@ -298,7 +320,6 @@ public abstract class JsonCall<T> implements RequestCallback {
 
         final native RpcError error()/*-{ return this.error; }-*/;
 
-        final native String xsrfKey()/*-{ return this.xsrfKey; }-*/;
     }
 
     private static class RpcError extends JavaScriptObject {
@@ -308,5 +329,17 @@ public abstract class JsonCall<T> implements RequestCallback {
         final native String message()/*-{ return this.message; }-*/;
 
         final native int code()/*-{ return this.code; }-*/;
+        
+        final native Data data()/*-{ return this.data}-*/;
+    }
+    
+    private static class Data extends JavaScriptObject{
+    	
+    	protected Data() {
+    	}
+    	
+    	final native String exception()/*-{return this.exception}-*/;
+
+		final native String[] params()/*-{return this.params}-*/;
     }
 }

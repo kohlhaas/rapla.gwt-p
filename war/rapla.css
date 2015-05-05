@@ -31,6 +31,20 @@ h1 {
 	margin: 15px 6px 6px;
 }
 
+#raplaPopup
+{
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  padding: 16px;
+  border: 6px solid orange;
+  background-color: white;
+  z-index:1002;
+  overflow: auto;
+}
+
 /* ADD BUTTON for new event */
 .addButton {
 	float: right;

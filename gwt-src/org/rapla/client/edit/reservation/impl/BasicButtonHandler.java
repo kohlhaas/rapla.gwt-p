@@ -5,28 +5,23 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.rapla.entities.dynamictype.Attribute;
+import org.rapla.entities.dynamictype.Classification;
 import org.rapla.facade.ClientFacade;
-import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 
-import org.rapla.facade.RaplaComponent;
-import org.rapla.entities.domain.Reservation;
-import org.rapla.entities.dynamictype.Attribute;
-import org.rapla.entities.dynamictype.Classification;
-import org.rapla.client.edit.reservation.GWTReservationController;
-
-public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
+public class BasicButtonHandler implements ClickHandler {
 
 	Logger logger = Logger.getLogger("BasicButtonHandler");
 	ReservationController controller;
-
-	public @Inject BasicButtonHandler(RaplaContext context,
+	ClientFacade facade;
+	public @Inject BasicButtonHandler(ClientFacade facade,
 			ReservationController controller) {
-		super(context);
+		this.facade = facade;
 		this.controller = controller;
 	}
 
@@ -55,7 +50,6 @@ public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
 				String text = controller.reservationName;
 				classification.setValue(first, text);
 				try {
-					ClientFacade facade = getClientFacade();
 					facade.store(controller.reservationTmp);
 				} catch (RaplaException e1) {
 					// TODO add exception handling
@@ -72,7 +66,6 @@ public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
 			case "l\u00F6schen":
 				if (!controller.isNew()) {
 					try {
-						ClientFacade facade = getClientFacade();
 						facade.remove(controller.reservationTmp);
 					} catch (RaplaException e1) {
 						// TODO add exception handling

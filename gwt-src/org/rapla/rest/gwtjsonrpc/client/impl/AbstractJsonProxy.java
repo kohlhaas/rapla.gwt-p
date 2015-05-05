@@ -14,6 +14,8 @@
 
 package org.rapla.rest.gwtjsonrpc.client.impl;
 
+import org.rapla.rest.gwtjsonrpc.client.ExceptionDeserializer;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.InvocationException;
 import com.google.gwt.user.client.rpc.RpcRequestBuilder;
@@ -28,8 +30,9 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 public abstract class AbstractJsonProxy implements ServiceDefTarget {
   /** URL of the service implementation. */
   String url;
-  static private String token;
-  static private EntryPointFactory serviceEntryPointFactory; 
+  private static String token;
+  private static EntryPointFactory serviceEntryPointFactory; 
+  private static ExceptionDeserializer exceptionDeserializer;
   
   public static EntryPointFactory getServiceEntryPointFactory() {
     return serviceEntryPointFactory;
@@ -38,6 +41,14 @@ public abstract class AbstractJsonProxy implements ServiceDefTarget {
   public static void setServiceEntryPointFactory(EntryPointFactory serviceEntryPointFactory) {
       AbstractJsonProxy.serviceEntryPointFactory = serviceEntryPointFactory;
   }
+  
+	public static void setExceptionDeserializer(ExceptionDeserializer exceptionDeserializer) {
+		AbstractJsonProxy.exceptionDeserializer = exceptionDeserializer;
+	}  
+	
+	public ExceptionDeserializer getExceptionDeserializer() {
+		return exceptionDeserializer;
+	}
 
 @Override
   public String getServiceEntryPoint() {

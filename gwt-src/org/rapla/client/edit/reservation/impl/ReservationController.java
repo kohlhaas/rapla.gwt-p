@@ -1,71 +1,46 @@
 package org.rapla.client.edit.reservation.impl;
 
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.rapla.client.edit.reservation.GWTReservationController;
 import org.rapla.client.factory.InfoViewInterface;
 import org.rapla.client.factory.ResourceDatesInterface;
 import org.rapla.client.factory.ViewEnumTypes;
 import org.rapla.client.factory.ViewFactory;
 import org.rapla.client.factory.ViewServiceProviderInterface;
-import org.rapla.client.internal.GWTRaplaLocale;
-import org.rapla.client.internal.RaplaGWTClient;
-import org.rapla.client.plugin.view.ViewSelectionChangedEvent.ViewSelectionChangedHandler;
+import org.rapla.client.gwt.GWTRaplaLocale;
 import org.rapla.client.plugin.view.infos.InfoView;
 import org.rapla.client.plugin.view.resoursedates.ResourceDatesView;
-import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.User;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.PermissionContainer;
 import org.rapla.entities.domain.Reservation;
-import org.rapla.entities.domain.internal.AllocatableImpl;
 import org.rapla.entities.dynamictype.Attribute;
-import org.rapla.entities.dynamictype.AttributeType;
 import org.rapla.entities.dynamictype.Classification;
-import org.rapla.entities.dynamictype.ClassificationFilter;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
 import org.rapla.entities.dynamictype.internal.AttributeImpl;
-import org.rapla.entities.dynamictype.internal.ClassificationImpl;
 import org.rapla.entities.dynamictype.internal.DynamicTypeImpl;
-import org.rapla.facade.RaplaComponent;
+import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
 
-import com.google.gwt.dev.util.collect.HashMap;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabBar;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Button;
 
-import org.rapla.facade.ClientFacade;
-import org.rapla.gui.internal.TreeAllocatableSelection;
-
-public class ReservationController implements GWTReservationController,
-		ViewSelectionChangedHandler {
+public class ReservationController implements org.rapla.client.edit.reservation.ReservationController {
 
 	// private ContentDrawer infoDrawer;
 
@@ -89,8 +64,8 @@ public class ReservationController implements GWTReservationController,
 
 	public String reservationName;
 
-	private RaplaContext context;
 
+	@Inject
 	private ClientFacade facade;
 
 	ViewServiceProviderInterface currentView;
@@ -107,14 +82,6 @@ public class ReservationController implements GWTReservationController,
 
 	boolean isNew;
 
-	public void setContext(RaplaContext context) {
-		this.context = context;
-	}
-
-	public RaplaContext getContext() {
-		return this.context;
-	}
-
 	public void setFacade(ClientFacade facade) {
 		this.facade = facade;
 	}
@@ -128,6 +95,12 @@ public class ReservationController implements GWTReservationController,
 			throws RaplaException {
 		reservationTmp = event;
 		this.isNew = isNew;
+		
+		PopupPanel createContent = createContent();
+		RootPanel root = RootPanel.get("raplaRoot");
+		root.add(createContent);
+		createContent.center();
+
 
 	}
 
@@ -145,7 +118,7 @@ public class ReservationController implements GWTReservationController,
 		popupContent.setHeight(height.toString() + "px");
 		popupContent.setWidth(width.toString() + "px");
 
-		buttonHandler = new BasicButtonHandler(context, this);
+		buttonHandler = new BasicButtonHandler(facade, this);
 
 		// reservation = this.facade.newReservation();
 		// ///
@@ -399,12 +372,6 @@ public class ReservationController implements GWTReservationController,
 	}
 
 	public void updateContent() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void viewChanged() {
 		// TODO Auto-generated method stub
 
 	}
