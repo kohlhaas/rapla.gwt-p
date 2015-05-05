@@ -19,6 +19,8 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DragEndEvent;
 import com.google.gwt.event.dom.client.DragEndHandler;
 import com.google.gwt.event.dom.client.DragEnterEvent;
@@ -35,8 +37,10 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.PopupPanel;
 
 public class WeekviewGWT extends FlexTable
 {
@@ -63,6 +67,29 @@ public class WeekviewGWT extends FlexTable
         this.callback = callback;
         setStyleName(tableStylePrefix);
         addStyleName("table");
+        this.sinkEvents(com.google.gwt.user.client.Event.getTypeInt(ContextMenuEvent.getType().getName()));
+        this.addHandler(new ContextMenuHandler()
+        {
+            @Override
+            public void onContextMenu(ContextMenuEvent event)
+            {
+                event.preventDefault();
+                event.stopPropagation();
+                final Element tc = WeekviewGWT.this.getEventTargetCell((com.google.gwt.user.client.Event) event.getNativeEvent());
+                final Event myEvent = events.get(tc.getFirstChildElement());
+                final StringBuilder sb = new StringBuilder();
+                sb.append("This could be the context Menut :-)");
+                if (myEvent != null)
+                {
+                    sb.append("... clicked on ");
+                    sb.append(myEvent.getHtmlBlock().getName());
+                }
+                final PopupPanel menu = new PopupPanel(true, true);
+                menu.add(new HTML(sb.toString()));
+                menu.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
+                menu.show();
+            }
+        }, ContextMenuEvent.getType());
     }
 
     public void update(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final String weeknumber)
