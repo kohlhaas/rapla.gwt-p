@@ -32,8 +32,6 @@ import org.rapla.entities.domain.AppointmentBlock;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.CalendarSelectionModel;
 import org.rapla.facade.ClientFacade;
-import org.rapla.facade.ModificationEvent;
-import org.rapla.facade.ModificationListener;
 import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
@@ -46,10 +44,9 @@ import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBuilder;
 
 import com.google.web.bindery.event.shared.EventBus;
-import com.sun.media.sound.ModelAbstractChannelMixer;
 
 @Singleton
-public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, ModificationListener
+public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin
 {
 
     private CalendarWeekView<W> view;
@@ -91,8 +88,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
     @Override
     public W provideContent()
     {
-        facade.removeModificationListener(this);
-        facade.addModificationListener( this);
         return view.provideContent();
     }
 
@@ -628,11 +623,4 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
             logger.error(e.getMessage(), e);
         }
     }
-
-    @Override
-    public void dataChanged(ModificationEvent evt) throws RaplaException
-    {
-        updateInternal();
-    }
-
 }
