@@ -162,25 +162,29 @@ public class WeekviewGWT extends FlexTable
     {
         final int rowCountFromWidget = getRowCount();
         final int rows = spanCells.length;
-        for (Integer column : extraDayColumns)
+        final int columns = spanCells[0].length;
+        for (int row = 1; row < rows; row++)
         {
-            for (int row = 1; row < rows; row++)
+            for (int column = 1; column < columns; column++)
             {
                 if (!spanCells[row][column])
                 {
                     final int cellCountFromWidget = getCellCount(row);
                     final int realColumn = calcColumn(spanCells, row, column);
-                    if (row > rowCountFromWidget || realColumn > cellCountFromWidget)
+                    if (getWidget(row, realColumn) == null)
                     {
-                        logger.error("to many rows or columns " + row + "/" + rowCountFromWidget + "-" + realColumn + "/" + cellCountFromWidget);
-                    }
-                    try
-                    {
-                        getCellFormatter().getElement(row, realColumn).setDraggable(Element.DRAGGABLE_TRUE);
-                    }
-                    catch (Exception e)
-                    {
-                        logger.error("ASD-" + row + "/" + column);
+                        if (row > rowCountFromWidget || realColumn > cellCountFromWidget)
+                        {
+                            logger.error("to many rows or columns " + row + "/" + rowCountFromWidget + "-" + realColumn + "/" + cellCountFromWidget);
+                        }
+                        try
+                        {
+                            getCellFormatter().getElement(row, realColumn).setDraggable(Element.DRAGGABLE_TRUE);
+                        }
+                        catch (Exception e)
+                        {
+                            logger.error("ASD-" + row + "/" + column);
+                        }
                     }
                 }
             }
@@ -290,7 +294,6 @@ public class WeekviewGWT extends FlexTable
         {
             final int column1Normalized = normalize(spanCells, p1.row, p1.column);
             final int column2Normalized = normalize(spanCells, p2.row, p2.column);
-            logger.info("comparing " + column1Normalized + ":" + column2Normalized);
             if (column1Normalized == column2Normalized)
             {
                 final int startRow = Math.max(1, Math.min(p1.row, p2.row));
@@ -300,7 +303,6 @@ public class WeekviewGWT extends FlexTable
                     if (!spanCells[aRow][column2Normalized])
                     {
                         final int column = calcColumn(spanCells, aRow, column2Normalized);
-                        logger.info("marking " + aRow + ":" + column);
                         getCellFormatter().getElement(aRow, column).getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
                     }
                 }
