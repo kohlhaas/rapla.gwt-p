@@ -162,23 +162,26 @@ public class CalendarView extends FlexTable
             @Override
             public void onDragEnter(DragEnterEvent event)
             {
+                event.stopPropagation();
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element tc = CalendarView.this.getEventTargetCell(event2);
-                event.stopPropagation();
-                if (originSupport.event != null)
+                if (tc != null)
                 {
-                    if (!events.containsKey(tc.getFirstChildElement()))
+                    if (originSupport.event != null)
                     {
-                        tc.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                        if (!events.containsKey(tc.getFirstChildElement()))
+                        {
+                            tc.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                        }
                     }
-                }
-                else
-                {
-                    final Position newPosition = calcPosition(tc);
-                    logger.info("from: " + originSupport.point);
-                    logger.info("to: " + newPosition);
-                    clearAllDayMarks(spanCells);
-                    mark(originSupport.point, newPosition);
+                    else
+                    {
+                        final Position newPosition = calcPosition(tc);
+                        logger.info("from: " + originSupport.point);
+                        logger.info("to: " + newPosition);
+                        clearAllDayMarks(spanCells);
+                        mark(originSupport.point, newPosition);
+                    }
                 }
             }
 
@@ -202,35 +205,6 @@ public class CalendarView extends FlexTable
                     }
                 }
             }
-
-            private int normalize(boolean[][] spanCells, int row, int column)
-            {
-                int col = -1;
-                final boolean[] spans = spanCells[row];
-                logger.info("spans: " + spans);
-                for (int i = 0; i < spans.length; i++)
-                {
-                    final boolean isSpan = spans[i];
-                    if (!isSpan)
-                    {
-                        col++;
-                    }
-                    if (col == column)
-                    {
-                        if (!extraDayColumns.contains(col))
-                        {
-                            // update to the end of the day
-                            final int index = Collections.binarySearch(extraDayColumns, col);
-                            return extraDayColumns.get(-(index) - 1);
-                        }
-                        else
-                        {
-                            return i;
-                        }
-                    }
-                }
-                return column;
-            }
         }, DragEnterEvent.getType());
         addDomHandler(new DragOverHandler()
         {
@@ -249,7 +223,7 @@ public class CalendarView extends FlexTable
                 {
                     com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                     final Element tc = CalendarView.this.getEventTargetCell(event2);
-                    if (!events.containsKey(tc.getFirstChildElement()))
+                    if (tc != null && !events.containsKey(tc.getFirstChildElement()))
                     {
                         tc.getStyle().clearBackgroundColor();
                     }
@@ -306,8 +280,11 @@ public class CalendarView extends FlexTable
                     final Element targetCell = CalendarView.this.getEventTargetCell(event2);
                     targetCell.getStyle().clearBackgroundColor();
                     Position p = calcPosition(targetCell);
-                    HTMLDaySlot daySlot=null; 
-                    RowSlot rowSlot = null;
+                    // TODO 
+                    final int column = normalize(spanCells, p.row, p.column);
+                    final HTMLDaySlot daySlot = findDaySlot(column);
+                    final RowSlot rowSlot = findRowSlot(p.row);
+                    logger.info("day" + daySlot.getHeader() + " - " + rowSlot.getRowname());
                     callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, rowSlot);
                 }
                 else
@@ -319,7 +296,62 @@ public class CalendarView extends FlexTable
                 originSupport.point = null;
                 event.stopPropagation();
             }
+
+            private RowSlot findRowSlot(int row)
+            {
+                // header remove
+                row--;
+                for (RowSlot rowSlot : timelist)
+                {
+                    if (row < rowSlot.getRowspan())
+                        return rowSlot;
+                    row -= rowSlot.getRowspan();
+                }
+                return null;
+            }
+
+            private HTMLDaySlot findDaySlot(int column)
+            {
+                //header remove
+                column--;
+                for (final HTMLDaySlot day : daylist)
+                {
+                    if (column <= day.size() + 1)
+                        return day;
+                    column -= (day.size() + 1);
+                }
+                return null;
+            }
         }, DropEvent.getType());
+    }
+
+    private int normalize(boolean[][] spanCells, int row, int column)
+    {
+        int col = -1;
+        final boolean[] spans = spanCells[row];
+        logger.info("spans: " + spans);
+        for (int i = 0; i < spans.length; i++)
+        {
+            final boolean isSpan = spans[i];
+            if (!isSpan)
+            {
+                col++;
+            }
+            if (col == column)
+            {
+                if (!extraDayColumns.contains(col))
+                {
+                    // update to the end of the day
+                    final int index = Collections.binarySearch(extraDayColumns, col);
+                    return extraDayColumns.get(-(index) - 1);
+                }
+                else
+                {
+                    return i;
+                }
+            }
+        }
+        return column;
     }
 
     private static Position calcPosition(Element targetCell)
@@ -469,32 +501,32 @@ public class CalendarView extends FlexTable
     private int getNextTimeRow(int startRow, List<Integer> timeRows)
     {
         //  return getFirstElementThatIsGreater(startRow, timeRows);
-        for (Integer integer : timeRows)
+        //        for (Integer integer : timeRows)
+        //        {
+        //            if (integer > startRow)
+        //            {
+        //                return integer;
+        //            }
+        //        }
+        //        return -1;
+        final int indexSearch = Collections.binarySearch(timeRows, startRow);
+        final int index;
+        // indexSearch >= 0 means theat startRow is found in timeRows list startRow is a value in timeRows 
+        // indexSearch returns the index of the found entry
+        if (indexSearch >= 0)
         {
-            if (integer > startRow)
-            {
-                return integer;
-            }
+            index = indexSearch + 1;
         }
-        return -1;
-        //        final int indexSearch = Collections.binarySearch(timeRows, startRow);
-        //        final int index;
-        //        // indexSearch >= 0 means theat startRow is found in timeRows list startRow is a value in timeRows 
-        //        // indexSearch returns the index of the found entry
-        //        if (indexSearch >= 0)
-        //        {
-        //            index = indexSearch + 1;
-        //        }
-        //        // indexSearch <0 means startRow is not found in timeRows -indexSearch-1 is the index at which startRow could be inserted to maintain the order 
-        //        else
-        //        {
-        //            index = (-indexSearch - 1) + 1;
-        //        }
-        //        if (index >= timeRows.size())
-        //        {
-        //            return -1;
-        //        }
-        //        return timeRows.get(index);
+        // indexSearch <0 means startRow is not found in timeRows -indexSearch-1 is the index at which startRow could be inserted to maintain the order 
+        else
+        {
+            index = (-indexSearch - 1) + 1;
+        }
+        if (index >= timeRows.size())
+        {
+            return -1;
+        }
+        return timeRows.get(index);
     }
 
     private void initSpanCells(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final boolean[][] spanCells)
