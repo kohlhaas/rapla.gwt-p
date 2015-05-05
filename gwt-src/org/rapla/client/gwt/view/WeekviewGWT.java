@@ -35,7 +35,6 @@ import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -50,6 +49,8 @@ public class WeekviewGWT extends FlexTable
         void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot);
 
         void selectReservation(HTMLRaplaBlock block);
+
+        void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay);
 
     }
 
@@ -190,7 +191,7 @@ public class WeekviewGWT extends FlexTable
             old.removeHandler();
         }
         currentDomHandlers.clear();
-        DragListener listener = new DragListener(spanCells, daylist, timelist);
+        EventListener listener = new EventListener(spanCells, daylist, timelist, logger);
         // Drag and Drop support
         currentDomHandlers.add(addDomHandler(listener, DragEnterEvent.getType()));
         currentDomHandlers.add(addDomHandler(listener, DragOverEvent.getType()));
@@ -198,6 +199,7 @@ public class WeekviewGWT extends FlexTable
         currentDomHandlers.add(addDomHandler(listener, DragEndEvent.getType()));
         currentDomHandlers.add(addDomHandler(listener, DragStartEvent.getType()));
         currentDomHandlers.add(addDomHandler(listener, DropEvent.getType()));
+        currentDomHandlers.add(addDomHandler(listener, ClickEvent.getType()));
     }
 
     private int normalize(boolean[][] spanCells, int row, int column)
@@ -229,19 +231,33 @@ public class WeekviewGWT extends FlexTable
         return column;
     }
 
-    class DragListener implements DragEnterHandler, DragOverHandler, DragLeaveHandler, DragEndHandler, DragStartHandler, DropHandler
+    class EventListener implements DragEnterHandler, DragOverHandler, DragLeaveHandler, DragEndHandler, DragStartHandler, DropHandler, ClickHandler
     {
         final private OriginSupport originSupport = new OriginSupport();
 
         final private boolean[][] spanCells;
         final private Collection<RowSlot> timelist;
         final private Collection<HTMLDaySlot> daylist;
+        final private Logger logger;
 
-        public DragListener(boolean[][] spanCells2, List<HTMLDaySlot> daylist2, List<RowSlot> timelist2)
+        public EventListener(boolean[][] spanCells2, List<HTMLDaySlot> daylist2, List<RowSlot> timelist2, Logger logger)
         {
             this.spanCells = spanCells2;
             this.daylist = daylist2;
             this.timelist = timelist2;
+            this.logger = logger;
+        }
+
+        @Override
+        public void onClick(ClickEvent event)
+        {
+            final Element tc = WeekviewGWT.this.getEventTargetCell((com.google.gwt.user.client.Event) event.getNativeEvent());
+            if (tc != null && tc.hasChildNodes() && events.containsKey(tc.getFirstChildElement()))
+            {
+                final HTMLRaplaBlock htmlBlock = events.get(tc.getFirstChildElement()).getHtmlBlock();
+                callback.selectReservation(htmlBlock);
+                event.stopPropagation();
+            }
         }
 
         @Override
@@ -357,14 +373,22 @@ public class WeekviewGWT extends FlexTable
                 Position p = calcPosition(targetCell);
                 final int column = normalize(spanCells, p.row, p.column);
                 final HTMLDaySlot daySlot = findDaySlot(column);
-                final Integer rowSlot = findRowSlot(p.row);
-                logger.info("day" + daySlot.getHeader() + " - " + rowSlot);
-                callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, rowSlot);
+                final Integer start = findRowSlot(p.row);
+                logger.info("day" + daySlot.getHeader() + " - " + start);
+                callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, start);
             }
             else if (originSupport.point != null)
             {
                 clearAllDayMarks(spanCells);
-                Window.alert("new event popup creation needed");
+                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+                final Element targetCell = WeekviewGWT.this.getEventTargetCell(event2);
+                logger.info("dropping on " + targetCell);
+                Position p = calcPosition(targetCell);
+                final int column = normalize(spanCells, originSupport.point.row, originSupport.point.column);
+                final HTMLDaySlot daySlot = findDaySlot(column);
+                final Integer from = findRowSlot(Math.min(originSupport.point.row, p.row));
+                final Integer till = findRowSlot(Math.max(originSupport.point.row, p.row));
+                callback.newReservation(daySlot, from, till);
             }
             originSupport.event = null;
             originSupport.point = null;
@@ -437,15 +461,6 @@ public class WeekviewGWT extends FlexTable
                         fillWithEmptyCellsInInterval(spanCells, column, lastEndRow, blockRow, timeRows, "empty");
                         final int blockColumn = calcColumn(spanCells, blockRow, column);
                         final Event event = new Event(htmlBlock);
-                        event.addDomHandler(new ClickHandler()
-                        {
-                            @Override
-                            public void onClick(ClickEvent event)
-                            {
-                                callback.selectReservation(htmlBlock);
-                                event.stopPropagation();
-                            }
-                        }, ClickEvent.getType());
                         this.setWidget(blockRow, blockColumn, event);
                         final Element element = event.getElement();
                         events.put(element, event);

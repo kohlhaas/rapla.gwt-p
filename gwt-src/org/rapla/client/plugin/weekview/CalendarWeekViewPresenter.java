@@ -30,8 +30,12 @@ import org.rapla.components.util.DateTools;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.configuration.CalendarModelConfiguration;
 import org.rapla.entities.configuration.Preferences;
+import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.AppointmentBlock;
+import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.dynamictype.Attribute;
+import org.rapla.entities.dynamictype.Classification;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.CalendarSelectionModel;
 import org.rapla.facade.ClientFacade;
@@ -107,12 +111,38 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin<W
     public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer minuteOfDay) throws RaplaException
     {
         AppointmentBlock appointmentBlock = block.getAppointmentBlock();
-        Date newStartTime = new Date(minuteOfDay * DateTools.MILLISECONDS_PER_MINUTE);
-        Date newStartDate = daySlot.getStartDate();
-        Date newStart = DateTools.toDateTime(newStartDate, newStartTime);
+        Date newStart = calcDate(daySlot, minuteOfDay);
         boolean keepTime = false;
         PopupContext context = new GWTPopupContext();
         reservationController.moveAppointment(appointmentBlock, newStart, context, keepTime);
+    }
+
+    @Override
+    public void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay) throws RaplaException
+    {
+        // TODO: change
+        CalendarOptions opt = getCalendarOptions();
+        final int rowsPerHour = opt.getRowsPerHour();
+        final Date startDate = calcDate(daySlot, fromMinuteOfDay);
+        final Date endDate = calcDate(daySlot, Math.min(tillMinuteOfDay + 60 / rowsPerHour, 24*60));
+        Reservation newEvent = facade.newReservation();
+        final Classification classification = newEvent.getClassification();
+        final Attribute first = classification.getType().getAttributes()[0];
+        classification.setValue(first, "Test");
+
+        final Appointment newAppointment = facade.newAppointment(startDate, endDate);
+        newEvent.addAppointment(newAppointment);
+        final Allocatable[] resources = facade.getAllocatables();
+        newEvent.addAllocatable(resources[0]);
+        eventBus.fireEvent(new DetailSelectEvent(newEvent));
+    }
+
+    private Date calcDate(HTMLDaySlot daySlot, Integer minuteOfDay)
+    {
+        Date newStartTime = new Date(minuteOfDay * DateTools.MILLISECONDS_PER_MINUTE);
+        Date newStartDate = daySlot.getStartDate();
+        Date newDate = DateTools.toDateTime(newStartDate, newStartTime);
+        return newDate;
     }
 
     @Override

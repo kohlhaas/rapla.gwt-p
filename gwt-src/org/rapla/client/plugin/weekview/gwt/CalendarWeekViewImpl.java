@@ -119,4 +119,17 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     {
         getPresenter().selectReservation(block);
     }
+
+    @Override
+    public void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay)
+    {
+        try
+        {
+            getPresenter().newReservation(daySlot, fromMinuteOfDay, tillMinuteOfDay);
+        }
+        catch (RaplaException e)
+        {
+            logger.error(e.getMessage(), e);
+        }
+    }
 }

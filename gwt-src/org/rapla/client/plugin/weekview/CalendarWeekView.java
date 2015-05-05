@@ -16,7 +16,7 @@ public interface CalendarWeekView<W> extends View<Presenter>
     public interface Presenter
     {
         
-        void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot) throws RaplaException;
+        void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer minuteOfDay) throws RaplaException;
 
         void selectReservation(HTMLRaplaBlock block);
         
@@ -27,6 +27,8 @@ public interface CalendarWeekView<W> extends View<Presenter>
         void next();
 
         void previous();
+
+        void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay) throws RaplaException;
     }
 
     W provideContent();

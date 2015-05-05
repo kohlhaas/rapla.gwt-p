@@ -121,7 +121,8 @@ public class Application implements ApplicationView.Presenter {
     		final boolean readOnly = event.isReadOnly();
     		Reservation editableEvent = event.isReadOnly() ? facade.edit(event) : event;
     		ReservationController reservationController = controller.get();
-    		reservationController.edit( editableEvent, readOnly );
+    		final boolean isNew = !readOnly;
+            reservationController.edit( editableEvent, isNew );
     	} catch (RaplaException e1) {
     		logger.error( e1.getMessage(), e1);
     	}       
