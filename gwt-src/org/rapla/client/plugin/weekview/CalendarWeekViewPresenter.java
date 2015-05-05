@@ -107,7 +107,10 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
     public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer minuteOfDay) throws RaplaException
     {
         AppointmentBlock appointmentBlock = block.getAppointmentBlock();
-        Date newStart = new Date( minuteOfDay * DateTools.MILLISECONDS_PER_MINUTE);
+        Date newStartTime = new Date( minuteOfDay * DateTools.MILLISECONDS_PER_MINUTE);
+        Date newStartDate = daySlot.getStartDate();
+        Date newStart = DateTools.toDateTime( newStartDate, newStartTime);
+        logger.info("Moving to " + newStart);
         boolean keepTime = false;
         PopupContext context = new GWTPopupContext();
         reservationController.moveAppointment(appointmentBlock, newStart, context, keepTime);
@@ -289,7 +292,8 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
                     int start = startMinutes;
                     int end = endMinutes;
                     minuteBlock.clear();
-                    prepareBuild = b.prepareBuild(getStartDate(), getEndDate());
+                    Date startDate = getStartDate();
+                    prepareBuild = b.prepareBuild(startDate, getEndDate());
                     start = Math.min(prepareBuild.getMinMinutes(), start);
                     end = Math.max(prepareBuild.getMaxMinutes(), end);
                     if (start < 0)
@@ -301,7 +305,8 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
                     maxMinute = end;
                     for (int i = 0; i < daySlots.length; i++)
                     {
-                        daySlots[i] = new HTMLDaySlot(2, headerNames[i]);
+                        Date date = DateTools.addDays( startDate, i);
+                        daySlots[i] = new HTMLDaySlot(2, headerNames[i], date);
                     }
                 }
                 {
@@ -495,11 +500,18 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin, 
             private static final long serialVersionUID = 1L;
             private boolean empty = true;
             String header;
+            Date startDate;
 
-            public HTMLDaySlot(int size, String header)
+            public HTMLDaySlot(int size, String header, Date startDate)
             {
                 super(size);
                 this.header = header;
+                this.startDate = startDate;
+            }
+            
+            public Date getStartDate()
+            {
+                return startDate;
             }
 
             public void putBlock(Block block, int slotnr, int startMinute)

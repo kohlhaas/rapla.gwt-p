@@ -12,7 +12,6 @@ import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPr
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.Slot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.SpanAndMinute;
 import org.rapla.components.calendarview.Block;
-import org.rapla.framework.RaplaException;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
@@ -32,6 +31,7 @@ import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -54,6 +54,7 @@ public class WeekviewGWT extends FlexTable
     private final Logger logger;
     private final List<Integer> extraDayColumns = new ArrayList<Integer>();
     private final Callback callback;
+    List<HandlerRegistration> currentDomHandlers = new ArrayList<HandlerRegistration>();
 
     public WeekviewGWT(String tableStylePrefix, Logger logger, Callback callback)
     {
@@ -131,7 +132,6 @@ public class WeekviewGWT extends FlexTable
     private void createDragAndDropSupport(final boolean[][] spanCells, final int columnCount, final int rowCount, final List<HTMLDaySlot> daylist,
             final List<RowSlot> timelist)
     {
-        final OriginSupport originSupport = new OriginSupport();
         final int rowCountFromWidget = getRowCount();
         final int rows = spanCells.length;
         for (Integer column : extraDayColumns)
@@ -157,174 +157,22 @@ public class WeekviewGWT extends FlexTable
                 }
             }
         }
+        
+        for ( HandlerRegistration old:currentDomHandlers)
+        {
+            old.removeHandler();
+        }
+        currentDomHandlers.clear();
+        DragListener listener = new DragListener(spanCells,daylist,timelist);
         // Drag and Drop support
-        addDomHandler(new DragEnterHandler()
-        {
-            @Override
-            public void onDragEnter(DragEnterEvent event)
-            {
-                event.stopPropagation();
-                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
-                if (tc != null)
-                {
-                    if (originSupport.event != null)
-                    {
-                        if (!events.containsKey(tc.getFirstChildElement()))
-                        {
-                            tc.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
-                        }
-                    }
-                    else
-                    {
-                        final Position newPosition = calcPosition(tc);
-                        logger.info("from: " + originSupport.point);
-                        logger.info("to: " + newPosition);
-                        clearAllDayMarks(spanCells);
-                        mark(originSupport.point, newPosition);
-                    }
-                }
-            }
-
-            private void mark(Position p1, Position p2)
-            {
-                final int column1Normalized = normalize(spanCells, p1.row, p1.column);
-                final int column2Normalized = normalize(spanCells, p2.row, p2.column);
-                logger.info("comparing " + column1Normalized + ":" + column2Normalized);
-                if (column1Normalized == column2Normalized)
-                {
-                    final int startRow = Math.min(p1.row, p2.row);
-                    final int endRow = Math.max(p1.row, p2.row);
-                    for (int aRow = startRow; aRow <= endRow; aRow++)
-                    {
-                        if (!spanCells[aRow][column2Normalized])
-                        {
-                            final int column = calcColumn(spanCells, aRow, column2Normalized);
-                            logger.info("marking " + aRow + ":" + column);
-                            getCellFormatter().getElement(aRow, column).getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
-                        }
-                    }
-                }
-            }
-        }, DragEnterEvent.getType());
-        addDomHandler(new DragOverHandler()
-        {
-            @Override
-            public void onDragOver(DragOverEvent event)
-            {
-                event.stopPropagation();
-            }
-        }, DragOverEvent.getType());
-        addDomHandler(new DragLeaveHandler()
-        {
-            @Override
-            public void onDragLeave(DragLeaveEvent event)
-            {
-                if (originSupport.event != null)
-                {
-                    com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                    final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
-                    if (tc != null && !events.containsKey(tc.getFirstChildElement()))
-                    {
-                        tc.getStyle().clearBackgroundColor();
-                    }
-                }
-                event.stopPropagation();
-            }
-        }, DragLeaveEvent.getType());
-        addDomHandler(new DragEndHandler()
-        {
-            @Override
-            public void onDragEnd(DragEndEvent event)
-            {
-                WeekviewGWT.this.removeStyleName("dragging");
-            }
-        }, DragEndEvent.getType());
-        addDomHandler(new DragStartHandler()
-        {
-            @Override
-            public void onDragStart(final DragStartEvent event)
-            {
-                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
-                final Event myEvent = events.get(tc.getFirstChildElement());
-                if (myEvent != null)
-                {
-                    WeekviewGWT.this.addStyleName("dragging");
-                    logger.info("event drag");
-                    originSupport.event = myEvent;
-                    originSupport.point = null;
-                }
-                else
-                {
-                    logger.info("new event drag");
-                    originSupport.point = calcPosition(tc);
-                    originSupport.event = null;
-                }
-                try
-                {// enable if needed
-                    event.setData("dragging", "start");
-                }
-                catch (Exception e)
-                {
-                }
-            }
-        }, DragStartEvent.getType());
-        addDomHandler(new DropHandler()
-        {
-            @Override
-            public void onDrop(final DropEvent event)
-            {
-                if (originSupport.event != null)
-                {
-                    com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                    final Element targetCell = WeekviewGWT.this.getEventTargetCell(event2);
-                    targetCell.getStyle().clearBackgroundColor();
-                    Position p = calcPosition(targetCell);
-                    // TODO 
-                    final int column = normalize(spanCells, p.row, p.column);
-                    final HTMLDaySlot daySlot = findDaySlot(column);
-                    final Integer rowSlot = findRowSlot(p.row);
-                    logger.info("day" + daySlot.getHeader() + " - " + rowSlot);
-                    callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, rowSlot);
-                }
-                else
-                {
-                    clearAllDayMarks(spanCells);
-                    Window.alert("new event popup creation needed");
-                }
-                originSupport.event = null;
-                originSupport.point = null;
-                event.stopPropagation();
-            }
-
-            private Integer findRowSlot(int row)
-            {
-                // header remove
-                row--;
-                for (RowSlot rowSlot : timelist)
-                {
-                    if (row < rowSlot.getRowspan())
-                        return rowSlot.getRowTimes().get(row).getMinute();
-                    row -= rowSlot.getRowspan();
-                }
-                return null;
-            }
-
-            private HTMLDaySlot findDaySlot(int column)
-            {
-                //header remove
-                column--;
-                for (final HTMLDaySlot day : daylist)
-                {
-                    if (column <= day.size() + 1)
-                        return day;
-                    column -= (day.size() + 1);
-                }
-                return null;
-            }
-        }, DropEvent.getType());
+        currentDomHandlers.add(addDomHandler(listener, DragEnterEvent.getType()));
+        currentDomHandlers.add(addDomHandler(listener, DragOverEvent.getType()));
+        currentDomHandlers.add(addDomHandler(listener, DragLeaveEvent.getType()));
+        currentDomHandlers.add(addDomHandler(listener, DragEndEvent.getType()));
+        currentDomHandlers.add(addDomHandler(listener, DragStartEvent.getType()));
+        currentDomHandlers.add(addDomHandler(listener, DropEvent.getType()));
     }
+    
 
     private int normalize(boolean[][] spanCells, int row, int column)
     {
@@ -353,6 +201,177 @@ public class WeekviewGWT extends FlexTable
             }
         }
         return column;
+    }
+    class DragListener implements DragEnterHandler, DragOverHandler, DragLeaveHandler, DragEndHandler, DragStartHandler, DropHandler
+    {
+        final private OriginSupport originSupport = new OriginSupport();
+        
+        final private boolean[][] spanCells;
+        final private Collection<RowSlot> timelist;
+        final private Collection<HTMLDaySlot> daylist;
+
+        public DragListener(boolean[][] spanCells2, List<HTMLDaySlot> daylist2, List<RowSlot> timelist2)
+        {
+            this.spanCells = spanCells2;
+            this.daylist = daylist2;
+            this.timelist = timelist2;
+        }
+
+        @Override
+        public void onDragEnter(DragEnterEvent event)
+        {
+            event.stopPropagation();
+            com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+            final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
+            if (tc != null)
+            {
+                if (originSupport.event != null)
+                {
+                    if (!events.containsKey(tc.getFirstChildElement()))
+                    {
+                        tc.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                    }
+                }
+                else
+                {
+                    final Position newPosition = calcPosition(tc);
+                    logger.info("from: " + originSupport.point);
+                    logger.info("to: " + newPosition);
+                    clearAllDayMarks(spanCells);
+                    mark(originSupport.point, newPosition);
+                }
+            }
+        }
+
+        private void mark(Position p1, Position p2)
+        {
+            final int column1Normalized = normalize(spanCells, p1.row, p1.column);
+            final int column2Normalized = normalize(spanCells, p2.row, p2.column);
+            logger.info("comparing " + column1Normalized + ":" + column2Normalized);
+            if (column1Normalized == column2Normalized)
+            {
+                final int startRow = Math.min(p1.row, p2.row);
+                final int endRow = Math.max(p1.row, p2.row);
+                for (int aRow = startRow; aRow <= endRow; aRow++)
+                {
+                    if (!spanCells[aRow][column2Normalized])
+                    {
+                        final int column = calcColumn(spanCells, aRow, column2Normalized);
+                        logger.info("marking " + aRow + ":" + column);
+                        getCellFormatter().getElement(aRow, column).getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                    }
+                }
+            }
+        }
+        
+        @Override
+        public void onDragLeave(DragLeaveEvent event)
+        {
+            if (originSupport.event != null)
+            {
+                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+                final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
+                if (tc != null && !events.containsKey(tc.getFirstChildElement()))
+                {
+                    tc.getStyle().clearBackgroundColor();
+                }
+            }
+            event.stopPropagation();
+        }
+        
+        @Override
+        public void onDragOver(DragOverEvent event)
+        {
+            event.stopPropagation();
+        }
+        
+        @Override
+        public void onDragEnd(DragEndEvent event)
+        {
+            WeekviewGWT.this.removeStyleName("dragging");
+        }
+
+        @Override
+        public void onDragStart(final DragStartEvent event)
+        {
+            com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+            final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
+            final Event myEvent = events.get(tc.getFirstChildElement());
+            if (myEvent != null)
+            {
+                WeekviewGWT.this.addStyleName("dragging");
+                logger.info("event drag");
+                originSupport.event = myEvent;
+                originSupport.point = null;
+            }
+            else
+            {
+                logger.info("new event drag");
+                originSupport.point = calcPosition(tc);
+                originSupport.event = null;
+            }
+            try
+            {// enable if needed
+                event.setData("dragging", "start");
+            }
+            catch (Exception e)
+            {
+            }
+        }
+        
+        @Override
+        public void onDrop(final DropEvent event)
+        {
+            if (originSupport.event != null)
+            {
+                com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
+                final Element targetCell = WeekviewGWT.this.getEventTargetCell(event2);
+                targetCell.getStyle().clearBackgroundColor();
+                Position p = calcPosition(targetCell);
+                // TODO 
+                final int column = normalize(spanCells, p.row, p.column);
+                final HTMLDaySlot daySlot = findDaySlot(column);
+                final Integer rowSlot = findRowSlot(p.row);
+                logger.info("day" + daySlot.getHeader() + " - " + rowSlot);
+                callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, rowSlot);
+            }
+            else
+            {
+                clearAllDayMarks(spanCells);
+                Window.alert("new event popup creation needed");
+            }
+            originSupport.event = null;
+            originSupport.point = null;
+            event.stopPropagation();
+        }
+
+        private Integer findRowSlot(int row)
+        {
+            // header remove
+            row--;
+            for (RowSlot rowSlot : timelist)
+            {
+                if (row < rowSlot.getRowspan())
+                    return rowSlot.getRowTimes().get(row).getMinute();
+                row -= rowSlot.getRowspan();
+            }
+            return null;
+        }
+
+        private HTMLDaySlot findDaySlot(int column)
+        {
+            //header remove
+            column--;
+            for (final HTMLDaySlot day : daylist)
+            {
+                if (column <= day.size() + 1)
+                    return day;
+                column -= (day.size() + 1);
+            }
+            return null;
+        }
+
+        
     }
 
     private static Position calcPosition(Element targetCell)

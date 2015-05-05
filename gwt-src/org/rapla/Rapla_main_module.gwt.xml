@@ -23,9 +23,13 @@
   <source path='components/calendarview'/>
   <source path='plugin/abstractcalendar'/>
   <source path='plugin/abstractcalendar/server'/>
-  <source path='components/xmlbundle/impl'/> 
+  <source path='components/xmlbundle/impl'/>
+  <source path='gui'/> 
   <source path='gui/toolkit'/>
   <source path='gui/internal/view'/>
+  <source path='gui/internal/edit'/>
+  <source path='gui/internal/edit/reservation'/>
+  <source path='gui/internal/common'/>
   <source path='framework'/>
   <source path='framework/logger'/>
   <source path='facade'/>
