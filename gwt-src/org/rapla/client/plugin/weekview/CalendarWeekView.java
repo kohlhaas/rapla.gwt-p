@@ -31,6 +31,6 @@ public interface CalendarWeekView<W> extends View<Presenter>
 
     W provideContent();
 
-    void update(List<HTMLDaySlot> daylist, List<RowSlot> timelist, String weeknumber);
+    void update(List<HTMLDaySlot> daylist, List<RowSlot> timelist, String weeknumber, Date selectedDate);
 
 }

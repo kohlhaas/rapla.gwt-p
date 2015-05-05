@@ -47,8 +47,9 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     }
 
     @Override
-    public void update(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final String weeknumber)
+    public void update(final List<HTMLDaySlot> daylist, final List<RowSlot> timelist, final String weeknumber, final Date selectedDate)
     {
+        navigatorView.setDate(selectedDate);
         calendar.update(daylist, timelist, weeknumber);
     }
 

@@ -14,7 +14,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -23,16 +22,19 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 public class DateComponent extends SimplePanel implements ValueChangeHandler<String>, HasValueChangeHandlers<Date>
 {
     private final TextBox tb = new TextBox();
+    private final RaplaLocale locale;
+    private final DatePicker datePicker;
 
     public DateComponent(Date initDate, RaplaLocale locale)
     {
         super();
+        this.locale = locale;
         tb.setStyleName("dateComponent");
         add(tb);
         tb.setValue(locale.formatDate(initDate), false);
         if (!isHtml5DateInputSupported())
         {
-            final DatePicker datePicker = new DatePicker();
+            datePicker = new DatePicker();
             final PopupPanel popupPanel = new PopupPanel(true, true);
             popupPanel.add(datePicker);
             tb.addFocusHandler(new FocusHandler()
@@ -70,8 +72,22 @@ public class DateComponent extends SimplePanel implements ValueChangeHandler<Str
                 }
             });
         }
+        else
+        {
+            datePicker = null;
+        }
         tb.getElement().setAttribute("type", "date");
         tb.addValueChangeHandler(this);
+    }
+
+    public void setDate(Date date)
+    {
+        this.tb.setValue(locale.formatDate(date), false);
+        if (datePicker != null)
+        {
+            datePicker.setValue(date, false);
+            datePicker.setCurrentMonth(date);
+        }
     }
 
     private native boolean isHtml5DateInputSupported()/*-{
