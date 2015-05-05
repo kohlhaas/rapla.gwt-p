@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.impl.PopupImpl;
  
 public class SampleReservationViewImpl extends AbstractView<Presenter> implements SampleReservationView<IsWidget> {
     

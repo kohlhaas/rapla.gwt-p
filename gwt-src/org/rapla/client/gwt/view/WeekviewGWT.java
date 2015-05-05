@@ -10,7 +10,9 @@ import java.util.Map;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.Slot;
+import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.SpanAndMinute;
 import org.rapla.components.calendarview.Block;
+import org.rapla.framework.RaplaException;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
@@ -36,7 +38,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 
-public class CalendarView extends FlexTable
+public class WeekviewGWT extends FlexTable
 {
 
     public static interface Callback
@@ -53,7 +55,7 @@ public class CalendarView extends FlexTable
     private final List<Integer> extraDayColumns = new ArrayList<Integer>();
     private final Callback callback;
 
-    public CalendarView(String tableStylePrefix, Logger logger, Callback callback)
+    public WeekviewGWT(String tableStylePrefix, Logger logger, Callback callback)
     {
         super();
         this.logger = logger;
@@ -89,11 +91,11 @@ public class CalendarView extends FlexTable
         int row = 0;
         for (final RowSlot rowSlot : timelist)
         {
-            final List<Integer> rowTimes = rowSlot.getRowTimes();
-            for (final Integer rowSpan : rowTimes)
+            final List<SpanAndMinute> rowTimes = rowSlot.getRowTimes();
+            for (final SpanAndMinute rowSpan : rowTimes)
             {
                 timeRows.add(row + 1);
-                row += rowSpan;
+                row += rowSpan.getRowspan();
             }
         }
         return timeRows;
@@ -163,7 +165,7 @@ public class CalendarView extends FlexTable
             {
                 event.stopPropagation();
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                final Element tc = CalendarView.this.getEventTargetCell(event2);
+                final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
                 if (tc != null)
                 {
                     if (originSupport.event != null)
@@ -221,7 +223,7 @@ public class CalendarView extends FlexTable
                 if (originSupport.event != null)
                 {
                     com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                    final Element tc = CalendarView.this.getEventTargetCell(event2);
+                    final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
                     if (tc != null && !events.containsKey(tc.getFirstChildElement()))
                     {
                         tc.getStyle().clearBackgroundColor();
@@ -235,7 +237,7 @@ public class CalendarView extends FlexTable
             @Override
             public void onDragEnd(DragEndEvent event)
             {
-                CalendarView.this.removeStyleName("dragging");
+                WeekviewGWT.this.removeStyleName("dragging");
             }
         }, DragEndEvent.getType());
         addDomHandler(new DragStartHandler()
@@ -244,11 +246,11 @@ public class CalendarView extends FlexTable
             public void onDragStart(final DragStartEvent event)
             {
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                final Element tc = CalendarView.this.getEventTargetCell(event2);
+                final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
                 final Event myEvent = events.get(tc.getFirstChildElement());
                 if (myEvent != null)
                 {
-                    CalendarView.this.addStyleName("dragging");
+                    WeekviewGWT.this.addStyleName("dragging");
                     logger.info("event drag");
                     originSupport.event = myEvent;
                     originSupport.point = null;
@@ -276,7 +278,7 @@ public class CalendarView extends FlexTable
                 if (originSupport.event != null)
                 {
                     com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
-                    final Element targetCell = CalendarView.this.getEventTargetCell(event2);
+                    final Element targetCell = WeekviewGWT.this.getEventTargetCell(event2);
                     targetCell.getStyle().clearBackgroundColor();
                     Position p = calcPosition(targetCell);
                     // TODO 
@@ -303,7 +305,7 @@ public class CalendarView extends FlexTable
                 for (RowSlot rowSlot : timelist)
                 {
                     if (row < rowSlot.getRowspan())
-                        return rowSlot.getRowTimes().get(row);
+                        return rowSlot.getRowTimes().get(row).getMinute();
                     row -= rowSlot.getRowspan();
                 }
                 return null;
@@ -547,8 +549,9 @@ public class CalendarView extends FlexTable
         int timeentry = 0;
         for (final RowSlot rowSlot : timelist)
         {
-            for (int span : rowSlot.getRowTimes())
+            for (SpanAndMinute time : rowSlot.getRowTimes())
             {
+                final int span = time.getRowspan();
                 timeentry++;
                 spanCells[timeentry][0] = false;
                 for (int i = 1; i < span; i++)
@@ -566,13 +569,13 @@ public class CalendarView extends FlexTable
         for (final RowSlot timeEntry : timelist)
         {
             boolean first = true;
-            for (Integer rowTime : timeEntry.getRowTimes())
+            for (SpanAndMinute rowTime : timeEntry.getRowTimes())
             {
                 final String rowname = first ? timeEntry.getRowname() : "_";
                 first = false;
                 this.setText(actualRowCount, 0, rowname);
                 setStyleNameFor(actualRowCount, 0, "header left");
-                final int rowspan = rowTime;
+                final int rowspan = rowTime.getRowspan();
                 flexCellFormatter.setRowSpan(actualRowCount, 0, rowspan);
                 flexCellFormatter.setAlignment(actualRowCount, 0, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_TOP);
                 actualRowCount += rowspan;

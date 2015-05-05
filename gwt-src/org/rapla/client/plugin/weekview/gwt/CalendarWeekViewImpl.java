@@ -6,13 +6,14 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.rapla.client.base.AbstractView;
-import org.rapla.client.gwt.view.CalendarView;
-import org.rapla.client.gwt.view.CalendarView.Callback;
 import org.rapla.client.gwt.view.NavigatorView;
 import org.rapla.client.gwt.view.NavigatorView.NavigatorAction;
+import org.rapla.client.gwt.view.WeekviewGWT;
+import org.rapla.client.gwt.view.WeekviewGWT.Callback;
 import org.rapla.client.plugin.weekview.CalendarWeekView;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
+import org.rapla.framework.RaplaException;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
@@ -23,14 +24,16 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
         NavigatorAction, Callback
 {
 
-    private final CalendarView calendar;
+    private final WeekviewGWT calendar;
     private final NavigatorView navigatorView;
-
+    Logger logger;
+    
     @Inject
     public CalendarWeekViewImpl(Logger logger)
     {
         navigatorView = new NavigatorView("week", this);
-        calendar = new CalendarView("week", logger, this);
+        calendar = new WeekviewGWT("week", logger, this);
+        this.logger = logger;
     }
 
     @Override
@@ -67,9 +70,16 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     }
 
     @Override
-    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot)
+    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot) 
     {
-        getPresenter().updateReservation(block, daySlot, rowSlot);
+        try
+        {
+            getPresenter().updateReservation(block, daySlot, rowSlot);
+        }
+        catch (RaplaException e)
+        {
+            logger.error(e.getMessage(), e);
+        }
     }
 
     @Override

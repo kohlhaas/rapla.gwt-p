@@ -22,6 +22,7 @@ import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 import org.rapla.framework.logger.internal.RaplaJDKLoggingAdapterWithoutClassnameSupport;
+import org.rapla.gui.ReservationController;
 import org.rapla.storage.StorageOperator;
 import org.rapla.storage.dbrm.RemoteConnectionInfo;
 import org.rapla.storage.dbrm.RemoteOperator;
@@ -49,6 +50,7 @@ public class RaplaGWTModule implements GinModule{
         
         binder.bind( ApplicationView.class).to(ApplicationViewImpl.class);
         binder.bind( ActivityManager.class).to(ActivityManagerImpl.class).in(Singleton.class);
+        binder.bind( ReservationController.class).to(ReservationControllerGWTImpl.class).in(Singleton.class);
         //binder.bind( CalendarSelectionModel.class).toProvider(provider)(CalendarModelImpl.class).in(Singleton.class);
     }
     
