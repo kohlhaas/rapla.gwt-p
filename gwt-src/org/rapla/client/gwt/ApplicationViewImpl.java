@@ -19,18 +19,19 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public class ApplicationViewImpl implements ApplicationView<IsWidget> {
 
-    FlowPanel drawingContent = new FlowPanel();
-    RootPanel root;
-    private ListBox listBox;
-    Presenter presenter;
+    private final FlowPanel drawingContent = new FlowPanel();
+    private final RootPanel root;
+    private final ListBox listBox;
+    private Presenter presenter;
 
     {
-        drawingContent.setStyleName("raplaDrawingContent");
-        root = RootPanel.get("raplaRoot");
+    	drawingContent.setStyleName("raplaDrawingContent");
+    	root = RootPanel.get("raplaRoot");
     }
 
     @Inject
     public ApplicationViewImpl() {
+        listBox = new ListBox();
     }
     
     public void setPresenter(Presenter presenter) 
@@ -40,7 +41,7 @@ public class ApplicationViewImpl implements ApplicationView<IsWidget> {
 
     public void show(List<String> viewNames)
     {
-        listBox = new ListBox();
+    	listBox.clear();
         final FlowPanel content = new FlowPanel();
         root.add( content );
         int index = 0;
@@ -73,7 +74,7 @@ public class ApplicationViewImpl implements ApplicationView<IsWidget> {
         {
             root.remove( drawingContent);
         }
-        drawingContent = new FlowPanel();
+        drawingContent.clear();
         IsWidget content = contentProvider.provideContent();
         drawingContent.add(content);
         root.add(drawingContent);

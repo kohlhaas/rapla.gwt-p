@@ -1,24 +1,26 @@
 package org.rapla.client.event;
 
 import org.rapla.client.event.DetailSelectEvent.DetailSelectEventHandler;
+import org.rapla.entities.Entity;
+import org.rapla.entities.domain.Reservation;
 
 import com.google.web.bindery.event.shared.Event;
 
 public class DetailSelectEvent extends Event<DetailSelectEventHandler> {
-	public static interface DetailSelectEventHandler  {
+	public static interface DetailSelectEventHandler {
 		void detailsRequested(DetailSelectEvent event);
 	}
 
 	public static final Type<DetailSelectEventHandler> TYPE = new Type<DetailSelectEventHandler>();
 
-	private Object selectedObject;
+	private Entity<?> selectedObject;
 
-	public DetailSelectEvent(Object selectedObject) {
+	public DetailSelectEvent(Entity<?> selectedObject) {
 		super();
 		this.selectedObject = selectedObject;
 	}
 
-	public Object getSelectedObject() {
+	public Entity<?> getSelectedObject() {
 		return selectedObject;
 	}
 

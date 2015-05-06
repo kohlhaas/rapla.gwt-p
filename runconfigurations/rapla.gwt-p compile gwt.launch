@@ -17,6 +17,6 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.google.gwt.dev.Compiler"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="org.rapla.client.Rapla org.rapla.login.RaplaLogin -gen generated -style DETAILED -draftCompile -style pretty -XmethodNameDisplayMode FULL"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="org.rapla.client.Rapla -gen generated -style DETAILED -draftCompile -style pretty -XmethodNameDisplayMode FULL"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="rapla.gwt-p"/>
 </launchConfiguration>

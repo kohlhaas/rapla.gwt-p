@@ -2,7 +2,7 @@ package java.net;
 
 public class URL {
 	String url;
-	public URL(String url)
+	public URL(String url) throws MalformedURLException
 	{
 		this.url = url;
 	}
@@ -24,5 +24,10 @@ public class URL {
 	@Override
 	public int hashCode() {
 		return url.hashCode();
+	}
+	
+	public String toExternalForm()
+	{
+	    return url;
 	}
 }
