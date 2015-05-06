@@ -227,10 +227,10 @@ public class WeekviewGWT extends FlexTable
             }
             if (col == column)
             {
-                if (!extraDayColumns.contains(col))
+                if (!extraDayColumns.contains(i))
                 {
                     // update to the end of the day
-                    final int index = Collections.binarySearch(extraDayColumns, col);
+                    final int index = Collections.binarySearch(extraDayColumns, i);
                     return extraDayColumns.get(-(index) - 1);
                 }
                 else
@@ -301,6 +301,7 @@ public class WeekviewGWT extends FlexTable
         {
             final int column1Normalized = normalize(spanCells, p1.row, p1.column);
             final int column2Normalized = normalize(spanCells, p2.row, p2.column);
+            logger.info("orig " + p1.column + ":" + p2.column);
             logger.info("comparing " + column1Normalized + ":" + column2Normalized);
             if (column1Normalized == column2Normalized)
             {
