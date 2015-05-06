@@ -57,8 +57,13 @@ h1 {
 	margin-right: 50px;
 	font-size: 20px;
 }
+.header.topleft,
+.header.left {
+	width: 30px;
+}
 
 .week.table {
+	width: 100%;
 	padding-top: 20px;
 	/* 	border-collapse: collapse; */
 }
