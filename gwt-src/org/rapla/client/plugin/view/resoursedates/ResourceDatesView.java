@@ -136,7 +136,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		// Image buttonPlus = new Image("button_plus.png");
 		buttonPlus = new Label("+");
 		buttonPlus.setTitle("Termin erstellen");
-		buttonPlus.setStyleName("buttonsResourceDatesClickable");
+		buttonPlus.setStyleName("buttonsResourceDates");
 
 		// TO-DO: Is this really a Label? Or should it be a Button? Can a Label
 		// be used, too?
@@ -195,6 +195,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 		dateEnd = new DateBox();
 		dateEnd.setStyleName("dateInput");
+		dateEnd.setValue(new Date(System.currentTimeMillis()));
 		dateEnd.setFormat(new DateBox.DefaultFormat(dateFormat));
 		end.add(dateEnd);
 
@@ -251,7 +252,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 			@Override
 			public void onClick(ClickEvent event) {
 				try {
-					dateDisclosurePanel.setOpen(true);
+					dateDisclosurePanel.setOpen(false);
 					buttonPlus.setStyleName("buttonsResourceDates");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -337,7 +338,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		chosenResources = new FlowPanel();
 		chosenResources.setStyleName("dateInfoLineComplete");
 
-		// Ausgewählte Resourcen laden
+		// Ausgewählte Ressourcen laden
 		loadChosenResources();
 		
 
@@ -354,8 +355,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 			chosenResources.add(helpList);
 		}
 
-		DisclosurePanel addResources = new DisclosurePanel("Resourcen Hinzufuegen");
-		addResources.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+		DisclosurePanel addResources = new DisclosurePanel("Ressourcen Hinzufuegen");
+		/*
+		 * addResources.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 				
 			  @Override
 			  public void onOpen(OpenEvent<DisclosurePanel> event) {
@@ -363,6 +365,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 				buttonPlus.setStyleName("buttonsResourceDatesClickable");
 			  }
 		});
+		*/
 		
 		addResources.setStyleName("dateInfoLineComplete");
 
@@ -391,7 +394,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	    dateContentWrapper.add(addDateWithLabel);
 	    dateDisclosurePanel = new DisclosurePanel();
 	    dateDisclosurePanel.add(dateContentWrapper);
-		dateDisclosurePanel.setOpen(false);
+		dateDisclosurePanel.setOpen(true);
 		dateInfos.add(dateDisclosurePanel);
 		
 		// dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
