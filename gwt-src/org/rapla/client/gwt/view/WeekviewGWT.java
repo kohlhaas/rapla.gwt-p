@@ -16,6 +16,7 @@ import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,6 +36,7 @@ import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -87,7 +89,12 @@ public class WeekviewGWT extends FlexTable
                 }
                 final PopupPanel menu = new PopupPanel(true, true);
                 menu.add(new HTML(sb.toString()));
-                menu.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
+                final NativeEvent nativeEvent = event.getNativeEvent();
+                final int clientX = nativeEvent.getClientX();
+                final int scrollLeft = Window.getScrollLeft();
+                final int clientY = nativeEvent.getClientY();
+                final int scrollTop = Window.getScrollTop();
+                menu.setPopupPosition(clientX + scrollLeft, clientY + scrollTop);
                 menu.show();
             }
         }, ContextMenuEvent.getType());
@@ -294,6 +301,7 @@ public class WeekviewGWT extends FlexTable
         {
             final int column1Normalized = normalize(spanCells, p1.row, p1.column);
             final int column2Normalized = normalize(spanCells, p2.row, p2.column);
+            logger.info("comparing " + column1Normalized + ":" + column2Normalized);
             if (column1Normalized == column2Normalized)
             {
                 final int startRow = Math.max(1, Math.min(p1.row, p2.row));
@@ -303,6 +311,7 @@ public class WeekviewGWT extends FlexTable
                     if (!spanCells[aRow][column2Normalized])
                     {
                         final int column = calcColumn(spanCells, aRow, column2Normalized);
+                        logger.info("marking " + aRow + ":" + column);
                         getCellFormatter().getElement(aRow, column).getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
                     }
                 }
