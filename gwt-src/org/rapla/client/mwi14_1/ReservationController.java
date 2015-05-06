@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
-
+/*
 import org.rapla.client.mwi14_1.factory.InfoViewInterface;
 import org.rapla.client.mwi14_1.factory.ResourceDatesInterface;
 import org.rapla.client.mwi14_1.factory.ViewEnumTypes;
@@ -45,7 +45,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ReservationController implements org.rapla.client.edit.reservation.ReservationController
 {
-
 	// private ContentDrawer infoDrawer;
 
 	@Inject
@@ -823,5 +822,5 @@ public class ReservationController implements org.rapla.client.edit.reservation.
 		logger.log(Level.WARNING, "reservationname: " + reservationName);
 
 	}
-
 }
+*/

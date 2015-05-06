@@ -1,5 +1,5 @@
 package org.rapla.client.mwi14_1.view.infos;
-
+/*
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -254,3 +254,4 @@ public class InfoView implements ViewServiceProviderInterface,
 	}
 
 }
+*/

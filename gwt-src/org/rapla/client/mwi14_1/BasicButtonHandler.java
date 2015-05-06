@@ -1,5 +1,5 @@
 package org.rapla.client.mwi14_1;
-
+/*
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -91,3 +91,4 @@ public class BasicButtonHandler extends RaplaComponent implements ClickHandler {
 	}
 
 }
+*/

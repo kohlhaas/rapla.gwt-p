@@ -1,5 +1,6 @@
-package org.rapla.client.mwi14_1.view.resoursedates;
+/*
 
+package org.rapla.client.mwi14_1.view.resoursedates;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -284,10 +285,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 				int active = dateList.getActive();
 				dateList.removeDate(active);
 				addDateWidget();
-				/*dateList.insert(dateList.getLastRaplaDate(), active);
-				dateList.remove(dateList.getLastPosition());
-				clearDateTimeInputFields();
-				*/
+//				dateList.insert(dateList.getLastRaplaDate(), active);
+//				dateList.remove(dateList.getLastPosition());
+//				clearDateTimeInputFields();
 			}
 			
 		});
@@ -824,3 +824,4 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 	}
 
 }
+*/

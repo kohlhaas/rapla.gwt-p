@@ -1,5 +1,5 @@
 package reservationControllerTest;
-
+/*
 import javax.inject.Singleton;
 
 import org.jukito.JukitoModule;
@@ -58,3 +58,4 @@ public class ReservationControllerTest {
 }
 
 
+*/
