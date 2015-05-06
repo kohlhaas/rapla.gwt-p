@@ -339,7 +339,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		chosenResources.setStyleName("dateInfoLineComplete");
 
 		// Ausgewählte Ressourcen laden
-		loadChosenResources();
+		
+		
+		loadChosenResourcesINIT();
 		
 
 		Label headerChosenRes  = new Label("Ausgewaehlte Ressourcen:");
@@ -432,7 +434,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		
 	}
 
-	private void loadChosenResources() {
+	private void loadChosenResourcesINIT() { //solange nötig, bis alles dynamisch geladen wird
 		
 		
 		List<String> rooms = new ArrayList<String>();
@@ -449,40 +451,61 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		
 		
 	    reservedResources.add(rooms);
-	    reservedResources.add(profs);
+		reservedResources.add(profs);
 	    reservedResources.add(cources);
 		
+	}	
+	
+	private void loadChosenResources(ArrayList<List<String>> chRes) {
+		
+		ArrayList<List<String>> cloneRes = null;
+		
+		for(List<String> list: chRes){
+			List<String> helpList = new ArrayList<String>();
+			for(String helpString:list){
+				helpList.add(helpString);
+			}
+			cloneRes.add(helpList);
+		}
+		
+		this.reservedResources = cloneRes;
 		
 	}
 
 	private void loadResourcesToChoose() {
-		//Ressourcen
 		
-		List<String> room = new ArrayList<String>();
-		room.add("Raeume");
-		room.add("A 204");
-		room.add("A 206");
-		room.add("A 205");
-		room.add("A 203");
+		// Wenn die Resourcen schon geladen wurden, werden keine weiteren hinzugefügt werden
+		if(toBeReservedResources.isEmpty()){ 
+			
+			List<String> room = new ArrayList<String>();
+			room.add("Raeume");
+			room.add("A 204");
+			room.add("A 206");
+			room.add("A 205");
+			room.add("A 203");
+			
+			List<String> cource = new ArrayList<String>();
+			cource.add("Kurse");
+			cource.add("WWI12B1");
+			cource.add("WWI12B2");
+			cource.add("WWI12B3");
+			cource.add("WWI12B4");
+			
+			List<String> prof = new ArrayList<String>();
+			prof.add("Professoren");
+			prof.add("Kuestermann");
+			prof.add("Freytag");
+			prof.add("Daniel");
+			prof.add("Wengler");		
+			
+			
+			toBeReservedResources.add(room);
+			toBeReservedResources.add(cource);
+			toBeReservedResources.add(prof);
+			
+		}else{}
 		
-		List<String> cource = new ArrayList<String>();
-		cource.add("Kurse");
-		cource.add("WWI12B1");
-		cource.add("WWI12B2");
-		cource.add("WWI12B3");
-		cource.add("WWI12B4");
-		
-		List<String> prof = new ArrayList<String>();
-		prof.add("Professoren");
-		prof.add("Kuestermann");
-		prof.add("Freytag");
-		prof.add("Daniel");
-		prof.add("Wengler");		
-		
-		
-		toBeReservedResources.add(room);
-		toBeReservedResources.add(cource);
-		toBeReservedResources.add(prof);
+
 		
 	}
 
@@ -530,7 +553,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 		return resource;
 	}
 	
-	private void refreshResourceTree() {
+	private void refreshResourceTree() { //Auswählbare Ressourcen
 		resourceTree.clear();
 		createResourceTree();
 		
@@ -687,6 +710,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 				dateEnd.setValue(tmp.getEndTime());
 				timeBegin.setValue((long)-3600000 + tmp.getStartHourMinute());
 				timeEnd.setValue((long)-3600000 + tmp.getEndHourMinute());
+				loadChosenResources(tmp.getResources());
+				refreshResourceContainer(); 
+				refreshResourceTree();
 				buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
 				rewriteDate.setVisible(true);
 				tmp.setStyleName("singleDateClicked");
@@ -768,9 +794,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 				}else{
 					type = 4;
 				}
-				tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, type);
+				tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, reservedResources, type);
 				try {
-					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
+					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), reservedResources, true));
 					addTermin = new RaplaDate(tmp);
 					dateList.add(addTermin);
 					addTermin.addClickHandler(new RaplaDateClickHandler());
@@ -781,7 +807,7 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 				}
 			}else{
 			try {	
-				addTermin = new RaplaDate(beginTmp, endTmp, true);
+				addTermin = new RaplaDate(beginTmp, endTmp, reservedResources,true);
 				addTermin.addClickHandler(new RaplaDateClickHandler());
 				dateList.add(addTermin);
 				clearDateTimeInputFields();
@@ -892,5 +918,9 @@ public class ResourceDatesView implements ViewServiceProviderInterface,
 
 	public void setToBeReservedResources(ArrayList<List<String>> toBeReservedResources) {
 		this.toBeReservedResources = toBeReservedResources;
+	}
+	
+	public ArrayList<List<String>> getReservedResourcesList(){
+		return reservedResources;
 	}
 }
