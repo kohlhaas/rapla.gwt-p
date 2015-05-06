@@ -15,6 +15,9 @@ import org.rapla.framework.logger.Logger;
 import org.rapla.rest.gwtjsonrpc.common.AsyncCallback;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 import org.rapla.rest.gwtjsonrpc.common.VoidResult;
+import org.rapla.storage.RaplaSecurityException;
+
+import com.google.gwt.user.client.Window;
 
 
 public class Bootstrap {
@@ -44,7 +47,10 @@ public class Bootstrap {
            @Override
            public void onFailure(Throwable e) {
                logger.error(e.getMessage(), e);
-               
+               if ( e instanceof RaplaSecurityException)
+               {
+                   Window.Location.replace("../rapla?page=auth");
+               }
            }
        });
 

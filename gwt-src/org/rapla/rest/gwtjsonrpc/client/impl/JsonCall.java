@@ -14,7 +14,6 @@
 
 package org.rapla.rest.gwtjsonrpc.client.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

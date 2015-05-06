@@ -32,7 +32,13 @@ final class GWTSampleI18nBundle implements I18nBundle {
     @Override
     public String format(String key, Object... obj)
     		throws MissingResourceException {
-    	return key;
+    	StringBuilder buf = new StringBuilder();
+    	buf.append(key);
+    	for (Object o:obj)
+    	{
+    	    buf.append(o);
+    	}
+        return buf.toString();
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rapla.client.Application;
 import org.rapla.framework.RaplaException;
 import org.rapla.rest.gwtjsonrpc.client.ExceptionDeserializer;
 import org.rapla.rest.gwtjsonrpc.client.impl.AbstractJsonProxy;
@@ -84,7 +83,7 @@ public class Rapla implements EntryPoint {
         } 
         else
         {
-            Window.Location.replace("login.html");
+            Window.Location.replace("../rapla?page=auth");
         }
     }
     
