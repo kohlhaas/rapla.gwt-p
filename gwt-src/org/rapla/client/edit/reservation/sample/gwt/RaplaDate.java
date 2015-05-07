@@ -117,9 +117,11 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 						+ raplaDates.get(raplaDates.size() - 1).sdfToDay
 								.format(endTime));
 		dateLabel.setStyleName("singleDateDateLabel");
+		Label times = new Label(sdfToTime.format(beginTime) + " - " + sdfToTime.format(endTime));
 		Label infoLabel = new Label(vorlesungsStunden + " Vorlesungsstunden");
 
 		infos.add(dateLabel);
+		infos.add(times);
 		infos.add(infoLabel);
 
 		singleDatesContainer.setHeader(infos);

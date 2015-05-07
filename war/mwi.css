@@ -177,9 +177,14 @@ border-right: 2px solid black !important;
 	float: left;
 	vertical-align: middle;
 	display: block;
-	margin-top: 7px;
-	
+	margin-top: 7px;	
 }
+
+.multiDateInfos {
+	width: 255px;
+	float: left;
+}
+
 .singleDateTimes {
 	width: 40px;
 	float: left;
@@ -190,10 +195,6 @@ border-right: 2px solid black !important;
 .singleDateInfos {
 	width: 215px;
 	float: right;
-}
-.multiDateInfos {
-	width: 255px;
-	float: left;
 }
 
 .singleDateDateLabel {

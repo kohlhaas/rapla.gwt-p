@@ -824,7 +824,7 @@ private void createResourceTree() {
 		//end.remove(dateEnd);
 		end.insert(dateEnd, 1);
 		end.setCellWidth(dateEnd, "180px");
-		noReccuring.setValue(false);
+		noReccuring.setValue(true);
 		cbRepeatType.setOpen(false);
 	
 		}
