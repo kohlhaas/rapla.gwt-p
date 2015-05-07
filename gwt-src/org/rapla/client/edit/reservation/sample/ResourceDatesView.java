@@ -25,8 +25,6 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 
 		void onAddDateClicked();
 
-		void onResourcesAdded();
-
 		void onAddTerminButtonClicked(ClickEvent event);
 
 
@@ -48,9 +46,6 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 	void setVisiblityOfDateElements();
 
 	void clearInputFields();
-
-	void addResources();
-
 
 	void setRaplaDate(RaplaDate tmp);
 

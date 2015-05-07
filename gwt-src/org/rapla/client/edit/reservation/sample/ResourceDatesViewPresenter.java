@@ -75,11 +75,6 @@ public class ResourceDatesViewPresenter implements Presenter{
 	}
 
 	@Override
-	public void onResourcesAdded() {
-		view.addResources();
-	}
-
-	@Override
 	public void onAddTerminButtonClicked(ClickEvent event) {
 		RaplaDate tmp = (RaplaDate) event.getSource();
 		view.setRaplaDate(tmp);

@@ -55,8 +55,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	Label buttonNextGap;
 	Label buttonGarbageCan;
 	Label buttonPlus;
-	// TO-DO: Is this really a Label? Or should it be a Button? Can a Label be
-	// used, too?
 
 	DateBox dateBegin;
 	DateBox dateEnd;
@@ -310,15 +308,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 				chosenResources.add(helpList);
 			}
 
-			DisclosurePanel addResources = new DisclosurePanel("Resourcen Hinzufuegen");
-			addResources.addOpenHandler(new OpenHandler<DisclosurePanel>() {
-					
-				  @Override
-				  public void onOpen(OpenEvent<DisclosurePanel> event) {
-				   getPresenter().onResourcesAdded();
-				  }
-			});
-			
+			DisclosurePanel addResources = new DisclosurePanel("Ressourcen Hinzufuegen");
 			addResources.setStyleName("dateInfoLineComplete");
 
 			FlowPanel chooseContainer = new FlowPanel();
@@ -796,15 +786,6 @@ private void createResourceTree() {
 	}}
 
 	@Override
-	public void addResources() {
-			dateDisclosurePanel.setOpen(false);
-			buttonPlus.setStyleName("buttonsResourceDatesClickable");		
-	}
-
-	
-	
-
-	@Override
 	public void setRaplaDate(RaplaDate tmp) {
 
 		this.tmp = tmp;
@@ -829,19 +810,7 @@ private void createResourceTree() {
 
 	@Override
 	public void openEditView() {
-		try {
-			if(!dateDisclosurePanel.isOpen()){
-			dateDisclosurePanel.setOpen(true);
-			buttonPlus.setStyleName("buttonsResourceDates");
-			}else{
 				addDateWidget();
-			}
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 
 	@Override
