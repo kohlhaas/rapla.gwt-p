@@ -8,6 +8,7 @@ import org.rapla.client.edit.reservation.sample.gwt.RaplaDate;
 import org.rapla.entities.domain.Appointment;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.ui.Widget;
 
 public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditSubView<W> {
     public interface Presenter
@@ -26,6 +27,8 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 		void onAddDateClicked();
 
 		void onAddTerminButtonClicked(ClickEvent event);
+
+		void onrepeatTypeClicked(ClickEvent event);
 
 
     }
@@ -50,6 +53,8 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 	void setRaplaDate(RaplaDate tmp);
 
 	void openEditView();
+	
+	void setRepeatTypeSettings(Widget sender);
     
 }
 

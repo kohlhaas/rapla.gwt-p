@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.mockito.cglib.transform.impl.AddPropertyTransformer;
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView.Presenter;
@@ -15,8 +14,6 @@ import org.rapla.entities.domain.Appointment;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
-import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
@@ -37,8 +34,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
-import com.google.gwt.user.datepicker.client.DatePicker;
 import com.blogspot.ctasada.gwt.eureka.client.ui.*;
 
 public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements ResourceDatesView<IsWidget>{
@@ -81,10 +78,15 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	RadioButton monthly;
 	RadioButton year;
 	RadioButton noReccuring;
+	ListBox repeatType;
+	Label repeatText;
+	
 	int height, width;
 	RaplaDate tmp;
 
 	HorizontalPanel end;
+	HorizontalPanel begin;
+	HorizontalPanel repeatSettings = new HorizontalPanel();
 
 	@Override
 	public IsWidget provideContent() {
@@ -154,12 +156,12 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			DateTimeFormat dateFormat = DateTimeFormat
 					.getFormat(PredefinedFormat.DATE_MEDIUM);
 
-			// Datum und Uhzreit BEGIN
-			HorizontalPanel begin = new HorizontalPanel();
+			// initialize and declarate Panel and Elements for Begin Time and Date
+			begin = new HorizontalPanel();
 			begin.setSpacing(5);
 			begin.setStyleName("dateInfoLineComplete");
 
-			Label beginText = new Label("Begin:");
+			Label beginText = new Label("Beginn:");
 			beginText.setStyleName("beschriftung");
 			begin.add(beginText);
 			begin.setCellVerticalAlignment(beginText,
@@ -184,7 +186,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			begin.setCellWidth(timeBegin, "80px");
 			begin.setCellWidth(beginTimeText, "50px");
 			
-			// Datum und Uhrzeit ENDE
+			// initialize and declarate Panel and Elements for End Time and Date
 			end = new HorizontalPanel();
 			end.setSpacing(5);
 			end.setStyleName("dateInfoLineComplete");
@@ -210,8 +212,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			end.setCellVerticalAlignment(endTimeText,
 					HasVerticalAlignment.ALIGN_MIDDLE);
 
-			end.setCellWidth(endText, "50px");
-			
+			end.setCellWidth(endText, "50px");			
 			end.setCellWidth(endText, "50px");
 			end.setCellWidth(dateEnd, "180px");
 			end.setCellWidth(timeEnd, "80px");
@@ -245,7 +246,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 				}
 			});
 			
-			// Checkbox WIEDERHOLEN
+			// Checkbox reccuring dates
 			repeat = new HorizontalPanel();
 			cbRepeatType = new DisclosurePanel("Wiederholen");
 			cbRepeatType.setStyleName("dateInfoLineLeft");
@@ -260,6 +261,13 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			year.addClickHandler(new RepeatClickHandler());
 			noReccuring = new RadioButton("repeat", "keine Wiederholung");
 			noReccuring.addClickHandler(new RepeatClickHandler());
+			
+			repeatType = new ListBox();
+			repeatType.addItem("Bis Datum");
+			repeatType.addItem("x Mal");
+			
+			repeatText = new Label("Beginn: ");
+			repeatText.setStyleName("beschriftung");
 
 			repeat.add(daily);
 			repeat.add(weekly);
@@ -328,12 +336,13 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			
 		    addResources.setContent(chooseContainer);
 			
-
+		    
 		    VerticalPanel dateContentWrapper = new VerticalPanel();
 		    dateContentWrapper.add(begin);	
 		    dateContentWrapper.add(end);
 		    dateContentWrapper.add(cbRepeatType);
 		    dateContentWrapper.add(addDateWithLabel);
+		    dateContentWrapper.add(repeatSettings);
 		    dateDisclosurePanel = new DisclosurePanel();
 		    dateDisclosurePanel.add(dateContentWrapper);
 		    dateDisclosurePanel.setOpen(true);
@@ -636,45 +645,12 @@ private void createResourceTree() {
 
 
 	class RepeatClickHandler implements ClickHandler{
-		boolean active = false;
-		Label blank;
-		HorizontalPanel repeatSettings;
-		ListBox repeatType;
 
 		@Override
 		public void onClick(ClickEvent event) {
-			
-			if(!(noReccuring.getValue())){
-					if(end.getWidgetCount() <= 5){
-					active = true;
-					end.remove(dateEnd);
-					blank = new Label("");
-					end.insert(blank,1);
-					end.setCellWidth(blank, "180px");
-					repeatType = new ListBox();
-					repeatType.addItem("Bis Datum");
-					repeatType.addItem("x Mal");
-					end.add(repeatType);
-					end.setCellVerticalAlignment(repeatType, HasVerticalAlignment.ALIGN_MIDDLE);
-					end.add(dateEnd);
-					cbRepeatType.add(repeatSettings);
-					}
-					
-			}if(noReccuring.getValue()){
-				active = false;
-				end.remove(1);
-				//end.remove(repeatType);
-				//end.remove(dateEnd);
-				end.insert(dateEnd, 1);
-				end.setCellWidth(dateEnd, "180px");
-				end.remove(4);
-				end.remove(4);
-				noReccuring.setValue(false);
-				cbRepeatType.setOpen(false);
-			}
-			
+			// TODO Auto-generated method stub
+			getPresenter().onrepeatTypeClicked(event);
 		}
-		
 	}
 	
 	@Override
@@ -687,7 +663,7 @@ private void createResourceTree() {
 		
 		if(beginTmp.after(endTmp)){
 		addDateInfo.setStyleName("error");	
-		addDateInfo.setText("Begin- nach Endtermin!");
+		addDateInfo.setText("Beginn- nach Endtermin!");
 		}else{
 			addDateInfo.setStyleName("");
 			addDateInfo.setText("");
@@ -748,8 +724,7 @@ private void createResourceTree() {
 		
 		rewriteDate.setVisible(false);
 		buttonGarbageCan.setStyleName("buttonsResourceDates");
-		noReccuring.setValue(true);
-		cbRepeatType.setOpen(false);
+		setRepeatTypeSettings(noReccuring);
 	}
 
 	@Override
@@ -816,6 +791,43 @@ private void createResourceTree() {
 	@Override
 	public void show() {
 		contentPanel.setVisible(true);
+		
+	}
+
+	@Override
+	public void setRepeatTypeSettings(Widget sender) {
+		// TODO Auto-generated method stub
+		if(sender != noReccuring){
+			end.remove(dateEnd);
+			begin.remove(dateBegin);
+	
+			repeatSettings.add(repeatText);					
+			repeatSettings.add(dateBegin);
+			repeatSettings.add(repeatType);
+			repeatSettings.add(dateEnd);	
+			repeatSettings.setCellWidth(repeatText, "50px");
+			repeatSettings.setCellWidth(dateBegin, "180px");
+			repeatSettings.setCellWidth(dateEnd, "180px");
+			repeatSettings.setCellVerticalAlignment(repeatType, HasVerticalAlignment.ALIGN_MIDDLE);			
+			repeatSettings.setCellVerticalAlignment(repeatText, HasVerticalAlignment.ALIGN_MIDDLE);
+	}if(sender == noReccuring){
+		//end.remove(1);
+		repeatSettings.remove(repeatText);
+		repeatSettings.remove(dateBegin);
+		repeatSettings.remove(repeatType);
+		repeatSettings.remove(dateEnd);
+		
+		begin.insert(dateBegin, 1);
+		begin.setCellWidth(dateBegin, "180px");
+		
+		//end.remove(repeatType);
+		//end.remove(dateEnd);
+		end.insert(dateEnd, 1);
+		end.setCellWidth(dateEnd, "180px");
+		noReccuring.setValue(false);
+		cbRepeatType.setOpen(false);
+	
+		}
 		
 	}
 

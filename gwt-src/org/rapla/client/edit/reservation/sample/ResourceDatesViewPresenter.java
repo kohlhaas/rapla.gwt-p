@@ -9,6 +9,7 @@ import org.rapla.entities.domain.Reservation;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ResourceDatesViewPresenter implements Presenter{
 
@@ -78,6 +79,13 @@ public class ResourceDatesViewPresenter implements Presenter{
 	public void onAddTerminButtonClicked(ClickEvent event) {
 		RaplaDate tmp = (RaplaDate) event.getSource();
 		view.setRaplaDate(tmp);
+		
+	}
+
+	@Override
+	public void onrepeatTypeClicked(ClickEvent event) {
+		Widget sender = (Widget) event.getSource();
+		view.setRepeatTypeSettings(sender);
 		
 	}
 
