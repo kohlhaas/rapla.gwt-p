@@ -682,7 +682,8 @@ public class WeekviewGWT extends FlexTable
         for (int i = 1; i < actualRowCount; i++)
         {
             final Node item = childNodes.getItem(i);
-            ((Element) item).addClassName(fullHours.contains(i) ? "full" : "sub");
+            if (item != null)
+                ((Element) item).addClassName(fullHours.contains(i) ? "full" : "sub");
         }
         return actualRowCount;
     }

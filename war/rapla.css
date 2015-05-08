@@ -66,6 +66,7 @@ h1 {
 	width: 100%;
 	padding-top: 20px;
 	border-spacing: 0;
+	border-bottom: 1px solid #000000;
 }
 
 .week.table td, .week.table tr {
@@ -129,7 +130,7 @@ h1 {
 }
 
 .event {
-	/*   width: 70px; */
+	margin: 3px;
 	overflow: hidden;
 }
 
