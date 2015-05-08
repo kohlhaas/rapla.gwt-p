@@ -57,19 +57,47 @@ h1 {
 	margin-right: 50px;
 	font-size: 20px;
 }
-.header.topleft,
-.header.left {
+
+.header.topleft, .header.left {
 	width: 30px;
 }
 
 .week.table {
 	width: 100%;
 	padding-top: 20px;
-	/* 	border-collapse: collapse; */
+	border-spacing: 0;
 }
 
 .week.table td, .week.table tr {
 	padding: 0px;
+}
+
+.week.table tr.full td {
+	border-top: 1px solid #000000;
+}
+
+.week.table tr.sub td {
+	border-top: 1px solid #E2E2E2;
+}
+
+.week.table .emptyDayRow {
+	border-right: 1px solid #000000;
+}
+
+.header.left {
+	border-right: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+
+.header.top {
+	border-right: 1px solid #000000;
+	border-top: 1px solid #000000;
+}
+
+.header.topleft {
+	border-right: 1px solid #000000;
+	border-left: 1px solid #000000;
+	border-top: 1px solid #000000;
 }
 
 .week.table td {
@@ -84,33 +112,25 @@ h1 {
 
 .week.table .header {
 	background-color: #aaaaaa;
-/* 	border-width: 2px; */
 	border-color: black;
 	border-right-width: 1px;
-/* 		border: 1px solid; */
 }
 
 .week.table .emptyDayRow {
 	
 }
 
-.week.table .empty {
-	border-right-width: 0px;
-	border-left-width: 0px;
-	border-top-width: 0px;
-	border-bottom-width: 1px;
-	border-color: #CCCCCC;
-}
-
 /* Event style */
-.week.table td.eventTd {
+.week.table td.eventTd, .week.table tr.sub td.eventTd {
+	border: 1px solid #999999;
 	border-right-style: groove;
 	border-right-width: 2px;
+	border-radius: 5px;
 }
 
 .event {
-/*   width: 70px; */
-  overflow: hidden;
+	/*   width: 70px; */
+	overflow: hidden;
 }
 
 .week.table .eventTd {

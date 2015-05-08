@@ -17,6 +17,8 @@ import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -637,20 +639,36 @@ public class WeekviewGWT extends FlexTable
     private int createYAchsis(final List<RowSlot> timelist, final FlexCellFormatter flexCellFormatter)
     {
         int actualRowCount = 1;
+        final ArrayList<Integer> fullHours = new ArrayList<Integer>();
         for (final RowSlot timeEntry : timelist)
         {
             boolean first = true;
             for (SpanAndMinute rowTime : timeEntry.getRowTimes())
             {
-                final String rowname = first ? timeEntry.getRowname() : "_";
-                first = false;
+                if (first)
+                {
+                    fullHours.add(actualRowCount);
+                }
+                final String rowname = first ? timeEntry.getRowname() : "";
                 this.setText(actualRowCount, 0, rowname);
+                if (!first)
+                {
+                    getCellFormatter().getElement(actualRowCount, 0).setInnerHTML("&#160;");
+                }
+                first = false;
                 setStyleNameFor(actualRowCount, 0, "header left");
                 final int rowspan = rowTime.getRowspan();
                 flexCellFormatter.setRowSpan(actualRowCount, 0, rowspan);
                 flexCellFormatter.setAlignment(actualRowCount, 0, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_TOP);
                 actualRowCount += rowspan;
             }
+        }
+        final Element table = getCellFormatter().getElement(0, 0).getParentElement().getParentElement();
+        final NodeList<Node> childNodes = table.getChildNodes();
+        for (int i = 1; i < actualRowCount; i++)
+        {
+            final Node item = childNodes.getItem(i);
+            ((Element) item).addClassName(fullHours.contains(i) ? "full" : "sub");
         }
         return actualRowCount;
     }
