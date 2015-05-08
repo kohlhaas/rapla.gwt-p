@@ -383,13 +383,16 @@ public class WeekviewGWT extends FlexTable
             {
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element targetCell = WeekviewGWT.this.getEventTargetCell(event2);
-                targetCell.getStyle().clearBackgroundColor();
-                Position p = calcPosition(targetCell);
-                final int column = normalize(spanCells, p.row, p.column);
-                final HTMLDaySlot daySlot = findDaySlot(column);
-                final Integer start = findRowSlot(p.row);
-                logger.info("day" + daySlot.getHeader() + " - " + start);
-                callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, start);
+                if (!isDroppedOnStart(targetCell))
+                {
+                    targetCell.getStyle().clearBackgroundColor();
+                    Position p = calcPosition(targetCell);
+                    final int column = normalize(spanCells, p.row, p.column);
+                    final HTMLDaySlot daySlot = findDaySlot(column);
+                    final Integer start = findRowSlot(p.row);
+                    logger.info("day" + daySlot.getHeader() + " - " + start);
+                    callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, start);
+                }
             }
             else if (originSupport.point != null)
             {
@@ -407,6 +410,17 @@ public class WeekviewGWT extends FlexTable
             originSupport.event = null;
             originSupport.point = null;
             event.stopPropagation();
+        }
+
+        private boolean isDroppedOnStart(Element targetCell)
+        {
+            final boolean hasChildNodes = targetCell.hasChildNodes();
+            if (hasChildNodes)
+            {
+                final Element firstChildElement = targetCell.getFirstChildElement();
+                return events.get(firstChildElement) == originSupport.event;
+            }
+            return false;
         }
 
         private Integer findRowSlot(int row)
