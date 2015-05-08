@@ -15,7 +15,9 @@ import org.rapla.components.calendarview.Block;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -369,6 +371,12 @@ public class WeekviewGWT extends FlexTable
             }
             try
             {// enable if needed
+                if (originSupport.point != null)
+                {
+                    final ImageElement image = Document.get().createImageElement();
+                    image.setSrc("");
+                    event.getDataTransfer().setDragImage(image, 0, 0);
+                }
                 event.setData("dragging", "start");
             }
             catch (Exception e)
