@@ -15,8 +15,12 @@ import org.rapla.components.calendarview.Block;
 import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -227,10 +231,10 @@ public class WeekviewGWT extends FlexTable
             }
             if (col == column)
             {
-                if (!extraDayColumns.contains(col))
+                if (!extraDayColumns.contains(i))
                 {
                     // update to the end of the day
-                    final int index = Collections.binarySearch(extraDayColumns, col);
+                    final int index = Collections.binarySearch(extraDayColumns, i);
                     return extraDayColumns.get(-(index) - 1);
                 }
                 else
@@ -301,6 +305,7 @@ public class WeekviewGWT extends FlexTable
         {
             final int column1Normalized = normalize(spanCells, p1.row, p1.column);
             final int column2Normalized = normalize(spanCells, p2.row, p2.column);
+            logger.info("orig " + p1.column + ":" + p2.column);
             logger.info("comparing " + column1Normalized + ":" + column2Normalized);
             if (column1Normalized == column2Normalized)
             {
@@ -366,6 +371,12 @@ public class WeekviewGWT extends FlexTable
             }
             try
             {// enable if needed
+                if (originSupport.point != null)
+                {
+                    final ImageElement image = Document.get().createImageElement();
+                    image.setSrc("");
+                    event.getDataTransfer().setDragImage(image, 0, 0);
+                }
                 event.setData("dragging", "start");
             }
             catch (Exception e)
@@ -380,13 +391,16 @@ public class WeekviewGWT extends FlexTable
             {
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element targetCell = WeekviewGWT.this.getEventTargetCell(event2);
-                targetCell.getStyle().clearBackgroundColor();
-                Position p = calcPosition(targetCell);
-                final int column = normalize(spanCells, p.row, p.column);
-                final HTMLDaySlot daySlot = findDaySlot(column);
-                final Integer start = findRowSlot(p.row);
-                logger.info("day" + daySlot.getHeader() + " - " + start);
-                callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, start);
+                if (!isDroppedOnStart(targetCell))
+                {
+                    targetCell.getStyle().clearBackgroundColor();
+                    Position p = calcPosition(targetCell);
+                    final int column = normalize(spanCells, p.row, p.column);
+                    final HTMLDaySlot daySlot = findDaySlot(column);
+                    final Integer start = findRowSlot(p.row);
+                    logger.info("day" + daySlot.getHeader() + " - " + start);
+                    callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, start);
+                }
             }
             else if (originSupport.point != null)
             {
@@ -404,6 +418,17 @@ public class WeekviewGWT extends FlexTable
             originSupport.event = null;
             originSupport.point = null;
             event.stopPropagation();
+        }
+
+        private boolean isDroppedOnStart(Element targetCell)
+        {
+            final boolean hasChildNodes = targetCell.hasChildNodes();
+            if (hasChildNodes)
+            {
+                final Element firstChildElement = targetCell.getFirstChildElement();
+                return events.get(firstChildElement) == originSupport.event;
+            }
+            return false;
         }
 
         private Integer findRowSlot(int row)
@@ -636,20 +661,37 @@ public class WeekviewGWT extends FlexTable
     private int createYAchsis(final List<RowSlot> timelist, final FlexCellFormatter flexCellFormatter)
     {
         int actualRowCount = 1;
+        final ArrayList<Integer> fullHours = new ArrayList<Integer>();
         for (final RowSlot timeEntry : timelist)
         {
             boolean first = true;
             for (SpanAndMinute rowTime : timeEntry.getRowTimes())
             {
-                final String rowname = first ? timeEntry.getRowname() : "_";
-                first = false;
+                if (first)
+                {
+                    fullHours.add(actualRowCount);
+                }
+                final String rowname = first ? timeEntry.getRowname() : "";
                 this.setText(actualRowCount, 0, rowname);
+                if (!first)
+                {
+                    getCellFormatter().getElement(actualRowCount, 0).setInnerHTML("&#160;");
+                }
+                first = false;
                 setStyleNameFor(actualRowCount, 0, "header left");
                 final int rowspan = rowTime.getRowspan();
                 flexCellFormatter.setRowSpan(actualRowCount, 0, rowspan);
                 flexCellFormatter.setAlignment(actualRowCount, 0, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_TOP);
                 actualRowCount += rowspan;
             }
+        }
+        final Element table = getCellFormatter().getElement(0, 0).getParentElement().getParentElement();
+        final NodeList<Node> childNodes = table.getChildNodes();
+        for (int i = 1; i < actualRowCount; i++)
+        {
+            final Node item = childNodes.getItem(i);
+            if (item != null)
+                ((Element) item).addClassName(fullHours.contains(i) ? "full" : "sub");
         }
         return actualRowCount;
     }

@@ -45,6 +45,7 @@ public class SampleReservationViewImpl extends AbstractView<Presenter> implement
         popup.add(content);
         content.add(new Label("Veranstaltung bearbeiten/anlegen"));
         content.add(tb);
+        tb.setFocus(true);
 
         content.add( contentRes );
         content.add( subView );
