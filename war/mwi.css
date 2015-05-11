@@ -25,6 +25,13 @@
 	padding: 3px !important;
 }
 
+.buttonLoupe{
+	margin: 5px !important;
+	margin-left: 0px !important;
+	cursor: pointer !important;
+	
+}
+
 /*
 .cancelButton:hover, .deleteButton:hover, .saveButton:hover {
 	background-color: white;
@@ -365,4 +372,9 @@ background-color: #FEEFB3;
 .error {
 color: #D8000C;
 background-color: #FFBABA;	
+}
+
+.gwt-SuggestBox { 
+margin: 5px;	
+
 }

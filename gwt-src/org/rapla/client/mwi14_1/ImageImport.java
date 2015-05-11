@@ -31,4 +31,7 @@ public interface ImageImport extends ClientBundle {
 	
 	@Source("undo.png")
 	ImageResource undoIcon();		
+	
+	@Source("loupe.png")
+	ImageResource loupeIcon();		
 }

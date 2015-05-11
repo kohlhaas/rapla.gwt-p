@@ -31,9 +31,11 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -48,6 +50,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	private static final ImageResource IMG_CROSS = ImageImport.INSTANCE.crossIcon();
 	private static final ImageResource IMG_PLUS = ImageImport.INSTANCE.plusIcon();
 	private static final ImageResource IMG_NEXT = ImageImport.INSTANCE.nextIcon();
+	private static final ImageResource IMG_LOUPE = ImageImport.INSTANCE.loupeIcon();
 	
 	Panel contentPanel;
 	FlowPanel mainContent;
@@ -78,7 +81,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	Label addDateInfo;
 	Button rewriteDate;
 	
-	HorizontalPanel repeat;
+	HorizontalPanel repeat, suche;
 	RadioButton daily;
 	RadioButton weekly;
 	RadioButton monthly;
@@ -336,7 +339,26 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			
 			 createResourceTree();
 			
-				
+			//Suchfeld
+			
+			suche = new HorizontalPanel(); 
+			 
+			MultiWordSuggestOracle oracle = new MultiWordSuggestOracle(); 
+			oracle.add("WWI12B1");
+			oracle.add("Küstermann");
+			oracle.add("Daniel");
+			oracle.add("B343");
+			
+			SuggestBox searchField = new SuggestBox(oracle);
+			searchField.setWidth("300px");
+			
+			Image loupe = new Image(IMG_LOUPE);
+			loupe.setStyleName("buttonLoupe");
+			
+			suche.add(searchField);
+			suche.add(loupe);
+			
+			chooseContainer.add(suche);
 		    chooseContainer.add(resourceTree);
 		    chooseContainer.setWidth(width  * 0.85 + "px");
 			
