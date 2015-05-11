@@ -22,6 +22,7 @@ public class ApplicationViewImpl implements ApplicationView<IsWidget> {
     private final FlowPanel drawingContent = new FlowPanel();
     private final RootPanel root;
     private final ListBox listBox;
+    private final ListBox calendars;
     private Presenter presenter;
 
     {
@@ -32,6 +33,15 @@ public class ApplicationViewImpl implements ApplicationView<IsWidget> {
     @Inject
     public ApplicationViewImpl() {
         listBox = new ListBox();
+        this.calendars = new ListBox();
+        calendars.addChangeHandler(new ChangeHandler()
+        {
+            @Override
+            public void onChange(ChangeEvent event)
+            {
+                presenter.changeCalendar(calendars.getSelectedValue());
+            }
+        });
     }
     
     public void setPresenter(Presenter presenter) 
@@ -39,11 +49,27 @@ public class ApplicationViewImpl implements ApplicationView<IsWidget> {
         this.presenter = presenter;
     }
 
-    public void show(List<String> viewNames)
+    public void show(List<String> viewNames, List<String> calendarNames)
     {
     	listBox.clear();
         final FlowPanel content = new FlowPanel();
         root.add( content );
+        final String currentSelected = calendars.getSelectedValue();
+        calendars.clear();
+        for (String calendarName : calendarNames)
+        {
+            calendars.addItem(calendarName);
+        }
+        final int indexOf = calendarNames.indexOf(currentSelected);
+        if (indexOf >= 0)
+        {
+            calendars.setSelectedIndex(indexOf);
+        }
+        else
+        {
+            calendars.setSelectedIndex(0);
+        }
+        content.add(calendars);
         int index = 0;
         for (final String name : viewNames) {
             listBox.insertItem(name, index);
@@ -79,5 +105,4 @@ public class ApplicationViewImpl implements ApplicationView<IsWidget> {
         drawingContent.add(content);
         root.add(drawingContent);
     }
-    
 }

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -28,8 +27,6 @@ import org.rapla.components.calendarview.Builder.PreperationResult;
 import org.rapla.components.calendarview.html.AbstractHTMLView;
 import org.rapla.components.util.DateTools;
 import org.rapla.components.xmlbundle.I18nBundle;
-import org.rapla.entities.configuration.CalendarModelConfiguration;
-import org.rapla.entities.configuration.Preferences;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.AppointmentBlock;
@@ -149,13 +146,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin<W
     public void updateContent() throws RaplaException
     {
         final Date selectedDate = model.getSelectedDate();
-        List<String> calendarNames = new ArrayList<String>();
-        final Preferences preferences = facade.getPreferences();
-        Map<String, CalendarModelConfiguration> exportMap = preferences.getEntry(CalendarModelConfiguration.EXPORT_ENTRY);
-        calendarNames.addAll(exportMap.keySet());
-        Collections.sort(calendarNames);
-        calendarNames.add(0, i18n.getString("default"));
-        HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view, logger, selectedDate, calendarNames);
+        HTMLWeekViewPresenter weekView = new HTMLWeekViewPresenter(view, logger, selectedDate);
         configure(weekView);
         Date startDate = weekView.getStartDate();
         Date endDate = weekView.getEndDate();
@@ -242,14 +233,11 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin<W
 
         private final Date selectedDate;
 
-        private final List<String> calendarNames;
-
-        public HTMLWeekViewPresenter(CalendarWeekView<?> view, Logger logger, Date selectedDate, List<String> calendarNames)
+        public HTMLWeekViewPresenter(CalendarWeekView<?> view, Logger logger, Date selectedDate)
         {
             this.view = view;
             this.selectedDate = selectedDate;
             this.logger = logger;
-            this.calendarNames = calendarNames;
         }
 
         /** The granularity of the selection rows.
@@ -436,7 +424,7 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin<W
             }
             {
                 long time = System.currentTimeMillis();
-                view.update(daylist, timelist, weeknumber, selectedDate, calendarNames);
+                view.update(daylist, timelist, weeknumber, selectedDate);
                 logger.info("update took  " + (System.currentTimeMillis() - time) + " ms");
             }
 
@@ -668,20 +656,6 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin<W
         catch (RaplaException e)
         {
             logger.error(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void changeCalendar(String newCalendarName)
-    {
-        try
-        {
-            model.load(newCalendarName == i18n.getString("default") ? null : newCalendarName);
-            updateContent();
-        }
-        catch (Exception e)
-        {
-            logger.error("error changing to calendar " + newCalendarName, e);
         }
     }
 }

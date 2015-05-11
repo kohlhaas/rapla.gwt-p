@@ -20,8 +20,6 @@ public interface CalendarWeekView<W> extends View<Presenter>
 
         void selectReservation(HTMLRaplaBlock block);
         
-        void changeCalendar(String newCalendarName);
-
         void selectDate(Date newDate);
 
         void next();
@@ -33,6 +31,6 @@ public interface CalendarWeekView<W> extends View<Presenter>
 
     W provideContent();
 
-    void update(List<HTMLDaySlot> daylist, List<RowSlot> timelist, String weeknumber, Date selectedDate, List<String> calendarNames);
+    void update(List<HTMLDaySlot> daylist, List<RowSlot> timelist, String weeknumber, Date selectedDate);
 
 }
