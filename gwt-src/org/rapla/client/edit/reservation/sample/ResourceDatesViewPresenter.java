@@ -89,5 +89,12 @@ public class ResourceDatesViewPresenter implements Presenter{
 		
 	}
 
+	@Override
+	public void onSetResourcesToAllClicked() {
+		// TODO Auto-generated method stub
+		view.setResourcesToAll();
+		
+	}
+
 }
 

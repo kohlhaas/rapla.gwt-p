@@ -72,4 +72,21 @@ public class TerminList extends FlowPanel {
 		return dates.get(getLastPosition());
 	}
 
+	public void setStyle(int RaplaDatePosition, String styleName) {
+		// TODO Auto-generated method stub
+		dates.get(RaplaDatePosition).setStyleName(styleName);
+		
+	}
+	public void removeStyle(int RaplaDatePosition, String styleName) {
+		// TODO Auto-generated method stub
+		dates.get(RaplaDatePosition).removeStyleName(styleName);
+		
+	}
+	
+	//Assume the resources of the given RaplaDate to all created resources
+	public void setResources(RaplaDate Date) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

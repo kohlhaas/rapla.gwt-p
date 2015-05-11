@@ -96,7 +96,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	HorizontalPanel begin;
 	HorizontalPanel repeatSettings = new HorizontalPanel();
 	
-	Button applyResourcesToAll;
+	Button setResourcesToAll;
 
 	@Override
 	public IsWidget provideContent() {
@@ -127,11 +127,21 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			firstDateListWidget.add(explainer);
 			dateList.add(firstDateListWidget);
 			
-			FlowPanel placeholderApplyResourcesToAll = new FlowPanel();
-			applyResourcesToAll = new Button("Ressourcen f\u00FCr alle \u00FCbernehmen");
-			applyResourcesToAll.setVisible(true);
-			placeholderApplyResourcesToAll.add(applyResourcesToAll);
-			dateList.add(placeholderApplyResourcesToAll);
+			FlowPanel placeholderSetResourcesToAll = new FlowPanel();
+			setResourcesToAll = new Button("Ressourcen f\u00FCr alle \u00FCbernehmen");
+			setResourcesToAll.setVisible(false);
+			placeholderSetResourcesToAll.add(setResourcesToAll);
+			dateList.add(placeholderSetResourcesToAll);
+			
+			setResourcesToAll.addClickHandler(new ClickHandler(){
+
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onSetResourcesToAllClicked();
+					
+				}
+				
+			});
 
 			
 			
@@ -719,6 +729,7 @@ private void createResourceTree() {
 				try {
 					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
 					addTermin = new RaplaDate(tmp);
+					addTermin.setStyleName("singleDate");
 					dateList.add(addTermin);
 					addTermin.addClickHandler(new ClickHandler(){
 						public void onClick(ClickEvent e) {
@@ -759,6 +770,7 @@ private void createResourceTree() {
 		endTimeText.setVisible(true);
 		
 		rewriteDate.setVisible(false);
+		setResourcesToAll.setVisible(false);
 		buttonGarbageCan.setStyleName("buttonsResourceDates");
 		setRepeatTypeSettings(noReccuring);
 	}
@@ -797,27 +809,32 @@ private void createResourceTree() {
 	//}
 	}
 
+	// ClickHandler: Actions when clicking on a created Date
 	@Override
-	public void setRaplaDate(RaplaDate currentDate) {
-
-		this.currentDate = currentDate;
+	public void setRaplaDate(RaplaDate clickedDate) {
+		int prevActive = dateList.getActive() == -1 ? 0 : dateList.getActive();
+		this.currentDate = clickedDate;
 		dateList.setActive(currentDate);
+		
+		//Loading the Date, Time and other date modification elements
 		if(!(dateList.getActive() == -1)){
+			setResourcesToAll.setVisible(true);
 			dateBegin.setValue(currentDate.getBeginTime());
 			dateEnd.setValue(currentDate.getEndTime());
 			timeBegin.setValue((long)-3600000 + currentDate.getStartHourMinute());
 			timeEnd.setValue((long)-3600000 + currentDate.getEndHourMinute());
 			buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
 			rewriteDate.setVisible(true);
-			currentDate.setStyleName("singleDateClicked");
-			applyResourcesToAll.setVisible(true);
+			dateList.setStyle(dateList.getRaplaDateIndex(clickedDate), "singleDateClicked");
+			dateList.removeStyle(prevActive, "singleDateClicked");
+			dateList.setStyle(prevActive, "singleDate");			
 		}else{
 			clearDateTimeInputFields();
 			buttonGarbageCan.setStyleName("buttonsResourceDates");
 			currentDate.removeStyleName("singleDateClicked");
 			currentDate.setStyleName("singleDate");
-			applyResourcesToAll.setVisible(false);
 		}
+		
 		
 
 	}
@@ -867,6 +884,13 @@ private void createResourceTree() {
 		cbRepeatType.setOpen(false);
 	
 		}
+		
+	}
+
+	@Override
+	public void setResourcesToAll() {
+		// TODO Auto-generated method stub
+		dateList.setResources(currentDate);
 		
 	}
 

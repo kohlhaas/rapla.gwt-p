@@ -30,6 +30,8 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 
 		void onrepeatTypeClicked(ClickEvent event);
 
+		void onSetResourcesToAllClicked();
+
 
     }
 
@@ -55,6 +57,8 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 	void openEditView();
 	
 	void setRepeatTypeSettings(Widget sender);
+
+	void setResourcesToAll();
     
 }
 
