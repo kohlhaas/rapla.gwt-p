@@ -58,9 +58,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	FlowPanel buttonBar;
 
 
-	Label buttonNextGap;
-	Label buttonGarbageCan;
-	Label buttonPlus;
+	//Label buttonNextGap, buttonGarbageCan, buttonPlus;
+	Image buttonNextGap, buttonGarbageCan, buttonPlus;
 
 	DateBox dateBegin;
 	DateBox dateEnd;
@@ -141,11 +140,11 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			buttonBar.setStyleName("datesButtonBar");
 			
 
-			Image buttonNextGap = new Image(IMG_NEXT);
+			buttonNextGap = new Image(IMG_NEXT);
 			//buttonNextGap = new Label(">>");
 			buttonNextGap.setStyleName("buttonsResourceDates");
 
-			Image buttonGarbageCan = new Image(IMG_CROSS);
+			buttonGarbageCan = new Image(IMG_CROSS);
 			//buttonGarbageCan = new Label("X");
 			buttonGarbageCan.setStyleName("buttonsResourceDates");
 			buttonGarbageCan.setTitle("Termin l\u00F6schen");
@@ -155,7 +154,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 		            }});
 				
 			
-			Image buttonPlus = new Image(IMG_PLUS);
+			buttonPlus = new Image(IMG_PLUS);
 			//buttonPlus = new Label("+");
 			buttonPlus.setTitle("Termin erstellen");
 			buttonPlus.setStyleName("buttonsResourceDates");
@@ -367,7 +366,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			suche.add(searchField);
 			suche.add(loupe);
 			
-			chooseContainer.add(suche);
+			chooseContainer.add(suche); 
 		    chooseContainer.add(resourceTree);
 		    chooseContainer.setWidth(width  * 0.85 + "px");
 			

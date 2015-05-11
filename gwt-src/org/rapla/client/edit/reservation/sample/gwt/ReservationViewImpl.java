@@ -68,7 +68,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 	private FlowPanel buttonsPanel;
 	public Panel popup;
 	private TabBar bar;
-	private Button cancel, save, delete;
+	//private Button cancel, save, delete;
+	private Image cancel, save, delete, undo, redo;
 	private int height, width;
 
 	// for info tab
@@ -150,7 +151,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		bar.addTab("Termine und Resourcen");
 		bar.setWidth(width + "px");
 		
-		Image cancel = new Image(IMG_ICON_CANCEL);
+		cancel = new Image(IMG_ICON_CANCEL);
 		//cancel = new Button("abbrechen");
 		cancel.setStyleName("cancelButton");
 		cancel.setTitle("Abbrechen");
@@ -162,8 +163,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			}
 		});
 
-		Image save = new Image(IMG_ICON_SAVE);
-	//	save = new Button("speichern");
+		save = new Image(IMG_ICON_SAVE);
+		//save = new Button("speichern");
 		save.setStyleName("saveButton");
 		save.setTitle("Veranstaltung speichern");
 		save.addClickHandler(new ClickHandler() {
@@ -174,7 +175,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			}
 		});
 		
-		Image delete = new Image(IMG_ICON_DELETE);
+		delete = new Image(IMG_ICON_DELETE);
 		//delete = new Button("l\u00F6schen");
 		delete.setStyleName("deleteButton");
 		delete.setTitle("Veranstaltung l\u00F6schen");
@@ -187,11 +188,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		});
 
 		
-		Image undo = new Image(IMG_ICON_UNDO);
+		undo = new Image(IMG_ICON_UNDO);
 		undo.setStyleName("undoButton");
 		undo.setTitle("R\u00FCckg\u00E4ngig");
 		
-		Image redo = new Image(IMG_ICON_REDO);
+		redo = new Image(IMG_ICON_REDO);
 		redo.setStyleName("redoButton");
 		redo.setTitle("Wiederholen");
 		
