@@ -438,7 +438,16 @@ public class WeekviewGWT extends FlexTable
             for (RowSlot rowSlot : timelist)
             {
                 if (row < rowSlot.getRowspan())
-                    return rowSlot.getRowTimes().get(row).getMinute();
+                {
+                    for (SpanAndMinute rowTime : rowSlot.getRowTimes())
+                    {
+                        if (row < rowTime.getRowspan())
+                        {
+                            return rowTime.getMinute();
+                        }
+                        row -= rowTime.getRowspan();
+                    }
+                }
                 row -= rowSlot.getRowspan();
             }
             return null;
@@ -616,7 +625,7 @@ public class WeekviewGWT extends FlexTable
         // indexSearch <0 means startRow is not found in timeRows -indexSearch-1 is the index at which startRow could be inserted to maintain the order 
         else
         {
-            index = (-indexSearch - 1) + 1;
+            index = (-indexSearch - 1);// + 1;
         }
         if (index >= timeRows.size())
         {
@@ -662,6 +671,7 @@ public class WeekviewGWT extends FlexTable
     {
         int actualRowCount = 1;
         final ArrayList<Integer> fullHours = new ArrayList<Integer>();
+        final ArrayList<Integer> subHours = new ArrayList<Integer>();
         for (final RowSlot timeEntry : timelist)
         {
             boolean first = true;
@@ -670,6 +680,10 @@ public class WeekviewGWT extends FlexTable
                 if (first)
                 {
                     fullHours.add(actualRowCount);
+                }
+                else
+                {
+                    subHours.add(actualRowCount);
                 }
                 final String rowname = first ? timeEntry.getRowname() : "";
                 this.setText(actualRowCount, 0, rowname);
@@ -691,7 +705,9 @@ public class WeekviewGWT extends FlexTable
         {
             final Node item = childNodes.getItem(i);
             if (item != null)
-                ((Element) item).addClassName(fullHours.contains(i) ? "full" : "sub");
+            {
+                ((Element) item).addClassName(fullHours.contains(i) ? "full" : subHours.contains(i) ? "sub" : "stub");
+            }
         }
         return actualRowCount;
     }
