@@ -91,11 +91,13 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	Label repeatText;
 	
 	int height, width;
-	RaplaDate tmp;
+	RaplaDate currentDate;
 
 	HorizontalPanel end;
 	HorizontalPanel begin;
 	HorizontalPanel repeatSettings = new HorizontalPanel();
+	
+	Button applyResourcesToAll;
 
 	@Override
 	public IsWidget provideContent() {
@@ -123,8 +125,15 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			firstDateListWidget.setStyleName("wildcardPanel");
 			Label explainer = new Label("Durch das Dr\u00FCcken des Plus-Buttons bei ausgef\u00FCllten Termindaten, wird ein Termin hinzugef\u00FCgt");
 			explainer.setStyleName("wildcard");
-			firstDateListWidget.add(explainer);	
+			firstDateListWidget.add(explainer);
 			dateList.add(firstDateListWidget);
+			
+			FlowPanel placeholderApplyResourcesToAll = new FlowPanel();
+			applyResourcesToAll = new Button("Ressourcen f\u00FCr alle \u00FCbernehmen");
+			applyResourcesToAll.setVisible(true);
+			placeholderApplyResourcesToAll.add(applyResourcesToAll);
+			dateList.add(placeholderApplyResourcesToAll);
+
 			
 			
 			buttonBar = new FlowPanel();
@@ -782,30 +791,33 @@ private void createResourceTree() {
 
 	@Override
 	public void clearInputFields() {
-		if(buttonGarbageCan.getStyleName().equals("buttonsResourceDatesClickable")){
+		//if(buttonGarbageCan.getStyleName().equals("buttonsResourceDatesClickable")){
 			dateList.removeDate(dateList.getActive());
 			clearDateTimeInputFields();
 			buttonGarbageCan.setStyleName("buttonsResourceDates");			
-	}}
+	//}
+	}
 
 	@Override
-	public void setRaplaDate(RaplaDate tmp) {
+	public void setRaplaDate(RaplaDate currentDate) {
 
-		this.tmp = tmp;
-		dateList.setActive(tmp);
+		this.currentDate = currentDate;
+		dateList.setActive(currentDate);
 		if(!(dateList.getActive() == -1)){
-			dateBegin.setValue(tmp.getBeginTime());
-			dateEnd.setValue(tmp.getEndTime());
-			timeBegin.setValue((long)-3600000 + tmp.getStartHourMinute());
-			timeEnd.setValue((long)-3600000 + tmp.getEndHourMinute());
+			dateBegin.setValue(currentDate.getBeginTime());
+			dateEnd.setValue(currentDate.getEndTime());
+			timeBegin.setValue((long)-3600000 + currentDate.getStartHourMinute());
+			timeEnd.setValue((long)-3600000 + currentDate.getEndHourMinute());
 			buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
 			rewriteDate.setVisible(true);
-			tmp.setStyleName("singleDateClicked");
+			currentDate.setStyleName("singleDateClicked");
+			applyResourcesToAll.setVisible(true);
 		}else{
 			clearDateTimeInputFields();
 			buttonGarbageCan.setStyleName("buttonsResourceDates");
-			tmp.removeStyleName("singleDateClicked");
-			tmp.setStyleName("singleDate");
+			currentDate.removeStyleName("singleDateClicked");
+			currentDate.setStyleName("singleDate");
+			applyResourcesToAll.setVisible(false);
 		}
 		
 
