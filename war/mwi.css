@@ -15,25 +15,23 @@
         z-index: 1003;
 } 
 
-.cancelButton, .deleteButton, .saveButton{
+.cancelButton, .deleteButton, .saveButton, .redoButton, .undoButton{
 	float: left !important;
 	width: auto !important;
-	background-color: rgb(153, 184, 252) !important;
-	color: white !important;
+/*	background-color: rgb(153, 184, 252) !important;*/
 	border-radius: 3px !important;
-	text-align: center !important;
-	font-size: 14px !important;
-	text-transform: uppercase !important;
 	cursor: pointer !important;
 	margin: 5px !important;
 	padding: 3px !important;
 }
 
-
+/*
 .cancelButton:hover, .deleteButton:hover, .saveButton:hover {
 	background-color: white;
 	padding: 2px;
 }
+*/
+
 
 .gwt-TabBar .gwt-TabBarItem-wrapper {
 	width: 130px;
@@ -98,7 +96,7 @@ border-right: 2px solid black !important;
 .buttonsResourceDates {
 	float: left;
 	width: 28px;
-	background-color: rgb(153, 184, 252);
+	/*background-color: rgb(153, 184, 252);*/
 	border-radius: 50px;
 	color: white;
 	cursor: pointer;

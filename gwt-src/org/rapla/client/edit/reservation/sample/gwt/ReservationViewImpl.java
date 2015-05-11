@@ -29,6 +29,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -38,6 +39,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -54,6 +56,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 import org.rapla.client.edit.reservation.sample.InfoView;
+import org.rapla.client.mwi14_1.ImageImport;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements
 		ReservationView<IsWidget> {
@@ -78,7 +81,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 	private TextBox vorlesungsStundenInput;
 	private ListBox studiengangListBox;
 	private Collection<String> studiengangListBoxAuswahl;
-
+	private static final ImageResource IMG_ICON_SAVE = ImageImport.INSTANCE.saveIcon();
+	private static final ImageResource IMG_ICON_CANCEL = ImageImport.INSTANCE.cancelIcon();
+	private static final ImageResource IMG_ICON_DELETE = ImageImport.INSTANCE.deleteIcon();
+	private static final ImageResource IMG_ICON_UNDO = ImageImport.INSTANCE.undoIcon();
+	private static final ImageResource IMG_ICON_REDO = ImageImport.INSTANCE.redoIcon();
+	
 	// for resources and dates tab
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
 	private ArrayList<List<String>> reservedResources = new ArrayList<List<String>>();
@@ -141,8 +149,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		bar.addTab("Veranstaltungsinformationen");
 		bar.addTab("Termine und Resourcen");
 		bar.setWidth(width + "px");
-
-		cancel = new Button("abbrechen");
+		
+		Image cancel = new Image(IMG_ICON_CANCEL);
+		//cancel = new Button("abbrechen");
 		cancel.setStyleName("cancelButton");
 		cancel.addClickHandler(new ClickHandler() {
 
@@ -152,7 +161,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			}
 		});
 
-		save = new Button("speichern");
+		Image save = new Image(IMG_ICON_SAVE);
+	//	save = new Button("speichern");
 		save.setStyleName("saveButton");
 		save.addClickHandler(new ClickHandler() {
 
@@ -161,8 +171,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 				getPresenter().onSaveButtonClicked();
 			}
 		});
-
-		delete = new Button("l\u00F6schen");
+		
+		Image delete = new Image(IMG_ICON_DELETE);
+		//delete = new Button("l\u00F6schen");
 		delete.setStyleName("deleteButton");
 		delete.addClickHandler(new ClickHandler() {
 
@@ -172,6 +183,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			}
 		});
 
+		
+		Image undo = new Image(IMG_ICON_UNDO);
+		undo.setStyleName("undoButton");
+		
+		Image redo = new Image(IMG_ICON_REDO);
+		redo.setStyleName("redoButton");
+		
 		layout = new VerticalPanel();
 		tabBarPanel = new FlowPanel();
 		buttonsPanel = new FlowPanel();
@@ -187,6 +205,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		buttonsPanel.add(cancel);
 		buttonsPanel.add(save);
 		buttonsPanel.add(delete);
+		buttonsPanel.add(undo);	
+		buttonsPanel.add(redo);
+	
 
 		layout.add(buttonsPanel);
 		layout.add(tabBarPanel);

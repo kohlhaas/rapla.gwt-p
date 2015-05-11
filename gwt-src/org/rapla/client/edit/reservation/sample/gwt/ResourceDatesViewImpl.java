@@ -10,12 +10,14 @@ import java.util.List;
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView.Presenter;
+import org.rapla.client.mwi14_1.ImageImport;
 import org.rapla.entities.domain.Appointment;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -25,6 +27,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -42,6 +45,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
 	private ArrayList<List<String>> reservedResources = new ArrayList<List<String>>();
+	private static final ImageResource IMG_CROSS = ImageImport.INSTANCE.crossIcon();
+	private static final ImageResource IMG_PLUS = ImageImport.INSTANCE.plusIcon();
+	private static final ImageResource IMG_NEXT = ImageImport.INSTANCE.nextIcon();
 	
 	Panel contentPanel;
 	FlowPanel mainContent;
@@ -123,12 +129,12 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			buttonBar.setStyleName("datesButtonBar");
 			
 
-			// Image buttonNextGap = new Image("button_luecke.png");
-			buttonNextGap = new Label(">>");
+			Image buttonNextGap = new Image(IMG_NEXT);
+			//buttonNextGap = new Label(">>");
 			buttonNextGap.setStyleName("buttonsResourceDates");
 
-			// Image buttonGarbageCan = new Image("button_eimer.png");
-			buttonGarbageCan = new Label("X");
+			Image buttonGarbageCan = new Image(IMG_CROSS);
+			//buttonGarbageCan = new Label("X");
 			buttonGarbageCan.setStyleName("buttonsResourceDates");
 			buttonGarbageCan.setTitle("Termin l\u00F6schen");
 			buttonGarbageCan.addClickHandler(new ClickHandler(){
@@ -137,8 +143,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 		            }});
 				
 			
-			// Image buttonPlus = new Image("button_plus.png");
-			buttonPlus = new Label("+");
+			Image buttonPlus = new Image(IMG_PLUS);
+			//buttonPlus = new Label("+");
 			buttonPlus.setTitle("Termin erstellen");
 			buttonPlus.setStyleName("buttonsResourceDates");
 
