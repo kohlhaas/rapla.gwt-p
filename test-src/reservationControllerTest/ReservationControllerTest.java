@@ -1,8 +1,11 @@
 package reservationControllerTest;
-/*
+
 import javax.inject.Singleton;
 
 import org.jukito.JukitoModule;
+
+
+
 
 
 
@@ -23,7 +26,9 @@ import org.jukito.JukitoRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.rapla.client.mwi14_1.ReservationController;
+import org.rapla.client.edit.reservation.ReservationController;
+import org.rapla.client.edit.reservation.sample.ReservationPresenter;
+import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.components.util.DateTools;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
@@ -39,7 +44,7 @@ import org.rapla.framework.logger.Logger;
 public class ReservationControllerTest {
 
 	
-	  @Inject ReservationController controller;
+	  @Inject ReservationPresenter controller;
 	  
 	  ClientFacade facade;
 	  Reservation event;
@@ -54,8 +59,33 @@ public class ReservationControllerTest {
 		        bind(org.rapla.framework.logger.Logger.class).toProvider((Class<? extends Provider<? extends Logger>>) RaplaJDKLoggingAdapter.class);
 		        bind( RaplaLocale.class).to(RaplaLocaleImpl.class).in(Singleton.class);
 		    }
-		  }
+	  }
+	  
+	  @Test
+	  public void shouldStoreReservationOnSave(Reservation event,ReservationView editView) throws RaplaException {
+	    boolean isNew = false;
+	 // WHEN
+	    // WHEN
+	    controller.edit(event, isNew);
+	    
+	    // THEN
+	    // test if presenter is called
+	    verify(editView).setPresenter(controller);
+
+	    // test if event is shown
+	    verify(editView).show(event);
+	    controller.onSaveButtonClicked();
+	    
+	    // THEN
+	    // test if store is called
+	    verify(facade).store( event );
+	  }
+	  
+	  
+	
+	  
+	  
+	  
+	  
+	  
 }
-
-
-*/
