@@ -153,8 +153,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		Image cancel = new Image(IMG_ICON_CANCEL);
 		//cancel = new Button("abbrechen");
 		cancel.setStyleName("cancelButton");
+		cancel.setTitle("Abbrechen");
 		cancel.addClickHandler(new ClickHandler() {
-
+			
 			@Override
 			public void onClick(ClickEvent e) {
 				getPresenter().onCancelButtonClicked();
@@ -164,6 +165,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		Image save = new Image(IMG_ICON_SAVE);
 	//	save = new Button("speichern");
 		save.setStyleName("saveButton");
+		save.setTitle("Veranstaltung speichern");
 		save.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -175,6 +177,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		Image delete = new Image(IMG_ICON_DELETE);
 		//delete = new Button("l\u00F6schen");
 		delete.setStyleName("deleteButton");
+		delete.setTitle("Veranstaltung l\u00F6schen");
 		delete.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -186,9 +189,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		
 		Image undo = new Image(IMG_ICON_UNDO);
 		undo.setStyleName("undoButton");
+		undo.setTitle("R\u00FCckg\u00E4ngig");
 		
 		Image redo = new Image(IMG_ICON_REDO);
 		redo.setStyleName("redoButton");
+		redo.setTitle("Wiederholen");
 		
 		layout = new VerticalPanel();
 		tabBarPanel = new FlowPanel();
