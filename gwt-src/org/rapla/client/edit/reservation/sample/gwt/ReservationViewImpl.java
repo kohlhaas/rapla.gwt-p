@@ -58,6 +58,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     ListBox allCurrentAttributes = new ListBox();
 
     Button hideButton = null;
+    Button deselectButton = null;
     Label planhour;
     String chosenEventType = "";
     String chosenLanguage = "";
@@ -488,12 +489,17 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 coursePanel.setVisible(false);
             }
         });
+        
+        deselectButton = new Button("Alle Selektionen löschen");
+        coursePanel.add(deselectButton);
 
         coursePanel.setVisible(false);
         //activateCourseButton = false;
 
 
     }
+    
+    
     
     private void removeAllLanguageLB(){
     	row1.remove(allLanguageLB);
@@ -504,6 +510,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         row1.remove(course);
         coursePanel.remove(tree);
         coursePanel.remove(hideButton);
+        coursePanel.remove(deselectButton);
 
     }
     
