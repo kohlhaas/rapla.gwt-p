@@ -32,18 +32,21 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 
 	private List<RaplaDate> raplaDates = new ArrayList<>();
 	private DisclosurePanel singleDatesContainer = new DisclosurePanel();
+	
+	private ArrayList<List<String>> resources = new ArrayList<List<String>>();
 
 	public RaplaDate() {
 
 	}
 
-	public RaplaDate(Date begin, Date end, boolean calculateLectureHours)
+	public RaplaDate(Date begin, Date end, ArrayList<List<String>> res, boolean calculateLectureHours)
 			throws ParseException {
 		this.beginTime = begin;
 		this.endTime = end;
 		this.calculateLectureHours = calculateLectureHours;
 
 		this.vorlesungsStunden = (((end.getTime() - begin.getTime()) / 60000) / 45);
+		setResources(res);
 		createSingleDate();
 		initWidget(main);
 	}
@@ -129,7 +132,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	}
 
 
-	public static List<RaplaDate> recurringDates(Date startDay, Date endDay, long startTime, long endTime,
+	public static List<RaplaDate> recurringDates(Date startDay, Date endDay, long startTime, long endTime, ArrayList<List<String>> res,
 			int repeatType) {
 		List<RaplaDate> tmp = new ArrayList<>();
 		RaplaDate next;
@@ -153,7 +156,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 			}
 			try {
 				if((startDay.before(endDay))){
-				next = new RaplaDate(new Date(startDay.getTime() + startTime), new Date(startDay.getTime() + endTime), true);
+				next = new RaplaDate(new Date(startDay.getTime() + startTime), new Date(startDay.getTime() + endTime), res, true);
 				tmp.add(next);
 				}
 			} catch (ParseException e) {
@@ -219,6 +222,14 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		// TODO Auto-generated method stub
 		return addDomHandler(handler, ClickEvent.getType());
+	}
+
+	public ArrayList<List<String>> getResources() {
+		return resources;
+	}
+
+	public void setResources(ArrayList<List<String>> resources) {
+		this.resources = resources;
 	}
 
 }

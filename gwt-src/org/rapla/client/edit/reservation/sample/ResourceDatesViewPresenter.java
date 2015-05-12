@@ -96,5 +96,12 @@ public class ResourceDatesViewPresenter implements Presenter{
 		
 	}
 
+	@Override
+	public void onFilterClicked() {
+		// TODO Auto-generated method stub
+		view.setVisiblityOfFilter();
+		
+	}
+
 }
 

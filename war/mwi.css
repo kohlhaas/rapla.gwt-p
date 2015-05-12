@@ -22,14 +22,34 @@
 	border-radius: 3px !important;
 	cursor: pointer !important;
 	margin: 5px !important;
-	padding: 3px !important;
 }
+
+.cancelButton:hover, .deleteButton:hover, .saveButton:hover, .redoButton:hover, .undoButton:hover{
+	margin-left: 6px !important;
+	margin-right: 4px !important;
+	margin-top: 6px !important;
+	margin-bottom: 4px !important;
+}
+
+
+
 
 .buttonLoupe{
 	margin: 5px !important;
 	margin-left: 0px !important;
 	cursor: pointer !important;
-	
+}
+
+.buttonFilter{
+	margin: 5px !important;
+	margin-left: 25px !important;
+	cursor: pointer !important;
+}
+
+.filterWindow{
+	width: auto !important;
+	margin-top: 5px !important;	
+	z-index: 1004;
 }
 
 /*
@@ -313,7 +333,7 @@ border-right: 2px solid black !important;
 }
 
 .chooseContainer{
-	border: 1px solid #c2c2c2;
+/*	border: 1px solid #c2c2c2;*/
 	width: 100%;
 	height: auto;
 	clear: both;
@@ -377,4 +397,8 @@ background-color: #FFBABA;
 .gwt-SuggestBox { 
 margin: 5px;	
 
+}
+
+.suchfeld{
+	height: 85px !important;
 }

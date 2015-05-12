@@ -51,6 +51,11 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	private static final ImageResource IMG_PLUS = ImageImport.INSTANCE.plusIcon();
 	private static final ImageResource IMG_NEXT = ImageImport.INSTANCE.nextIcon();
 	private static final ImageResource IMG_LOUPE = ImageImport.INSTANCE.loupeIcon();
+	private static final ImageResource IMG_FILTER = ImageImport.INSTANCE.filterIcon();
+	private static final ImageResource IMG_CROSS_GREY = ImageImport.INSTANCE.crossGreyIcon();
+	private static final ImageResource IMG_PLUS_GREY = ImageImport.INSTANCE.plusGreyIcon();
+	private static final ImageResource IMG_NEXT_GREY = ImageImport.INSTANCE.nextGreyIcon();
+	private static final ImageResource IMG_CHANGE = ImageImport.INSTANCE.changeIcon();
 	
 	Panel contentPanel;
 	FlowPanel mainContent;
@@ -97,6 +102,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	HorizontalPanel repeatSettings = new HorizontalPanel();
 	
 	Button setResourcesToAll;
+	
+	ListBox filterEintr;
 
 	@Override
 	public IsWidget provideContent() {
@@ -150,11 +157,11 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			buttonBar.setStyleName("datesButtonBar");
 			
 
-			buttonNextGap = new Image(IMG_NEXT);
+			buttonNextGap = new Image(IMG_NEXT_GREY);
 			//buttonNextGap = new Label(">>");
 			buttonNextGap.setStyleName("buttonsResourceDates");
 
-			buttonGarbageCan = new Image(IMG_CROSS);
+			buttonGarbageCan = new Image(IMG_CROSS_GREY);
 			//buttonGarbageCan = new Label("X");
 			buttonGarbageCan.setStyleName("buttonsResourceDates");
 			buttonGarbageCan.setTitle("Termin l\u00F6schen");
@@ -169,8 +176,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			buttonPlus.setTitle("Termin erstellen");
 			buttonPlus.setStyleName("buttonsResourceDates");
 
-			// TO-DO: Is this really a Label? Or should it be a Button? Can a Label
-			// be used, too?
 
 			buttonBar.add(buttonPlus);
 			buttonBar.add(buttonGarbageCan);
@@ -327,7 +332,25 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			chosenResources.setStyleName("dateInfoLineComplete");
 
 			// Ausgewählte Resourcen laden
-			loadChosenResources();
+			ArrayList<List<String>> testRessourcen = new ArrayList<List<String>>();
+			
+			List<String> rooms = new ArrayList<String>();
+			rooms.add("Raeume");
+			rooms.add("A 204");
+			
+			List<String> cources = new ArrayList<String>();
+			cources.add("Kurse");
+			cources.add("WWI12B1");
+			
+			List<String> profs = new ArrayList<String>();
+			profs.add("Professoren");
+			profs.add("Kuestermann");		
+			
+			testRessourcen.add(rooms);
+			testRessourcen.add(cources);
+			testRessourcen.add(profs);
+			
+			loadChosenResources(testRessourcen);
 			
 
 			Label headerChosenRes  = new Label("Ausgewaehlte Ressourcen:");
@@ -353,14 +376,44 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			resourceTree = new Tree();
 
 			// Auswählbare Ressourcen laden
-			 loadResourcesToChoose();
 			
-			 createResourceTree();
+
 			
+			loadResourcesToChoose();
+			
+			createResourceTree();
+
+						
+
+
+			
+			//Filter
+			Image filter = new Image(IMG_FILTER);
+			filter.setStyleName("buttonFilter");
+			filter.addClickHandler(new ClickHandler(){
+
+				@Override
+				public void onClick(ClickEvent event) {
+					
+					getPresenter().onFilterClicked();
+				}
+				
+			});
+		    
+		    filterEintr = new ListBox();
+		    filterEintr.addItem("Verfügbare Ressourcen");
+		    filterEintr.addItem("Nicht Verfügabre Ressourcen");
+		    filterEintr.addItem("Kurse");
+		    filterEintr.addItem("Räume");
+		    filterEintr.addItem("Professoren");	
+		    filterEintr.setStyleName("filterWindow");
+		    filterEintr.setMultipleSelect(true);
+		    filterEintr.setVisible(false);
+
+		    
 			//Suchfeld
-			
 			suche = new HorizontalPanel(); 
-			 
+			suche.setStyleName("suchfeld");
 			MultiWordSuggestOracle oracle = new MultiWordSuggestOracle(); 
 			oracle.add("WWI12B1");
 			oracle.add("Küstermann");
@@ -372,9 +425,12 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			
 			Image loupe = new Image(IMG_LOUPE);
 			loupe.setStyleName("buttonLoupe");
-			
+
 			suche.add(searchField);
 			suche.add(loupe);
+			suche.add(filter);
+			suche.add(filterEintr);
+						
 			
 			chooseContainer.add(suche); 
 		    chooseContainer.add(resourceTree);
@@ -409,7 +465,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	}
 
 private void createResourceTree() {
-		
+			
 		for(List<String> hList : toBeReservedResources){
 			String header = hList.get(0);
 			hList.remove(0);
@@ -417,9 +473,8 @@ private void createResourceTree() {
 			hList.add(0, header);
 		}
 	
-		
 		// Create ResourceTree
-		for(int i=0; i<toBeReservedResources.size();i++){
+		for(int i=0; i < toBeReservedResources.size();i++){
 			resourceTree.addItem(new TreeItem());
 			resourceTree.getItem(i).setText(toBeReservedResources.get(i).get(0).toString());
 			resourceTree.getItem(i).setTitle(toBeReservedResources.get(i).get(0).toString());
@@ -432,57 +487,71 @@ private void createResourceTree() {
 		
 	}
 
-	private void loadChosenResources() {
+	private void loadChosenResources(ArrayList<List<String>> res) {
+		
+		reservedResources.clear();
+		reservedResources = copyResourceArray(res);
 		
 		
-		List<String> rooms = new ArrayList<String>();
-		rooms.add("Raeume");
-		rooms.add("A 204");
-		
-		List<String> cources = new ArrayList<String>();
-		cources.add("Kurse");
-		cources.add("WWI12B1");
-		
-		List<String> profs = new ArrayList<String>();
-		profs.add("Professoren");
-		profs.add("Kuestermann");		
-		
-		
-	    reservedResources.add(rooms);
-	    reservedResources.add(profs);
-	    reservedResources.add(cources);
+//		List<String> rooms = new ArrayList<String>();
+//		rooms.add("Raeume");
+//		rooms.add("A 204");
+//		
+//		List<String> cources = new ArrayList<String>();
+//		cources.add("Kurse");
+//		cources.add("WWI12B1");
+//		
+//		List<String> profs = new ArrayList<String>();
+//		profs.add("Professoren");
+//		profs.add("Kuestermann");		
+//		
+//		
+//	    reservedResources.add(rooms);
+//	    reservedResources.add(profs);
+//	    reservedResources.add(cources);
 		
 		
 	}
 
 	private void loadResourcesToChoose() {
-		//Ressourcen
 		
-		List<String> room = new ArrayList<String>();
-		room.add("Raeume");
-		room.add("A 204");
-		room.add("A 206");
-		room.add("A 205");
-		room.add("A 203");
+
 		
-		List<String> cource = new ArrayList<String>();
-		cource.add("Kurse");
-		cource.add("WWI12B1");
-		cource.add("WWI12B2");
-		cource.add("WWI12B3");
-		cource.add("WWI12B4");
+		ArrayList<List<String>> ressourcenZwei = new ArrayList<List<String>>();
 		
-		List<String> prof = new ArrayList<String>();
-		prof.add("Professoren");
-		prof.add("Kuestermann");
-		prof.add("Freytag");
-		prof.add("Daniel");
-		prof.add("Wengler");		
+		List<String> rooms = new ArrayList<String>();
+		rooms.add("Raeume");
+		rooms.add("A 203");
+		rooms.add("A 204");
+		rooms.add("A 205");
+		rooms.add("A 206");
+		
+		List<String> cources = new ArrayList<String>();
+		cources.add("Kurse");
+		cources.add("WWI12B1");
+		cources.add("WWI12B2");
+		cources.add("WWI12B3");
+		cources.add("WWI12B4");
+		
+		List<String> profs = new ArrayList<String>();
+		profs.add("Professoren");
+		profs.add("Kuestermann");	
+		profs.add("Wengler");	
+		profs.add("Wallrath");	
+		profs.add("Freytag");	
+
+		ressourcenZwei.add(rooms);
+		ressourcenZwei.add(cources);
+		ressourcenZwei.add(profs);
 		
 		
-		toBeReservedResources.add(room);
-		toBeReservedResources.add(cource);
-		toBeReservedResources.add(prof);
+		toBeReservedResources.clear();
+		toBeReservedResources = copyResourceArray(ressourcenZwei);
+		
+//		
+//		toBeReservedResources.add(room);
+//		toBeReservedResources.add(cource);
+//		toBeReservedResources.add(prof);
 		
 	}
 
@@ -725,9 +794,9 @@ private void createResourceTree() {
 				}else{
 					type = 4;
 				}
-				tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, type);
+				tmp = RaplaDate.recurringDates(dateBegin.getValue(), dateEnd.getValue(), timeBegin.getTime() + 3600000,timeEnd.getTime() + 3600000, copyResourceArray(reservedResources), type);
 				try {
-					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), true));
+					tmp.add(new RaplaDate(beginTmp, new Date(dateBegin.getValue().getTime() + timeEnd.getTime() + 3600000), copyResourceArray(reservedResources), true));
 					addTermin = new RaplaDate(tmp);
 					addTermin.setStyleName("singleDate");
 					dateList.add(addTermin);
@@ -742,7 +811,7 @@ private void createResourceTree() {
 				}
 			}else{
 			try {	
-				addTermin = new RaplaDate(beginTmp, endTmp, true);
+				addTermin = new RaplaDate(beginTmp, endTmp, copyResourceArray(reservedResources), true);
 				addTermin.addClickHandler(new ClickHandler(){
 					public void onClick(ClickEvent e) {
 		                getPresenter().onAddTerminButtonClicked(e);
@@ -771,7 +840,8 @@ private void createResourceTree() {
 		
 		rewriteDate.setVisible(false);
 		setResourcesToAll.setVisible(false);
-		buttonGarbageCan.setStyleName("buttonsResourceDates");
+		buttonGarbageCan.setResource(IMG_CROSS_GREY);
+		buttonPlus.setResource(IMG_PLUS);
 		setRepeatTypeSettings(noReccuring);
 	}
 
@@ -805,7 +875,8 @@ private void createResourceTree() {
 		//if(buttonGarbageCan.getStyleName().equals("buttonsResourceDatesClickable")){
 			dateList.removeDate(dateList.getActive());
 			clearDateTimeInputFields();
-			buttonGarbageCan.setStyleName("buttonsResourceDates");			
+			buttonGarbageCan.setResource(IMG_CROSS_GREY);
+			buttonPlus.setResource(IMG_PLUS);
 	//}
 	}
 
@@ -823,14 +894,20 @@ private void createResourceTree() {
 			dateEnd.setValue(currentDate.getEndTime());
 			timeBegin.setValue((long)-3600000 + currentDate.getStartHourMinute());
 			timeEnd.setValue((long)-3600000 + currentDate.getEndHourMinute());
-			buttonGarbageCan.setStyleName("buttonsResourceDatesClickable");
+			buttonGarbageCan.setResource(IMG_CROSS);
+			buttonPlus.setResource(IMG_CHANGE);
 			rewriteDate.setVisible(true);
 			dateList.setStyle(dateList.getRaplaDateIndex(clickedDate), "singleDateClicked");
 			dateList.removeStyle(prevActive, "singleDateClicked");
-			dateList.setStyle(prevActive, "singleDate");			
+			dateList.setStyle(prevActive, "singleDate");	
+			reservedResources.clear();
+			reservedResources = copyResourceArray(currentDate.getResources());
+			refreshResourceContainer();
+			refreshResourceTree();
 		}else{
 			clearDateTimeInputFields();
-			buttonGarbageCan.setStyleName("buttonsResourceDates");
+			buttonGarbageCan.setResource(IMG_CROSS_GREY);
+			buttonPlus.setResource(IMG_PLUS);
 			currentDate.removeStyleName("singleDateClicked");
 			currentDate.setStyleName("singleDate");
 		}
@@ -893,6 +970,35 @@ private void createResourceTree() {
 		dateList.setResources(currentDate);
 		
 	}
+	
+	public ArrayList<List<String>> copyResourceArray(ArrayList<List<String>> res){
+		
+		ArrayList<List<String>> copyArray = new ArrayList<List<String>>();
+		List<String> copyList;// = new ArrayList<String>(); 
+		
+		
+		for(List<String> tempList: res){
+			copyList = new ArrayList<String>(); 
+			for(String tempString: tempList){
+				copyList.add(tempString);
+			}
+			copyArray.add(copyList);
+		}
+		
+		return copyArray;
+	}
 
+	@Override
+	public void setVisiblityOfFilter() {
+		// TODO Auto-generated method stub
+		
+		if(filterEintr.isVisible()){
+			filterEintr.setVisible(false);	
+		}else{
+			filterEintr.setVisible(true);	
+		}
+		
+		
+	}
 
 }

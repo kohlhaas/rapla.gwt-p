@@ -26,6 +26,18 @@ public interface ImageImport extends ClientBundle {
 	@Source("plus.png")
 	ImageResource plusIcon();	
 	
+	@Source("cross_grey.png")
+	ImageResource crossGreyIcon();		
+	
+	@Source("next_grey.png")
+	ImageResource nextGreyIcon();
+	
+	@Source("plus_grey.png")
+	ImageResource plusGreyIcon();	
+	
+	@Source("change.png")
+	ImageResource changeIcon();	
+	
 	@Source("redo.png")
 	ImageResource redoIcon();	
 	
@@ -34,4 +46,7 @@ public interface ImageImport extends ClientBundle {
 	
 	@Source("loupe.png")
 	ImageResource loupeIcon();		
+	
+	@Source("filter.png")
+	ImageResource filterIcon();		
 }
