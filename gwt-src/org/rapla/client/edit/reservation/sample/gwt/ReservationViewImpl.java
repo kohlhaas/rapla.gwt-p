@@ -491,6 +491,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         });
         
         deselectButton = new Button("Alle Selektionen löschen");
+        deselectButton.setStyleName("deselectButton");
         coursePanel.add(deselectButton);
 
         coursePanel.setVisible(false);
