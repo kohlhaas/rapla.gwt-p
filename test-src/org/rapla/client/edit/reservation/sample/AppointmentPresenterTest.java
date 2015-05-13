@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -41,15 +42,6 @@ public class AppointmentPresenterTest {
       
   }
   
-//  @Before
-//  public void setupReservation(){
-//	  try {
-//		event = facade.newReservation();
-//	} catch (RaplaException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
-//  }
 
   public static class Module extends JukitoModule {
       protected void configureTest() {
@@ -59,7 +51,7 @@ public class AppointmentPresenterTest {
     }
   
   @Test
-  public void shouldCallShowOnEdit() throws RaplaException {
+  public void setReservationTest() throws RaplaException {
     AppointmentView editView = presenter.getView();
     
     // WHEN
@@ -72,6 +64,14 @@ public class AppointmentPresenterTest {
     // test if appointment show is called
     verify(editView).show(event);
     
+  }
+  
+  @Test
+  public void newAppointmentTest() throws RaplaException{
+  AppointmentView editView = presenter.getView();
+	
+  	// BEFORE
+  	presenter.setReservation(event);
     // WHEN 
     presenter.newAppointmentButtonPressed();
     
@@ -79,44 +79,119 @@ public class AppointmentPresenterTest {
     // test if newAppointment is called in facade
     Date startDate = new Date(facade.today().getTime() + DateTools.MILLISECONDS_PER_HOUR * 8);
     Date endDate = new Date(startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
-    Appointment newAppointment = verify(facade).newAppointment(startDate,endDate);
+    Appointment appointment = verify(facade).newAppointment(startDate,endDate);
     
     // test if appointment list is updated
     verify(editView).updateAppointmentList(Arrays.asList(event.getAppointments()), Arrays.asList(event.getAppointments()).size()-1);
     
     // test if appointment is added to event
-    verify(event).addAppointment(newAppointment);
+    verify(event).addAppointment(appointment);
     
-    // WHEN
+ }
+  
+  @Test
+  public void getConflictsTest () throws RaplaException{
+  AppointmentView editView = presenter.getView();
+    
+  // WHEN
     presenter.getConflicts();
     
     // THEN
     // test if getConflicts is called in facade
     verify(facade).getConflicts(presenter.getReservation());
     
+ }
+  
+  @Test
+  public void nextFreeDateTest () throws RaplaException{
+  AppointmentView editView = presenter.getView();
+  
+  Date startDate = new Date(facade.today().getTime() + DateTools.MILLISECONDS_PER_HOUR * 8);
+  Date endDate = new Date(startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
+  
     // WHEN
     presenter.nextFreeDateButtonPressed(startDate, endDate);
     
     // THEN
     // test if newAppointment is called in facade
-    verify(facade, Mockito.times(2)).newAppointment(startDate,endDate);
+    verify(facade).newAppointment(startDate,endDate);
     
     //test if getAllocatables is called in facade
     verify(facade).getAllocatables();
     
     // TODO: add test for return value in view
-    
-    // WHEN
-    presenter.appointmentSelected(0);
-    
-    // THEN
-    // test if getAppointments is called
-    Appointment[] appArray = verify(event, Mockito.times(4)).getAppointments();
-    
-    
-    // test if view is updated with the right Appointment
-    //verify(editView).updateAppointmentOptionsPanel(appArray[0]);
-    
+        
   }
+  
+  @Test
+  public void appointmentSelectedTest() throws RaplaException{
+	  AppointmentView editView = presenter.getView();
+	  
+	// BEFORE
+	presenter.setReservation(event);  
+	presenter.newAppointmentButtonPressed();
+	
+	// WHEN
+	presenter.appointmentSelected(0);
+	    
+	// THEN
+	// test if getAppointments is called 
+	verify(event,Mockito.times(2)).getAppointments(); 
+	// test if view is updated
+	verify(editView).updateAppointmentOptionsPanel(event.getAppointments()[0]);
+			
+	    
+	   //TODO:  
+	    // test if view is updated with the right Appointment
+	    //verify(editView).updateAppointmentOptionsPanel(appArray[0]);
+  }
+  
+  @Test
+  public void removeAppointmentTest() throws RaplaException{
+	  AppointmentView editView = presenter.getView();
+	  
+	  //BEFORE
+	  presenter.setReservation(event);
+	  presenter.newAppointmentButtonPressed();
+	  
+	  // WHEN
+	  presenter.removeAppointmentButtonPressed(0);
+	  
+	  // THEN
+	  // test if getAppointments is called
+	  Appointment[] AppointmentList = verify(event,Mockito.times(2)).getAppointments(); 
+	  // TODO: test if appointment is removed
+	  verify(event).removeAppointment(event.getAppointments()[0]);
+  
+  }
+  
+  @Test
+  public void addResourceTest() throws RaplaException{
+	  AppointmentView editView = presenter.getView();
+	  
+	  //BEFORE
+	  presenter.setReservation(event);
+	  presenter.newAppointmentButtonPressed();
+	  
+	  // WHEN
+	  //TODO: Wie wird das aufgerufen?
+	  presenter.addResourceButtonPressed(1, "Kurs", Locale.GERMAN);
+	  
+	  // THEN
+	  // test if 
+  }
+  
+  @Test
+  public void getAllocatablesTest() throws RaplaException{
+	  AppointmentView editView = presenter.getView();
+	  	  
+	  // WHEN
+	  presenter.getAllocatables();
+	  
+	  // THEN
+	  // test if facade is called
+	  verify(facade).getAllocatables();
+  }
+  
   
 }
