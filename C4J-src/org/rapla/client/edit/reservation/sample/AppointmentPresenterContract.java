@@ -19,8 +19,6 @@ public class AppointmentPresenterContract extends AppointmentPresenter {
 	@Target
 	private AppointmentPresenter target;
 	
-	boolean AppointmentAdded;
-	
 	@ClassInvariant
 	public void classInvariant() {
 		// TODO: write invariants if required
@@ -44,7 +42,6 @@ public class AppointmentPresenterContract extends AppointmentPresenter {
 		}
 		if (postCondition()) {
 			// TODO: write postconditions if required
-			AppointmentAdded=true;
 		}
 	}
 
@@ -99,7 +96,6 @@ public class AppointmentPresenterContract extends AppointmentPresenter {
 	public void appointmentSelected(int selectedIndex) {
 		if (preCondition()) {
 			// TODO: write preconditions if required
-			assert AppointmentAdded = true :"Appointment added";
 			assert selectedIndex >=0 : "selectedIndex >=0";
 			assert selectedIndex <= target.getReservation().getAppointments().length : "selectedIndex <= Appointments[]";
 		}
@@ -112,6 +108,8 @@ public class AppointmentPresenterContract extends AppointmentPresenter {
 	public void removeAppointmentButtonPressed(int selectedIndex) {
 		if (preCondition()) {
 			// TODO: write preconditions if required
+			assert selectedIndex >=0 : "selectedIndex >=0";
+			assert selectedIndex <= target.getReservation().getAppointments().length : "selectedIndex <= Appointments[]";
 		}
 		if (postCondition()) {
 			// TODO: write postconditions if required
@@ -123,6 +121,9 @@ public class AppointmentPresenterContract extends AppointmentPresenter {
 			String resourceTypeName, Locale locale) {
 		if (preCondition()) {
 			// TODO: write preconditions if required
+			assert selectedIndex >=0 : "selectedIndex >=0";
+			assert resourceTypeName != null : "resourceTypeName != null";
+			assert locale != null : "locale != null";
 		}
 		if (postCondition()) {
 			// TODO: write postconditions if required
