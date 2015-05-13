@@ -29,7 +29,6 @@ public class TerminList extends FlowPanel {
 			firstWidget = false;
 		}
 			
-		
 		super.add(s);
 		dates.add(s);
 		/*
@@ -51,7 +50,7 @@ public class TerminList extends FlowPanel {
 		
 	}
 	public void removeDate(int index){
-		super.remove(index);
+		super.remove(index+1);
 		dates.remove(index);	
 	}
 

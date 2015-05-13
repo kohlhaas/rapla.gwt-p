@@ -22,8 +22,6 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 
 		void onButtonPlusClicked();
 
-		void onRewriteDateClicked();
-
 		void onAddDateClicked();
 
 		void onAddTerminButtonClicked(ClickEvent event);
@@ -47,8 +45,6 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 	void show();
 
 	void addDateWidget();
-
-	void RewriteDate();
 
 	void setVisiblityOfDateElements();
 
