@@ -14,7 +14,10 @@ import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
+import de.vksi.c4j.ContractReference;
+
 import javax.inject.Inject;
+
 import java.util.*;
 
 /**
@@ -23,6 +26,7 @@ import java.util.*;
  * DynamicType is the ObjectType
  * ...
  */
+@ContractReference(AppointmentPresenterContract.class)
 public class AppointmentPresenter implements Presenter {
     @Inject
     ClientFacade facade;
