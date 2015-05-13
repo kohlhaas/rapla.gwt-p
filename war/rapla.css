@@ -169,6 +169,11 @@
 
 .course {
 	margin: 0 5px 10px 5px;
+}
+
+.deselectButton {
+	margin: 0 5px 10px 5px;
+	padding: 4px;
 } 
 
 
