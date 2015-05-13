@@ -43,6 +43,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.blogspot.ctasada.gwt.eureka.client.ui.*;
 
+
 public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements ResourceDatesView<IsWidget>{
 
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
@@ -132,7 +133,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			dateList.add(firstDateListWidget);
 			
 			FlowPanel placeholderSetResourcesToAll = new FlowPanel();
+			placeholderSetResourcesToAll.setStyleName("resourceButtonPanel");
 			setResourcesToAll = new Button("Ressourcen f\u00FCr alle \u00FCbernehmen");
+			setResourcesToAll.setStyleName("resourceButton");
 			setResourcesToAll.setVisible(false);
 			placeholderSetResourcesToAll.add(setResourcesToAll);
 			dateList.add(placeholderSetResourcesToAll);
@@ -232,7 +235,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			end.add(dateEnd);
 
 			timeEnd = new SmallTimeBox(new Date(-3600000));
-			timeEnd.setTitle("endTime");
 			end.add(timeEnd.asWidget());
 
 			endTimeText = new Label("Uhr");
@@ -853,6 +855,7 @@ private void createResourceTree() {
 			clearDateTimeInputFields();
 			buttonGarbageCan.setResource(IMG_CROSS_GREY);
 			buttonPlus.setResource(IMG_PLUS);
+			buttonPlus.setTitle("Termin erstellen");
 	//}
 	}
 
