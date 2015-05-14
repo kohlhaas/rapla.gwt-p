@@ -1,4 +1,4 @@
-package reservationControllerTest;
+package org.rapla.client.edit.reservation;
 
 import javax.inject.Singleton;
 
@@ -41,7 +41,7 @@ import org.rapla.framework.logger.Logger;
 
 @RunWith(JukitoRunner.class)
 
-public class ReservationControllerTest {
+public class ReservationPresenterTest {
 
 	
 	  @Inject ReservationPresenter controller;
@@ -82,6 +82,25 @@ public class ReservationControllerTest {
 	  }
 	  
 	  
+	@Test 
+	  public void shouldDeleteReservationOnDelete(Reservation event,ReservationView editView) throws RaplaException {
+	    boolean isNew = false;
+	 // WHEN
+	    // WHEN
+	    controller.edit(event, isNew);
+	    
+	    // THEN
+	    // test if presenter is called
+	    verify(editView).setPresenter(controller);
+
+	    // test if event is shown
+	    verify(editView).show(event);
+	    controller.onDeleteButtonClicked();
+	    
+	    // THEN
+	    // test if store is called
+	    verify(facade).remove( event );
+	  }
 	
 	  
 	  
