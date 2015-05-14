@@ -4,6 +4,7 @@ import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.domain.internal.ReservationImpl;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
 import org.rapla.entities.dynamictype.DynamicType;
@@ -35,7 +36,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
     String tabName = "Termin- und Ressourcenplanung";
 
     /**
-     * ich brauch einfunktion die den veranstaltungstyp speichert, -->
+     * ich brauch eine funktion die den veranstaltungstyp speichert, -->
      * eine funktion die die sprache speichert --> s.unten.
      * eine funktion die alle verfügbaren sprachen holt (Daten) --> done
      * und die daten sollen alle gespeichert werden, wenn ich auf speichern button klick --> theo. done
@@ -155,8 +156,6 @@ public class ReservationPresenter implements ReservationController, Presenter {
      * for now you have to save the original type and not as string or smth similiar
      * TODO: need a way to get the type and only save the specific type etc.., for now its only objects and thats not save
      *
-     * @param attributeNames
-     * @param locale
      */
     public void changeAttributes(Map<String, Object> attributeNames, Locale locale) {
         logger.info("adding number of attributes: " + attributeNames.size());
@@ -203,6 +202,15 @@ public class ReservationPresenter implements ReservationController, Presenter {
         }
         return "is new";
 
+    }
+
+    /**
+     * returns true if the user clicked on the "+" button
+     * @return if the event is new or not
+     */
+
+    public boolean getIsNew(){
+        return isNew;
     }
 
     @Override
