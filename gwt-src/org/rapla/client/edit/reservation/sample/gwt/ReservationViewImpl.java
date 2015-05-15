@@ -60,6 +60,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     Button hideButton = null;
     Button deselectButton = null;
     Label planhour;
+    Label captionLabel;
+    String html = "<div class = 'img' ><img class= 'img_1' src = '/images/081 Pen.png'></img></div>";
     String chosenEventType = "";
     String chosenLanguage = "";
     Tree tree;
@@ -102,6 +104,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         // initDownButton();
         initLabelInfo();
         initTextAreaInfo();
+        
+        
     
 
         
@@ -259,13 +263,21 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     private void initCaptionLabel() {
-    	//getPresenter().isReservationNew();
-        Label captionLabel = new Label("Veranstaltung anlegen");
-        Label captionIcon = new Label();
-        captionLabel.setStyleName("captionLabel");
-        captionIcon.setStyleName("captionIcon");
-        headerPanel.add(captionIcon);
-        headerPanel.add(captionLabel);
+    	
+    	/*Header for Creating Reservations*/
+    	if(getPresenter().getIsNew()){
+    		captionLabel = new Label("Veranstaltung anlegen");
+    		captionLabel.setStyleName("captionCreationLabel");
+    	}
+    	
+    	/*Header for Editing Reservations*/
+    	else{
+    		captionLabel = new Label("Veranstaltung bearbeiten");
+    		captionLabel.setStyleName("captionEditingLabel");
+    
+    	}
+
+		headerPanel.add(captionLabel);
     }
 
     

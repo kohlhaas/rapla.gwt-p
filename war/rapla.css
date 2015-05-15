@@ -14,7 +14,7 @@
 }
 
 
-.captionLabel{
+.captionCreationLabel, .captionEditingLabel{
 	font-family: "Calibri";
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -25,12 +25,20 @@
 	background-color: cornflowerblue;
 }
 
-.captionLabel::before {
+.captionCreationLabel::before {
 	content: url('images/022 Document Add.png');
 	padding-right: 10px;
 	padding-top: 1px;
 	padding-bottom: 1px;
 
+}
+
+.captionEditingLabel::before {
+	/*background: url('images/081 Pen.png');*/
+	content: url('images/081 Pen.png');
+	padding-right: 10px;
+	padding-top: 1px;
+	padding-bottom: 1px;
 }
 
 .tabPanel {
