@@ -148,7 +148,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 
 		bar = new TabBar();
 		bar.addTab("Veranstaltungsinformationen");
-		bar.addTab("Termine und Resourcen");
+		bar.addTab("Termine und Ressourcen");
 		bar.setWidth(width + "px");
 		
 		cancel = new Image(IMG_ICON_CANCEL);
