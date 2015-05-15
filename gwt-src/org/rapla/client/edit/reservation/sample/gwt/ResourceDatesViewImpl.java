@@ -5,7 +5,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView;
@@ -73,6 +77,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	Label beginTimeText;
 	Label endTimeText;
 
+	DisclosurePanel addResources;
 	Tree resourceTree;
 	
 	CheckBox cbWholeDay;
@@ -81,6 +86,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	DisclosurePanel dateDisclosurePanel;
 	DisclosurePanel cbRepeatType;
 	
+	FlowPanel dateInfos;
 	Label addDateInfo;
 	
 	HorizontalPanel repeat, suche;
@@ -102,6 +108,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	Button setResourcesToAll;
 	
 	ListBox filterEintr;
+	FlowPanel errorPanel;
 
 	@Override
 	public IsWidget provideContent() {
@@ -181,7 +188,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			buttonBar.add(buttonGarbageCan);
 			buttonBar.add(buttonNextGap);
 
-			FlowPanel dateInfos = new FlowPanel();
+			dateInfos = new FlowPanel();
 			dateInfos.setHeight(height + "px");
 			dateInfos.setStyleName("dateInfos");
 
@@ -352,13 +359,13 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 				chosenResources.add(helpList);
 			}
 
-			DisclosurePanel addResources = new DisclosurePanel("Ressourcen Hinzufuegen");
+			addResources = new DisclosurePanel("Ressourcen Hinzufuegen");
 			addResources.setStyleName("dateInfoLineComplete");
 
 			FlowPanel chooseContainer = new FlowPanel();
 			chooseContainer.setStyleName("chooseContainer");
 
-			// Baumstruktur für verfügbare Resourcen
+			// Baumstruktur f\u00FCr verf\u00FCgbare Resourcen
 			resourceTree = new Tree();
 
 			// Auswählbare Ressourcen laden
@@ -387,8 +394,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			});
 		    
 		    filterEintr = new ListBox();
-		    filterEintr.addItem("Verfügbare Ressourcen");
-		    filterEintr.addItem("Nicht Verfügabre Ressourcen");
+		    filterEintr.addItem("Verf\u00FCgbare Ressourcen");
+		    filterEintr.addItem("Nicht Verf\u00FCgabre Ressourcen");
 		    filterEintr.addItem("Kurse");
 		    filterEintr.addItem("Räume");
 		    filterEintr.addItem("Professoren");	
@@ -402,7 +409,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			suche.setStyleName("suchfeld");
 			MultiWordSuggestOracle oracle = new MultiWordSuggestOracle(); 
 			oracle.add("WWI12B1");
-			oracle.add("Küstermann");
+			oracle.add("K\u00FCstermann");
 			oracle.add("Daniel");
 			oracle.add("B343");
 			
@@ -420,7 +427,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			
 			chooseContainer.add(suche); 
 		    chooseContainer.add(resourceTree);
-		    chooseContainer.setWidth(width  * 0.85 + "px");
+		    //chooseContainer.setWidth(width  * 0.85 + "px");
 			
 		    addResources.setContent(chooseContainer);
 			
@@ -906,7 +913,8 @@ private void createResourceTree() {
 		if(buttonPlus.getTitle().equals("Termin \u00FCberschreiben")){
 			int active = dateList.getActive();
 			dateList.removeDate(active);
-			addDateWidget();	
+			addDateWidget();
+			buttonPlus.setTitle("Termin erstellen");
 			
 		}else{
 				addDateWidget();
@@ -957,8 +965,149 @@ private void createResourceTree() {
 	}
 
 	@Override
-	public void setResourcesToAll() {
+	public void setResourcesToAllDates() {
 		// TODO Auto-generated method stub
+		//reset view
+		setRaplaDate(dateList.getDate(dateList.getActive()));		
+		final List<RaplaDate> errorListAll = dateList.checkConflict();
+		List<RaplaDate> errorList = new ArrayList<>();
+		HashSet<RaplaDate> errorSet = new HashSet<>();
+		errorSet.addAll(errorListAll);
+		errorList.addAll(errorSet);
+		Collections.sort(errorList);
+		final HashMap<FlowPanel, RaplaDate> keyValueMap = new HashMap<>();		
+		FlowPanel dateElement;
+		if(!errorList.isEmpty()){		
+			errorPanel = new FlowPanel();
+			VerticalPanel top = new VerticalPanel();
+			Label headerInfo = new Label("\u00DCberschneidung von Ressourcen bei folgenden Terminen");
+			headerInfo.setStyleName("errorPanelTitle");
+			top.add(headerInfo);
+			top.setCellHorizontalAlignment(headerInfo, HasHorizontalAlignment.ALIGN_CENTER);
+			
+			HorizontalPanel raplaDatePanel = new HorizontalPanel();
+			raplaDatePanel.addStyleName("raplaDatePanel");
+			final VerticalPanel conflictPanel = new VerticalPanel();
+			conflictPanel.setStyleName("conflictPanel");
+			final Label conflictPanelLabel = new Label("Konflikte bestehen mit:");
+			conflictPanelLabel.addStyleName("conflictPanelLabel");
+			conflictPanel.add(conflictPanelLabel);
+			
+			ClickHandler handler = new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					//getPresenter().onErrorRaplaDateClick();
+					FlowPanel sender = (FlowPanel) event.getSource();
+					RaplaDate senderDate = keyValueMap.get(sender);
+					/*
+					Iterator<Entry<FlowPanel, RaplaDate>> it = keyValueMap.entrySet().iterator();
+				    while (it.hasNext()) {
+				        HashMap.Entry<FlowPanel, RaplaDate> pair = (HashMap.Entry<FlowPanel, RaplaDate>)it.next();
+				        pair.getKey().removeStyleName("dateElementClicked");
+				        it.remove(); // avoids a ConcurrentModificationException
+				    }
+					
+				    sender.setStyleName("dateElementClicked");
+				    */
+					reservedResources.clear();
+					reservedResources = copyResourceArray(senderDate.getResources());
+					
+					refreshResourceContainer();
+					refreshResourceTree();
+				    
+					conflictPanel.clear();
+					conflictPanel.add(conflictPanelLabel);
+					conflictPanel.add(chosenResources);
+					loadChosenResources(senderDate.getResources());
+					Label conflictLabel = new Label("Bestehenden Terminen:");
+					conflictLabel.setStyleName("beschriftung");
+					conflictPanel.add(conflictLabel);
+					for (int i = 0; i < errorListAll.size(); i++){
+						if(senderDate == errorListAll.get(i)){
+							// check if even or odd
+							Label errorPanelElementTitle = new Label("Titel der Vorlesung");
+							errorPanelElementTitle.setStyleName("errorPanelElementTitle");
+							if((i & 1) == 0){
+								//even
+								conflictPanel.add(errorPanelElementTitle);
+								conflictPanel.add(errorListAll.get(i+1).createSingleDate(errorListAll.get(i+1)));
+							}else{
+								conflictPanel.add(errorPanelElementTitle);
+								conflictPanel.add(errorListAll.get(i-1).createSingleDate(errorListAll.get(i-1)));
+							}
+						}
+					}
+					
+				}
+			};
+	
+			for(int i = 0; i < errorList.size(); i++){
+				VerticalPanel conflictingDatePanel = new VerticalPanel();
+				RaplaDate conflictingDate = errorList.get(i);
+				Label errorPanelElementTitle = new Label("Titel der Vorlesung");
+				conflictingDatePanel.add(errorPanelElementTitle);
+				errorPanelElementTitle.setStyleName("errorPanelElementTitle");
+				dateElement = conflictingDate.createSingleDate(conflictingDate);
+				dateElement.setWidth("200px");
+				dateElement.addDomHandler(handler, ClickEvent.getType());
+				keyValueMap.put(dateElement, conflictingDate);
+				conflictingDatePanel.add(dateElement);
+				//conflictingDatePanel.add(resourceTree);
+				raplaDatePanel.add(conflictingDatePanel);
+				raplaDatePanel.setCellHorizontalAlignment(conflictingDatePanel, HasHorizontalAlignment.ALIGN_CENTER);
+			}
+			
+			VerticalPanel bottom = new VerticalPanel();
+			bottom.setStyleName("errorPanelButtom");
+			bottom.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			bottom.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+			FlowPanel bottomElements = new FlowPanel();
+			bottomElements.setStyleName("bottomElements");
+			Button takeChanges = new Button("\u00C4nderungen \u00FCbernehmen");
+			takeChanges.setStyleName("errorPanelButton");
+			takeChanges.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					// TODO Auto-generated method stub
+					getPresenter().onErrorPanelButtonClick(event);
+				}
+			});
+			Button close = new Button("Konflikte ignorieren");
+			close.setStyleName("errorPanelButton");
+			close.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					// TODO Auto-generated method stub
+					getPresenter().onErrorPanelButtonClick(event);
+				}
+			});
+			
+			bottomElements.add(takeChanges);
+			bottomElements.add(close);
+			bottom.add(bottomElements);
+			
+			top.addStyleName("errorPanelTop");
+			
+			HorizontalPanel troubleshootingPanel = new HorizontalPanel();
+			troubleshootingPanel.add(conflictPanel);
+			troubleshootingPanel.add(addResources);
+			troubleshootingPanel.setCellWidth(conflictPanel, "35%");
+			addResources.setStyleName("addResourcesErrorStyle");
+			troubleshootingPanel.setStyleName("troubleshootingPanel");
+			
+			addResources.setOpen(true);
+			errorPanel.add(top);
+			errorPanel.add(raplaDatePanel);
+			errorPanel.add(troubleshootingPanel);
+			errorPanel.add(bottom);			
+			errorPanel.setStyleName("errorPanel");
+			dateList.add(errorPanel);
+			
+			
+		}
 		dateList.setResources(currentDate);
 		
 	}
@@ -991,6 +1140,18 @@ private void createResourceTree() {
 		}
 		
 		
+	}
+
+	@Override
+	public void setErrorPanelButtonClickAction(ClickEvent event) {
+		// TODO Auto-generated method stub
+		Button sender = (Button) event.getSource();
+		if(sender.getText().equals("Konflikte ignorieren")){
+			dateList.remove(dateList.getLastPosition()+2);
+			dateInfos.add(chosenResources);
+			dateInfos.add(addResources);
+			addResources.removeStyleName("addResourcesErrorStyle");
+		}
 	}
 
 }

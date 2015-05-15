@@ -90,7 +90,7 @@ border-right: 2px solid black !important;
 	border: 1px solid #c2c2c2;
 	float: left;
 	overflow-y: active;
-	overflow-x: hidden;
+	overflow-x: active;
 }
 
 .wildcard{
@@ -162,7 +162,7 @@ border-right: 2px solid black !important;
 }
 
 .singleDate {
-	width: 300px;
+	width: 98%;
 	padding: 2px;
 	margin-bottom: 2px;
 	overflow-x: hidden;
@@ -175,7 +175,7 @@ border-right: 2px solid black !important;
 }
 
 .singleDateClicked {
-	width: 300px;
+	width: 98%;
 	padding: 2px;
  	margin-bottom: 2px;
 	overflow-x: hidden;
@@ -206,7 +206,7 @@ border-right: 2px solid black !important;
 }
 
 .multiDateInfos {
-	width: 255px;
+	width: 98;
 	float: left;
 }
 
@@ -218,7 +218,7 @@ border-right: 2px solid black !important;
 }
 
 .singleDateInfos {
-	width: 215px;
+	width: 98%;
 	float: right;
 }
 
@@ -364,14 +364,14 @@ border-right: 2px solid black !important;
 }
 .resourceButton{
 	display:block;
-	width: 240px;
+	width: 98%;
 	font: bold;
 	background-color: #f0eded;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	border: 1px solid #222222;	
-	padding: 5px;
+	padding: 1%;
 	margin-bottom: 5px;
 }
 .resourceButton:hover {
@@ -383,7 +383,7 @@ border-right: 2px solid black !important;
 }
 
 .resourceButtonPanel{
-	width: 300px;
+	width: 100%;
 	border-bottom: 1px solid #222222;
 	margin-bottom: 3px;
 }
@@ -419,4 +419,100 @@ margin: 5px;
 
 .suchfeld{
 	height: 85px !important;
+}
+.errorPanel{
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  width: 90%;
+  height: 80%;
+  padding: 16px;
+  border: 6px solid #000000;
+  background-color: white;
+  z-index:1003;
+  overflow: auto;
+}
+
+.errorPanelTop{
+  position: relative;
+  width: 100%;
+  height: 10%;
+  background-color: white;
+  border-bottom: 1px solid #d6d8d9;
+}
+.raplaDatePanel{
+  width: 100%;
+  height: 15%;
+  background-color: white;
+  overflow: hidden;
+  padding-top: 3px;
+}
+.dateElementClicked{
+	background-color: #f0eded;
+}
+.troubleshootingPanel{
+	width: 100%;
+	height: 65%;
+	border: 1px solid #d6d8d9;
+	overflow: hidden;
+}
+.errorPanelButtom{
+  position:relative;
+  width: 100%;
+  height: 10%;
+  background-color: white;
+}
+.bottomElements{
+	width:100%;
+    height:100%;
+    display: inline-block;
+    float: right; 
+    padding: 1px;
+}
+.errorPanelButton{
+	float: right;
+	height: 25px;	
+	width: 200px;
+	font: bold;
+	background-color: #f0eded;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border: 1px solid #222222;	
+	text-align:center;
+	margin-right: 5px;
+}
+.errorPanelButton:hover {
+	background-color: #d6d8d9;
+}
+.errorPanelButton:active {
+	position:relative;	
+	top:1px;
+}
+.errorPanelTitle{
+	font-size: 2em;
+	font-weight: bold;
+	color: #777777;
+}
+.errorPanelElementTitle{
+	font-size: 1em;
+	font-weight: bold;
+	color: #777777;
+	align:center;
+}
+
+.conflictPanel{
+	heigth: 100%;
+	padding-left: 2px;
+}
+.conflictPanelLabel{
+	font-size: 1em;
+	font-weight: bold;
+	color: #ff0000;
+	align:center;
+}
+
+.addResourcesErrorStyle{
+	height: 100%;
+	border-left: 1px solid #d6d8d9;
 }

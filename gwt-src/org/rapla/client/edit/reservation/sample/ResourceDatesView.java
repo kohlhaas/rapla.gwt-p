@@ -32,6 +32,8 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 		
 		void onFilterClicked();
 
+		void onErrorPanelButtonClick(ClickEvent event);
+
 
     }
 
@@ -56,9 +58,11 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 	
 	void setRepeatTypeSettings(Widget sender);
 
-	void setResourcesToAll();
+	void setResourcesToAllDates();
 	
 	void setVisiblityOfFilter();
+
+	void setErrorPanelButtonClickAction(ClickEvent event);
     
 }
 

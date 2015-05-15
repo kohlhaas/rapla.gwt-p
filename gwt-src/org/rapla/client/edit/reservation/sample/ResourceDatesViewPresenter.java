@@ -88,7 +88,7 @@ public class ResourceDatesViewPresenter implements Presenter{
 	@Override
 	public void onSetResourcesToAllClicked() {
 		// TODO Auto-generated method stub
-		view.setResourcesToAll();
+		view.setResourcesToAllDates();
 		
 	}
 
@@ -97,6 +97,12 @@ public class ResourceDatesViewPresenter implements Presenter{
 		// TODO Auto-generated method stub
 		view.setVisiblityOfFilter();
 		
+	}
+
+	@Override
+	public void onErrorPanelButtonClick(ClickEvent event) {
+		// TODO Auto-generated method stub
+		view.setErrorPanelButtonClickAction(event);
 	}
 
 }

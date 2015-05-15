@@ -47,7 +47,8 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 
 		this.vorlesungsStunden = (((end.getTime() - begin.getTime()) / 60000) / 45);
 		setResources(res);
-		createSingleDate();
+		main = createSingleDate(this);
+		main.setStyleName("singleDate");
 		initWidget(main);
 	}
 
@@ -57,9 +58,10 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 		initWidget(main);
 	}
 
-	private void createSingleDate() {
-
-		main.setStyleName("singleDate");
+	public FlowPanel createSingleDate(RaplaDate date) {
+		
+		FlowPanel mainPanel = new FlowPanel();
+		mainPanel.setStyleName("singleDate");
 
 		element = new Label(" ");
 		element.setStyleName("singleDateSign");
@@ -84,9 +86,11 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 		infos.add(dateLabel);
 		infos.add(infoLabel);
 
-		main.add(element);
-		main.add(times);
-		main.add(infos);
+		mainPanel.add(element);
+		mainPanel.add(times);
+		mainPanel.add(infos);
+		
+		return mainPanel;
 	}
 
 	public void createMultiDateLabel() {
@@ -231,5 +235,4 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	public void setResources(ArrayList<List<String>> resources) {
 		this.resources = resources;
 	}
-
 }
