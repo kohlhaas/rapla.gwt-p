@@ -103,8 +103,57 @@ public class ReservationPresenterTest {
 	  }
 	
 	  
+	@Test 
+	  public void shouldCancelReservationCreation(Reservation event,ReservationView editView) throws RaplaException {
+	    boolean isNew = false;
+	 // WHEN
+	    // WHEN
+	    controller.edit(event, isNew);
+	    
+	    // THEN
+	    // test if presenter is called
+	    verify(editView).setPresenter(controller);
+
+	    // test if event is shown
+	    
+	    controller.onCancelButtonClicked();
+	    
+	    // THEN
+	    // test if store is called
+	    verify(editView).hide();
+	  }
+	  
+	@Test 
+	  public void shouldSaveTemporaryChanges(Reservation event,ReservationView editView) throws RaplaException {
+	    
+	  }
+	  
+	@Test 
+	  public void shouldloadDataFromReservationToView(Reservation event,ReservationView editView) throws RaplaException {
+	    
+	  }
+	
+	@Test 
+	  public void shouldloadPersonsIntoView(Reservation event,ReservationView editView) throws RaplaException {
+	    
+	  }
+	  
+	@Test 
+	  public void shouldChangeTab(Reservation event,ReservationView editView) throws RaplaException {
+	    
+	  }
+	
+	@Test 
+	  public void shouldEnableDeleteButton(Reservation event,ReservationView editView) throws RaplaException {
+	    
+	  }
+	
+	
 	  
 	  
 	  
-	  
+	
+	
+	
+	
 }
