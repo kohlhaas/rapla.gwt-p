@@ -11,6 +11,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import de.vksi.c4j.ContractReference;
+
+@ContractReference(org.rapla.client.edit.reservation.ResourceDatesContract.class)
 public class ResourceDatesViewPresenter implements Presenter{
 
     private ResourceDatesView view;

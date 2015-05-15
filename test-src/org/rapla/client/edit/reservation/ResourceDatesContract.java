@@ -6,21 +6,20 @@ import static de.vksi.c4j.Condition.preCondition;
 import org.rapla.client.edit.reservation.sample.InfoView;
 import org.rapla.client.edit.reservation.sample.InfoViewPresenter;
 import org.rapla.client.edit.reservation.sample.ReservationPresenter;
-import org.rapla.client.edit.reservation.sample.ReservationView;
+import org.rapla.client.edit.reservation.sample.ResourceDatesView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesViewPresenter;
 
 import de.vksi.c4j.Target;
 
-public class InfoViewContract extends InfoViewPresenter {
-
+public class ResourceDatesContract  extends ResourceDatesViewPresenter {
 
 
 	@Target
 	private ReservationPresenter target;
 
-	public InfoViewContract(InfoView view) {
+	public ResourceDatesContract(ResourceDatesView view) {
 		super(view);
-
+	
 				 if (preCondition()) {
 //			         assert hour >= HOUR_MIN : "hour >= HOUR_MIN";
 //			         assert hour <= HOUR_MAX : "hour <= HOUR_MAX";

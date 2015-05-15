@@ -9,6 +9,9 @@ import org.rapla.client.edit.reservation.sample.InfoView.Presenter;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
 
+import de.vksi.c4j.ContractReference;
+@ContractReference(org.rapla.client.edit.reservation.InfoViewContract.class)
+
 public class InfoViewPresenter implements Presenter{
 
     private InfoView view;
