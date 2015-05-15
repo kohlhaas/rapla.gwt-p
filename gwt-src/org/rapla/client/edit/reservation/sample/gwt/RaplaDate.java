@@ -91,7 +91,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 
 	public void createMultiDateLabel() {
 
-		main.setStyleName("singleDate");
+		//main.setStyleName("singleDate");
 		Collections.sort(raplaDates);
 		FlowPanel helper = new FlowPanel();
 
@@ -127,7 +127,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 		infos.add(times);
 		infos.add(infoLabel);
 
-		singleDatesContainer.setHeader(infos);
+		singleDatesContainer.setHeader(infos);;
 		main.add(singleDatesContainer);
 	}
 

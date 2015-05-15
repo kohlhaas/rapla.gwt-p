@@ -43,6 +43,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.blogspot.ctasada.gwt.eureka.client.ui.*;
 
+
 public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements ResourceDatesView<IsWidget>{
 
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
@@ -62,8 +63,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	TerminList dateList;
 	FlowPanel buttonBar;
 
-
-	//Label buttonNextGap, buttonGarbageCan, buttonPlus;
 	Image buttonNextGap, buttonGarbageCan, buttonPlus;
 
 	DateBox dateBegin;
@@ -83,7 +82,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 	DisclosurePanel cbRepeatType;
 	
 	Label addDateInfo;
-	Button rewriteDate;
 	
 	HorizontalPanel repeat, suche;
 	RadioButton daily;
@@ -135,7 +133,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			dateList.add(firstDateListWidget);
 			
 			FlowPanel placeholderSetResourcesToAll = new FlowPanel();
+			placeholderSetResourcesToAll.setStyleName("resourceButtonPanel");
 			setResourcesToAll = new Button("Ressourcen f\u00FCr alle \u00FCbernehmen");
+			setResourcesToAll.setStyleName("resourceButton");
 			setResourcesToAll.setVisible(false);
 			placeholderSetResourcesToAll.add(setResourcesToAll);
 			dateList.add(placeholderSetResourcesToAll);
@@ -235,7 +235,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			end.add(dateEnd);
 
 			timeEnd = new SmallTimeBox(new Date(-3600000));
-			timeEnd.setTitle("endTime");
 			end.add(timeEnd.asWidget());
 
 			endTimeText = new Label("Uhr");
@@ -310,22 +309,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			cbRepeatType.add(repeat);
 			
 			HorizontalPanel addDateWithLabel = new HorizontalPanel();
-			rewriteDate = new Button("Termin \u00FCberschreiben");
-			rewriteDate.setVisible(false);
 			addDateInfo = new Label();
-			addDateWithLabel.add(rewriteDate);
 			addDateWithLabel.add(addDateInfo);
-			addDateWithLabel.setCellVerticalAlignment(rewriteDate, HasVerticalAlignment.ALIGN_MIDDLE);
 			addDateWithLabel.setCellVerticalAlignment(addDateInfo, HasVerticalAlignment.ALIGN_MIDDLE);
-			
-			rewriteDate.addClickHandler(new ClickHandler(){
-
-				@Override
-				public void onClick(ClickEvent event) {
-					getPresenter().onRewriteDateClicked();
-				}
-				
-			});
 
 			// Ausgewählte Ressourcen laden
 			chosenResources = new FlowPanel();
@@ -838,20 +824,12 @@ private void createResourceTree() {
 		beginTimeText.setVisible(true);
 		endTimeText.setVisible(true);
 		
-		rewriteDate.setVisible(false);
 		setResourcesToAll.setVisible(false);
 		buttonGarbageCan.setResource(IMG_CROSS_GREY);
 		buttonPlus.setResource(IMG_PLUS);
 		setRepeatTypeSettings(noReccuring);
 	}
-
-	@Override
-	public void RewriteDate() {
-		int active = dateList.getActive();
-		dateList.removeDate(active);
-		addDateWidget();		
-	}
-
+	
 	@Override
 	public void setVisiblityOfDateElements() {
 
@@ -877,37 +855,44 @@ private void createResourceTree() {
 			clearDateTimeInputFields();
 			buttonGarbageCan.setResource(IMG_CROSS_GREY);
 			buttonPlus.setResource(IMG_PLUS);
+			buttonPlus.setTitle("Termin erstellen");
 	//}
 	}
 
 	// ClickHandler: Actions when clicking on a created Date
 	@Override
 	public void setRaplaDate(RaplaDate clickedDate) {
-		int prevActive = dateList.getActive() == -1 ? 0 : dateList.getActive();
+		int prevActive = dateList.getActive() == -1 ? -1 : dateList.getActive();
 		this.currentDate = clickedDate;
 		dateList.setActive(currentDate);
 		
 		//Loading the Date, Time and other date modification elements
 		if(!(dateList.getActive() == -1)){
+			if(dateList.getWidgetCount()>2)
 			setResourcesToAll.setVisible(true);
+			
 			dateBegin.setValue(currentDate.getBeginTime());
 			dateEnd.setValue(currentDate.getEndTime());
 			timeBegin.setValue((long)-3600000 + currentDate.getStartHourMinute());
 			timeEnd.setValue((long)-3600000 + currentDate.getEndHourMinute());
+			
 			buttonGarbageCan.setResource(IMG_CROSS);
 			buttonPlus.setResource(IMG_CHANGE);
-			rewriteDate.setVisible(true);
-			dateList.setStyle(dateList.getRaplaDateIndex(clickedDate), "singleDateClicked");
-			dateList.removeStyle(prevActive, "singleDateClicked");
-			dateList.setStyle(prevActive, "singleDate");	
+			buttonPlus.setTitle("Termin \u00FCberschreiben");
 			reservedResources.clear();
 			reservedResources = copyResourceArray(currentDate.getResources());
 			refreshResourceContainer();
 			refreshResourceTree();
+			
+			dateList.setStyle(dateList.getRaplaDateIndex(clickedDate), "singleDateClicked");
+			dateList.removeStyle(prevActive, "singleDateClicked");
+			dateList.setStyle(prevActive, "singleDate");	
+
 		}else{
 			clearDateTimeInputFields();
 			buttonGarbageCan.setResource(IMG_CROSS_GREY);
 			buttonPlus.setResource(IMG_PLUS);
+			buttonPlus.setTitle("Termin erstellen");
 			currentDate.removeStyleName("singleDateClicked");
 			currentDate.setStyleName("singleDate");
 		}
@@ -918,7 +903,14 @@ private void createResourceTree() {
 
 	@Override
 	public void openEditView() {
+		if(buttonPlus.getTitle().equals("Termin \u00FCberschreiben")){
+			int active = dateList.getActive();
+			dateList.removeDate(active);
+			addDateWidget();	
+			
+		}else{
 				addDateWidget();
+		}
 	}
 
 	@Override
