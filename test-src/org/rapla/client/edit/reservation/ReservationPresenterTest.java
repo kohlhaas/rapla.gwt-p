@@ -11,6 +11,8 @@ import org.jukito.JukitoModule;
 
 
 
+
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.rapla.client.edit.reservation.ReservationController;
+import org.rapla.client.edit.reservation.sample.InfoView;
+import org.rapla.client.edit.reservation.sample.InfoViewPresenter;
 import org.rapla.client.edit.reservation.sample.ReservationPresenter;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.components.util.DateTools;
@@ -45,6 +49,7 @@ public class ReservationPresenterTest {
 
 	
 	  @Inject ReservationPresenter controller;
+	  @Inject InfoViewPresenter infoViewPresenter;
 	  
 	  ClientFacade facade;
 	  Reservation event;
@@ -139,8 +144,17 @@ public class ReservationPresenterTest {
 	  }
 	  
 	@Test 
-	  public void shouldChangeTab(Reservation event,ReservationView editView) throws RaplaException {
-	    
+	  public void shouldChangeTab(Reservation event,ReservationView editView, InfoView infoView) throws RaplaException {
+	    boolean isNew = false;
+	 // WHEN
+	    // WHEN
+	    controller.edit(event, isNew);
+	    verify(editView).setPresenter(controller);
+
+	   // verify(infoView).setPresenter(infoViewPresenter);
+		controller.onTabChanged(0);
+		
+	    verify(editView).setCurrentSubView(infoViewPresenter.getView());
 	  }
 	
 	@Test 

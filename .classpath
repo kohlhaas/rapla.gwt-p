@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/c4j-6.0.0.jar"/>
 	<classpathentry excluding="org/rapla/jre/**" kind="src" path="gwt-src"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test-src"/>
-	<classpathentry kind="lib" path="C:/Users/Jenny/Downloads/c4j-6.0.0/c4j-6.0.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/rapla"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/aopalliance.jar"/>
