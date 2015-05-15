@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="lib/gwt-eureka-0.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Jenny/Downloads/c4j-6.0.0/c4j-6.0.0.jar"/>
 	<classpathentry kind="output" path="eclipse-build"/>
 </classpath>

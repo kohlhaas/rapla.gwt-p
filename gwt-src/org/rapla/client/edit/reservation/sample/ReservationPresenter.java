@@ -27,6 +27,9 @@ import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 import org.rapla.client.edit.reservation.sample.InfoView;
 
+import de.vksi.c4j.ContractReference;
+
+@ContractReference(org.rapla.client.edit.reservation.ReservationContract.class)
 public class ReservationPresenter implements ReservationController, Presenter {
 
 	@Inject
