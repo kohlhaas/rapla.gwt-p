@@ -336,6 +336,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			cources.add("WWI12B1");
 			
 			List<String> profs = new ArrayList<String>();
+			//profs.addAll(this.loadProfs());
 			profs.add("Professoren");
 			profs.add("Kuestermann");		
 			
@@ -344,7 +345,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			testRessourcen.add(profs);
 			
 			loadChosenResources(testRessourcen);
-			
+//			
 
 			Label headerChosenRes  = new Label("Ausgewaehlte Ressourcen:");
 			headerChosenRes.setStyleName("beschriftung");
@@ -371,10 +372,10 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 			// Auswählbare Ressourcen laden
 			
 
+//			
+//			loadResourcesToChoose();
 			
-			loadResourcesToChoose();
-			
-			createResourceTree();
+//			createResourceTree();
 
 						
 
@@ -457,7 +458,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter>  implements R
 		
 	}
 
-private void createResourceTree() {
+public void createResourceTree() {
 			
 		for(List<String> hList : toBeReservedResources){
 			String header = hList.get(0);
@@ -480,7 +481,7 @@ private void createResourceTree() {
 		
 	}
 
-	private void loadChosenResources(ArrayList<List<String>> res) {
+	public void loadChosenResources(ArrayList<List<String>> res) {
 		
 		reservedResources.clear();
 		reservedResources = copyResourceArray(res);
@@ -505,48 +506,48 @@ private void createResourceTree() {
 		
 		
 	}
-
-	private void loadResourcesToChoose() {
-		
-
-		
-		ArrayList<List<String>> ressourcenZwei = new ArrayList<List<String>>();
-		
-		List<String> rooms = new ArrayList<String>();
-		rooms.add("Raeume");
-		rooms.add("A 203");
-		rooms.add("A 204");
-		rooms.add("A 205");
-		rooms.add("A 206");
-		
-		List<String> cources = new ArrayList<String>();
-		cources.add("Kurse");
-		cources.add("WWI12B1");
-		cources.add("WWI12B2");
-		cources.add("WWI12B3");
-		cources.add("WWI12B4");
-		
-		List<String> profs = new ArrayList<String>();
-		profs.add("Professoren");
-		profs.add("Kuestermann");	
-		profs.add("Wengler");	
-		profs.add("Wallrath");	
-		profs.add("Freytag");	
-
-		ressourcenZwei.add(rooms);
-		ressourcenZwei.add(cources);
-		ressourcenZwei.add(profs);
-		
-		
-		toBeReservedResources.clear();
-		toBeReservedResources = copyResourceArray(ressourcenZwei);
-		
+//
+//	private void loadResourcesToChoose() {
 //		
-//		toBeReservedResources.add(room);
-//		toBeReservedResources.add(cource);
-//		toBeReservedResources.add(prof);
-		
-	}
+//
+//		
+//		ArrayList<List<String>> ressourcenZwei = new ArrayList<List<String>>();
+//		
+//		List<String> rooms = new ArrayList<String>();
+//		rooms.add("Raeume");
+//		rooms.add("A 203");
+//		rooms.add("A 204");
+//		rooms.add("A 205");
+//		rooms.add("A 206");
+//		
+//		List<String> cources = new ArrayList<String>();
+//		cources.add("Kurse");
+//		cources.add("WWI12B1");
+//		cources.add("WWI12B2");
+//		cources.add("WWI12B3");
+//		cources.add("WWI12B4");
+//		
+//		List<String> profs = new ArrayList<String>();
+//		profs.add("Professoren");
+//		profs.add("Kuestermann");	
+//		profs.add("Wengler");	
+//		profs.add("Wallrath");	
+//		profs.add("Freytag");	
+//
+//		ressourcenZwei.add(rooms);
+//		ressourcenZwei.add(cources);
+//		ressourcenZwei.add(profs);
+//		
+//		
+//		toBeReservedResources.clear();
+//		toBeReservedResources = copyResourceArray(ressourcenZwei);
+//		
+////		
+////		toBeReservedResources.add(room);
+////		toBeReservedResources.add(cource);
+////		toBeReservedResources.add(prof);
+//		
+//	}
 
 	private FlowPanel createResourceContainer(String name){
 		
@@ -1152,6 +1153,38 @@ private void createResourceTree() {
 			dateInfos.add(addResources);
 			addResources.removeStyleName("addResourcesErrorStyle");
 		}
+	}
+	
+	
+
+	@Override
+	public void setResourcesPerson(List<String> dynamicTypesNames) {	
+		dynamicTypesNames.add(0, "Professoren");
+		this.toBeReservedResources.add(dynamicTypesNames);
+		
+	}
+
+	@Override
+	public void setResourcesRoom(List<String> dynamicTypesNames) {
+		dynamicTypesNames.add(0, "Raeume");
+		this.toBeReservedResources.add(dynamicTypesNames);
+		
+	}
+
+	@Override
+	public void setResourcesCourse(List<String> dynamicTypesNames) {
+		dynamicTypesNames.add(0, "Kurse");
+		this.toBeReservedResources.add(dynamicTypesNames);
+		
+		
+	}
+
+	@Override
+	public void clear() {
+		this.toBeReservedResources.clear();
+		this.resourceTree.clear();
+		this.refreshResourceContainer();
+		
 	}
 
 }

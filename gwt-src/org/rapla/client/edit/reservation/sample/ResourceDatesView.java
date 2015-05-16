@@ -63,6 +63,15 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 	void setVisiblityOfFilter();
 
 	void setErrorPanelButtonClickAction(ClickEvent event);
+
+	void setResourcesPerson(List<String> dynamicTypesNames);
+	void setResourcesRoom(List<String> dynamicTypesNames);
+	void setResourcesCourse(List<String> dynamicTypesNames);
+
+	void createResourceTree();
+	
+	void clear();
+    
     
 }
 

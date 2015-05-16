@@ -51,4 +51,5 @@ public interface InfoView<W> extends View<Presenter>, ReservationEditSubView<W> 
 
 	void setDynamicFields(Attribute[] attributes);
 
+
 }

@@ -98,12 +98,16 @@ public class ResourceDatesViewPresenter implements Presenter{
 		view.setVisiblityOfFilter();
 		
 	}
+	
+	
 
 	@Override
 	public void onErrorPanelButtonClick(ClickEvent event) {
 		// TODO Auto-generated method stub
 		view.setErrorPanelButtonClickAction(event);
 	}
+
+	
 
 }
 

@@ -188,7 +188,7 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 
 	@Override
 	public void setEventTypes(List<String> eventTypes) {
-
+		eventTypesListBox.clear();
 		for (int i = 0; i < eventTypes.size(); i++) {
 			eventTypesListBox.addItem((String) eventTypes.get(i).toString());
 		}
@@ -259,4 +259,6 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 		contentPanel.setVisible(true);
 		
 	}
+
+	
 }

@@ -15,6 +15,7 @@ import org.rapla.client.edit.reservation.sample.ResourceDatesView;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
+import org.rapla.framework.RaplaException;
 
 import com.blogspot.ctasada.gwt.eureka.client.ui.SmallTimeBox;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -204,7 +205,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 
 		bar.addSelectionHandler(new SelectionHandler<Integer>() {
 			public void onSelection(SelectionEvent<Integer> event) {
-				getPresenter().onTabChanged(bar.getSelectedTab());
+				try {
+					getPresenter().onTabChanged(bar.getSelectedTab());
+				} catch (RaplaException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 

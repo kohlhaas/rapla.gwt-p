@@ -17,6 +17,7 @@ import org.rapla.entities.domain.PermissionContainer;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
+import org.rapla.entities.dynamictype.ClassificationFilter;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
 import org.rapla.entities.dynamictype.internal.AttributeImpl;
@@ -357,7 +358,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 	}
 
 	@Override
-	public void onTabChanged(int selectedTab) {
+	public void onTabChanged(int selectedTab) throws RaplaException {
 		logger.info("Changed Tab");
 		try {
 			this.saveTemporaryChanges();
@@ -381,14 +382,9 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		logger.info("updated view");
 
 		if (tempView instanceof InfoView) {
-			try {
-				((InfoView) tempView).setEventTypes(this.getEventTypes());
-			} catch (RaplaException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.configure((InfoView) tempView);
 		} else if (tempView instanceof ResourceDatesView) {
-
+			this.configure(((ResourceDatesView) tempView));
 		} else {
 
 		}
@@ -396,6 +392,92 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		// this.loadPersonsIntoView(); not ready yet
 		this.loadDataFromReservationToView();
 
+	}
+
+	private void configure(InfoView view) throws RaplaException {
+		view.setEventTypes(this.getEventTypes());
+		
+	}
+
+	private void configure(ResourceDatesView view) throws RaplaException {
+		//view.setChosenResouces();
+		view.clear();
+		view.setResourcesPerson(this.getPersonData());
+		view.setResourcesCourse(this.getCourseData());
+		view.setResourcesRoom(this.getRoomData());
+		view.createResourceTree();
+		
+	}
+
+	private List<String> getCourseData() throws RaplaException {
+		 List<String> course = new ArrayList<String>();
+			DynamicType[] types = facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
+			ClassificationFilter[] filters = 	new ClassificationFilter[1];
+			logger.warn("Load data into resourcesDates");
+			for(DynamicType type:types){
+				logger.warn(type.toString());
+				
+				if(type.getName(this.raplaLocale.getLocale()).toString().equalsIgnoreCase("kurs")){
+					filters[0] = type.newClassificationFilter();
+				}
+			}
+			Allocatable[] allocatables = facade.getAllocatables(filters);
+			logger.warn("Load course data into resourcesDates");
+			for(Allocatable allocatable:allocatables){
+//				logger.warn("Course: " + allocatable.getName(raplaLocale.getLocale()));
+				course.add(allocatable.getName(raplaLocale.getLocale()));
+			}
+			
+			return course;
+	}
+
+	private List<String> getPersonData() throws RaplaException {
+		 List<String> persons = new ArrayList<String>();
+		DynamicType[] types = facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_PERSON);
+		ClassificationFilter[] filters = 	new ClassificationFilter[1];
+		logger.warn("Load data into resourcesDates");
+		for(DynamicType type:types){
+			logger.warn(type.toString());
+			
+			if(type.getKey().toString().equalsIgnoreCase("professor")){
+				logger.warn(type.getName().toString());
+				filters[0] = type.newClassificationFilter();
+			}
+//			if(type.getKey().toString().equalsIgnoreCase("honorarkraft")){
+//				logger.warn(type.getName().toString());
+//				filters[1] = type.newClassificationFilter();
+//			}
+		}
+		Allocatable[] allocatables = facade.getAllocatables(filters);
+		logger.warn("Load person data into resourcesDates");
+		for(Allocatable allocatable:allocatables){
+//			logger.warn("Person: " + allocatable.getName(raplaLocale.getLocale()));
+			persons.add(allocatable.getName(raplaLocale.getLocale()));
+		}
+		
+		return persons;
+	}
+
+	private List<String>  getRoomData() throws RaplaException {
+		 List<String> rooms = new ArrayList<String>();
+		DynamicType[] types = facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
+		ClassificationFilter[] filters = 	new ClassificationFilter[1];
+		logger.warn("Load data into resourcesDates");
+		for(DynamicType type:types){
+			logger.warn(type.toString());
+			
+			if(type.getName(this.raplaLocale.getLocale()).toString().equalsIgnoreCase("raum")){
+				filters[0] = type.newClassificationFilter();
+			}
+		}
+		Allocatable[] allocatables = facade.getAllocatables(filters);
+		logger.warn("Load room data into resourcesDates");
+		for(Allocatable allocatable:allocatables){
+//			logger.warn("Room: " + allocatable.getName(raplaLocale.getLocale()));
+			rooms.add(allocatable.getName(raplaLocale.getLocale()));
+		}
+		
+		return rooms;
 	}
 
 	public List<DynamicType> getCreateableDynamicTypes(String classificationType)
