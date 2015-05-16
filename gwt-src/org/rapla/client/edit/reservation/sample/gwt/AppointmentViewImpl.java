@@ -94,7 +94,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         addAppointment.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                getPresenter().newAppointmentButtonPressed();
+                getPresenter().newAppointmentButtonPressed(getStartDate(), getEndDate());
             }
         });
         appointmentPanel.add(addAppointment);
