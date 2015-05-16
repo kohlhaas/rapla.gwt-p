@@ -20,12 +20,6 @@ import javax.inject.Inject;
 
 import java.util.*;
 
-/**
- * every Classification exist of: DynamicType(take a look above), Attributes...Names
- * Attributes are the properties of the ObjectType
- * DynamicType is the ObjectType
- * ...
- */
 @ContractReference(AppointmentPresenterContract.class)
 public class AppointmentPresenter implements Presenter {
     @Inject

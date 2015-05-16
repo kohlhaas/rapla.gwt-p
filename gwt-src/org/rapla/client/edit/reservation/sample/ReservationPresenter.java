@@ -19,6 +19,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Each Reservation has a classification, some resources(allocatable) and appointments
+ * Classifications are : Reservation, Resource, Person.
+ * Each Classification has a type f.e. a resource can be type: course
+ * A Classification for a reservation is classified as a reservation
+ * A Appointment is a kind of timeline (from x to y)
+ * A Allocatable has to be classified as resource and hold some attributes
+ */
 public class ReservationPresenter implements ReservationController, Presenter {
 
     @Inject
@@ -121,20 +129,21 @@ public class ReservationPresenter implements ReservationController, Presenter {
     }
 
     /**
-     * @param searchCategory Studiengaenge, Benutzergruppen....
+     * @param neededCategory Studiengaenge, Benutzergruppen....
      * @return null if error
      */
-    public Category[] getCategory(Locale locale, String searchCategory) {
+    public Category[] getCategory(Locale locale, String neededCategory) {
         Category courseCategory = null;
+
         Category superCategory = facade.getSuperCategory();
         Category[] categories = superCategory.getCategories();
         for (Category category : categories) {
-            if (category.getName(locale).equals(searchCategory)) {
+            if (category.getName(locale).equals(neededCategory)) {
                 courseCategory = category;
             }
         }
         if (courseCategory == null) {
-            logger.error("there is no : " + searchCategory);
+            logger.error("there is no : " + neededCategory);
         }
 
         if (courseCategory != null) {
@@ -147,14 +156,14 @@ public class ReservationPresenter implements ReservationController, Presenter {
     public void changeReservationName(String newName) {
         logger.info("Name changed to " + newName);
         Classification classification = reservation.getClassification();
-        Attribute first = classification.getType().getAttributes()[0];
-        classification.setValue(first, newName);
+        Attribute attribute = classification.getType().getAttributes()[0];
+        classification.setValue(attribute, newName);
     }
 
     /**
      * for now only if depth =1+
      * for now you have to save the original type and not as string or smth similiar
-     * TODO: need a way to get the type and only save the specific type etc.., for now its only objects and thats not save
+     * TODO: need a way to get the type and only save the specific type etc.., for now its only objects and that's not save
      *
      */
     public void changeAttributes(Map<String, Object> attributeNames, Locale locale) {
