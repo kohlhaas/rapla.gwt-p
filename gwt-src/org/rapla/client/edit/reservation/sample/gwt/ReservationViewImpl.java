@@ -338,9 +338,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 language.clear();
 
                 if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
+                	
                 	removeCourseButton();
                 	removeAllLanguageLB();
                 	removePlannedHoursLabelTB();
+                	coursePanel.setVisible(false);
                 	
                 	buttonRemoved = true;
 
@@ -365,6 +367,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
                 if (chosenEventType.equalsIgnoreCase("Lehrveranstaltung")) {
                     //activateCourseButton = true;
+                	coursePanel.setVisible(true);
                 	changedToLehrveranstaltung = true;
                 	initAllLanguageLB();
                     initCourseButton();
@@ -502,14 +505,20 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             }
         });
         
-        deselectButton = new Button("Alle Selektionen löschen");
-        deselectButton.setStyleName("deselectButton");
-        coursePanel.add(deselectButton);
+        initDeselectButton();
+
 
         coursePanel.setVisible(false);
         //activateCourseButton = false;
 
 
+    }
+    
+    private void initDeselectButton(){
+    	
+        deselectButton = new Button("Alle Selektionen löschen");
+        deselectButton.setStyleName("deselectButton");
+        coursePanel.add(deselectButton);
     }
     
     
