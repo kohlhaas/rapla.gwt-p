@@ -21,9 +21,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
-    /**
-     * please use smth like hungarian Notation or make the vars better readable
-     */
 
     Panel popup;
     FlowPanel headerPanel;

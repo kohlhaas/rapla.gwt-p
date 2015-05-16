@@ -15,6 +15,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/jukito-1.4.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/DHBW_C4J/libs/c4j-6.0.0-for-java-8.jar"/>
+	<classpathentry kind="lib" path="lib/c4j-6.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/javassist-3.16.1-GA.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="output" path="eclipse-build"/>
 </classpath>
