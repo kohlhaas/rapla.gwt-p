@@ -56,6 +56,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     Button hideButton = null;
     Button deselectButton = null;
+    CheckBox [] cb;
     Label planhour;
     Label captionLabel;
     String html = "<div class = 'img' ><img class= 'img_1' src = '/images/081 Pen.png'></img></div>";
@@ -471,14 +472,31 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
          * here you got all categories like Allgemein, Wirtschaft, Technik etc.
          */
         int i = 0;
+        int f = 0;
+        int anzahl = 0;
+        
+        for (Category category : allCourses) {
+        	for (Category underCategory : category.getCategories()) {
+            	anzahl = anzahl + 1;
+            }
+        }
+        
+        cb = new CheckBox [anzahl]; 
+        
         for (Category category : allCourses) {
 
-            //allCoursesLB.addItem(category.getName(locale));
             tree.addItem(new TreeItem());
             tree.getItem(i).setText(category.getName(locale));
+            
+            
 
             for (Category underCategory : category.getCategories()) {
-                tree.getItem(i).addItem(new TreeItem(new CheckBox(underCategory.getName(locale))));
+
+            	cb[f] = new CheckBox(underCategory.getName(locale));
+
+            	tree.getItem(i).addItem(new TreeItem(cb[f]));
+            	f++;
+            
             }
             i++;
 
@@ -516,6 +534,26 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         deselectButton = new Button("Alle Selektionen löschen");
         deselectButton.setStyleName("deselectButton");
         coursePanel.add(deselectButton);
+        
+        final Locale locale = getRaplaLocale().getLocale();
+        final Category[] allCourses = getPresenter().getCategory(locale, "Studiengänge");
+        
+        deselectButton.addClickHandler(new ClickHandler(){
+        	@Override
+        	public void onClick(ClickEvent e){
+        		
+        		int f = 0;
+                for (Category category : allCourses) {
+                	for (Category underCategory : category.getCategories()) {
+                		//String name = "cb" + f;
+                		cb[f].setValue(false);
+                		f++;
+                	
+                	}
+                
+                }
+        	}
+        });
     }
     
     
