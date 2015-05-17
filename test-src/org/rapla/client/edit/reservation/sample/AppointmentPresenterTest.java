@@ -73,7 +73,7 @@ public class AppointmentPresenterTest {
   	// BEFORE
   	presenter.setReservation(event);
     // WHEN 
-    presenter.newAppointmentButtonPressed();
+    //presenter.newAppointmentButtonPressed(); TODO: add app test, had to change it
     
     // THEN
     // test if newAppointment is called in facade
@@ -129,7 +129,7 @@ public class AppointmentPresenterTest {
 	  
 	// BEFORE
 	presenter.setReservation(event);  
-	presenter.newAppointmentButtonPressed();
+	// presenter.newAppointmentButtonPressed(); TODO: see above
 	
 	// WHEN
 	presenter.appointmentSelected(0);
@@ -152,7 +152,7 @@ public class AppointmentPresenterTest {
 	  
 	  //BEFORE
 	  presenter.setReservation(event);
-	  presenter.newAppointmentButtonPressed();
+	 // presenter.newAppointmentButtonPressed();
 	  
 	  // WHEN
 	  presenter.removeAppointmentButtonPressed(0);
@@ -171,7 +171,7 @@ public class AppointmentPresenterTest {
 	  
 	  //BEFORE
 	  presenter.setReservation(event);
-	  presenter.newAppointmentButtonPressed();
+	 // presenter.newAppointmentButtonPressed();
 	  
 	  // WHEN
 	  //TODO: Wie wird das aufgerufen?

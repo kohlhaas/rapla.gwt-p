@@ -1,10 +1,8 @@
 package org.rapla.client.edit.reservation.sample;
 
+import de.vksi.c4j.ContractReference;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
-import org.rapla.components.util.DateTools;
-import org.rapla.entities.domain.Allocatable;
-import org.rapla.entities.domain.Appointment;
-import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.ClientFacade;
@@ -14,10 +12,7 @@ import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
-import de.vksi.c4j.ContractReference;
-
 import javax.inject.Inject;
-
 import java.util.*;
 
 @ContractReference(AppointmentPresenterContract.class)
@@ -40,12 +35,20 @@ public class AppointmentPresenter implements Presenter {
         this.view.setPresenter(this);
     }
 
-
+    /**
+     * @param repeatingType use null, if no repeating is needed
+     */
     @Override
-    public void newAppointmentButtonPressed(Date startDate, Date endDate) {
+    public void newAppointmentButtonPressed(Date startDate, Date endDate, RepeatingType repeatingType) {
         Appointment newAppointment;
         try {
             newAppointment = facade.newAppointment(startDate, endDate);
+            if (repeatingType != null) {
+                logger.info("saved appointment: "+newAppointment +" and repeatingType "+ repeatingType);
+                newAppointment.setRepeatingEnabled(true);
+                Repeating repeating = newAppointment.getRepeating();
+                repeating.setType(repeatingType);
+            }
             reservation.addAppointment(newAppointment);
             List<Appointment> appointmentList = Arrays.asList(reservation.getAppointments());
             view.updateAppointmentList(appointmentList, appointmentList.size() - 1);
@@ -79,22 +82,20 @@ public class AppointmentPresenter implements Presenter {
      * @return NULL if error
      */
     public Date[] nextFreeDateButtonPressed(Date startDate, Date endDate) {
-        Appointment newAppointment;
+        Appointment appointment;
         try {
             logger.info("accessing facade");
-            newAppointment = facade.newAppointment(startDate, endDate);
+            appointment = facade.newAppointment(startDate, endDate);
             logger.info("new appointment for Dates: " + startDate.toString() + " - " + endDate.toString());
             List<Allocatable> asList = Arrays.asList(facade.getAllocatables());
-            FutureResult<Date> nextAllocatableDate = facade.getNextAllocatableDate(asList, newAppointment, calendarOptions);
+            FutureResult<Date> nextAllocatableDate = facade.getNextAllocatableDate(asList, appointment, calendarOptions);
             logger.info("next allo date: " + nextAllocatableDate.get().toString());
             Date newStart = nextAllocatableDate.get();
-            if ( newStart != null)
-			{
-				newAppointment.move(newStart);
-				return new Date[] {newAppointment.getStart(), newAppointment.getEnd()};
-			}
-            else {
-            	return null;
+            if (newStart != null) {
+                appointment.move(newStart);
+                return new Date[]{appointment.getStart(), appointment.getEnd()};
+            } else {
+                return null;
             }
         } catch (RaplaException e) {
             logger.error("error while using facade: ", e);
@@ -130,12 +131,12 @@ public class AppointmentPresenter implements Presenter {
         logger.info("removing app toString: " + selectedAppointment.toString());
         this.reservation.removeAppointment(selectedAppointment);
         int focus;
-        if(reservation.getAppointments().length < 1)
-        	focus = -1;
-        else if (selectedIndex ==  reservation.getAppointments().length)
-        	focus = selectedIndex - 1;
+        if (reservation.getAppointments().length < 1)
+            focus = -1;
+        else if (selectedIndex == reservation.getAppointments().length)
+            focus = selectedIndex - 1;
         else
-        	focus = selectedIndex;
+            focus = selectedIndex;
         this.view.updateAppointmentList(Arrays.asList(reservation.getAppointments()), focus);
     }
 

@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.rapla.entities.domain.Allocatable;
+import org.rapla.entities.domain.RepeatingType;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.Conflict;
@@ -36,7 +37,7 @@ public class AppointmentPresenterContract extends AppointmentPresenter {
 	}
 
 	@Override
-	public void newAppointmentButtonPressed() {
+	public void newAppointmentButtonPressed(Date startDate, Date endDate, RepeatingType type) {
 		if (preCondition()) {
 			// TODO: write preconditions if required
 		}
