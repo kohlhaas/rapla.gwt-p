@@ -2,6 +2,9 @@ package org.rapla.client.edit.reservation.sample;
 
 import static org.mockito.Mockito.verify;
 
+import java.util.Locale;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -11,18 +14,24 @@ import org.jukito.TestSingleton;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.internal.RaplaJDKLoggingAdapter;
 import org.rapla.framework.internal.RaplaLocaleImpl;
+import org.rapla.client.base.AbstractView;
+import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 
 @RunWith(JukitoRunner.class)
-public class ReservationPresenterTest {
+public class ReservationPresenterTest  {
 
   @Inject
   ReservationPresenter presenter;
+  
+  @Inject
+  RaplaLocale raplaLocale;
   
   ClientFacade facade;
   
@@ -40,7 +49,7 @@ public class ReservationPresenterTest {
     }
   
   @Test
-  public void shouldCallShowOnEdit(Reservation event, ReservationView editView) throws RaplaException {
+  public void editTest(Reservation event, ReservationView editView) throws RaplaException {
     boolean isNew = false;
     // WHEN
     presenter.edit(event, isNew);
@@ -52,16 +61,34 @@ public class ReservationPresenterTest {
     // test if event is shown
     verify(editView).show(event);
     
+    isNew = true;
+    //WHEN
+    presenter.edit(event, isNew);
+    
+    // THEN
+    // test if presenter is called
+    verify(editView).setPresenter(presenter);
+
+    // test if event is shown
+    verify(editView,Mockito.times(2)).show(event);
+  }
+  
+  @Test
+  public void onSavedButtonTest(Reservation event) throws RaplaException {
+    
+	//BEFORE
+	presenter.edit(event, true);
+	  
     // WHEN
     presenter.onSaveButtonClicked();
     
     // THEN
     // test if store is called
-    verify(facade).store( event );
+    verify(facade).store(event);
   }
   
   @Test
-  public void testDelete( Reservation event) throws RaplaException {
+  public void deleteButtonTest( Reservation event) throws RaplaException {
     boolean isNew = false;
     // WHEN
     presenter.edit(event, isNew);
@@ -76,12 +103,45 @@ public class ReservationPresenterTest {
   }
   
   @Test
-  public void newEvent(Reservation event){
-	  boolean isNew=true;
+  public void cancelButtonTest(ReservationView editView){
+	  //WHEN	  
+	  presenter.onCancelButtonClicked();
 	  
-	  presenter.edit(event, isNew);
+	  //THEN
+	  //test if window is hidden
+	  verify(editView).hide();
 	 
   }
   
+  @Test
+  public void getEventTypesTest(Reservation event, ReservationView editView) throws RaplaException {
+	  //WHEN	
+	  presenter.getAllEventTypes();
+	  
+	  //THEN
+	  //test if facade is called
+	  verify(facade).getDynamicTypes("reservation");
+
+  }
   
+  @Test
+  public void getCategoryTest(){
+	  Locale locale = raplaLocale.getLocale();
+	  //WHEN	
+	  presenter.getCategory(locale, "Sprachen");
+	  //THEN
+	  //test if superCategory is get from facade
+	  verify(facade).getSuperCategory();
+	  //TODO: NullPointerException: Warum??
+  }
+  
+  @Test
+  public void changeAttributeTest(){
+	  Locale locale = raplaLocale.getLocale();
+	  //WHEN	
+	  presenter.changeAttributesOfCLassification((Map<String, Object>) presenter.getAllCurrentAttributes(locale),locale);;
+	  //THEN
+	  
+	  
+  }
 }

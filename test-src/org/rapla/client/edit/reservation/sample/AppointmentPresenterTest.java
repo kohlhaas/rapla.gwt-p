@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.rapla.client.base.AbstractView;
+import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.components.util.DateTools;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
@@ -26,7 +28,7 @@ import org.rapla.framework.internal.RaplaJDKLoggingAdapter;
 import org.rapla.framework.internal.RaplaLocaleImpl;
 
 @RunWith(JukitoRunner.class)
-public class AppointmentPresenterTest {
+public class AppointmentPresenterTest extends AbstractView<Presenter> {
 
   @Inject
   AppointmentPresenter presenter;
@@ -117,10 +119,7 @@ public class AppointmentPresenterTest {
     verify(facade).newAppointment(startDate,endDate);
     
     //test if getAllocatables is called in facade
-    verify(facade).getAllocatables();
-    
-    // TODO: add test for return value in view
-        
+    verify(facade).getAllocatables();        
   }
   
   @Test
