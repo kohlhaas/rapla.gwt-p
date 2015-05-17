@@ -42,11 +42,9 @@ public class AppointmentPresenter implements Presenter {
 
 
     @Override
-    public void newAppointmentButtonPressed() {
+    public void newAppointmentButtonPressed(Date startDate, Date endDate) {
         Appointment newAppointment;
         try {
-            Date startDate = new Date(facade.today().getTime() + DateTools.MILLISECONDS_PER_HOUR * 8);
-            Date endDate = new Date(startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
             newAppointment = facade.newAppointment(startDate, endDate);
             reservation.addAppointment(newAppointment);
             List<Appointment> appointmentList = Arrays.asList(reservation.getAppointments());

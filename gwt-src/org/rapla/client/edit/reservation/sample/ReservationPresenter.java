@@ -4,7 +4,6 @@ import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
-import org.rapla.entities.domain.internal.ReservationImpl;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
 import org.rapla.entities.dynamictype.DynamicType;
@@ -21,8 +20,8 @@ import java.util.Map;
 
 /**
  * Each Reservation has a classification, some resources(allocatable) and appointments
- * Classifications are : Reservation, Resource, Person.
- * Each Classification has a type f.e. a resource can be type: course
+ * Classifications kinds are : Reservation, Resource, Person.
+ * Each Classification has a type : f.e. a resource can be type: course
  * A Classification for a reservation is classified as a reservation
  * A Appointment is a kind of timeline (from x to y)
  * A Allocatable has to be classified as resource and hold some attributes
@@ -43,36 +42,12 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     String tabName = "Termin- und Ressourcenplanung";
 
-    /**
-     * ich brauch eine funktion die den veranstaltungstyp speichert, -->
-     * eine funktion die die sprache speichert --> s.unten.
-     * eine funktion die alle verfügbaren sprachen holt (Daten) --> done
-     * und die daten sollen alle gespeichert werden, wenn ich auf speichern button klick --> theo. done
-     * eine funktion, die die geplanten vorlesungsstunden abspeichert --> s. unten
-     * aber das sind eig. alles attribute oder?
-     * ich brauch noch eine funktion die alle  Daten zu Attribut "Art" bei dem Veranstaltungstyp "Prüfungen" ausließt --> s.unten
-     */
     @Inject
     public ReservationPresenter(ReservationView view, AppointmentPresenter appointmentPresenter) {
         this.view = view;
         view.setPresenter(this);
         this.appointmentPresenter = appointmentPresenter;
         view.addSubView(tabName, appointmentPresenter.getView());
-    }
-
-    /**
-     * TODO: have to add the depth or smth similiar to know it, else an another class
-     */
-    public List<String> getCategoryNames(Locale locale) {
-
-        List<String> stringList = new ArrayList<>();
-        Category superCategory = facade.getSuperCategory();
-        Category[] categories = superCategory.getCategories();
-        for (Category category : categories) {
-            String name = category.getName(locale);
-            stringList.add(name);
-        }
-        return stringList;
     }
 
     @Override
@@ -116,7 +91,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
     }
 
     /**
-     * @return all "Veranslatungstypen" eventTypes, null if error
+     * @return all "Veranstaltungstypen" eventTypes, null if error
      */
     @Override
     public DynamicType[] getAllEventTypes() {
@@ -166,7 +141,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
      * TODO: need a way to get the type and only save the specific type etc.., for now its only objects and that's not save
      *
      */
-    public void changeAttributes(Map<String, Object> attributeNames, Locale locale) {
+    public void changeAttributesOfCLassification(Map<String, Object> attributeNames, Locale locale) {
         logger.info("adding number of attributes: " + attributeNames.size());
 
         Classification classification = reservation.getClassification();

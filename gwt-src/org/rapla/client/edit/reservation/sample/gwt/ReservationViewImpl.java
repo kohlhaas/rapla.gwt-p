@@ -456,9 +456,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void initCourseButton() {
 
-/**
- * Make that method smaller please
- */
         //Study course
 
         course.setStyleName("course");
@@ -480,9 +477,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         TreeItem studiengangTreeItem = new TreeItem();
         studiengangTreeItem.setText("Studiengänge");
         tree.addItem(studiengangTreeItem);
-        /**
-         * here you got all categories like Allgemein, Wirtschaft, Technik etc.
-         */
         int i = 0;
         int f = 0;
         int anzahl = 0;
@@ -514,13 +508,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         }
         coursePanel.add(tree);
-
-        /**
-         * here you got all underCategories "Technik --> Elektrotechnik,Informatik...| Wirtschaft --> BWl ..."
-         * depending on the study category u chosed
-         * i dont know if its really smart to do it this way, but he has f.e very nested attributes.. and given so, a map could be wrong
-         */
-
 
         hideButton = new Button("Eingabe bestätigen");
         coursePanel.add(hideButton);
@@ -713,7 +700,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 public void onClick(ClickEvent e) {
                     //Attributes [] selectedAttributes = new Attributes();
 
-                    //getPresenter().changeAttributes(attributes);
+                    //getPresenter().changeAttributesOfCLassification(attributes);
                     getPresenter().onSaveButtonClicked();
                 }
             });
