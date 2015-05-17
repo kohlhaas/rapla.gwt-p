@@ -1,28 +1,20 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.cell.client.ImageCell;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.text.shared.SafeHtmlRenderer;
-import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
-import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
-
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
@@ -31,7 +23,6 @@ import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import javax.inject.Inject;
-
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -67,16 +58,16 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     private FlowPanel resourceListsPanel;
     private ListBox resourceTypesList;
     private Map<String, ListBox> resourceLists;
-    
+
     ListDataProvider<Appointment> appointmentDataProvider = new ListDataProvider<>();
-    
+
     SingleSelectionModel<Appointment> selectionModel;
 
-	ListBox bookedResources = new ListBox();
-
+    ListBox bookedResources = new ListBox();
 
     /**
-     * save an appointment by calling : "getPresenter().newAppointmentButtonPressed(dateStart, dateEnd)"
+     * TODO: change a current appointent, now its only possible to add one, but not to change the existing one.
+     * TODO. In Case of usage, f.e. use a button "changed current appointment" and i can create a "change appointment" method
      */
 
     public void show(Reservation reservation) {
@@ -94,7 +85,9 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         addAppointment.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                getPresenter().newAppointmentButtonPressed(getStartDate(), getEndDate());
+                String selectedRepeatRB = getSelectedRepeatRB(selectRepeat);
+                Logger.getGlobal().info("selectedRepeat:" + selectedRepeatRB);
+                getPresenter().newAppointmentButtonPressed(getStartDate(), getEndDate(),RepeatingType.findForString(selectedRepeatRB));
             }
         });
         appointmentPanel.add(addAppointment);
@@ -107,7 +100,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         appointmentList.addStyleName("appointment-list");
         appointmentPanel.add(appointmentListScroll);
         appointmentListScroll.add(appointmentList);
-        
+
         appointmentOptionsPanel = new FlowPanel();
 
         // Resources Panel
@@ -124,7 +117,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         addResource.addStyleName("add-resource");
         resourceToolbar.add(addResource);
         resourcePanel.add(resourceToolbar);
-        
+
         resourceListsPanel = new FlowPanel();
         resourceListsPanel.addStyleName("resources-lists");
         resourcePanel.add(resourceListsPanel);
@@ -134,61 +127,71 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         resourcePanel.add(bookedResources);
         updateBookedResources(Arrays.asList(reservation.getResources()));
         addResource.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				String resourceType = resourceTypesList.getSelectedItemText();
-				getPresenter().addResourceButtonPressed(resourceLists.get(resourceType).getSelectedIndex(), resourceType, getRaplaLocale().getLocale());
-			}
-		});
+            @Override
+            public void onClick(ClickEvent event) {
+                String resourceType = resourceTypesList.getSelectedItemText();
+                getPresenter().addResourceButtonPressed(resourceLists.get(resourceType).getSelectedIndex(), resourceType, getRaplaLocale().getLocale());
+            }
+        });
         updateResources(resources);
     }
-    
+
+    private String getSelectedRepeatRB(RadioButton[] radioButtons) {
+        for (RadioButton radioButton : radioButtons) {
+            if (radioButton.getValue()) {
+                return radioButton.getFormValue();
+            }
+        }
+        return "NOTHING";
+    }
+
     private Date getStartDate() {
-		Date startDate = startDateField.getValue();
-       	startDate.setHours(Integer.parseInt(startHourField.getValue()));
-       	startDate.setMinutes(Integer.parseInt(startMinuteField.getValue()));
-       	return startDate;
-	}
-    
-    private Date getEndDate() { 
-		Date endDate = endDateField.getValue();
-       	endDate.setHours(Integer.parseInt(endHourField.getValue()));
-       	endDate.setMinutes(Integer.parseInt(endMinuteField.getValue()));
-       	return endDate;
-	}
-    
+        Date startDate = startDateField.getValue();
+        startDate.setHours(Integer.parseInt(startHourField.getValue()));
+        startDate.setMinutes(Integer.parseInt(startMinuteField.getValue()));
+        return startDate;
+    }
+
+    private Date getEndDate() {
+        Date endDate = endDateField.getValue();
+        endDate.setHours(Integer.parseInt(endHourField.getValue()));
+        endDate.setMinutes(Integer.parseInt(endMinuteField.getValue()));
+        return endDate;
+    }
+
     private void setStartDate(Date date) {
-    	startDateField.setValue(date);
-    	startHourField.setValue(addZero(date.getHours()));
-    	startMinuteField.setValue(addZero(date.getMinutes()));
-	}
+        startDateField.setValue(date);
+        startHourField.setValue(addZero(date.getHours()));
+        startMinuteField.setValue(addZero(date.getMinutes()));
+    }
+
     private void setEndDate(Date date) {
-    	endDateField.setValue(date);
-    	endHourField.setValue(addZero(date.getHours()));
-    	endMinuteField.setValue(addZero(date.getMinutes()));
-	}
+        endDateField.setValue(date);
+        endHourField.setValue(addZero(date.getHours()));
+        endMinuteField.setValue(addZero(date.getMinutes()));
+    }
 
-	private String addZero(int n) {
-		if(n<10)
-			return "0"+n;
-		else
-			return ""+n;
-	}
+    private String addZero(int n) {
+        if (n < 10)
+            return "0" + n;
+        else
+            return "" + n;
+    }
 
-	public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
+    public void updateAppointmentOptionsPanel(Appointment selectedAppointment) {
         // Create Panels and Widgets
         appointmentOptionsPanel.clear();
         appointmentOptionsPanel.addStyleName("appointment-options");
         appointmentPanel.add(appointmentOptionsPanel);
-        
+
         if (selectedAppointment == null) {
-        	Logger.getGlobal().info("### null appointment selected");
-        	return;
+            Logger.getGlobal().info("### null appointment selected");
+            return;
+        } else {
+            Logger.getGlobal().info("### appointment selected: " + selectedAppointment.getStart()+" with repeatingType: "+ selectedAppointment.getRepeating());
+
         }
-        else {
-        	Logger.getGlobal().info("### appointment selected: "+ selectedAppointment.getStart());
-        }
-        
+
         // Repeat Radio Buttons
         initRadioButtonRepeat();
 
@@ -210,15 +213,14 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         nextFreeApp.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-				Date[] dates = getPresenter().nextFreeDateButtonPressed(getStartDate(), getEndDate());
-				if (dates != null) {
-			        setStartDate(dates[0]);
-			        setEndDate(dates[1]);
-				}
-				else {
-					// TODO: Show popup that no free appointment is available 
-				}
-            }			
+                Date[] dates = getPresenter().nextFreeDateButtonPressed(getStartDate(), getEndDate());
+                if (dates != null) {
+                    setStartDate(dates[0]);
+                    setEndDate(dates[1]);
+                } else {
+                    // TODO: Show popup that no free appointment is available
+                }
+            }
         });
 
         // Fill in data from appointment object
@@ -234,73 +236,72 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endDateField.setValue(selectedAppointment.getEnd());
         endHourField.setText(hoursFormat.format(selectedAppointment.getEnd()));
         endMinuteField.setText(minutesFormat.format(selectedAppointment.getEnd()));
-        
+
         HistoryManager.getInstance().trackWidget(startHourField);
         HistoryManager.getInstance().trackWidget(startMinuteField);
         HistoryManager.getInstance().trackWidget(endHourField);
         HistoryManager.getInstance().trackWidget(endMinuteField);
     }
 
-	public void updateAppointmentList(List<Appointment> appointments, int focus) {
-		appointmentDataProvider.setList(appointments);
-		ProvidesKey<Appointment> keyProvider = new ProvidesKey<Appointment>() {
-			@Override
-			public String getKey(Appointment a) {
-				return a.getId();
-			}
-		};
+    public void updateAppointmentList(List<Appointment> appointments, int focus) {
+        appointmentDataProvider.setList(appointments);
+        ProvidesKey<Appointment> keyProvider = new ProvidesKey<Appointment>() {
+            @Override
+            public String getKey(Appointment a) {
+                return a.getId();
+            }
+        };
         List<HasCell<Appointment, ?>> row = new ArrayList<>();
         TextCell labelCell = new TextCell();
         ButtonImageCell iconCell = new ButtonImageCell();
-        Column<Appointment,String> labelColumn = new Column<Appointment,String>(labelCell) {
-			@Override
-			public String getValue(Appointment appointment) {
-				return df.format(appointment.getStart());
-			}
+        Column<Appointment, String> labelColumn = new Column<Appointment, String>(labelCell) {
+            @Override
+            public String getValue(Appointment appointment) {
+                return df.format(appointment.getStart());
+            }
         };
-        Column<Appointment,String> iconColumn = new Column<Appointment,String>(iconCell) {
-			@Override
-			public String getValue(Appointment appointment) {
-				return "images/black/080 Trash.png";
-			}
+        Column<Appointment, String> iconColumn = new Column<Appointment, String>(iconCell) {
+            @Override
+            public String getValue(Appointment appointment) {
+                return "images/black/080 Trash.png";
+            }
         };
-        iconColumn.setFieldUpdater(new FieldUpdater<Appointment,String>() {
-			@Override
-			public void update(int index, Appointment object, String value) {
-				getPresenter().removeAppointmentButtonPressed(index);
-			}
-		});
+        iconColumn.setFieldUpdater(new FieldUpdater<Appointment, String>() {
+            @Override
+            public void update(int index, Appointment object, String value) {
+                getPresenter().removeAppointmentButtonPressed(index);
+            }
+        });
         row.add(labelColumn);
         row.add(iconColumn);
         CompositeCell<Appointment> appointmentCell = new CompositeCell<Appointment>(row);
         appointmentList = new CellList<>(appointmentCell);
         appointmentList.setRowCount(appointments.size());
         appointmentDataProvider.addDataDisplay(appointmentList);
-        
-        if (selectionModel==null) {
-        	selectionModel = new SingleSelectionModel<Appointment>(keyProvider);
-	        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-				@Override
-				public void onSelectionChange(SelectionChangeEvent event) {
-					updateAppointmentOptionsPanel(selectionModel.getSelectedObject());
-				}
-			});
+
+        if (selectionModel == null) {
+            selectionModel = new SingleSelectionModel<Appointment>(keyProvider);
+            selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+                @Override
+                public void onSelectionChange(SelectionChangeEvent event) {
+                    updateAppointmentOptionsPanel(selectionModel.getSelectedObject());
+                }
+            });
         }
         appointmentList.setSelectionModel(selectionModel);
-        
-        if(focus>=0) {
-        	selectionModel.setSelected(appointments.get(focus), true);
-        	//Logger.getGlobal().info("### focus: " + selectionModel.isSelected(appointments.get(focus)));
-        }
-        else {
-        	selectionModel.setSelected(null, true);
+
+        if (focus >= 0) {
+            selectionModel.setSelected(appointments.get(focus), true);
+            //Logger.getGlobal().info("### focus: " + selectionModel.isSelected(appointments.get(focus)));
+        } else {
+            selectionModel.setSelected(null, true);
         }
         appointmentListScroll.onResize();
     }
 
     @Override
     public void updateResources(List<Allocatable> resources) {
-    	resourceLists.clear();
+        resourceLists.clear();
         resourceTypesList.clear();
         resourceTypesList.addChangeHandler(new ChangeHandler() {
             @Override
@@ -328,8 +329,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
             }
         }
         // TODO: Remove after demo; selects the second in list because looks nicer
-        if(sortedResources.keySet().size() > 1)
-        	resourceTypesList.setItemSelected(1, true);
+        if (sortedResources.keySet().size() > 1)
+            resourceTypesList.setItemSelected(1, true);
         DomEvent.fireNativeEvent(Document.get().createChangeEvent(), resourceTypesList);
     }
 
@@ -412,10 +413,10 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
                 case DAILY:
                     checked = selectRepeat[1];
                     break;
-                case MONTHLY:
+                case WEEKLY:
                     checked = selectRepeat[2];
                     break;
-                case WEEKLY:
+                case MONTHLY:
                     checked = selectRepeat[3];
                     break;
                 case YEARLY:
@@ -429,10 +430,15 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     private void initRadioButtonRepeat() {
         selectRepeat[0] = new RadioButton("select-repeat", "Nicht wiederholen");
+        selectRepeat[0].setFormValue("NOTHING");
         selectRepeat[1] = new RadioButton("select-repeat", "Täglich");
+        selectRepeat[1].setFormValue("daily");
         selectRepeat[2] = new RadioButton("select-repeat", "Wöchentlich");
+        selectRepeat[2].setFormValue("weekly");
         selectRepeat[3] = new RadioButton("select-repeat", "Monatlich");
+        selectRepeat[3].setFormValue("monthly");
         selectRepeat[4] = new RadioButton("select-repeat", "Jährlich");
+        selectRepeat[4].setFormValue("yearly");
         selectRepeat[0].setValue(true);
         selectRepeatPanel = new FlowPanel();
         appointmentOptionsPanel.add(selectRepeatPanel);
@@ -467,8 +473,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     @Override
     public void updateBookedResources(List<Allocatable> resources) {
         bookedResources.clear();
-        for(Allocatable resource : resources) {
-        	bookedResources.addItem(resource.getName(getRaplaLocale().getLocale()));
+        for (Allocatable resource : resources) {
+            bookedResources.addItem(resource.getName(getRaplaLocale().getLocale()));
         }
     }
 
