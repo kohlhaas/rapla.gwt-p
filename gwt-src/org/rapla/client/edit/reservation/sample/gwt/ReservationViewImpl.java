@@ -58,7 +58,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     Button deselectButton = null;
     CheckBox [] cb;
     Label planhour;
+    Label lectureCourseLabel;
     Label captionLabel;
+    //Label lectureCourseLabel;
     String html = "<div class = 'img' ><img class= 'img_1' src = '/images/081 Pen.png'></img></div>";
     String chosenEventType = "";
     String chosenLanguage = "";
@@ -318,6 +320,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         	//actviateCourseButton = true;
 
         }
+        
+/*        if(chosenEventType.equalsIgnoreCase("Prüfung")){
+        	initLectureCourseLabel();
+        	initLectureCourseTextBox();
+        }*/
 
         mapDynamicTypesToChangeHandler(eventTypes, locale, eventTypeLB);
 
@@ -340,6 +347,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 	removeCourseButton();
                 	removeAllLanguageLB();
                 	removePlannedHoursLabelTB();
+                	//removeLectureCourseTB();
                 	coursePanel.setVisible(false);
                 	
                 	buttonRemoved = true;
@@ -350,6 +358,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 if (chosenEventType.equalsIgnoreCase("Prüfung")) {
                     //ausblenden für präsi: initLanguageListBox();
                 	removeExaminationTypeLB();
+                	removeLectureCourseLabelTB();
 
                 }
                 for (DynamicType dynamicType : eventTypes) {
@@ -378,6 +387,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 
                 if(chosenEventType.equalsIgnoreCase("Prüfung")){
                 	initExaminationTypeLB();
+                	grid.resizeRows(2);
+                	initLectureCourseLabelInGrid();
+                	initLectureCourseTextBoxInGrid();
                 }
 
             }
@@ -562,7 +574,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	row1.remove(examinationTypeLB);
     }
     
+    //könnte ich als eine Methode schreiben
     private void removePlannedHoursLabelTB(){
+    	grid.removeRow(1);
+    }
+    
+    private void removeLectureCourseLabelTB(){
     	grid.removeRow(1);
     }
 
@@ -589,6 +606,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         grid.setWidget(0, 1, eventNameTB);
 
     }
+    
 
     private void initLabelPlannedHoursInGrid() {
         planhour = new Label("geplante Vorlesungsstunden");
@@ -601,6 +619,21 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tbPlanhour.setStyleName("tbPlanhour");
         grid.setWidget(1, 1, tbPlanhour);
     }
+    
+    private void initLectureCourseLabelInGrid() {
+    	lectureCourseLabel = new Label("Vorlesung");
+    	lectureCourseLabel.setStyleName("lectureCourse");
+    	grid.setWidget(1,0, lectureCourseLabel);
+      
+      
+     }
+    
+    private void initLectureCourseTextBoxInGrid() {
+    	TextBox lectureCourseTextBox = new TextBox(); 
+    	lectureCourseTextBox.setStyleName("textbox");
+    	grid.setWidget(1,1, lectureCourseTextBox);
+      
+     }
 
     private void initUpButton() {
         //Button for count up planned hours
