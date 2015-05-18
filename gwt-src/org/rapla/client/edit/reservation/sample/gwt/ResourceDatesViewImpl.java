@@ -446,13 +446,14 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		dateContentWrapper.add(cbRepeatType);
 		dateContentWrapper.add(addDateWithLabel);
 		dateContentWrapper.add(repeatSettings);
-		dateDisclosurePanel = new DisclosurePanel();
-		dateDisclosurePanel.add(dateContentWrapper);
-		dateDisclosurePanel.setOpen(true);
+		dateContentWrapper.setBorderWidth(0);
+//		dateDisclosurePanel = new DisclosurePanel();
+//		dateDisclosurePanel.add(dateContentWrapper);
+//		dateDisclosurePanel.setOpen(true);
+			
+		dateInfos.add(dateContentWrapper);
 
-		dateInfos.add(dateDisclosurePanel);
-
-		dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
+	//	dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
 		dateInfos.add(chosenResources);
 		dateInfos.add(addResources);
 

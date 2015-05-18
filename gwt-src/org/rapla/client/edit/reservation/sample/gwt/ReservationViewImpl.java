@@ -214,8 +214,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			}
 		});
 
-		buttonsPanel.add(cancel);
 		buttonsPanel.add(save);
+		buttonsPanel.add(cancel);
 		buttonsPanel.add(delete);
 		buttonsPanel.add(undo);	
 		buttonsPanel.add(redo);

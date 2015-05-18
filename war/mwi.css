@@ -257,7 +257,7 @@ border-right: 2px solid black !important;
 .beschriftung{
 	margin-bottom: 2px;
 	font-weight: bold;
-	
+	margin-left: 5px;
 }
 .dateInfoLineLeft{
 	margin-top: 7px;
@@ -418,7 +418,7 @@ margin: 5px;
 }
 
 .suchfeld{
-	height: 85px !important;
+	/*height: 85px !important;*/
 }
 .errorPanel{
   position: absolute;
