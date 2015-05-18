@@ -363,7 +363,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		// loadChosenResources(testRessourcen);
 		//
 
-		Label headerChosenRes = new Label("Ausgewaehlte Ressourcen:");
+		Label headerChosenRes = new Label("Ausgew\u00E4hlte Ressourcen:");
 		headerChosenRes.setStyleName("beschriftung");
 
 		chosenResources.setStyleName("dateInfoLineComplete");
@@ -375,7 +375,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			chosenResources.add(helpList);
 		}
 
-		addResources = new DisclosurePanel("Ressourcen Hinzufuegen");
+		addResources = new DisclosurePanel("Ressourcen hinzuf\u00FCgen");
 		addResources.setStyleName("dateInfoLineComplete");
 
 		FlowPanel chooseContainer = new FlowPanel();
@@ -1239,7 +1239,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 	@Override
 	public void setResourcesRoom(List<String> dynamicTypesNames) {
-		dynamicTypesNames.add(0, "Raeume");
+		dynamicTypesNames.add(0, "R\u00E4ume");
 		this.toBeReservedResources.add(dynamicTypesNames);
 
 	}
