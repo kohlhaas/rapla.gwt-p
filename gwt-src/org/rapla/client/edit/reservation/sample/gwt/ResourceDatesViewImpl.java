@@ -1073,6 +1073,8 @@ public void createResourceTree() {
 				public void onClick(ClickEvent event) {
 					// TODO Auto-generated method stub
 					getPresenter().onErrorPanelButtonClick(event);
+					showLabelSaved();
+
 				}
 			});
 			Button close = new Button("Konflikte ignorieren");
@@ -1186,5 +1188,14 @@ public void createResourceTree() {
 		this.refreshResourceContainer();
 		
 	}
+	
+	public void showLabelSaved() throws InterruptedException{
+		
+		Label changes = new Label("Änderungen wurden übernommen");
+		changes.setVisible(true);
+		changes.wait(5);
+		changes.setVisible(false);
+		}
+
 
 }
