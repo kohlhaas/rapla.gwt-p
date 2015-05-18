@@ -207,7 +207,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			public void onSelection(SelectionEvent<Integer> event) {
 				try {
 					getPresenter().onTabChanged(bar.getSelectedTab());
-				} catch (RaplaException e) {
+				} catch (RaplaException | ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

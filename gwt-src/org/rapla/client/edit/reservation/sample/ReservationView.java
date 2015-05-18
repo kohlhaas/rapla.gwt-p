@@ -1,5 +1,7 @@
 package org.rapla.client.edit.reservation.sample;
 
+import java.text.ParseException;
+
 import org.rapla.client.base.View;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.domain.Reservation;
@@ -19,7 +21,7 @@ public interface ReservationView<W> extends View<Presenter> {
 
 		void onCancelButtonClicked();
 
-		void onTabChanged(int selectedTab) throws RaplaException;
+		void onTabChanged(int selectedTab) throws RaplaException, ParseException;
 
 	}
 

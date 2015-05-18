@@ -1,6 +1,8 @@
 package org.rapla.client.edit.reservation.sample;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +29,7 @@ import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 import org.rapla.client.edit.reservation.sample.InfoView;
+import org.rapla.client.edit.reservation.sample.gwt.RaplaDate;
 
 import de.vksi.c4j.ContractReference;
 
@@ -305,7 +308,115 @@ public class ReservationPresenter implements ReservationController, Presenter {
 			// getCreateableDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
 
 		} else {
+			// Date endDate = null;
+			// Date startDate = null;
 			// currentView = (ResourceDatesView) currentView;
+			logger.warn("...Save dates..");
+			Appointment[] deleteAppointments = tempReservation
+					.getAppointments();
+			for (Appointment deleteAppointment : deleteAppointments) {
+				tempReservation.removeAppointment(deleteAppointment);
+			}
+			Allocatable[] deleteAllocatables = tempReservation
+					.getAllocatables();
+			for (Allocatable deleteAllocatable : deleteAllocatables) {
+				tempReservation.removeAllocatable(deleteAllocatable);
+			}
+
+			Appointment appointment = null;
+
+			logger.warn("Save dates..");
+
+			List<RaplaDate> dateList = ((ResourceDatesView) currentView)
+					.getDates();
+
+			for (RaplaDate raplaDate : dateList) {
+				if (raplaDate.getRaplaDateList().size() == 0) {
+
+					appointment = facade.newAppointment(
+							raplaDate.getBeginTime(), raplaDate.getEndTime());
+					ArrayList<List<String>> resources = raplaDate
+							.getResources();
+					// Allocatable allocatable = null;
+
+					List<Allocatable> tempAllocatables = new ArrayList<Allocatable>();
+
+					for (List<String> resouceList : resources) {
+
+						logger.warn("1..");
+						ClassificationFilter[] filters = new ClassificationFilter[1];
+
+						if (resouceList.get(0).toString()
+								.equalsIgnoreCase("Professoren")) {
+							logger.warn("1a..");
+							filters[0] = getProfFilter();
+						} else if (resouceList.get(0).toString()
+								.equalsIgnoreCase("Kurse")) {
+							logger.warn("1b..");
+							filters[0] = getCourseFilter();
+						} else {
+
+							logger.warn("1c..");
+							filters[0] = getRoomFilter();
+						}
+
+						logger.warn("2..");
+						Allocatable[] allocatables = facade
+								.getAllocatables(filters);
+
+						logger.warn("2a..");
+						logger.warn("2a.. resouceList.size(): "
+								+ resouceList.size());
+						// if (resouceList.size() > 1) {
+						for (int i = 1; i < resouceList.size(); i++) { // TODO
+																				// maybe
+																				// change
+
+							logger.warn("2b..");
+							for (Allocatable tempAllocatable : allocatables) {
+
+								logger.warn("2c..");
+								if (resouceList
+										.get(i)
+										.toString()
+										.equalsIgnoreCase(
+												tempAllocatable
+														.getName(this.raplaLocale
+																.getLocale()))) {
+
+									logger.warn("2d..");
+									tempAllocatables.add(tempAllocatable);
+								}
+							}
+
+						}
+						// }
+
+					}
+
+					logger.warn("3..");
+					Allocatable[] tmpAllocatables = new Allocatable[tempAllocatables
+							.size()];
+					Allocatable[] restrictedAllocatables = (Allocatable[]) tempAllocatables
+							.toArray(tmpAllocatables);
+					logger.warn("3a..");
+					tempReservation.addAppointment(appointment);
+					logger.warn("3b..");
+					for (Allocatable allocatable : restrictedAllocatables) {
+						tempReservation.addAllocatable(allocatable);
+					}
+					// tempReservation.setRestriction(appointment,
+					// restrictedAllocatables);
+					logger.warn("fin..");
+
+				} else {
+
+				}
+			}
+
+			// tempReservation.setRestriction(appointment,
+			// restrictedAllocatables);
+			// tempReservation.addAppointment(appointment);
 		}
 
 		// logger.log(Level.WARNING, "All Attributes - ");
@@ -358,7 +469,8 @@ public class ReservationPresenter implements ReservationController, Presenter {
 	}
 
 	@Override
-	public void onTabChanged(int selectedTab) throws RaplaException {
+	public void onTabChanged(int selectedTab) throws RaplaException,
+			ParseException {
 		logger.info("Changed Tab");
 		try {
 			this.saveTemporaryChanges();
@@ -396,88 +508,119 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
 	private void configure(InfoView view) throws RaplaException {
 		view.setEventTypes(this.getEventTypes());
-		
+
 	}
 
 	private void configure(ResourceDatesView view) throws RaplaException {
-		//view.setChosenResouces();
+		// view.setChosenResouces();
 		view.clear();
 		view.setResourcesPerson(this.getPersonData());
 		view.setResourcesCourse(this.getCourseData());
 		view.setResourcesRoom(this.getRoomData());
 		view.createResourceTree();
-		
+
 	}
 
 	private List<String> getCourseData() throws RaplaException {
-		 List<String> course = new ArrayList<String>();
-			DynamicType[] types = facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
-			ClassificationFilter[] filters = 	new ClassificationFilter[1];
-			logger.warn("Load data into resourcesDates");
-			for(DynamicType type:types){
-				logger.warn(type.toString());
-				
-				if(type.getName(this.raplaLocale.getLocale()).toString().equalsIgnoreCase("kurs")){
-					filters[0] = type.newClassificationFilter();
-				}
+		List<String> course = new ArrayList<String>();
+		ClassificationFilter[] filters = new ClassificationFilter[1];
+
+		filters[0] = getCourseFilter();
+		Allocatable[] allocatables = facade.getAllocatables(filters);
+		// logger.warn("Load course data into resourcesDates");
+		for (Allocatable allocatable : allocatables) {
+			// logger.warn("Course: " +
+			// allocatable.getName(raplaLocale.getLocale()));
+			course.add(allocatable.getName(raplaLocale.getLocale()));
+		}
+
+		return course;
+	}
+
+	private ClassificationFilter getCourseFilter() throws RaplaException {
+		DynamicType[] types = facade
+				.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
+
+		// logger.warn("Load data into resourcesDates");
+		ClassificationFilter filter = null;
+		for (DynamicType type : types) {
+			// logger.warn(type.toString());
+
+			if (type.getName(this.raplaLocale.getLocale()).toString()
+					.equalsIgnoreCase("kurs")) {
+				filter = type.newClassificationFilter();
 			}
-			Allocatable[] allocatables = facade.getAllocatables(filters);
-			logger.warn("Load course data into resourcesDates");
-			for(Allocatable allocatable:allocatables){
-//				logger.warn("Course: " + allocatable.getName(raplaLocale.getLocale()));
-				course.add(allocatable.getName(raplaLocale.getLocale()));
-			}
-			
-			return course;
+		}
+		return filter;
 	}
 
 	private List<String> getPersonData() throws RaplaException {
-		 List<String> persons = new ArrayList<String>();
-		DynamicType[] types = facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_PERSON);
-		ClassificationFilter[] filters = 	new ClassificationFilter[1];
-		logger.warn("Load data into resourcesDates");
-		for(DynamicType type:types){
-			logger.warn(type.toString());
-			
-			if(type.getKey().toString().equalsIgnoreCase("professor")){
-				logger.warn(type.getName().toString());
-				filters[0] = type.newClassificationFilter();
-			}
-//			if(type.getKey().toString().equalsIgnoreCase("honorarkraft")){
-//				logger.warn(type.getName().toString());
-//				filters[1] = type.newClassificationFilter();
-//			}
-		}
+		List<String> persons = new ArrayList<String>();
+		ClassificationFilter[] filters = new ClassificationFilter[1];
+		filters[0] = getProfFilter();
 		Allocatable[] allocatables = facade.getAllocatables(filters);
-		logger.warn("Load person data into resourcesDates");
-		for(Allocatable allocatable:allocatables){
-//			logger.warn("Person: " + allocatable.getName(raplaLocale.getLocale()));
+		// logger.warn("Load person data into resourcesDates");
+		for (Allocatable allocatable : allocatables) {
+			// logger.warn("Person: " +
+			// allocatable.getName(raplaLocale.getLocale()));
 			persons.add(allocatable.getName(raplaLocale.getLocale()));
 		}
-		
+
 		return persons;
 	}
 
-	private List<String>  getRoomData() throws RaplaException {
-		 List<String> rooms = new ArrayList<String>();
-		DynamicType[] types = facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
-		ClassificationFilter[] filters = 	new ClassificationFilter[1];
-		logger.warn("Load data into resourcesDates");
-		for(DynamicType type:types){
-			logger.warn(type.toString());
-			
-			if(type.getName(this.raplaLocale.getLocale()).toString().equalsIgnoreCase("raum")){
-				filters[0] = type.newClassificationFilter();
+	private ClassificationFilter getProfFilter() throws RaplaException {
+		DynamicType[] types = facade
+				.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_PERSON);
+
+		// logger.warn("Load data into resourcesDates");
+		ClassificationFilter filter = null;
+		for (DynamicType type : types) {
+			// logger.warn(type.toString());
+
+			if (type.getKey().toString().equalsIgnoreCase("professor")) {
+				// logger.warn(type.getName().toString());
+				filter = type.newClassificationFilter();
 			}
+			// if(type.getKey().toString().equalsIgnoreCase("honorarkraft")){
+			// logger.warn(type.getName().toString());
+			// filters[1] = type.newClassificationFilter();
+			// }
 		}
+
+		return filter;
+	}
+
+	private List<String> getRoomData() throws RaplaException {
+		List<String> rooms = new ArrayList<String>();
+		ClassificationFilter[] filters = new ClassificationFilter[1];
+		filters[0] = getRoomFilter();
 		Allocatable[] allocatables = facade.getAllocatables(filters);
-		logger.warn("Load room data into resourcesDates");
-		for(Allocatable allocatable:allocatables){
-//			logger.warn("Room: " + allocatable.getName(raplaLocale.getLocale()));
+		// logger.warn("Load room data into resourcesDates");
+		for (Allocatable allocatable : allocatables) {
+			// logger.warn("Room: " +
+			// allocatable.getName(raplaLocale.getLocale()));
 			rooms.add(allocatable.getName(raplaLocale.getLocale()));
 		}
-		
+
 		return rooms;
+	}
+
+	private ClassificationFilter getRoomFilter() throws RaplaException {
+		DynamicType[] types = facade
+				.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
+		// logger.warn("Load data into resourcesDates");
+		ClassificationFilter filter = null;
+		for (DynamicType type : types) {
+			// logger.warn(type.toString());
+
+			if (type.getName(this.raplaLocale.getLocale()).toString()
+					.equalsIgnoreCase("raum")) {
+				filter = type.newClassificationFilter();
+			}
+		}
+
+		return filter;
 	}
 
 	public List<DynamicType> getCreateableDynamicTypes(String classificationType)
@@ -629,13 +772,15 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		}
 	}
 
-	protected void loadDataFromReservationToView() {
+	protected void loadDataFromReservationToView() throws ParseException,
+			RaplaException {
 		if (view.getCurrentSubView() != null)
 			loadDataFromReservationToView(view.getCurrentSubView());
 	}
 
 	private void loadDataFromReservationToView(
-			ReservationEditSubView currentView) {
+			ReservationEditSubView currentView) throws ParseException,
+			RaplaException {
 		logger.info("Load data from reservation");
 		Locale locale = this.raplaLocale.getLocale();
 		Classification classificationTmp = tempReservation.getClassification();
@@ -643,7 +788,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		Allocatable[] allocatables = tempReservation.getAllocatables();
 
 		Allocatable[] resources = tempReservation.getAllocatables();
-		Appointment[] appointments = tempReservation.getAppointments();
+		// Appointment[] appointments = tempReservation.getAppointments();
 
 		Allocatable[] persons = tempReservation.getPersons();
 
@@ -707,6 +852,94 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
 		} else {
 
+			List<RaplaDate> dateList = new ArrayList<RaplaDate>();
+
+			Appointment[] appointments = tempReservation.getAppointments();
+			Allocatable[] tmpAllocatables = null;
+			RaplaDate raplaDate;
+			if (tempReservation.getAppointments().length > 0) {
+				tmpAllocatables = tempReservation
+						.getAllocatablesFor(appointments[0]);
+
+				ArrayList<List<String>> res = new ArrayList<List<String>>();
+
+				List<String> profList = new ArrayList<String>();
+				profList.add("Professoren");
+				res.add(profList);
+				List<String> courseList = new ArrayList<String>();
+				courseList.add("Kurse");
+				res.add(courseList);
+				List<String> roomList = new ArrayList<String>();
+				roomList.add("Raeume");
+				res.add(roomList);
+
+				logger.warn("1..");
+				for (Allocatable tmpAllocatable : tmpAllocatables) {
+					if (this.getProfFilter().matches(
+							tmpAllocatable.getClassification())) {
+						profList.add(tmpAllocatable.getName(this.raplaLocale
+								.getLocale()));
+					} else if (this.getCourseFilter().matches(
+							tmpAllocatable.getClassification())) {
+						courseList.add(tmpAllocatable.getName(this.raplaLocale
+								.getLocale()));
+					} else if (this.getRoomFilter().matches(
+							tmpAllocatable.getClassification())) {
+						roomList.add(tmpAllocatable.getName(this.raplaLocale
+								.getLocale()));
+					}
+				}
+
+				logger.warn("save dates..");
+				for (Appointment appointment : appointments) {
+					// tmpAllocatables = tempReservation
+					// .getAllocatablesFor(appointment);
+
+					// ArrayList<List<String>> res = new
+					// ArrayList<List<String>>();
+					//
+					// List<String> profList = new ArrayList<String>();
+					// profList.add("Professoren");
+					// res.add(profList);
+					// List<String> courseList = new ArrayList<String>();
+					// courseList.add("Kurse");
+					// res.add(courseList);
+					// List<String> roomList = new ArrayList<String>();
+					// roomList.add("Raeume");
+					// res.add(roomList);
+					//
+					// logger.warn("1..");
+					// for (Allocatable tmpAllocatable : tmpAllocatables) {
+					// if (this.getProfFilter().matches(
+					// tmpAllocatable.getClassification())) {
+					// profList.add(tmpAllocatable.getName(this.raplaLocale
+					// .getLocale()));
+					// } else if (this.getCourseFilter().matches(
+					// tmpAllocatable.getClassification())) {
+					// courseList.add(tmpAllocatable.getName(this.raplaLocale
+					// .getLocale()));
+					// } else if (this.getRoomFilter().matches(
+					// tmpAllocatable.getClassification())) {
+					// roomList.add(tmpAllocatable.getName(this.raplaLocale
+					// .getLocale()));
+					// }
+					// }
+
+					logger.warn("2..");
+					boolean calculateLectureHours = true;
+
+					raplaDate = new RaplaDate(appointment.getStart(),
+							appointment.getEnd(), res, calculateLectureHours);
+					dateList.add(raplaDate);
+				}
+			}
+
+			// Allocatable[] allocatables = tempReservation.getAllocatables()
+			logger.warn("3a..");
+			logger.warn("Dates list: " + dateList.size());
+			logger.warn("3b..");
+			((ResourceDatesView) currentView).setDates(dateList);
+			logger.warn("loaded date & resource data..");
 		}
 
 	}

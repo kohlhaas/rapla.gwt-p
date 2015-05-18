@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 public class TerminList extends FlowPanel {
 	
-	private List<RaplaDate> dates = new ArrayList<>();
+	private List<RaplaDate> dates = new ArrayList<RaplaDate>();
 	private int active = -1;
 	private boolean firstWidget = true;
 	
@@ -109,5 +109,23 @@ public class TerminList extends FlowPanel {
 		}
 		return conflictingDates;
 	}
+
+	public List<RaplaDate> getDates() {
+		return dates;
+	}
+
+	public void setDates(List<RaplaDate> dates) {
+		if(firstWidget){
+			this.remove(0);
+			firstWidget = false;
+		}
+		
+		this.dates = dates;
+		for(RaplaDate date: dates){
+			super.add(date);
+		}
+	}
+	
+	
 
 }

@@ -133,18 +133,18 @@ public class Application implements ApplicationView.Presenter {
 	    logger.info( "Add clicked");
         try {
             Reservation newEvent = facade.newReservation();
-            final Date selectedDate =facade.today();
-            final Date time = new Date (DateTools.MILLISECONDS_PER_MINUTE * calendarOptions.getWorktimeStartMinutes());
-            final Date startDate = raplaLocale.toDate(selectedDate,time);
+//            final Date selectedDate =facade.today();
+//            final Date time = new Date (DateTools.MILLISECONDS_PER_MINUTE * calendarOptions.getWorktimeStartMinutes());
+//            final Date startDate = raplaLocale.toDate(selectedDate,time);
             final Classification classification = newEvent.getClassification();
             final Attribute first = classification.getType().getAttributes()[0];
             classification.setValue(first, "Test");
             
-            final Date endDate = new Date( startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
-            final Appointment newAppointment = facade.newAppointment( startDate, endDate);
-            newEvent.addAppointment( newAppointment);
-            final Allocatable[] resources = facade.getAllocatables();
-            newEvent.addAllocatable( resources[0]);
+//            final Date endDate = new Date( startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
+//            final Appointment newAppointment = facade.newAppointment( startDate, endDate);
+//            newEvent.addAppointment( newAppointment);
+//            final Allocatable[] resources = facade.getAllocatables();
+//            newEvent.addAllocatable( resources[0]);
             eventBus.fireEvent(new DetailSelectEvent(newEvent));
         } catch (RaplaException e1) {
             logger.error( e1.getMessage(), e1);

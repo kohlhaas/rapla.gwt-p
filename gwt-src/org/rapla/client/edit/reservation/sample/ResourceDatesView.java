@@ -5,6 +5,7 @@ import java.util.List;
 import org.rapla.client.base.View;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView.Presenter;
 import org.rapla.client.edit.reservation.sample.gwt.RaplaDate;
+import org.rapla.client.edit.reservation.sample.gwt.TerminList;
 import org.rapla.entities.domain.Appointment;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -71,7 +72,10 @@ public interface ResourceDatesView<W>  extends View<Presenter>, ReservationEditS
 	void createResourceTree();
 	
 	void clear();
+
+	List<RaplaDate> getDates();
     
+	void setDates(List<RaplaDate> dateList);
     
 }
 
