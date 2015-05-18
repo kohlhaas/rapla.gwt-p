@@ -251,6 +251,7 @@ border-right: 2px solid black !important;
 	box-shadow: 1px 2px 4px rgba(0, 0, 0, .2);
 	margin-top: 5px;
 	margin-bottom: 5px;
+	margin-left: -200px;
 	padding-top: 5px;
 	padding-bottom: 10px;
 }
@@ -536,7 +537,8 @@ margin: 5px;
 
 
 .listpanel {
-		margin-left: 14px !important;
+	margin-top: 5px;
+		margin-left: 114px !important;
 	
 	    text-align: left;
 	
@@ -561,3 +563,5 @@ margin: 5px;
 ::-webkit-scrollbar-thumb:hover {
     background-color: #aaa;
 }
+
+
