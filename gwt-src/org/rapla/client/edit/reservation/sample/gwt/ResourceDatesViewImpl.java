@@ -808,7 +808,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 							new Date(dateBegin.getValue().getTime()
 									+ timeEnd.getTime() + 3600000),
 							copyResourceArray(reservedResources), true));
-					addTermin = new RaplaDate(tmp);
+					addTermin = new RaplaDate(tmp, type);
 					addTermin.setStyleName("singleDate");
 					dateList.add(addTermin);
 					addTermin.addClickHandler(new ClickHandler() {
@@ -910,6 +910,10 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			timeBegin.setValue((long) -3600000
 					+ currentDate.getStartHourMinute());
 			timeEnd.setValue((long) -3600000 + currentDate.getEndHourMinute());
+			if(currentDate.isReccuringDate()){
+			setRepeatTypeSettings(daily);
+			}
+			
 
 			buttonGarbageCan.setResource(IMG_CROSS);
 			buttonPlus.setResource(IMG_CHANGE);
@@ -992,6 +996,10 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 					HasVerticalAlignment.ALIGN_MIDDLE);
 			repeatSettings.setCellVerticalAlignment(repeatText,
 					HasVerticalAlignment.ALIGN_MIDDLE);
+			if(sender == daily){
+				daily.setValue(true);
+				cbRepeatType.setOpen(true);
+			}
 		}
 		if (sender == noReccuring) {
 			// end.remove(1);

@@ -4,25 +4,15 @@ import javax.inject.Singleton;
 
 import org.jukito.JukitoModule;
 
-
-
-
-
-
-
-
-
-
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-
 import org.jukito.JukitoModule;
 import org.jukito.JukitoRunner;
 import org.junit.Before;
@@ -152,7 +142,12 @@ public class ReservationPresenterTest {
 	    verify(editView).setPresenter(controller);
 
 	   // verify(infoView).setPresenter(infoViewPresenter);
-		controller.onTabChanged(0);
+		try {
+			controller.onTabChanged(0);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	    verify(editView).setCurrentSubView(infoViewPresenter.getView());
 	  }

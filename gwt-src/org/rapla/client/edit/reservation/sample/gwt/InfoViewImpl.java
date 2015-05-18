@@ -118,9 +118,14 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 				width + "px");
 		Label studiengang = new Label("Studiengang");
 		studiengangListBox = new ListBox();
-		studiengangListBox.addItem("WWI12B1");
-		studiengangListBox.addItem("WWI12B2");
-		studiengangListBox.addItem("WWI12B3");
+		studiengangListBox.addItem("BWL-Bank");
+		studiengangListBox.addItem("BWL-Handel");
+		studiengangListBox.addItem("BWL-International Business");
+		studiengangListBox.addItem("BWL-Industie");
+		studiengangListBox.addItem("RSW-Steuern- und Pr\u00FCfungswesen");
+		studiengangListBox.addItem("Unternehmertum");
+		studiengangListBox.addItem("BWL-Versicherung");
+		studiengangListBox.addItem("Wirtschaftsinformatik");
 		studiengangListBoxAuswahl = new ArrayList();
 		studiengangListBox.addChangeHandler(new ChangeHandler() {
 			// Hier den Handler / Listener für die Listbox einbinden ~ done
@@ -131,17 +136,37 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 			}
 
 		});
-
 		studiengangPanel.add(studiengang, (width / 3) + "px");
 		studiengangPanel.add(studiengangListBox, (width / 3) + "px");
+		
+		final InfoHorizontalPanel planungsstatus = new InfoHorizontalPanel(width
+				+ "px");
+		final Label planungsstatusLabel = new Label("Planungsstatus");
+		TextBox planungsstatusInput = new TextBox();
+		planungsstatus.add(planungsstatusLabel, (width / 3) + "px");
+		planungsstatus.add(planungsstatusInput, (width / 3) + "px");
+		planungsstatus.setWidth(width + "px");
+		
+		final InfoHorizontalPanel erfassungsstatus = new InfoHorizontalPanel(width
+				+ "px");
+		final Label erfassungsstatusLabel = new Label("Erfassungsstatus");
+		TextBox erfassungsstatusInput = new TextBox();
+		erfassungsstatus.add(erfassungsstatusLabel, (width / 3) + "px");
+		erfassungsstatus.add(erfassungsstatusInput, (width / 3) + "px");
+		erfassungsstatus.setWidth(width + "px");
+
 
 		studiengangPanel.finalize(3);
 		vorlesungsStundenPanel.finalize(3);
 		titelPanel.finalize(3);
+		planungsstatus.finalize(3);
+		erfassungsstatus.finalize(3);
 
 		contentRight.add(titelPanel);
 		contentRight.add(vorlesungsStundenPanel);
 		contentRight.add(studiengangPanel);
+		contentRight.add(planungsstatus);
+		contentRight.add(erfassungsstatus);
 
 		infoTab.add(contentLeft);
 		infoTab.add(contentRight);
