@@ -771,7 +771,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 	@Override
 	public void addDateWidget() {
-		
+
 		logger.warn("datelist widget countp1: " + dateList.getWidgetCount());
 		RaplaDate addTermin = new RaplaDate();
 
@@ -918,11 +918,16 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			logger.warn("1b ");
 			reservedResources.clear();
 			if (currentDate.getResources().size() > 0) {
-				reservedResources = copyResourceArray(currentDate
-						.getResources());
-				refreshResourceContainer();
-				refreshResourceTree();
+				// reservedResources = copyResourceArray(currentDate
+				// .getResources());
+				this.loadChosenResources(currentDate.getResources());
+			} else {
+				ArrayList<List<String>> res = new ArrayList<List<String>>();
+				this.loadChosenResources(res);
 			}
+			refreshResourceContainer();
+			refreshResourceTree();
+
 			logger.warn("1c ");
 			dateList.setStyle(dateList.getRaplaDateIndex(clickedDate),
 					"singleDateClicked");
@@ -951,7 +956,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 	@Override
 	public void openEditView() {
 		logger.warn("openEditView ");
-		logger.warn("datelist widget count: "+  dateList.getWidgetCount());
+		logger.warn("datelist widget count: " + dateList.getWidgetCount());
 		if (buttonPlus.getTitle().equals("Termin \u00FCberschreiben")) {
 			logger.warn("Termin \u00FCberschreiben");
 
@@ -1248,6 +1253,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		this.resourceTree.clear();
 		this.deleteResourceContainer();
 		// this.reservedResources=null;
+		this.refreshResourceTree();
 
 	}
 
@@ -1262,9 +1268,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		List<RaplaDate> dateList2 = this.dateList.getDates();
 		logger.warn("Dates list 1: " + this.dateList.getDates().size());
 
-		for (RaplaDate raplaDate : dateList2) {
-			raplaDate.setResources(this.reservedResources);
-		}
+//		for (RaplaDate raplaDate : dateList2) {
+//			raplaDate.setResources(this.reservedResources);
+//		}
 
 		if (this.dateList.getDates().size() > 0) {
 			logger.warn("Resource list 1a: "

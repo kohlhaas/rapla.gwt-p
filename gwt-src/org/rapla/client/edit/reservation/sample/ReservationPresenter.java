@@ -369,8 +369,8 @@ public class ReservationPresenter implements ReservationController, Presenter {
 								+ resouceList.size());
 						// if (resouceList.size() > 1) {
 						for (int i = 1; i < resouceList.size(); i++) { // TODO
-																				// maybe
-																				// change
+																		// maybe
+																		// change
 
 							logger.warn("2b..");
 							for (Allocatable tempAllocatable : allocatables) {
@@ -405,8 +405,8 @@ public class ReservationPresenter implements ReservationController, Presenter {
 					for (Allocatable allocatable : restrictedAllocatables) {
 						tempReservation.addAllocatable(allocatable);
 					}
-					// tempReservation.setRestriction(appointment,
-					// restrictedAllocatables);
+					 tempReservation.setRestriction(appointment,
+					 restrictedAllocatables);
 					logger.warn("fin..");
 
 				} else {
@@ -490,6 +490,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
 		}
 		logger.info("update view");
+		logger.info("tempView = " + selectedTab);
 		view.update(tempView);
 		logger.info("updated view");
 
@@ -858,72 +859,71 @@ public class ReservationPresenter implements ReservationController, Presenter {
 			Allocatable[] tmpAllocatables = null;
 			RaplaDate raplaDate;
 			if (tempReservation.getAppointments().length > 0) {
-				tmpAllocatables = tempReservation
-						.getAllocatablesFor(appointments[0]);
-
-				ArrayList<List<String>> res = new ArrayList<List<String>>();
-
-				List<String> profList = new ArrayList<String>();
-				profList.add("Professoren");
-				res.add(profList);
-				List<String> courseList = new ArrayList<String>();
-				courseList.add("Kurse");
-				res.add(courseList);
-				List<String> roomList = new ArrayList<String>();
-				roomList.add("Raeume");
-				res.add(roomList);
-
-				logger.warn("1..");
-				for (Allocatable tmpAllocatable : tmpAllocatables) {
-					if (this.getProfFilter().matches(
-							tmpAllocatable.getClassification())) {
-						profList.add(tmpAllocatable.getName(this.raplaLocale
-								.getLocale()));
-					} else if (this.getCourseFilter().matches(
-							tmpAllocatable.getClassification())) {
-						courseList.add(tmpAllocatable.getName(this.raplaLocale
-								.getLocale()));
-					} else if (this.getRoomFilter().matches(
-							tmpAllocatable.getClassification())) {
-						roomList.add(tmpAllocatable.getName(this.raplaLocale
-								.getLocale()));
-					}
-				}
+				// tmpAllocatables = tempReservation
+				// .getAllocatablesFor(appointments[0]);
+				//
+				// ArrayList<List<String>> res = new ArrayList<List<String>>();
+				//
+				// List<String> profList = new ArrayList<String>();
+				// profList.add("Professoren");
+				// res.add(profList);
+				// List<String> courseList = new ArrayList<String>();
+				// courseList.add("Kurse");
+				// res.add(courseList);
+				// List<String> roomList = new ArrayList<String>();
+				// roomList.add("Raeume");
+				// res.add(roomList);
+				//
+				// logger.warn("1..");
+				// for (Allocatable tmpAllocatable : tmpAllocatables) {
+				// if (this.getProfFilter().matches(
+				// tmpAllocatable.getClassification())) {
+				// profList.add(tmpAllocatable.getName(this.raplaLocale
+				// .getLocale()));
+				// } else if (this.getCourseFilter().matches(
+				// tmpAllocatable.getClassification())) {
+				// courseList.add(tmpAllocatable.getName(this.raplaLocale
+				// .getLocale()));
+				// } else if (this.getRoomFilter().matches(
+				// tmpAllocatable.getClassification())) {
+				// roomList.add(tmpAllocatable.getName(this.raplaLocale
+				// .getLocale()));
+				// }
+				// }
 
 				logger.warn("save dates..");
 				for (Appointment appointment : appointments) {
-					// tmpAllocatables = tempReservation
-					// .getAllocatablesFor(appointment);
+					tmpAllocatables = tempReservation
+							.getAllocatablesFor(appointment);
 
-					// ArrayList<List<String>> res = new
-					// ArrayList<List<String>>();
-					//
-					// List<String> profList = new ArrayList<String>();
-					// profList.add("Professoren");
-					// res.add(profList);
-					// List<String> courseList = new ArrayList<String>();
-					// courseList.add("Kurse");
-					// res.add(courseList);
-					// List<String> roomList = new ArrayList<String>();
-					// roomList.add("Raeume");
-					// res.add(roomList);
-					//
-					// logger.warn("1..");
-					// for (Allocatable tmpAllocatable : tmpAllocatables) {
-					// if (this.getProfFilter().matches(
-					// tmpAllocatable.getClassification())) {
-					// profList.add(tmpAllocatable.getName(this.raplaLocale
-					// .getLocale()));
-					// } else if (this.getCourseFilter().matches(
-					// tmpAllocatable.getClassification())) {
-					// courseList.add(tmpAllocatable.getName(this.raplaLocale
-					// .getLocale()));
-					// } else if (this.getRoomFilter().matches(
-					// tmpAllocatable.getClassification())) {
-					// roomList.add(tmpAllocatable.getName(this.raplaLocale
-					// .getLocale()));
-					// }
-					// }
+					ArrayList<List<String>> res = new ArrayList<List<String>>();
+
+					List<String> profList = new ArrayList<String>();
+					profList.add("Professoren");
+					res.add(profList);
+					List<String> courseList = new ArrayList<String>();
+					courseList.add("Kurse");
+					res.add(courseList);
+					List<String> roomList = new ArrayList<String>();
+					roomList.add("Raeume");
+					res.add(roomList);
+
+					logger.warn("1..");
+					for (Allocatable tmpAllocatable : tmpAllocatables) {
+						if (this.getProfFilter().matches(
+								tmpAllocatable.getClassification())) {
+							profList.add(tmpAllocatable
+									.getName(this.raplaLocale.getLocale()));
+						} else if (this.getCourseFilter().matches(
+								tmpAllocatable.getClassification())) {
+							courseList.add(tmpAllocatable
+									.getName(this.raplaLocale.getLocale()));
+						} else if (this.getRoomFilter().matches(
+								tmpAllocatable.getClassification())) {
+							roomList.add(tmpAllocatable
+									.getName(this.raplaLocale.getLocale()));
+						}
+					}
 
 					logger.warn("2..");
 					boolean calculateLectureHours = true;
