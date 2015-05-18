@@ -91,7 +91,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 	private static final ImageResource IMG_ICON_DELETE = ImageImport.INSTANCE.deleteIcon();
 	private static final ImageResource IMG_ICON_UNDO = ImageImport.INSTANCE.undoIcon();
 	private static final ImageResource IMG_ICON_REDO = ImageImport.INSTANCE.redoIcon();
-	private static final ImageResource IMG_ICON_PLUS = ImageImport.INSTANCE.plusIcon();
+	private static final ImageResource IMG_ICON_PLUS = ImageImport.INSTANCE.addOptIcon();
 	
 	// for resources and dates tab
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
