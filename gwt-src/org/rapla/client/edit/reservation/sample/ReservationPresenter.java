@@ -12,7 +12,10 @@ import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 
+import de.vksi.c4j.ContractReference;
+
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +29,7 @@ import java.util.Map;
  * A Appointment is a kind of timeline (from x to y)
  * A Allocatable has to be classified as resource and hold some attributes
  */
+@ContractReference(ReservationPresenterContract.class)
 public class ReservationPresenter implements ReservationController, Presenter {
 
     @Inject
