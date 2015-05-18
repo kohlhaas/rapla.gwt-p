@@ -298,5 +298,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 	public void setCurrentSubView(ReservationEditSubView currentSubView) {
 		this.currentView = currentSubView;
 	}
+	
+	
 
 }

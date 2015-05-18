@@ -1102,6 +1102,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 				public void onClick(ClickEvent event) {
 					// TODO Auto-generated method stub
 					getPresenter().onErrorPanelButtonClick(event);
+					showLabelSaved();
+
 				}
 			});
 			Button close = new Button("Konflikte ignorieren");
@@ -1311,5 +1313,14 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			refreshResourceContainer();
 		}
 	}
+	
+	public void showLabelSaved() throws InterruptedException{
+		
+		Label changes = new Label("Änderungen wurden übernommen");
+		changes.setVisible(true);
+		changes.wait(5);
+		changes.setVisible(false);
+		}
+
 
 }
