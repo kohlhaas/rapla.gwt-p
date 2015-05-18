@@ -536,8 +536,15 @@ margin: 5px;
 
 
 .listpanel {
+		margin-left: 14px !important;
+	
 	    text-align: left;
 	
 }
 
+.eventTypeLabel {
+	  
+	    font-size: 1em; 
+	    margin-bottom: 5px;
+}
 
