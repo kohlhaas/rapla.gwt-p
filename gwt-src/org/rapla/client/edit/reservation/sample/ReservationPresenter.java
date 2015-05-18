@@ -182,7 +182,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     /**
      *
-     * @param valuesToSave a Map with a name of the attribute and a value
+     * @param valuesToSave a Map with a name of the attribute and a value, IT OVERWRITES ALL CURRENT ATTRIBUTES, SO SAVE NAME TOO
      */
     public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave) {
 
