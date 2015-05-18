@@ -31,6 +31,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -44,6 +45,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -70,7 +73,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 	public Panel popup;
 	private TabBar bar;
 	//private Button cancel, save, delete;
-	private Image cancel, save, delete, undo, redo;
+	private Image cancel, save, delete, undo, redo, plus;
 	private int height, width;
 
 	// for info tab
@@ -88,6 +91,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 	private static final ImageResource IMG_ICON_DELETE = ImageImport.INSTANCE.deleteIcon();
 	private static final ImageResource IMG_ICON_UNDO = ImageImport.INSTANCE.undoIcon();
 	private static final ImageResource IMG_ICON_REDO = ImageImport.INSTANCE.redoIcon();
+	private static final ImageResource IMG_ICON_PLUS = ImageImport.INSTANCE.plusIcon();
 	
 	// for resources and dates tab
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
@@ -152,54 +156,100 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		bar.addTab("Termine und Ressourcen");
 		bar.setWidth(width + "px");
 		
+		MenuBar buttonsPanel = new MenuBar();
+		//buttonsPanel.setAutoOpen(true);
 		cancel = new Image(IMG_ICON_CANCEL);
+		
+		MenuItem cancelButton = new MenuItem(cancel.toString(), true, new Command() {
+            @Override
+            public void execute() {
+               getPresenter().onCancelButtonClicked();
+            }
+        });
+		
+		
 		//cancel = new Button("abbrechen");
-		cancel.setStyleName("cancelButton");
-		cancel.setTitle("Abbrechen");
-		cancel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent e) {
-				getPresenter().onCancelButtonClicked();
-			}
-		});
+		//cancel.setStyleName("cancelButton");
+		cancelButton.setTitle("Abbrechen");
 
 		save = new Image(IMG_ICON_SAVE);
+		MenuItem saveButton = new MenuItem(save.toString(), true, new Command() {
+            @Override
+            public void execute() {
+               getPresenter().onSaveButtonClicked();
+            }
+        });
+		
 		//save = new Button("speichern");
-		save.setStyleName("saveButton");
-		save.setTitle("Veranstaltung speichern");
-		save.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent e) {
-				getPresenter().onSaveButtonClicked();
-			}
-		});
+//		save.setStyleName("saveButton");
+		
+		saveButton.setTitle("Veranstaltung speichern");
+//		save.addClickHandler(new ClickHandler() {
+//
+//					@Override
+//					public void onClick(ClickEvent event) {
+//						getPresenter().onSaveButtonClicked();						
+//					}});
+	
 		
 		delete = new Image(IMG_ICON_DELETE);
-		//delete = new Button("l\u00F6schen");
-		delete.setStyleName("deleteButton");
-		delete.setTitle("Veranstaltung l\u00F6schen");
-		delete.addClickHandler(new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent e) {
-				getPresenter().onDeleteButtonClicked();
-			}
-		});
+		MenuItem deleteButton = new MenuItem(delete.toString(), true, new Command() {
+            @Override
+            public void execute() {
+               getPresenter().onDeleteButtonClicked();
+            }
+        });
+		//delete = new Button("l\u00F6schen");
+//		delete.setStyleName("deleteButton");
+		deleteButton.setTitle("Veranstaltung l\u00F6schen");
+//		delete.addClickHandler(new ClickHandler() {
+//
+//			@Override
+//			public void onClick(ClickEvent e) {
+//				getPresenter().onDeleteButtonClicked();
+//			}
+//		});
 
 		
 		undo = new Image(IMG_ICON_UNDO);
-		undo.setStyleName("undoButton");
+		MenuItem undoButton = new MenuItem(undo.toString(), true, buttonsPanel);
+
+//		undo.setStyleName("undoButton");
 		undo.setTitle("R\u00FCckg\u00E4ngig");
 		
 		redo = new Image(IMG_ICON_REDO);
-		redo.setStyleName("redoButton");
+		MenuItem redoButton = new MenuItem(redo.toString(), true, buttonsPanel);
+
+//		redo.setStyleName("redoButton");
 		redo.setTitle("Wiederholen");
 		
+		
+		plus = new Image(IMG_ICON_PLUS);
+
+		  MenuBar additionalOptions = new MenuBar(true);
+		  
+		  MenuItem plusButton = new MenuItem(plus.toString(),true,buttonsPanel);
+// override = new MenuItem( plus.toString(), true, additionalOptions);
+		  plusButton.setSubMenu(additionalOptions);
+		  
+		  
+			MenuItem overrideResources = new MenuItem("Ressourcen für weitere Termine uebernehmen", true, additionalOptions);
+			additionalOptions.addItem(overrideResources);
+			additionalOptions.addItem(new MenuItem("asdas", true, additionalOptions));
+			additionalOptions.addItem(new MenuItem("asdas", true, additionalOptions));
+			additionalOptions.addItem(new MenuItem("asdas", true, additionalOptions));
+			
+			//	MenuItem overrideResources = new MenuItem("Ressourcen für weitere Termine uebernehmen", true, additionalOptions);
+		//	MenuItem overrideResources = new MenuItem("Ressourcen für weitere Termine uebernehmen", true, additionalOptions);
+
+		//  MenuItem overrideResources = new MenuItem("Ressourcen für weitere Termine uebernehmen", true, additionalOptions);
+//		additionalOptions.addItem(test);
+//		additionalOptions.addItem(overrideResources);
+
 		layout = new VerticalPanel();
 		tabBarPanel = new FlowPanel();
-		buttonsPanel = new FlowPanel();
+		//buttonsPanel = new FlowPanel();
 		
 		tabBarPanel.add(bar);
 
@@ -214,12 +264,20 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			}
 		});
 
-		buttonsPanel.add(save);
-		buttonsPanel.add(cancel);
-		buttonsPanel.add(delete);
-		buttonsPanel.add(undo);	
-		buttonsPanel.add(redo);
-	
+//		buttonsPanel.add(cancel);
+//		buttonsPanel.add(save);
+//		buttonsPanel.add(delete);
+//		buttonsPanel.add(undo);	
+//		buttonsPanel.add(redo);
+//		buttonsPanel.add(additionalOptions);
+
+		buttonsPanel.addItem(saveButton);
+		buttonsPanel.addItem(cancelButton);
+		buttonsPanel.addItem(deleteButton);
+		buttonsPanel.addItem(undoButton);
+		buttonsPanel.addItem(redoButton);
+		buttonsPanel.addItem(plusButton);
+
 
 		layout.add(buttonsPanel);
 		layout.add(tabBarPanel);
