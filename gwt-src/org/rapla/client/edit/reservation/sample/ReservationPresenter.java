@@ -167,7 +167,6 @@ public class ReservationPresenter implements ReservationController, Presenter {
     public List<String> getAllCurrentAttributes(Locale locale) {
         List<String> list = new ArrayList<>();
         Classification classification = reservation.getClassification();
-
         DynamicType type = classification.getType();
         for (Attribute attribute : type.getAttributes()) {
             String valueAsString = classification.getValueAsString(attribute, locale);

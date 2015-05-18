@@ -121,8 +121,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         initSaveDeleteCancelButtons();
         final Locale locale = getRaplaLocale().getLocale();
-        //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
-        List<String> allCurrentAttributes = this.getPresenter().getAllCurrentAttributes(locale);
 
 
         /**
@@ -145,19 +143,14 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 /**
  * about current attributes
  */
-      /*  //für Präsentation ausblenden
-        
+        //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
         for (String s : getPresenter().getAllCurrentAttributes(locale)) {
             allCurrentAttributes.addItem(s);
         }
         Label labelCurrentAttributes = new Label("Current Attributes");
         row1.add(labelCurrentAttributes);
-        row1.add(allCurrentAttributes);*/
+        row1.add(allCurrentAttributes);
     } 
-    /**
-     *
-     */
-
 
     private void initRaplaPopupPanel() {
         popup = RootPanel.get("raplaPopup");
