@@ -136,9 +136,9 @@ public class ReservationPresenter implements ReservationController, Presenter {
     }
 
     /**
-     * for now only if depth =1+
      * for now you have to save the original type and not as string or smth similiar
      * TODO: need a way to get the type and only save the specific type etc.., for now its only objects and that's not save
+     * @param attributeNames input a map of string and the corresponding object --> searching for the object in the attributes and change the value
      *
      */
     public void changeAttributesOfCLassification(Map<String, Object> attributeNames, Locale locale) {
