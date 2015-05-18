@@ -73,6 +73,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     public void show(Reservation event) {
 
     	/*Structuring GUI*/
+    	
 
         initRaplaPopupPanel();
         initHeaderPanel();
@@ -670,6 +671,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //Standard Buttons
         {
             Button button = new Button("Abbrechen");
+            button.setStyleName("cancel");
             button.addClickHandler(new ClickHandler() {
 
                 @Override
@@ -682,6 +684,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         if (getPresenter().isDeleteButtonEnabled()) {
             Button button = new Button("Löschen");
+            button.setStyleName("delete");
             button.addClickHandler(new ClickHandler() {
 
                 @Override
@@ -694,6 +697,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         {
             Button button = new Button("Speichern");
+            button.setStyleName("save");
             button.addClickHandler(new ClickHandler() {
 
                 @Override
@@ -712,6 +716,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         	historyMgmtPanel.addStyleName("history-mgmt");
         	popup.add(historyMgmtPanel);
             Button button = new Button("Rückgängig");
+            button.setStyleName("back");
             button.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
@@ -725,6 +730,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         {
             Button button = new Button("Wiederholen");
+            button.setStyleName("further");
             button.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
