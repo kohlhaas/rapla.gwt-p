@@ -177,11 +177,13 @@
 
 .course {
 	margin: 0 5px 10px 5px;
+	cursor: pointer;
 }
 
 .deselectButton {
 	margin: 0 5px 10px 5px;
 	padding: 4px;
+	cursor: pointer;
 } 
 
 
@@ -202,6 +204,26 @@
 	margin-right: 5px;
 	height: 100%;
 	
+}
+
+.cancel::before {
+	content: url('images/black/068 Cancel.png');
+	padding-right: 5px;
+}
+
+.delete::before {
+	content: url('images/black/080 Trash.png');
+	padding-right: 5px;
+}
+
+.back::before {
+	content: url('images/black/127 ArrowLeft.png');
+	padding-right: 5px;
+}
+
+.further::after {
+	content: url('images/black/129 ArrowRight.png');
+	padding-left: 5px;
 }
 
 

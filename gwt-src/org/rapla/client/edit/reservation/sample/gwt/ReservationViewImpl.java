@@ -73,6 +73,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     public void show(Reservation event) {
 
     	/*Structuring GUI*/
+    	
 
         initRaplaPopupPanel();
         initHeaderPanel();
@@ -120,6 +121,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         initSaveDeleteCancelButtons();
         final Locale locale = getRaplaLocale().getLocale();
+        //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
+        List<String> allCurrentAttributes = this.getPresenter().getAllCurrentAttributes(locale);
+
 
         /**
          * das sind die Namen für getCategory Werte (Methode von unten), Theorethisch koentest du die beiden listboxen voneinander abhaengig machen
@@ -670,6 +674,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //Standard Buttons
         {
             Button button = new Button("Abbrechen");
+            button.setStyleName("cancel");
             button.addClickHandler(new ClickHandler() {
 
                 @Override
@@ -682,6 +687,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         if (getPresenter().isDeleteButtonEnabled()) {
             Button button = new Button("Löschen");
+            button.setStyleName("delete");
             button.addClickHandler(new ClickHandler() {
 
                 @Override
@@ -694,6 +700,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         {
             Button button = new Button("Speichern");
+            button.setStyleName("save");
             button.addClickHandler(new ClickHandler() {
 
                 @Override
@@ -712,6 +719,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         	historyMgmtPanel.addStyleName("history-mgmt");
         	popup.add(historyMgmtPanel);
             Button button = new Button("Rückgängig");
+            button.setStyleName("back");
             button.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
@@ -725,6 +733,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         {
             Button button = new Button("Wiederholen");
+            button.setStyleName("further");
             button.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
