@@ -168,8 +168,10 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 				getPresenter().onSetResourcesToAllClicked();
 
 			}
-
 		});
+
+		addResources = new DisclosurePanel("Ressourcen hinzuf\u00FCgen");
+		addResources.setStyleName("dateInfoLineComplete");
 
 		buttonBar = new FlowPanel();
 		buttonBar.setHeight(height + "px");
@@ -1102,7 +1104,13 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 				public void onClick(ClickEvent event) {
 					// TODO Auto-generated method stub
 					getPresenter().onErrorPanelButtonClick(event);
-			//		showLabelSaved();
+
+					try {
+						showLabelSaved();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
 				}
 			});
@@ -1209,7 +1217,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		this.toBeReservedResources.clear();
 		this.resourceTree.clear();
 		this.deleteResourceContainer();
-	//	this.reservedResources=null;
+		// this.reservedResources=null;
 
 	}
 
@@ -1220,16 +1228,14 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		// while(iterator.hasNext()){
 		// RaplaDate date = iterator.next();
 		// }
-		
-	
-		
+
 		List<RaplaDate> dateList2 = this.dateList.getDates();
 		logger.warn("Dates list 1: " + this.dateList.getDates().size());
-		
-		for(RaplaDate raplaDate : dateList2){
+
+		for (RaplaDate raplaDate : dateList2) {
 			raplaDate.setResources(this.reservedResources);
 		}
-		
+
 		if (this.dateList.getDates().size() > 0) {
 			logger.warn("Resource list 1a: "
 					+ this.dateList.getDates().get(0).getResources().size());
@@ -1310,22 +1316,21 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 			logger.warn("Dates list 2: " + this.dateList.getDates().size());
 
-			 ArrayList<List<String>> testRessourcen = new
-			 ArrayList<List<String>>();
+			ArrayList<List<String>> testRessourcen = new ArrayList<List<String>>();
 
 			this.loadChosenResources(testRessourcen);
-			
+
 			refreshResourceContainer();
 		}
 	}
-	
-	public void showLabelSaved() throws InterruptedException{
-		
-		Label changes = new Label("Änderungen wurden übernommen");
-		changes.setVisible(true);
-	//	changes.wait(5);
-		changes.setVisible(false);
-		}
 
+	public void showLabelSaved() throws InterruptedException {
+
+		Label changes = new Label("Änderungen wurden übernommen");
+		dateInfos.add(changes);
+		changes.setVisible(true);
+		// changes.wait(5);
+		changes.setVisible(false);
+	}
 
 }
