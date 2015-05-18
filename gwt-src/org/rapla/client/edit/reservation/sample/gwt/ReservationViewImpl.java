@@ -31,6 +31,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -44,6 +45,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -88,6 +91,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 	private static final ImageResource IMG_ICON_DELETE = ImageImport.INSTANCE.deleteIcon();
 	private static final ImageResource IMG_ICON_UNDO = ImageImport.INSTANCE.undoIcon();
 	private static final ImageResource IMG_ICON_REDO = ImageImport.INSTANCE.redoIcon();
+	private static final ImageResource IMG_ICON_PLUS = ImageImport.INSTANCE.addOptIcon();
 	
 	// for resources and dates tab
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
@@ -197,6 +201,26 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		redo.setStyleName("redoButton");
 		redo.setTitle("Wiederholen");
 		
+		MenuBar plus = new MenuBar(true);
+		MenuBar subMenu = new MenuBar();
+		Image plusImage = new Image(IMG_ICON_PLUS);
+		//redo.setStyleName("redoButton");
+		plus.setTitle("Weitere Optionen");
+		subMenu.addItem("Ressourcen für alle Termine übernehmen", new Command(){
+
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		MenuItem plusButton = new MenuItem(plusImage.toString(), true, subMenu);
+		plus.addItem(plusButton);
+		
+		
+	
+		
 		layout = new VerticalPanel();
 		tabBarPanel = new FlowPanel();
 		buttonsPanel = new FlowPanel();
@@ -214,12 +238,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			}
 		});
 
-		buttonsPanel.add(cancel);
 		buttonsPanel.add(save);
+		buttonsPanel.add(cancel);
 		buttonsPanel.add(delete);
 		buttonsPanel.add(undo);	
 		buttonsPanel.add(redo);
-	
+		buttonsPanel.add(plus);
+
 
 		layout.add(buttonsPanel);
 		layout.add(tabBarPanel);

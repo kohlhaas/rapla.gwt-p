@@ -363,7 +363,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		// loadChosenResources(testRessourcen);
 		//
 
-		Label headerChosenRes = new Label("Ausgewaehlte Ressourcen:");
+		Label headerChosenRes = new Label("Ausgew\u00E4hlte Ressourcen:");
 		headerChosenRes.setStyleName("beschriftung");
 
 		chosenResources.setStyleName("dateInfoLineComplete");
@@ -375,7 +375,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			chosenResources.add(helpList);
 		}
 
-		addResources = new DisclosurePanel("Ressourcen Hinzufuegen");
+		addResources = new DisclosurePanel("Ressourcen hinzuf\u00FCgen");
 		addResources.setStyleName("dateInfoLineComplete");
 
 		FlowPanel chooseContainer = new FlowPanel();
@@ -408,12 +408,12 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		filterEintr.addItem("Verf\u00FCgbare Ressourcen");
 		filterEintr.addItem("Nicht Verf\u00FCgabre Ressourcen");
 		filterEintr.addItem("Kurse");
-		filterEintr.addItem("Räume");
+		filterEintr.addItem("R\u00E4ume");
 		filterEintr.addItem("Professoren");
 		filterEintr.setStyleName("filterWindow");
 		filterEintr.setMultipleSelect(true);
 		filterEintr.setVisible(false);
-
+		
 		// Suchfeld
 		suche = new HorizontalPanel();
 		suche.setStyleName("suchfeld");
@@ -425,6 +425,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 		SuggestBox searchField = new SuggestBox(oracle);
 		searchField.setWidth("300px");
+		searchField.setStyleName("searchInput");
 
 		Image loupe = new Image(IMG_LOUPE);
 		loupe.setStyleName("buttonLoupe");
@@ -446,13 +447,14 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		dateContentWrapper.add(cbRepeatType);
 		dateContentWrapper.add(addDateWithLabel);
 		dateContentWrapper.add(repeatSettings);
-		dateDisclosurePanel = new DisclosurePanel();
-		dateDisclosurePanel.add(dateContentWrapper);
-		dateDisclosurePanel.setOpen(true);
+		dateContentWrapper.setBorderWidth(0);
+//		dateDisclosurePanel = new DisclosurePanel();
+//		dateDisclosurePanel.add(dateContentWrapper);
+//		dateDisclosurePanel.setOpen(true);
+			
+		dateInfos.add(dateContentWrapper);
 
-		dateInfos.add(dateDisclosurePanel);
-
-		dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
+	//	dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
 		dateInfos.add(chosenResources);
 		dateInfos.add(addResources);
 
@@ -808,7 +810,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 							new Date(dateBegin.getValue().getTime()
 									+ timeEnd.getTime() + 3600000),
 							copyResourceArray(reservedResources), true));
-					addTermin = new RaplaDate(tmp);
+					addTermin = new RaplaDate(tmp, type);
 					addTermin.setStyleName("singleDate");
 					dateList.add(addTermin);
 					addTermin.addClickHandler(new ClickHandler() {
@@ -910,6 +912,10 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			timeBegin.setValue((long) -3600000
 					+ currentDate.getStartHourMinute());
 			timeEnd.setValue((long) -3600000 + currentDate.getEndHourMinute());
+			if(currentDate.isReccuringDate()){
+			setRepeatTypeSettings(daily);
+			}
+			
 
 			buttonGarbageCan.setResource(IMG_CROSS);
 			buttonPlus.setResource(IMG_CHANGE);
@@ -997,6 +1003,10 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 					HasVerticalAlignment.ALIGN_MIDDLE);
 			repeatSettings.setCellVerticalAlignment(repeatText,
 					HasVerticalAlignment.ALIGN_MIDDLE);
+			if(sender == daily){
+				daily.setValue(true);
+				cbRepeatType.setOpen(true);
+			}
 		}
 		if (sender == noReccuring) {
 			// end.remove(1);
@@ -1235,7 +1245,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 	@Override
 	public void setResourcesRoom(List<String> dynamicTypesNames) {
-		dynamicTypesNames.add(0, "Raeume");
+		dynamicTypesNames.add(0, "R\u00E4ume");
 		this.toBeReservedResources.add(dynamicTypesNames);
 
 	}

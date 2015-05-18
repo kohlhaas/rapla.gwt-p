@@ -29,6 +29,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	private Date beginTime, endTime;
 	private boolean calculateLectureHours;
 	Label element;
+	int reccuringType;
 
 	private List<RaplaDate> raplaDates = new ArrayList<>();
 	private DisclosurePanel singleDatesContainer = new DisclosurePanel();
@@ -52,7 +53,8 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 		initWidget(main);
 	}
 
-	public RaplaDate(List<RaplaDate> list) {
+	public RaplaDate(List<RaplaDate> list, int reccuringType) {
+		this.reccuringType = reccuringType;
 		this.raplaDates = list;
 		createMultiDateLabel();
 		initWidget(main);

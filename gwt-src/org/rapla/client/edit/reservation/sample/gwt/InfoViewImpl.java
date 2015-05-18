@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -83,15 +84,26 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 		});
 
 		final FlowPanel listPanel = new FlowPanel();
+		Label eventType = new Label("Veranstaltungsart w\u00E4hlen:");
+		eventType.setStyleName("eventTypeLabel");
+		
+//		InfoHorizontalPanel access = new InfoHorizontalPanel(0.5*width +"px");
+		
+	//	access.add(changeAccess);
+		
+		listPanel.add(eventType);
 		listPanel.add(eventTypesListBox);
 		listPanel.add(resources);
+		
 		listPanel.setWidth(width + "px");
+		listPanel.setStyleName("listpanel");
 		contentLeft.add(listPanel);
 
 		final InfoHorizontalPanel titelPanel = new InfoHorizontalPanel(width
 				+ "px");
 		final Label title = new Label("Vorlesungstitel");
 		titelInput = new TextBox();
+		titelInput.setWidth(0.33*width + "px");
 		titelPanel.add(title, (width / 3) + "px");
 		titelPanel.add(titelInput, (width / 3) + "px");
 		titelPanel.setWidth(width + "px");
@@ -99,6 +111,7 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 		final Label vorlesungsStunden = new Label("Vorlesungsstunden");
 		final Label vorlesungsStundenMessage = new Label("");
 		vorlesungsStundenInput = new TextBox();
+		vorlesungsStundenInput.setWidth(0.33*width + "px");
 		vorlesungsStundenInput.addKeyUpHandler(new KeyUpHandler() {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
@@ -118,9 +131,15 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 				width + "px");
 		Label studiengang = new Label("Studiengang");
 		studiengangListBox = new ListBox();
-		studiengangListBox.addItem("WWI12B1");
-		studiengangListBox.addItem("WWI12B2");
-		studiengangListBox.addItem("WWI12B3");
+		studiengangListBox.setWidth(0.33*width + "px");
+		studiengangListBox.addItem("BWL-Bank");
+		studiengangListBox.addItem("BWL-Handel");
+		studiengangListBox.addItem("BWL-International Business");
+		studiengangListBox.addItem("BWL-Industie");
+		studiengangListBox.addItem("RSW-Steuern- und Pr\u00FCfungswesen");
+		studiengangListBox.addItem("Unternehmertum");
+		studiengangListBox.addItem("BWL-Versicherung");
+		studiengangListBox.addItem("Wirtschaftsinformatik");
 		studiengangListBoxAuswahl = new ArrayList();
 		studiengangListBox.addChangeHandler(new ChangeHandler() {
 			// Hier den Handler / Listener für die Listbox einbinden ~ done
@@ -131,17 +150,39 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 			}
 
 		});
-
 		studiengangPanel.add(studiengang, (width / 3) + "px");
 		studiengangPanel.add(studiengangListBox, (width / 3) + "px");
+		
+		final InfoHorizontalPanel planungsstatus = new InfoHorizontalPanel(width
+				+ "px");
+		final Label planungsstatusLabel = new Label("Planungsstatus");
+		TextBox planungsstatusInput = new TextBox();
+		planungsstatusInput.setWidth(0.33*width + "px");
+		planungsstatus.add(planungsstatusLabel, (width / 3) + "px");
+		planungsstatus.add(planungsstatusInput, (width / 3) + "px");
+		planungsstatus.setWidth(width + "px");
+		
+		final InfoHorizontalPanel erfassungsstatus = new InfoHorizontalPanel(width
+				+ "px");
+		final Label erfassungsstatusLabel = new Label("Erfassungsstatus");
+		TextBox erfassungsstatusInput = new TextBox();
+		erfassungsstatusInput.setWidth(0.33*width + "px");
+		erfassungsstatus.add(erfassungsstatusLabel, (width / 3) + "px");
+		erfassungsstatus.add(erfassungsstatusInput, (width / 3) + "px");
+		erfassungsstatus.setWidth(width + "px");
+
 
 		studiengangPanel.finalize(3);
 		vorlesungsStundenPanel.finalize(3);
 		titelPanel.finalize(3);
+		planungsstatus.finalize(3);
+		erfassungsstatus.finalize(3);
 
 		contentRight.add(titelPanel);
 		contentRight.add(vorlesungsStundenPanel);
 		contentRight.add(studiengangPanel);
+		contentRight.add(planungsstatus);
+		contentRight.add(erfassungsstatus);
 
 		infoTab.add(contentLeft);
 		infoTab.add(contentRight);
