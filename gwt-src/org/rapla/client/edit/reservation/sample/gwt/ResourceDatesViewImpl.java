@@ -1102,7 +1102,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 				public void onClick(ClickEvent event) {
 					// TODO Auto-generated method stub
 					getPresenter().onErrorPanelButtonClick(event);
-					showLabelSaved();
+			//		showLabelSaved();
 
 				}
 			});
@@ -1209,7 +1209,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		this.toBeReservedResources.clear();
 		this.resourceTree.clear();
 		this.deleteResourceContainer();
-//		this.reservedResources=null;
+	//	this.reservedResources=null;
 
 	}
 
@@ -1310,6 +1310,11 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 			logger.warn("Dates list 2: " + this.dateList.getDates().size());
 
+			 ArrayList<List<String>> testRessourcen = new
+			 ArrayList<List<String>>();
+
+			this.loadChosenResources(testRessourcen);
+			
 			refreshResourceContainer();
 		}
 	}
@@ -1318,7 +1323,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		
 		Label changes = new Label("Änderungen wurden übernommen");
 		changes.setVisible(true);
-		changes.wait(5);
+	//	changes.wait(5);
 		changes.setVisible(false);
 		}
 
