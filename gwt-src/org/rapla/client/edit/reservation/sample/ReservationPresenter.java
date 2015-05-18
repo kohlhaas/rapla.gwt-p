@@ -192,6 +192,8 @@ public class ReservationPresenter implements ReservationController, Presenter {
         return "is new";
 
     }
+    
+
 
     /**
      * returns true if the user clicked on the "+" button

@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
+
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
@@ -17,8 +18,10 @@ import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 
@@ -45,7 +48,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     VerticalPanel upDown;
 
     TextBox eventNameTB;
-
+    
+    final ListBox eventTypeLB = new ListBox();
     ListBox language = new ListBox();
     ListBox examinationTypeLB;
     ListBox allLanguageLB = new ListBox();
@@ -69,8 +73,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     boolean changedToLehrveranstaltung;
     boolean firstChange = true;
     
+    Map<String, Object> attributeNames = new HashMap<String, Object>();
+    
+  
+    
 
     public void show(Reservation event) {
+    	
 
     	/*Structuring GUI*/
     	
@@ -119,10 +128,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         down.setHTML(html2);
         upDown.add(down);  */
 
-        initSaveDeleteCancelButtons();
+        initSaveDeleteCancelButtons(event);
         final Locale locale = getRaplaLocale().getLocale();
         //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
-        List<String> allCurrentAttributes = this.getPresenter().getAllCurrentAttributes(locale);
+       // List<String> allCurrentAttributes = this.getPresenter().getAllCurrentAttributes(locale);
 
 
         /**
@@ -145,14 +154,14 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 /**
  * about current attributes
  */
-      /*  //für Präsentation ausblenden
+        //für Präsentation ausblenden
         
         for (String s : getPresenter().getAllCurrentAttributes(locale)) {
-            allCurrentAttributes.addItem(s);
+            (allCurrentAttributes).addItem(s);
         }
         Label labelCurrentAttributes = new Label("Current Attributes");
         row1.add(labelCurrentAttributes);
-        row1.add(allCurrentAttributes);*/
+        row1.add(allCurrentAttributes);
     } 
     /**
      *
@@ -292,7 +301,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         // Eventtype
         final DynamicType[] eventTypes = getPresenter().getAllEventTypes();
         final Locale locale = getRaplaLocale().getLocale();
-        final ListBox eventTypeLB = new ListBox();
 
         //initLabelCurrentEventType(locale);
 
@@ -670,7 +678,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
 
-    private void initSaveDeleteCancelButtons() {
+    private void initSaveDeleteCancelButtons(Reservation event) {
         //Standard Buttons
         {
             Button button = new Button("Abbrechen");
@@ -701,13 +709,31 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         {
             Button button = new Button("Speichern");
             button.setStyleName("save");
+            final Locale locale = getRaplaLocale().getLocale();
             button.addClickHandler(new ClickHandler() {
 
                 @Override
                 public void onClick(ClickEvent e) {
-                    //Attributes [] selectedAttributes = new Attributes();
+                	
+                	
+                	
+                	DynamicType [] eventTypes = getPresenter().getAllEventTypes();
+                	
+                	for(DynamicType eventType : eventTypes){
+                		
+                		if(eventType.getName(locale).equalsIgnoreCase(eventTypeLB.getSelectedValue()))
+                			attributeNames.put(examinationTypeLB.getSelectedValue(),eventType.getAttribute("PrüfungsArt"));
+                	}
+                	
+                	
 
-                    //getPresenter().changeAttributesOfCLassification(attributes);
+
+/*                	attributeNames.put("PrüfungsArt", examinationTypeLB.getSelectedValue());
+                    Attributes [] selectedAttributes = new Attributes();
+
+                    getPresenter().changeAttributesOfCLassification(selectedAttributes);*/
+                	
+               
                     getPresenter().onSaveButtonClicked();
                 }
             });
