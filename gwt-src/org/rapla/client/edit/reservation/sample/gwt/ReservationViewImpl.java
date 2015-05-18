@@ -218,6 +218,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		MenuItem plusButton = new MenuItem(plusImage.toString(), true, subMenu);
 		plus.addItem(plusButton);
 		
+		
 	
 		
 		layout = new VerticalPanel();
