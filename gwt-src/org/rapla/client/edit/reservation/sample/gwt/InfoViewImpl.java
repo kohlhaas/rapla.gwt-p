@@ -83,7 +83,7 @@ public class InfoViewImpl extends AbstractView<Presenter> implements
 		});
 
 		final FlowPanel listPanel = new FlowPanel();
-		Label eventType = new Label("Art der Veranstaltung");
+		Label eventType = new Label("Veranstaltungsart w\u00E4hlen:");
 		eventType.setStyleName("eventTypeLabel");
 		listPanel.add(eventType);
 		listPanel.add(eventTypesListBox);
