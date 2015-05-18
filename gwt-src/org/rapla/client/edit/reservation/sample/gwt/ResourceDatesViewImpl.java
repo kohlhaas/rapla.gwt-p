@@ -170,6 +170,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			}
 		});
 
+		this.dateList.setFirstWidget(true);
+
 		addResources = new DisclosurePanel("Ressourcen hinzuf\u00FCgen");
 		addResources.setStyleName("dateInfoLineComplete");
 
@@ -769,6 +771,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 	@Override
 	public void addDateWidget() {
+		
+		logger.warn("datelist widget countp1: " + dateList.getWidgetCount());
 		RaplaDate addTermin = new RaplaDate();
 
 		Date beginTmp = new Date(dateBegin.getValue().getTime()
@@ -834,6 +838,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 				}
 			}
 		}
+
+		logger.warn("datelist widget countp2: " + dateList.getWidgetCount());
 	}
 
 	private void clearDateTimeInputFields() {
@@ -886,14 +892,18 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 	// ClickHandler: Actions when clicking on a created Date
 	@Override
 	public void setRaplaDate(RaplaDate clickedDate) {
+		logger.warn("setRaplaDate");
 		int prevActive = dateList.getActive() == -1 ? -1 : dateList.getActive();
+		logger.warn("Active index1: " + dateList.getActive());
 		this.currentDate = clickedDate;
 		dateList.setActive(currentDate);
+		logger.warn("Active index2: " + dateList.getActive());
 
 		// Loading the Date, Time and other date modification elements
 		if (!(dateList.getActive() == -1)) {
 			if (dateList.getWidgetCount() > 2)
 				setResourcesToAll.setVisible(true);
+			logger.warn("1 ");
 
 			dateBegin.setValue(currentDate.getBeginTime());
 			dateEnd.setValue(currentDate.getEndTime());
@@ -904,17 +914,29 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			buttonGarbageCan.setResource(IMG_CROSS);
 			buttonPlus.setResource(IMG_CHANGE);
 			buttonPlus.setTitle("Termin \u00FCberschreiben");
-			reservedResources.clear();
-			reservedResources = copyResourceArray(currentDate.getResources());
-			refreshResourceContainer();
-			refreshResourceTree();
 
+			logger.warn("1b ");
+			reservedResources.clear();
+			if (currentDate.getResources().size() > 0) {
+				reservedResources = copyResourceArray(currentDate
+						.getResources());
+				refreshResourceContainer();
+				refreshResourceTree();
+			}
+			logger.warn("1c ");
 			dateList.setStyle(dateList.getRaplaDateIndex(clickedDate),
 					"singleDateClicked");
-			dateList.removeStyle(prevActive, "singleDateClicked");
-			dateList.setStyle(prevActive, "singleDate");
+			logger.warn("1c2 ");
+			if (prevActive != -1) {
+				dateList.removeStyle(prevActive, "singleDateClicked");
+				dateList.setStyle(prevActive, "singleDate");
+			}
+
+			logger.warn("1d ");
 
 		} else {
+			logger.warn("2 ");
+
 			clearDateTimeInputFields();
 			buttonGarbageCan.setResource(IMG_CROSS_GREY);
 			buttonPlus.setResource(IMG_PLUS);
@@ -922,13 +944,20 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			currentDate.removeStyleName("singleDateClicked");
 			currentDate.setStyleName("singleDate");
 		}
+		logger.warn("end ");
 
 	}
 
 	@Override
 	public void openEditView() {
+		logger.warn("openEditView ");
+		logger.warn("datelist widget count: "+  dateList.getWidgetCount());
 		if (buttonPlus.getTitle().equals("Termin \u00FCberschreiben")) {
+			logger.warn("Termin \u00FCberschreiben");
+
+			logger.warn("last pos: " + dateList.getLastPosition());
 			int active = dateList.getActive();
+			logger.warn("Active index: " + active);
 			dateList.removeDate(active);
 			addDateWidget();
 			buttonPlus.setTitle("Termin erstellen");
@@ -936,6 +965,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		} else {
 			addDateWidget();
 		}
+
 	}
 
 	@Override
@@ -1263,6 +1293,36 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 		if (dateList.size() > 0) {
 			logger.warn("set Dates 1");
+
+			for (RaplaDate date : dateList) {
+				date.setStyleName("singleDate");
+				// dateList.add(date);
+				date.addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent e) {
+						getPresenter().onAddTerminButtonClicked(e);
+					}
+				});
+			}
+
+			FlowPanel placeholderSetResourcesToAll = new FlowPanel();
+			placeholderSetResourcesToAll.setStyleName("resourceButtonPanel");
+			setResourcesToAll = new Button(
+					"Ressourcen f\u00FCr alle \u00FCbernehmen");
+			setResourcesToAll.setStyleName("resourceButton");
+			setResourcesToAll.setVisible(false);
+			placeholderSetResourcesToAll.add(setResourcesToAll);
+			this.dateList.add(placeholderSetResourcesToAll);
+
+			setResourcesToAll.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onSetResourcesToAllClicked();
+
+				}
+			});
+			this.dateList.setFirstWidget(false);
+
 			this.dateList.setDates(dateList);
 			// this.deleteResourceContainer();
 			this.loadChosenResources(dateList.get(0).getResources());
@@ -1303,16 +1363,17 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			placeholderSetResourcesToAll.add(setResourcesToAll);
 			this.dateList.add(placeholderSetResourcesToAll);
 
-			// setResourcesToAll.addClickHandler(new ClickHandler() {
-			//
-			// @Override
-			// public void onClick(ClickEvent event) {
-			// getPresenter().onSetResourcesToAllClicked();
-			//
-			// }
-			//
-			// });
-			//
+			setResourcesToAll.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onSetResourcesToAllClicked();
+
+				}
+
+			});
+
+			this.dateList.setFirstWidget(true);
 
 			logger.warn("Dates list 2: " + this.dateList.getDates().size());
 

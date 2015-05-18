@@ -4,11 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.rapla.framework.logger.Logger;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class TerminList extends FlowPanel {
+//	
+//	@Inject
+//	Logger logger;
 	
 	private List<RaplaDate> dates = new ArrayList<RaplaDate>();
 	private int active = -1;
@@ -26,9 +33,13 @@ public class TerminList extends FlowPanel {
 	
 	public void add(final RaplaDate s){
 		
-		if(firstWidget){
+//		logger.warn("add RaplaDate");
+//		logger.warn("firstWidget" + firstWidget);
+		if(firstWidget == true){
+			this.remove(0);
 			this.remove(0);
 			firstWidget = false;
+//			logger.warn("2");
 		}
 			
 		super.add(s);
@@ -53,6 +64,7 @@ public class TerminList extends FlowPanel {
 	}
 	public void removeDate(int index){
 		super.remove(index+1);
+	//	super.remove(index+1);
 		dates.remove(index);	
 	}
 
@@ -115,16 +127,31 @@ public class TerminList extends FlowPanel {
 	}
 
 	public void setDates(List<RaplaDate> dates) {
-		if(firstWidget){
-			this.remove(0);
+//		if(firstWidget){
+//			this.remove(0);
+//			firstWidget = false;
+//		}
+		
+		//this.dates = dates;
+		for(RaplaDate date: dates){
+			//super.add(date);
+			this.add(date);
+		}
+		if(dates.size()>0){
+			this.active=0;
 			firstWidget = false;
 		}
-		
-		this.dates = dates;
-		for(RaplaDate date: dates){
-			super.add(date);
-		}
 	}
+
+	public boolean isFirstWidget() {
+		return firstWidget;
+	}
+
+	public void setFirstWidget(boolean firstWidget) {
+		this.firstWidget = firstWidget;
+	}
+	
+	
 	
 	
 
