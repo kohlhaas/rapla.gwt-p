@@ -16,10 +16,7 @@ import de.vksi.c4j.ContractReference;
 
 import javax.inject.Inject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Each Reservation has a classification, some resources(allocatable) and appointments
@@ -111,7 +108,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
      * @param neededCategory Studiengaenge, Benutzergruppen....
      * @return null if error
      */
-    public Category[] getCategory(Locale locale, String neededCategory) {
+    public Category[] getCategoryAttributes(Locale locale, String neededCategory) {
         Category courseCategory = null;
 
         Category superCategory = facade.getSuperCategory();
@@ -142,8 +139,8 @@ public class ReservationPresenter implements ReservationController, Presenter {
     /**
      * for now you have to save the original type and not as string or smth similiar
      * TODO: need a way to get the type and only save the specific type etc.., for now its only objects and that's not save
-     * @param attributeNames input a map of string and the corresponding object --> searching for the object in the attributes and change the value
      *
+     * @param attributeNames input a map of string and the corresponding object --> searching for the object in the attributes and change the value
      */
     public void changeAttributesOfCLassification(Map<String, Object> attributeNames, Locale locale) {
         logger.info("adding number of attributes: " + attributeNames.size());
@@ -171,12 +168,33 @@ public class ReservationPresenter implements ReservationController, Presenter {
         for (Attribute attribute : type.getAttributes()) {
             String valueAsString = classification.getValueAsString(attribute, locale);
             if (valueAsString == null || valueAsString.isEmpty()) {
-                valueAsString= "not defined yet";
+                valueAsString = "not defined yet";
             }
             list.add(attribute.getName(locale) + " : " + valueAsString);
         }
+        list.add("");
+        for (Attribute attribute : classification.getAttributes()) {
+            list.add(attribute.toString());
+        }
         logger.info("all attributes length: " + list.size());
         return list;
+    }
+
+    /**
+     *
+     * @param valuesToSave a Map with a name of the attribute and a value
+     */
+    public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave) {
+
+        Classification classification = reservation.getClassification();
+        DynamicType type = classification.getType();
+        Classification newClassification = type.newClassification();
+        logger.info("saving Map:" + valuesToSave.toString() +"and size:" + valuesToSave.size());
+        for (Map.Entry<Attribute, Object> stringObjectEntry : valuesToSave.entrySet()) {
+            newClassification.setValue(stringObjectEntry.getKey(),stringObjectEntry.getValue());
+        }
+        reservation.setClassification(newClassification);
+        logger.info("new Classification"+ Arrays.toString(newClassification.getAttributes()));
     }
 
     /**
@@ -194,10 +212,11 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     /**
      * returns true if the user clicked on the "+" button
+     *
      * @return if the event is new or not
      */
 
-    public boolean getIsNew(){
+    public boolean getIsNew() {
         return isNew;
     }
 

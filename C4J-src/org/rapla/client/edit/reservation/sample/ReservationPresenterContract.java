@@ -108,7 +108,7 @@ public class ReservationPresenterContract extends ReservationPresenter {
 	}
 
 	@Override
-	public Category[] getCategory(Locale locale, String neededCategory) {
+	public Category[] getCategoryAttributes(Locale locale, String neededCategory) {
 		if (preCondition()) {
 			// TODO: write preconditions if required
 			assert locale != null : "locale != null";
@@ -116,7 +116,7 @@ public class ReservationPresenterContract extends ReservationPresenter {
 		}
 		if (postCondition()) {
 			// TODO: write postconditions if required
-			assert unchanged(target.getCategory(locale, neededCategory));
+			assert unchanged(target.getCategoryAttributes(locale, neededCategory));
 			
 		}
 		return ignored();

@@ -21,8 +21,6 @@ import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.internal.RaplaJDKLoggingAdapter;
 import org.rapla.framework.internal.RaplaLocaleImpl;
-import org.rapla.client.base.AbstractView;
-import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 
 @RunWith(JukitoRunner.class)
 public class ReservationPresenterTest  {
@@ -128,7 +126,7 @@ public class ReservationPresenterTest  {
   public void getCategoryTest(){
 	  Locale locale = raplaLocale.getLocale();
 	  //WHEN	
-	  presenter.getCategory(locale, "Sprachen");
+	  presenter.getCategoryAttributes(locale, "Sprachen");
 	  //THEN
 	  //test if superCategory is get from facade
 	  verify(facade).getSuperCategory();
