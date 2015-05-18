@@ -408,12 +408,12 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		filterEintr.addItem("Verf\u00FCgbare Ressourcen");
 		filterEintr.addItem("Nicht Verf\u00FCgabre Ressourcen");
 		filterEintr.addItem("Kurse");
-		filterEintr.addItem("Räume");
+		filterEintr.addItem("R\u00E4ume");
 		filterEintr.addItem("Professoren");
 		filterEintr.setStyleName("filterWindow");
 		filterEintr.setMultipleSelect(true);
 		filterEintr.setVisible(false);
-
+		
 		// Suchfeld
 		suche = new HorizontalPanel();
 		suche.setStyleName("suchfeld");
@@ -425,6 +425,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 		SuggestBox searchField = new SuggestBox(oracle);
 		searchField.setWidth("300px");
+		searchField.setStyleName("searchInput");
 
 		Image loupe = new Image(IMG_LOUPE);
 		loupe.setStyleName("buttonLoupe");
