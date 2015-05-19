@@ -218,7 +218,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			}
 			
 		});
-		subMenu.setStyleName("extraInhalt");
+		
+		
 		MenuItem plusButton = new MenuItem(plusImage.toString(), true, subMenu);
 		plus.addItem(plusButton);
 		

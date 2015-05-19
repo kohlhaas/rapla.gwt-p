@@ -369,15 +369,15 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		chosenResources.setStyleName("dateInfoLineComplete");
 		chosenResources.add(headerChosenRes);
 		
-		FlowPanel explainer2Panel = new FlowPanel();
-		explainer2Panel.setStyleName("wildcardPanel");
+//		FlowPanel explainer2Panel = new FlowPanel();
+//		explainer2Panel.setStyleName("wildcardPanel");
 		
 		Label explainer2 = new Label("Es wurden bisher keine Ressourcen ausgewählt");
 		explainer2.setStyleName("wildcard");
 		
-		explainer2Panel.add(explainer2);
-		
-		chosenResources.add(explainer2Panel);
+//		explainer2Panel.add(explainer2);
+//		
+//		chosenResources.add(explainer2Panel);
 		
 		// -------
 
@@ -416,7 +416,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 		filterEintr = new ListBox();
 		filterEintr.addItem("Verf\u00FCgbare Ressourcen");
-		filterEintr.addItem("Nicht Verf\u00FCgabre Ressourcen");
+		filterEintr.addItem("Nicht Verf\u00FCgbare Ressourcen");
 		filterEintr.addItem("Kurse");
 		filterEintr.addItem("R\u00E4ume");
 		filterEintr.addItem("Professoren");
