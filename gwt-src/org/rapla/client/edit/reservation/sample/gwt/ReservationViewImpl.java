@@ -25,16 +25,16 @@ import java.util.Map;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 
-    Panel popup;
+    Panel popupPanel;
     FlowPanel headerPanel;
 
     TabPanel tabPanel; //Tabs for General Information and Appointment+Ressources-Planning
 
-    FlowPanel content;
-    FlowPanel contentRes = new FlowPanel();
-    FlowPanel generalInformation;
-    FlowPanel row1;
-    FlowPanel part2;
+    FlowPanel contentPanel;
+    FlowPanel contentRessourcesPanel = new FlowPanel();
+    FlowPanel generalInformationPanel;
+    FlowPanel row1Panel;
+    FlowPanel part2Panel;
     FlowPanel coursePanel;
 
     HorizontalPanel saveDeleteCancelHPanel;
@@ -45,7 +45,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     Grid grid;
 
-    VerticalPanel upDown;
+    VerticalPanel upDown; //aktuell nicht in Benutzung
 
     TextBox eventNameTB;
     
@@ -57,6 +57,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     ListBox allKeys2 = new ListBox();
     Button course = new Button("Studiengang auswählen");
     ListBox allCurrentAttributes = new ListBox();
+    TextBox testSaving = new TextBox(); //TEST!!!
 
     Button hideButton = null;
     Button deselectButton = null;
@@ -102,18 +103,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         /* Filling structure */
         initCaptionLabel();
         initEventTypeListBoxes();
-        
-        //initCourseButton();
         initLabelEventNameInGrid();
         initEventNameTextBox();
         initLabelPlannedHoursInGrid();
         initTextBoxPlannedHoursInGrid();
-
-
         // initUpButton();
         // initDownButton();
         initLabelInfo();
         initTextAreaInfo();
+        
+        initTestButton(); //TEST!!!
         
         
     
@@ -163,14 +162,16 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             (allCurrentAttributes).addItem(s);
         }
         Label labelCurrentAttributes = new Label("Current Attributes");
-        row1.add(labelCurrentAttributes);
-        row1.add(allCurrentAttributes);
-    } 
+        row1Panel.add(labelCurrentAttributes);
+        row1Panel.add(allCurrentAttributes);
+    }
+    
+    /*Init Panels*/
 
     private void initRaplaPopupPanel() {
-        popup = RootPanel.get("raplaPopup");
-        popup.setVisible(true);
-        popup.setStyleName("popup");
+        popupPanel = RootPanel.get("raplaPopup");
+        popupPanel.setVisible(true);
+        popupPanel.setStyleName("popup");
     }
 
     private void initTabPanel() {
@@ -189,18 +190,18 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     private void initContentPanel() {
-        content = new FlowPanel();
-        content.setStyleName("content");
+        contentPanel = new FlowPanel();
+        contentPanel.setStyleName("content");
     }
 
     private void initGeneralInformationPanel() {
-        generalInformation = new FlowPanel();
-        generalInformation.setStyleName("generalInformation");
+        generalInformationPanel = new FlowPanel();
+        generalInformationPanel.setStyleName("generalInformation");
     }
 
     private void initRow1() {
-        row1 = new FlowPanel();
-        row1.setStyleName("zeile1");
+        row1Panel = new FlowPanel();
+        row1Panel.setStyleName("zeile1");
     }
 
     private void initCoursePanel() {
@@ -211,8 +212,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void initPart2Panel() {
         //Second part of the structure
-        part2 = new FlowPanel();
-        part2.setStyleName("part2");
+        part2Panel = new FlowPanel();
+        part2Panel.setStyleName("part2");
 
     }
 
@@ -226,20 +227,22 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         upDown.setStyleName("upDown");
 
     }
+    
+
 
     private void clearPanels() {
-        popup.clear();
+        popupPanel.clear();
         headerPanel.clear();
         saveDeleteCancelHPanel.clear();
         tabPanel.clear();
-        content.clear();
-        generalInformation.clear();
-        row1.clear();
+        contentPanel.clear();
+        generalInformationPanel.clear();
+        row1Panel.clear();
         coursePanel.clear();
-        part2.clear();
+        part2Panel.clear();
         grid.clear();
         //upDown.clear();
-        contentRes.clear();
+        contentRessourcesPanel.clear();
         allKeys.clear();
         allLanguageLB.clear();
         allCurrentAttributes.clear();
@@ -247,24 +250,25 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     private void structuringPanels() {
-        popup.add(headerPanel);
-        popup.add(tabPanel);
-        popup.add(saveDeleteCancelHPanel);
+        popupPanel.add(headerPanel);
+        popupPanel.add(tabPanel);
+        popupPanel.add(saveDeleteCancelHPanel);
         initTabs();
-        content.add(generalInformation);
-        content.add(contentRes);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
+        contentPanel.add(generalInformationPanel);
+        contentPanel.add(contentRessourcesPanel);// Notiz Yvonne: Ressourcen - Implementierung (siehe mapfromReservation-Methode)
 
-        generalInformation.add(row1);
-        generalInformation.add(coursePanel);
-        generalInformation.add(part2);
-        part2.add(grid);
+        generalInformationPanel.add(row1Panel);
+        generalInformationPanel.add(coursePanel);
+        generalInformationPanel.add(part2Panel);
+        part2Panel.add(grid);
         //part2.add(upDown);
     }
     
 
-
+    /*Defining two Tabs for the two Views*/
+    
     private void initTabs() {
-        tabPanel.add(content, "Allgemeine Informationen");
+        tabPanel.add(contentPanel, "Allgemeine Informationen");
         tabPanel.getTabBar().setStyleName("tabBar");
 
         for (TabPanelRapla tab : tabs) {
@@ -273,6 +277,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         tabPanel.selectTab(0);
     }
+    
+    
+    
+    /* Filling Panels */
 
     private void initCaptionLabel() {
     	
@@ -311,7 +319,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         for (DynamicType dynamicType : eventTypes) {
             eventTypeLB.addItem(dynamicType.getName(locale));
         }
-        row1.add(eventTypeLB);
+        row1Panel.add(eventTypeLB);
 
         chosenEventType = eventTypeLB.getSelectedValue();
         if (chosenEventType.equalsIgnoreCase(null)) {
@@ -416,7 +424,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	for(Category art : examinationTypesCategory){
     		examinationTypeLB.addItem(art.getName(locale));
     	}
-    	row1.add(examinationTypeLB);
+    	row1Panel.add(examinationTypeLB);
     }
     
     private void initAllLanguageLB(){
@@ -433,7 +441,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         	}
         	
         }
-        row1.add(allLanguageLB);
+        row1Panel.add(allLanguageLB);
         
         
         
@@ -470,13 +478,13 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //Study course
 
         course.setStyleName("course");
-        row1.add(course);
+        row1Panel.add(course);
 
         course.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent e) {
                 if (buttonRemoved) {
-                    row1.add(course);
+                    row1Panel.add(course);
                     buttonRemoved = false;
                 }
                 coursePanel.setVisible(true);
@@ -569,12 +577,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     
     
     private void removeAllLanguageLB(){
-    	row1.remove(allLanguageLB);
+    	row1Panel.remove(allLanguageLB);
     }
 
 
     private void removeCourseButton() {
-        row1.remove(course);
+        row1Panel.remove(course);
         coursePanel.remove(tree);
         coursePanel.remove(hideButton);
         coursePanel.remove(deselectButton);
@@ -582,7 +590,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
     
     private void removeExaminationTypeLB(){
-    	row1.remove(examinationTypeLB);
+    	row1Panel.remove(examinationTypeLB);
     }
     
     //könnte ich als eine Methode schreiben
@@ -665,16 +673,20 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private void initLabelInfo() {
         Label info = new Label("Sonstige Veranstaltungsinformationen:");
-        part2.add(info);
+        part2Panel.add(info);
 
     }
 
     private void initTextAreaInfo() {
         TextArea taInfo = new TextArea();
         taInfo.setStyleName("taInfo");
-        part2.add(taInfo);
+        part2Panel.add(taInfo);
+        part2Panel.add(testSaving); //TEST!!!!!!
+        
+
 
     }
+    
 
 
     private void initSaveDeleteCancelButtons(Reservation event) {
@@ -716,13 +728,21 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 	
                 	
                 	
-                	DynamicType [] eventTypes = getPresenter().getAllEventTypes();
+/*                	DynamicType [] eventTypes = getPresenter().getAllEventTypes();
                 	
                 	for(DynamicType eventType : eventTypes){
                 		
-                		if(eventType.getName(locale).equalsIgnoreCase(eventTypeLB.getSelectedValue()))
+                		if(eventType.getName(locale).equalsIgnoreCase(eventTypeLB.getSelectedValue())){
+                			
                 			attributeNames.put(examinationTypeLB.getSelectedValue(),eventType.getAttribute("PrüfungsArt"));
-                	}
+                			testSaving.setText(attributeNames.toString());
+                		}
+                			
+                			
+                		
+                			
+                		
+                	}*/
                 	
                 	
 
@@ -742,7 +762,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         {
         	historyMgmtPanel = new FlowPanel();
         	historyMgmtPanel.addStyleName("history-mgmt");
-        	popup.add(historyMgmtPanel);
+        	popupPanel.add(historyMgmtPanel);
             Button button = new Button("Rückgängig");
             button.setStyleName("back");
             button.addClickHandler(new ClickHandler() {
@@ -771,10 +791,47 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
     }
 
-
+    //TEST!!!
+    private void initTestButton() {
+    	
+    	Button testButton = new Button("Show Saving");
+    	saveDeleteCancelHPanel.add(testButton);
+    	 final Locale locale = getRaplaLocale().getLocale();
+    	testButton.addClickHandler(new ClickHandler() {
+    		
+    		@Override
+    		public void onClick(ClickEvent event) {
+    			DynamicType [] eventTypes = getPresenter().getAllEventTypes();
+            	
+            	for(DynamicType eventType : eventTypes){
+            		
+            		if(eventType.getName(locale).equalsIgnoreCase(eventTypeLB.getSelectedValue())){
+            			
+            			attributeNames.put(examinationTypeLB.getSelectedValue(),eventType.getAttribute("PrüfungsArt"));
+            			testSaving.setText(attributeNames.toString());
+            			//testSaving.setText(attributeNames.values().toString());
+            		}
+            			
+            			
+            		
+            	}
+    		}
+    	});
+    	
+    	
+    	
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     public void hide() {
-        popup.setVisible(false);
-        content.clear();
+        popupPanel.setVisible(false);
+        contentPanel.clear();
     }
 
     //Method to insert the AppointmentView as SubView to the ReservationView
