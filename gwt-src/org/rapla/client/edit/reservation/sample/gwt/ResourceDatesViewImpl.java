@@ -368,7 +368,17 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 		chosenResources.setStyleName("dateInfoLineComplete");
 		chosenResources.add(headerChosenRes);
-
+		
+		FlowPanel explainer2Panel = new FlowPanel();
+		explainer2Panel.setStyleName("wildcardPanel");
+		
+		Label explainer2 = new Label("Es wurden bisher keine Ressourcen ausgewählt");
+		explainer2.setStyleName("wildcard");
+		
+		explainer2Panel.add(explainer2);
+		
+		chosenResources.add(explainer2Panel);
+		
 		// -------
 
 		for (FlowPanel helpList : getPanelResourceContainer()) {

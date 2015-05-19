@@ -52,4 +52,7 @@ public interface ImageImport extends ClientBundle {
 	
 	@Source("addOpt.png")
 	ImageResource addOptIcon();		
+	
+	@Source("menu.png")
+	ImageResource menuIcon();
 }

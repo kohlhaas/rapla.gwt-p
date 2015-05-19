@@ -92,6 +92,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 	private static final ImageResource IMG_ICON_UNDO = ImageImport.INSTANCE.undoIcon();
 	private static final ImageResource IMG_ICON_REDO = ImageImport.INSTANCE.redoIcon();
 	private static final ImageResource IMG_ICON_PLUS = ImageImport.INSTANCE.addOptIcon();
+	private static final ImageResource IMG_ICON_MENU = ImageImport.INSTANCE.menuIcon();
 	
 	// for resources and dates tab
 	private ArrayList<List<String>> toBeReservedResources = new ArrayList<List<String>>();
@@ -203,9 +204,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		
 		MenuBar plus = new MenuBar(true);
 		MenuBar subMenu = new MenuBar();
-		Image plusImage = new Image(IMG_ICON_PLUS);
+//		Image plusImage = new Image(IMG_ICON_PLUS);
+		Image plusImage = new Image(IMG_ICON_MENU);
 		//redo.setStyleName("redoButton");
 		plus.setTitle("Weitere Optionen");
+
 		subMenu.addItem("Ressourcen für alle Termine übernehmen", new Command(){
 
 			@Override
@@ -215,6 +218,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 			}
 			
 		});
+		subMenu.setStyleName("extraInhalt");
 		MenuItem plusButton = new MenuItem(plusImage.toString(), true, subMenu);
 		plus.addItem(plusButton);
 		
@@ -244,6 +248,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		buttonsPanel.add(undo);	
 		buttonsPanel.add(redo);
 		buttonsPanel.add(plus);
+		
+		buttonsPanel.setStyleName("mainButtonsBar");
 
 
 		layout.add(buttonsPanel);
