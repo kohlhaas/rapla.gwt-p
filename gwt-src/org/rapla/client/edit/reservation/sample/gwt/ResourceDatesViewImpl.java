@@ -1400,8 +1400,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		Label changes = new Label("Änderungen wurden übernommen");
 		dateInfos.add(changes);
 		changes.setVisible(true);
-		// changes.wait(5);
-		changes.setVisible(false);
 	}
 
 }
