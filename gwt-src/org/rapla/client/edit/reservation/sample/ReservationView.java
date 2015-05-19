@@ -37,6 +37,8 @@ public interface ReservationView<W> extends View<Presenter> {
 
         boolean getIsNew();
 
+		Category[] getCategoryAttributes(Locale locale, String neededCategory);
+
     }
 
     void show(Reservation event);

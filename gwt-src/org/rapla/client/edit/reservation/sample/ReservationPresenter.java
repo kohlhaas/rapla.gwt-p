@@ -208,5 +208,11 @@ public class ReservationPresenter implements ReservationController, Presenter {
         return !isNew;
     }
 
+	@Override
+	public Category[] getCategoryAttributes(Locale locale, String neededCategory) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
