@@ -158,10 +158,14 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     }
 
+    public Attribute[] getAllCurrentAttributes(){
+        return reservation.getClassification().getAttributes();
+    }
+
     /**
      * @return all current Values as a String
      */
-    public List<String> getAllCurrentAttributes(Locale locale) {
+    public List<String> getAllCurrentAttributesAsStrings(Locale locale) {
         List<String> list = new ArrayList<>();
         Classification classification = reservation.getClassification();
         DynamicType type = classification.getType();
@@ -181,7 +185,9 @@ public class ReservationPresenter implements ReservationController, Presenter {
     }
 
     /**
-     *
+     * Each DynamicType (Lehrveranstaltung, Prüfung etc) has N Attributes (Titel, Sprache etc)
+     * With the Map u can give each attribute a new value
+     * overwrites current values
      * @param valuesToSave a Map with a name of the attribute and a value, IT OVERWRITES ALL CURRENT ATTRIBUTES, SO SAVE NAME TOO
      */
     public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave) {

@@ -34,11 +34,13 @@ public interface ReservationView<W> extends View<Presenter> {
 
         void changeAttributesOfCLassification(Map<String, Object> attributeNames, Locale locale);
 
-        List<String> getAllCurrentAttributes(Locale locale);
+        List<String> getAllCurrentAttributesAsStrings(Locale locale);
 
         boolean getIsNew();
 
         void setAttributesOfReservation(Map<Attribute, Object> valuesToSave);
+
+        Attribute[] getAllCurrentAttributes();
 
     }
 

@@ -15,7 +15,6 @@ import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
-import org.rapla.entities.dynamictype.internal.AttributeImpl;
 
 import java.util.*;
 
@@ -137,13 +136,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
  * about current attributes
  */
         //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
-        for (String s : getPresenter().getAllCurrentAttributes(locale)) {
+        for (String s : getPresenter().getAllCurrentAttributesAsStrings(locale)) {
             allCurrentAttributes.addItem(s);
         }
         Label labelCurrentAttributes = new Label("Current Attributes");
         row1.add(labelCurrentAttributes);
         row1.add(allCurrentAttributes);
-
     }
 
     private void initRaplaPopupPanel() {
@@ -259,7 +257,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             captionLabel = new Label("Veranstaltung anlegen");
             captionLabel.setStyleName("captionCreationLabel");
         }
-    	
+
     	/*Header for Editing Reservations*/
         else {
             captionLabel = new Label("Veranstaltung bearbeiten");
@@ -306,7 +304,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
         
 /*        if(chosenEventType.equalsIgnoreCase("Prüfung")){
-        	initLectureCourseLabel();
+            initLectureCourseLabel();
         	initLectureCourseTextBox();
         }*/
 

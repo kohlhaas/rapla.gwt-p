@@ -145,19 +145,19 @@ public class ReservationPresenterContract extends ReservationPresenter {
 		}
 		if (postCondition()) {
 			// TODO: write postconditions if required
-			assert !unchanged(target.getAllCurrentAttributes(locale));
+			assert !unchanged(target.getAllCurrentAttributesAsStrings(locale));
 		}
 	}
 
 	@Override
-	public List<String> getAllCurrentAttributes(Locale locale) {
+	public List<String> getAllCurrentAttributesAsStrings(Locale locale) {
 		if (preCondition()) {
 			// TODO: write preconditions if required
 			assert locale != null : "locale != null";
 		}
 		if (postCondition()) {
 			// TODO: write postconditions if required
-			assert unchanged(target.getAllCurrentAttributes(locale));
+			assert unchanged(target.getAllCurrentAttributesAsStrings(locale));
 		}
 		return ignored();
 	}
