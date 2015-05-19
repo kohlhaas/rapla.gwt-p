@@ -202,27 +202,27 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		redo.setStyleName("redoButton");
 		redo.setTitle("Wiederholen");
 		
-		MenuBar plus = new MenuBar(true);
-		MenuBar subMenu = new MenuBar();
+//		MenuBar plus = new MenuBar(true);
+//		MenuBar subMenu = new MenuBar();
 //		Image plusImage = new Image(IMG_ICON_PLUS);
 		Image plusImage = new Image(IMG_ICON_MENU);
 		//redo.setStyleName("redoButton");
-		plus.setTitle("Weitere Optionen");
-
-		subMenu.addItem("Ressourcen für alle Termine übernehmen", new Command(){
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
-		
-		
-		MenuItem plusButton = new MenuItem(plusImage.toString(), true, subMenu);
-		plus.addItem(plusButton);
-		
+//		plus.setTitle("Weitere Optionen");
+//
+//		subMenu.addItem("Ressourcen für alle Termine übernehmen", new Command(){
+//
+//			@Override
+//			public void execute() {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//		});
+//		
+//		
+//		MenuItem plusButton = new MenuItem(plusImage.toString(), true, subMenu);
+//		plus.addItem(plusButton);
+//		
 		
 	
 		
@@ -248,7 +248,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements
 		buttonsPanel.add(delete);
 		buttonsPanel.add(undo);	
 		buttonsPanel.add(redo);
-		buttonsPanel.add(plus);
+//		buttonsPanel.add(plus);
 		
 		buttonsPanel.setStyleName("mainButtonsBar");
 
