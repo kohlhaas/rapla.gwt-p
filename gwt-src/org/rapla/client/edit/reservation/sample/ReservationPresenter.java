@@ -184,7 +184,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
             }
             list.add(attribute.getName() + " : " + valueAsString + " Typ: " + attribute.getType().name());
         }
-        list.add("");
+//        list.add("");
 //        for (Attribute attribute : type.getAttributes()) {
 //            list.add(attribute.getKey());
 //            list.add(attribute.getId());
