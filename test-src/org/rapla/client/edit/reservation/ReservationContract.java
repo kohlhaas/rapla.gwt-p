@@ -6,6 +6,8 @@ import org.rapla.client.edit.reservation.sample.InfoViewPresenter;
 import org.rapla.client.edit.reservation.sample.ReservationPresenter;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesViewPresenter;
+import org.rapla.entities.domain.Reservation;
+
 import static de.vksi.c4j.Condition.ignored;
 import static de.vksi.c4j.Condition.postCondition;
 import static de.vksi.c4j.Condition.preCondition;
@@ -17,6 +19,7 @@ public class ReservationContract extends ReservationPresenter {
 
 	@Target
 	private ReservationPresenter target;
+	private Reservation reservation = target.getTempReservation();
 
 	public ReservationContract(ReservationView view,
 			InfoViewPresenter infoViewPresenter,
@@ -38,8 +41,8 @@ public class ReservationContract extends ReservationPresenter {
 	@Override
 	public void onSaveButtonClicked() {
 		if (preCondition()) {
-			//veranstaltung geöffnet ist die veranstaltung, die gespeichert wird
-			
+			assert reservation != null;
+				
 		}
 		if (postCondition()) {
 			

@@ -987,5 +987,9 @@ public class ReservationPresenter implements ReservationController, Presenter {
 				+ ((InfoView) infoViewPresenter.getView()).getTitelInput());
 
 	}
+	
+	public Reservation getTempReservation(){
+		return tempReservation;
+	}
 
 }
