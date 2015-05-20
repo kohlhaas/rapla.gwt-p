@@ -21,7 +21,7 @@ import java.util.*;
 /**
  * Each Reservation has a classification, some resources(allocatable) and appointments
  * Classifications kinds are : Reservation, Resource, Person.
- * Each Classification has a type : f.e. a resource can be type: course
+ * Each Classification rhas a type : f.e. a resource can be type: course
  * A Classification for a reservation is classified as a reservation
  * A Appointment is a kind of timeline (from x to y)
  * A Allocatable has to be classified as resource and hold some attributes
