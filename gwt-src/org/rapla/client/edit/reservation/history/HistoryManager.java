@@ -1,5 +1,6 @@
 package org.rapla.client.edit.reservation.history;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,7 +15,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -26,11 +27,13 @@ public class HistoryManager {
 	List<Step> steps;
 	ListIterator<Step> currentPosition;
 	Map<Widget,Object> lastValue;
+	List<Widget> ignoreList;
 	
 	private HistoryManager() {
 		steps = new LinkedList<Step>();
 		currentPosition = steps.listIterator();
 		lastValue = new HashMap<>();
+		ignoreList = new ArrayList<Widget>();
 	}
 	
 	public static HistoryManager getInstance() {
@@ -83,6 +86,21 @@ public class HistoryManager {
 					HistoryManager.getInstance().addStep(newStep);
 				}});
 		}
+		else if (className == ListBox.class) {
+			ListBox listBox = (ListBox) widget;
+			lastValue.put(listBox, listBox.getSelectedIndex());
+			listBox.addChangeHandler(new ChangeHandler() {
+				@Override
+				public void onChange(ChangeEvent event) {
+					if(HistoryManager.getInstance().ignore((Widget) event.getSource())){
+						return;
+					}
+					ListBox listBox = (ListBox) event.getSource();
+					Step newStep = new ListBoxStep(listBox, (int) lastValue.get(listBox));
+					HistoryManager.getInstance().addStep(newStep);
+				}
+			});
+		}
 		else if (widget instanceof Panel) {
 			// assumption: if a FlowPanel is passed it contains RadioButton objects
 			Panel parentPanel = (Panel) widget;
@@ -115,6 +133,8 @@ public class HistoryManager {
 		}
 	}
 	
+
+
 	public String output() {
 		String output = "";
 		for(int i=0; i<steps.size(); i++) {
@@ -137,4 +157,16 @@ public class HistoryManager {
 		lastValue.put(step.getWidget(), step.up());
 	}
 
+	public void ignoreNextChangeTo(Widget widget) {
+		ignoreList.add(widget);
+	}
+	
+	protected boolean ignore(Widget widget) {
+		if(ignoreList.contains(widget)) {
+			ignoreList.remove(widget);
+			return true;
+		}
+		else
+			return false;
+	}
 }
