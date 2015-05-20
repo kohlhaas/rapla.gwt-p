@@ -18,7 +18,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
@@ -63,13 +65,13 @@ public class HistoryManager {
 	
 	public void trackWidget(Widget widget) {
 		Class<? extends Widget> className = widget.getClass();
-		if (className == TextBox.class) {
-			TextBox textBox = (TextBox) widget;
+		if (widget instanceof TextBoxBase) {
+			TextBoxBase textBox = (TextBoxBase) widget;
 			lastValue.put(textBox, textBox.getValue());
 			textBox.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					TextBox textBox = (TextBox) event.getSource();
+					TextBoxBase textBox = (TextBoxBase) event.getSource();
 					Step newStep = new TextBoxStep(textBox, lastValue.get(textBox));
 					HistoryManager.getInstance().addStep(newStep);
 				}
