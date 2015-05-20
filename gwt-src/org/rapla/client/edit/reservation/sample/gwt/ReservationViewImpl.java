@@ -6,6 +6,8 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
+
+import org.apache.log4j.lf5.LogLevel;
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
@@ -15,8 +17,11 @@ import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
+import org.rapla.facade.Conflict;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 
@@ -738,5 +743,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         TabPanelRapla aTab = new TabPanelRapla(tabName, flowPanel);
         tabs.add(aTab);
     }
+    
+    public void showConflicts(Conflict[] conflicts) {
+    	for(Conflict c : conflicts) {
+    		Logger.getGlobal().log(Level.INFO, c.getReservation1Name() + " konfligiert mit " + c.getReservation2Name() );
+    	}
+	}
 
 }

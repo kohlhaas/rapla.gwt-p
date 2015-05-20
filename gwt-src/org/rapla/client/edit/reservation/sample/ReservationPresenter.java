@@ -8,6 +8,7 @@ import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.ClientFacade;
+import org.rapla.facade.Conflict;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
@@ -17,6 +18,7 @@ import de.vksi.c4j.ContractReference;
 import javax.inject.Inject;
 
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Each Reservation has a classification, some resources(allocatable) and appointments
@@ -62,12 +64,18 @@ public class ReservationPresenter implements ReservationController, Presenter {
     @Override
     public void onSaveButtonClicked() {
         logger.info("save clicked");
-        try {
-            facade.store(reservation);
-        } catch (RaplaException e1) {
-            logger.error(e1.getMessage(), e1);
+        logger.info(getConflicts().length + " conflicts found.");
+        if(getConflicts().length > 0) {
+    		view.showConflicts(getConflicts());
+    	}
+        else {
+	        try {
+	            facade.store(reservation);
+	        } catch (RaplaException e1) {
+	            logger.error(e1.getMessage(), e1);
+	        }
+	        view.hide();
         }
-        view.hide();
     }
 
     public String getCurrentReservationName(Locale locale) {
@@ -229,6 +237,21 @@ public class ReservationPresenter implements ReservationController, Presenter {
     @Override
     public boolean isDeleteButtonEnabled() {
         return !isNew;
+    }
+    
+    /**
+     * gets all conflicts for the existing reservation, if a new appButton has been pressed, a new app will be added to
+     * the reservation.. conflicts in this reservation will be shown. Else it returns NULL
+     *
+     * @return NULL if error
+     */
+    public Conflict[] getConflicts() {
+        try {
+            return facade.getConflicts(this.reservation);
+        } catch (RaplaException e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
     }
 
 

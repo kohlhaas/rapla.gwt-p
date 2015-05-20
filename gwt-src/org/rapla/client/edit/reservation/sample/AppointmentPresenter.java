@@ -57,22 +57,6 @@ public class AppointmentPresenter implements Presenter {
         }
     }
 
-
-    /**
-     * gets all conflicts for the existing reservation, if a new appButton has been pressed, a new app will be added to
-     * the reservation.. conflicts in this reservation will be shown. Else it returns NULL
-     *
-     * @return NULL if error
-     */
-    public Conflict[] getConflicts() {
-        try {
-            return facade.getConflicts(this.reservation);
-        } catch (RaplaException e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
-    }
-
     /**
      * get the next Free date, depending on the startDate and endDate and CalendarOption, if an exception is thrown
      * THE METHOD RETURNS NULL
