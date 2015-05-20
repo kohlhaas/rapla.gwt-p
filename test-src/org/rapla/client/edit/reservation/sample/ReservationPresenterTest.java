@@ -23,8 +23,6 @@ import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.internal.RaplaJDKLoggingAdapter;
 import org.rapla.framework.internal.RaplaLocaleImpl;
-import org.rapla.client.base.AbstractView;
-import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 
 @RunWith(JukitoRunner.class)
 public class ReservationPresenterTest  {
@@ -135,7 +133,7 @@ public class ReservationPresenterTest  {
 	  
 	  //WHEN
 	  try {
-		presenter.getCategory(locale, "Sprachen");  
+		presenter.getCategoryAttributes(locale, "Sprachen");  
 	  } 
 	  catch (NullPointerException e){
 		 //Test can return NullPointerException, if Code-Server is unreachable. 
@@ -152,20 +150,21 @@ public class ReservationPresenterTest  {
 	  Locale locale = raplaLocale.getLocale();
 	  
 	  //BEFORE
-	  List<String> oldAttributes = presenter.getAllCurrentAttributes(locale);
+	  List<String> oldAttributes = presenter.getAllCurrentAttributesAsStrings(locale);
 	  
 	  //WHEN
 	  try{
-	  presenter.changeAttributesOfCLassification((Map<String, Object>) presenter.getAllCurrentAttributes(locale),locale);;
+	  presenter.changeAttributesOfCLassification((Map<String, Object>) presenter.getAllCurrentAttributesAsStrings(locale),locale);;
 	  } 
 	  catch (NullPointerException e){
 		 //Test can return NullPointerException, if Code-Server is unreachable. 
 		 //The NullPointer occurs in the facade, so it's not part of the method to be tested.
 	  }
 	  
+
 	  //THEN
 	  //test that current attributes are changed
-	  Mockito.eq(!presenter.getAllCurrentAttributes(locale).equals(oldAttributes));
+	  Mockito.eq(!presenter.getAllCurrentAttributesAsStrings(locale).equals(oldAttributes));
 	  
 	  
   }
