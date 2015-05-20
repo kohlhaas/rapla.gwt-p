@@ -16,16 +16,14 @@ import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 
     Panel popup;
     FlowPanel headerPanel;
 
-    TabPanel tabPanel; //Tabs for General Information and Appointment+Ressources-Planning
+    TabPanel tabPanel; //Tabs for General Information and Appointment+Resources-Planning
 
     FlowPanel content;
     FlowPanel contentRes = new FlowPanel();
@@ -56,7 +54,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     Button hideButton = null;
     Button deselectButton = null;
-    CheckBox [] cb;
+    CheckBox[] cb;
     Label planhour;
     Label lectureCourseLabel;
     Label captionLabel;
@@ -68,12 +66,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     boolean buttonRemoved = false;
     boolean changedToLehrveranstaltung;
     boolean firstChange = true;
-    
+
 
     public void show(Reservation event) {
 
     	/*Structuring GUI*/
-    	
+
 
         initRaplaPopupPanel();
         initHeaderPanel();
@@ -93,7 +91,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         /* Filling structure */
         initCaptionLabel();
         initEventTypeListBoxes();
-        
+
         //initCourseButton();
         initLabelEventNameInGrid();
         initEventNameTextBox();
@@ -105,9 +103,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         // initDownButton();
         initLabelInfo();
         initTextAreaInfo();
-        
-        
-    
+
+
+        final Locale locale = getRaplaLocale().getLocale();
+
 
         
 
@@ -120,13 +119,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         upDown.add(down);  */
 
         initSaveDeleteCancelButtons();
-        final Locale locale = getRaplaLocale().getLocale();
-        //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
-        List<String> allCurrentAttributes = this.getPresenter().getAllCurrentAttributes(locale);
 
 
         /**
-         * das sind die Namen für getCategory Werte (Methode von unten), Theorethisch koentest du die beiden listboxen voneinander abhaengig machen
+         * das sind die Namen für getCategoryAttributes Werte (Methode von unten), Theorethisch koentest du die beiden listboxen voneinander abhaengig machen
          */
 /*        List<String> keys = getPresenter().getCategoryNames(locale);
         for (String key : keys) {
@@ -136,28 +132,17 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
        row1.add(allKeys);*/
 
 
-        /**
-         *
-         */
-        
-
-
 /**
  * about current attributes
  */
-      /*  //für Präsentation ausblenden
-        
-        for (String s : getPresenter().getAllCurrentAttributes(locale)) {
+        //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
+        for (String s : getPresenter().getAllCurrentAttributesAsStrings(locale)) {
             allCurrentAttributes.addItem(s);
         }
         Label labelCurrentAttributes = new Label("Current Attributes");
         row1.add(labelCurrentAttributes);
-        row1.add(allCurrentAttributes);*/
-    } 
-    /**
-     *
-     */
-
+        row1.add(allCurrentAttributes);
+    }
 
     private void initRaplaPopupPanel() {
         popup = RootPanel.get("raplaPopup");
@@ -252,7 +237,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         part2.add(grid);
         //part2.add(upDown);
     }
-    
 
 
     private void initTabs() {
@@ -267,27 +251,24 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     private void initCaptionLabel() {
-    	
-    	/*Header for Creating Reservations*/
-    	if(getPresenter().getIsNew()){
-    		captionLabel = new Label("Veranstaltung anlegen");
-    		captionLabel.setStyleName("captionCreationLabel");
-    	}
-    	
-    	/*Header for Editing Reservations*/
-    	else{
-    		captionLabel = new Label("Veranstaltung bearbeiten");
-    		captionLabel.setStyleName("captionEditingLabel");
-    
-    	}
 
-		headerPanel.add(captionLabel);
+    	/*Header for Creating Reservations*/
+        if (getPresenter().getIsNew()) {
+            captionLabel = new Label("Veranstaltung anlegen");
+            captionLabel.setStyleName("captionCreationLabel");
+        }
+
+    	/*Header for Editing Reservations*/
+        else {
+            captionLabel = new Label("Veranstaltung bearbeiten");
+            captionLabel.setStyleName("captionEditingLabel");
+
+        }
+
+        headerPanel.add(captionLabel);
     }
 
-    
 
-    
-    
     private void initEventTypeListBoxes() {
         // Eventtype
         final DynamicType[] eventTypes = getPresenter().getAllEventTypes();
@@ -298,9 +279,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
         eventTypeLB.setStyleName("eventType");
 
-        /**
-         * SEHR UNSAUBER, nur grob, bitte ggf. verbessern --> ggf. in eigene Klasse oder Presenter
-         */
         for (DynamicType dynamicType : eventTypes) {
             eventTypeLB.addItem(dynamicType.getName(locale));
         }
@@ -314,19 +292,19 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
 
 
-        if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
-        	initAllLanguageLB();
-        	initCourseButton();
-        	initLabelPlannedHoursInGrid();
-        	initTextBoxPlannedHoursInGrid();
-        	
-        	//boolean changedLehrveranstaltung = false;
-        	//actviateCourseButton = true;
+        if (chosenEventType.equalsIgnoreCase("Lehrveranstaltung")) {
+            initAllLanguageLB();
+            initCourseButton();
+            initLabelPlannedHoursInGrid();
+            initTextBoxPlannedHoursInGrid();
+
+            //boolean changedLehrveranstaltung = false;
+            //actviateCourseButton = true;
 
         }
         
 /*        if(chosenEventType.equalsIgnoreCase("Prüfung")){
-        	initLectureCourseLabel();
+            initLectureCourseLabel();
         	initLectureCourseTextBox();
         }*/
 
@@ -346,23 +324,23 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
                 language.clear();
 
-                if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
-                	
-                	removeCourseButton();
-                	removeAllLanguageLB();
-                	removePlannedHoursLabelTB();
-                	//removeLectureCourseTB();
-                	coursePanel.setVisible(false);
-                	
-                	buttonRemoved = true;
+                if (chosenEventType.equalsIgnoreCase("Lehrveranstaltung")) {
+
+                    removeCourseButton();
+                    removeAllLanguageLB();
+                    removePlannedHoursLabelTB();
+                    //removeLectureCourseTB();
+                    coursePanel.setVisible(false);
+
+                    buttonRemoved = true;
 
                 }
 
 
                 if (chosenEventType.equalsIgnoreCase("Prüfung")) {
                     //ausblenden für präsi: initLanguageListBox();
-                	removeExaminationTypeLB();
-                	removeLectureCourseLabelTB();
+                    removeExaminationTypeLB();
+                    removeLectureCourseLabelTB();
 
                 }
                 for (DynamicType dynamicType : eventTypes) {
@@ -378,68 +356,67 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
                 if (chosenEventType.equalsIgnoreCase("Lehrveranstaltung")) {
                     //activateCourseButton = true;
-                	coursePanel.setVisible(true);
-                	changedToLehrveranstaltung = true;
-                	initAllLanguageLB();
+                    coursePanel.setVisible(true);
+                    changedToLehrveranstaltung = true;
+                    initAllLanguageLB();
                     initCourseButton();
                     grid.resizeRows(2);
                     initLabelPlannedHoursInGrid();
                     initTextBoxPlannedHoursInGrid();
-                    
+
 
                 }
-                
-                if(chosenEventType.equalsIgnoreCase("Prüfung")){
-                	initExaminationTypeLB();
-                	grid.resizeRows(2);
-                	initLectureCourseLabelInGrid();
-                	initLectureCourseTextBoxInGrid();
+
+                if (chosenEventType.equalsIgnoreCase("Prüfung")) {
+                    initExaminationTypeLB();
+                    grid.resizeRows(2);
+                    initLectureCourseLabelInGrid();
+                    initLectureCourseTextBoxInGrid();
                 }
 
             }
         });
     }
-    
-    private void initExaminationTypeLB(){
-    	examinationTypeLB = new ListBox();
-    	//examinationTypeLB.setStyleName("examinationTypeLB");
-    	final Locale locale = getRaplaLocale().getLocale();
-    	final Category[] examinationTypesCategory = getPresenter().getCategory(locale, "Prüfungsart");
-    	
-    	for(Category art : examinationTypesCategory){
-    		examinationTypeLB.addItem(art.getName(locale));
-    	}
-    	row1.add(examinationTypeLB);
+
+    private void initExaminationTypeLB() {
+        examinationTypeLB = new ListBox();
+        //examinationTypeLB.setStyleName("examinationTypeLB");
+        final Locale locale = getRaplaLocale().getLocale();
+        final Category[] examinationTypesCategory = getPresenter().getCategoryAttributes(locale, "Prüfungsart");
+
+        for (Category category : examinationTypesCategory) {
+            examinationTypeLB.addItem(category.getName(locale));
+        }
+        row1.add(examinationTypeLB);
     }
-    
-    private void initAllLanguageLB(){
-    	//examinationTypeLB.setStyleName("allLanguage");
-    	final Locale locale = getRaplaLocale().getLocale();
-        final Category[] languagesCategory = getPresenter().getCategory(locale, "Sprachen");
-        
-        if(!changedToLehrveranstaltung){
-        	
-        	allLanguageLB.addItem("Veranstaltungssprache auswählen");
-        
-        	for (Category language : languagesCategory) {
-        		allLanguageLB.addItem(language.getName(locale));
-        	}
-        	
+
+    private void initAllLanguageLB() {
+        //examinationTypeLB.setStyleName("allLanguage");
+        final Locale locale = getRaplaLocale().getLocale();
+        final Category[] languagesCategory = getPresenter().getCategoryAttributes(locale, "Sprachen");
+
+        if (!changedToLehrveranstaltung) {
+
+            allLanguageLB.addItem("Veranstaltungssprache auswählen");
+
+            for (Category language : languagesCategory) {
+                allLanguageLB.addItem(language.getName(locale));
+            }
+
         }
         row1.add(allLanguageLB);
-        
-        
-        
-        
-        allLanguageLB.addChangeHandler(new ChangeHandler(){
-        	
-        	public void onChange(ChangeEvent event){
-        		if(firstChange){
-        			allLanguageLB.removeItem(0);;
-        		}
-        		
-        		firstChange = false;
-        	}
+
+
+        allLanguageLB.addChangeHandler(new ChangeHandler() {
+
+            public void onChange(ChangeEvent event) {
+                if (firstChange) {
+                    allLanguageLB.removeItem(0);
+                    ;
+                }
+
+                firstChange = false;
+            }
         });
     }
 
@@ -476,7 +453,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             }
         });
         final Locale locale = getRaplaLocale().getLocale();
-        final Category[] allCourses = getPresenter().getCategory(locale, "Studiengänge");
+        final Category[] allCourses = getPresenter().getCategoryAttributes(locale, "Studiengänge");
         tree = new Tree();
         TreeItem studiengangTreeItem = new TreeItem();
         studiengangTreeItem.setText("Studiengänge");
@@ -484,29 +461,28 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         int i = 0;
         int f = 0;
         int anzahl = 0;
-        
+
         for (Category category : allCourses) {
-        	for (Category underCategory : category.getCategories()) {
-            	anzahl = anzahl + 1;
+            for (Category underCategory : category.getCategories()) {
+                anzahl = anzahl + 1;
             }
         }
-        
-        cb = new CheckBox [anzahl]; 
-        
+
+        cb = new CheckBox[anzahl];
+
         for (Category category : allCourses) {
 
             tree.addItem(new TreeItem());
             tree.getItem(i).setText(category.getName(locale));
-            
-            
+
 
             for (Category underCategory : category.getCategories()) {
 
-            	cb[f] = new CheckBox(underCategory.getName(locale));
+                cb[f] = new CheckBox(underCategory.getName(locale));
 
-            	tree.getItem(i).addItem(new TreeItem(cb[f]));
-            	f++;
-            
+                tree.getItem(i).addItem(new TreeItem(cb[f]));
+                f++;
+
             }
             i++;
 
@@ -522,7 +498,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 coursePanel.setVisible(false);
             }
         });
-        
+
         initDeselectButton();
 
 
@@ -531,38 +507,37 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
 
     }
-    
-    private void initDeselectButton(){
-    	
+
+    private void initDeselectButton() {
+
         deselectButton = new Button("Alle Selektionen löschen");
         deselectButton.setStyleName("deselectButton");
         coursePanel.add(deselectButton);
-        
+
         final Locale locale = getRaplaLocale().getLocale();
-        final Category[] allCourses = getPresenter().getCategory(locale, "Studiengänge");
-        
-        deselectButton.addClickHandler(new ClickHandler(){
-        	@Override
-        	public void onClick(ClickEvent e){
-        		
-        		int f = 0;
+        final Category[] allCourses = getPresenter().getCategoryAttributes(locale, "Studiengänge");
+
+        deselectButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent e) {
+
+                int f = 0;
                 for (Category category : allCourses) {
-                	for (Category underCategory : category.getCategories()) {
-                		//String name = "cb" + f;
-                		cb[f].setValue(false);
-                		f++;
-                	
-                	}
-                
+                    for (Category underCategory : category.getCategories()) {
+                        //String name = "cb" + f;
+                        cb[f].setValue(false);
+                        f++;
+
+                    }
+
                 }
-        	}
+            }
         });
     }
-    
-    
-    
-    private void removeAllLanguageLB(){
-    	row1.remove(allLanguageLB);
+
+
+    private void removeAllLanguageLB() {
+        row1.remove(allLanguageLB);
     }
 
 
@@ -573,18 +548,18 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         coursePanel.remove(deselectButton);
 
     }
-    
-    private void removeExaminationTypeLB(){
-    	row1.remove(examinationTypeLB);
+
+    private void removeExaminationTypeLB() {
+        row1.remove(examinationTypeLB);
     }
-    
+
     //könnte ich als eine Methode schreiben
-    private void removePlannedHoursLabelTB(){
-    	grid.removeRow(1);
+    private void removePlannedHoursLabelTB() {
+        grid.removeRow(1);
     }
-    
-    private void removeLectureCourseLabelTB(){
-    	grid.removeRow(1);
+
+    private void removeLectureCourseLabelTB() {
+        grid.removeRow(1);
     }
 
     private void initLabelEventNameInGrid() {
@@ -610,7 +585,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         grid.setWidget(0, 1, eventNameTB);
 
     }
-    
+
 
     private void initLabelPlannedHoursInGrid() {
         planhour = new Label("geplante Vorlesungsstunden");
@@ -623,21 +598,21 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tbPlanhour.setStyleName("tbPlanhour");
         grid.setWidget(1, 1, tbPlanhour);
     }
-    
+
     private void initLectureCourseLabelInGrid() {
-    	lectureCourseLabel = new Label("Vorlesung");
-    	lectureCourseLabel.setStyleName("lectureCourse");
-    	grid.setWidget(1,0, lectureCourseLabel);
-      
-      
-     }
-    
+        lectureCourseLabel = new Label("Vorlesung");
+        lectureCourseLabel.setStyleName("lectureCourse");
+        grid.setWidget(1, 0, lectureCourseLabel);
+
+
+    }
+
     private void initLectureCourseTextBoxInGrid() {
-    	TextBox lectureCourseTextBox = new TextBox(); 
-    	lectureCourseTextBox.setStyleName("textbox");
-    	grid.setWidget(1,1, lectureCourseTextBox);
-      
-     }
+        TextBox lectureCourseTextBox = new TextBox();
+        lectureCourseTextBox.setStyleName("textbox");
+        grid.setWidget(1, 1, lectureCourseTextBox);
+
+    }
 
     private void initUpButton() {
         //Button for count up planned hours
@@ -715,9 +690,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
 
         {
-        	historyMgmtPanel = new FlowPanel();
-        	historyMgmtPanel.addStyleName("history-mgmt");
-        	popup.add(historyMgmtPanel);
+            historyMgmtPanel = new FlowPanel();
+            historyMgmtPanel.addStyleName("history-mgmt");
+            popup.add(historyMgmtPanel);
             Button button = new Button("Rückgängig");
             button.setStyleName("back");
             button.addClickHandler(new ClickHandler() {

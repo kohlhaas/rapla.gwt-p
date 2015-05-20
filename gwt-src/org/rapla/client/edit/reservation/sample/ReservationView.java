@@ -4,6 +4,7 @@ import org.rapla.client.base.View;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface ReservationView<W> extends View<Presenter> {
 
         DynamicType[] getAllEventTypes();
 
-        Category[] getCategory(Locale locale, String searchCategory);
+        Category[] getCategoryAttributes(Locale locale, String searchCategory);
 
         String getCurrentReservationName(Locale locale);
 
@@ -33,9 +34,13 @@ public interface ReservationView<W> extends View<Presenter> {
 
         void changeAttributesOfCLassification(Map<String, Object> attributeNames, Locale locale);
 
-        List<String> getAllCurrentAttributes(Locale locale);
+        List<String> getAllCurrentAttributesAsStrings(Locale locale);
 
         boolean getIsNew();
+
+        void setAttributesOfReservation(Map<Attribute, Object> valuesToSave);
+
+        Attribute[] getAllCurrentAttributes();
 
     }
 
