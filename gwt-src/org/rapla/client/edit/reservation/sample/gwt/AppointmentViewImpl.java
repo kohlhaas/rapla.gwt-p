@@ -113,14 +113,21 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         resourceTypesList = new ListBox();
         resourceTypesList.addStyleName("resources-types");
         resourceToolbar.add(resourceTypesList);
-        Button addResource = new Button("Ressource hinzufügen");
-        addResource.addStyleName("add-resource");
-        resourceToolbar.add(addResource);
         resourcePanel.add(resourceToolbar);
+        
+        VerticalPanel addRemoveResourceVp = new VerticalPanel(); 
+        addRemoveResourceVp.addStyleName("resource-add-remove");
+        Button addResource = new Button(">>");
+        addResource.addStyleName("add-resource");
+        addRemoveResourceVp.add(addResource);
+        Button removeResourceBtn = new Button("<<");
+        removeResourceBtn.addStyleName("remove-resource");
+        addRemoveResourceVp.add(removeResourceBtn);
 
         resourceListsPanel = new FlowPanel();
         resourceListsPanel.addStyleName("resources-lists");
         resourcePanel.add(resourceListsPanel);
+        resourcePanel.add(addRemoveResourceVp);
         resourceLists = new HashMap<String, ListBox>();
         bookedResources.addStyleName("booked-resources");
         bookedResources.setVisibleItemCount(7);
@@ -131,6 +138,12 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
             public void onClick(ClickEvent event) {
                 String resourceType = resourceTypesList.getSelectedItemText();
                 getPresenter().addResourceButtonPressed(resourceLists.get(resourceType).getSelectedIndex(), resourceType, getRaplaLocale().getLocale());
+            }
+        });
+        removeResourceBtn.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                getPresenter().removeResourceButtonPressed(bookedResources.getSelectedIndex());
             }
         });
         updateResources(resources);

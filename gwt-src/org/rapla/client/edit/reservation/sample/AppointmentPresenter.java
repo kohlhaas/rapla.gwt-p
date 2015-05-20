@@ -225,5 +225,11 @@ public class AppointmentPresenter implements Presenter {
         return reservation;
     }
 
+	@Override
+	public void removeResourceButtonPressed(int selectedIndex) {
+		// TODO Resource löschen, dann updateBookedResources aufrufen
+		
+	}
+
 }
 

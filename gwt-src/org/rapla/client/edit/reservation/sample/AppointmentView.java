@@ -22,6 +22,7 @@ public interface AppointmentView<W> extends View<Presenter>, ReservationEditSubV
         void appointmentSelected(int selectedIndex);
         void removeAppointmentButtonPressed(int selectedIndex);
         void addResourceButtonPressed(int selectedIndex, String resourceTypeName, Locale locale);
+        void removeResourceButtonPressed(int selectedIndex);
         Allocatable[] getAllocatables();
         Map<DynamicType, List<Allocatable>> getSortedAllocatables();
 		DynamicType[] getEventTypes();
