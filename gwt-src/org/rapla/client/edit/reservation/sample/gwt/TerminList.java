@@ -16,7 +16,8 @@ public class TerminList extends FlowPanel {
 //	
 //	@Inject
 //	Logger logger;
-	
+
+	//List constains all created RaplaDates
 	private List<RaplaDate> dates = new ArrayList<RaplaDate>();
 	private int active = -1;
 	private boolean firstWidget = true;
@@ -44,18 +45,6 @@ public class TerminList extends FlowPanel {
 			
 		super.add(s);
 		dates.add(s);
-		/*
-		 * Needs GWTBus (fireEvent) to embed in ResourceDatesView
-		s.addClickHandler(new ClickHandler(){
-
-			@Override
-			public void onClick(ClickEvent event) {
-				int position = dates.indexOf(s);
-				active = active == position ? -1 : position;				
-			}
-			
-		});
-		*/
 	}
 	
 	public RaplaDate getDate(int index){
@@ -63,8 +52,8 @@ public class TerminList extends FlowPanel {
 		
 	}
 	public void removeDate(int index){
+		//+1 because the FlowPanel contains an extra button in the view ("Ressourcen für alle übernehmen")
 		super.remove(index+1);
-	//	super.remove(index+1);
 		dates.remove(index);	
 	}
 
@@ -102,6 +91,7 @@ public class TerminList extends FlowPanel {
 		
 	}
 
+	//Method that checks if created dates are at the same time an have different resources
 	public List<RaplaDate> checkConflict() {
 		List<RaplaDate> conflictingDates = new ArrayList<>();
 		for (int j = 0; j < dates.size(); j++){
@@ -126,15 +116,9 @@ public class TerminList extends FlowPanel {
 		return dates;
 	}
 
+	//replace the list of dates
 	public void setDates(List<RaplaDate> dates) {
-//		if(firstWidget){
-//			this.remove(0);
-//			firstWidget = false;
-//		}
-		
-		//this.dates = dates;
 		for(RaplaDate date: dates){
-			//super.add(date);
 			this.add(date);
 		}
 		if(dates.size()>0){

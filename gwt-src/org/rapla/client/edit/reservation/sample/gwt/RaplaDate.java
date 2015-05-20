@@ -10,7 +10,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -31,6 +30,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	Label element;
 	int reccuringType;
 
+	//ArrayList for MultiDate / reccuring Dates
 	private List<RaplaDate> raplaDates = new ArrayList<>();
 	private DisclosurePanel singleDatesContainer = new DisclosurePanel();
 	
@@ -39,7 +39,8 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	public RaplaDate() {
 
 	}
-
+	
+	//Constructor for a standard Date
 	public RaplaDate(Date begin, Date end, ArrayList<List<String>> res, boolean calculateLectureHours)
 			throws ParseException {
 		this.beginTime = begin;
@@ -53,6 +54,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 		initWidget(main);
 	}
 
+	//Constructor for a reccuring Date
 	public RaplaDate(List<RaplaDate> list, int reccuringType) {
 		this.reccuringType = reccuringType;
 		this.raplaDates = list;
@@ -60,6 +62,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 		initWidget(main);
 	}
 
+	//Method to create the Panel of a single Date, visible in the view
 	public FlowPanel createSingleDate(RaplaDate date) {
 		
 		FlowPanel mainPanel = new FlowPanel();
@@ -95,12 +98,13 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 		return mainPanel;
 	}
 
+	//Method to create the Panel of a single Date, visible in the view
 	public void createMultiDateLabel() {
 
-		//main.setStyleName("singleDate");
 		Collections.sort(raplaDates);
 		FlowPanel helper = new FlowPanel();
 
+		//change the css classes of the single Dates inside of a reccuring Date
 		for (Iterator<RaplaDate> iter = raplaDates.iterator(); iter.hasNext();) {
 			RaplaDate sd = iter.next();
 			if (sd.calculateLectureHours == true)
@@ -113,7 +117,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 		this.beginTime = raplaDates.get(0).getBeginTime();
 		this.endTime = raplaDates.get(raplaDates.size() - 1).getEndTime();
 
-		// a DisclosurePanel can only contain two Widgets
+		// a DisclosurePanel can only contain two Widgets; so that the Panel in the view could be opened
 		singleDatesContainer.add(helper);
 
 		singleDatesContainer.setStyleName("singleDatesContainer");
@@ -138,12 +142,14 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	}
 
 
+	//Method used to create a List of Dates out of the reccuring settings the user clicked in the view
 	public static List<RaplaDate> recurringDates(Date startDay, Date endDay, long startTime, long endTime, ArrayList<List<String>> res,
 			int repeatType) {
-		List<RaplaDate> tmp = new ArrayList<>();
+		List<RaplaDate> dateList = new ArrayList<>();
 		RaplaDate next;
 		long day = 86400000;
 		while (startDay.before(endDay)) {
+			//Cases for different repeat type opions 1=per day, 2= per week; 3=per month; 4= per year
 			switch (repeatType) {
 			case 1:
 				startDay = new Date(startDay.getTime() + day);
@@ -163,7 +169,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 			try {
 				if((startDay.before(endDay))){
 				next = new RaplaDate(new Date(startDay.getTime() + startTime), new Date(startDay.getTime() + endTime), res, true);
-				tmp.add(next);
+				dateList.add(next);
 				}
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
@@ -172,8 +178,7 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 			
 
 		}
-		//tmp.remove(tmp.size()-1);
-		return tmp;
+		return dateList;
 	}
 
 	@Override
@@ -187,6 +192,12 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 			back = 1;
 		}
 		return back;
+	}
+	
+	@Override
+	public HandlerRegistration addClickHandler(ClickHandler handler) {
+		// TODO Auto-generated method stub
+		return addDomHandler(handler, ClickEvent.getType());
 	}
 
 	public double getVorlesungsstunden() {
@@ -217,17 +228,12 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 		return this.raplaDates;
 	}
 	
+	//Java class Calendar is not available under gwt
 	public long getStartHourMinute(){
 		return (long) ((beginTime.getHours()*3600000) + (beginTime.getMinutes()*60000));
 	}
 	public long getEndHourMinute(){
 		return (long) ((endTime.getHours()*3600000) + (endTime.getMinutes()*60000));
-	}
-
-	@Override
-	public HandlerRegistration addClickHandler(ClickHandler handler) {
-		// TODO Auto-generated method stub
-		return addDomHandler(handler, ClickEvent.getType());
 	}
 
 	public ArrayList<List<String>> getResources() {

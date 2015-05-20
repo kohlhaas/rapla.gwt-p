@@ -6,9 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -29,7 +27,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -144,6 +141,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		dateList.setHeight(height + "px");
 		dateList.setStyleName("dateList");
 
+		//initial explanation text if no date is created yet
 		FlowPanel firstDateListWidget = new FlowPanel();
 		firstDateListWidget.setStyleName("wildcardPanel");
 		Label explainer = new Label(
@@ -152,6 +150,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		firstDateListWidget.add(explainer);
 		dateList.add(firstDateListWidget);
 
+		//The panel contains the Button "Ressourcen für alle übernehmen" at the top of the datelist
 		FlowPanel placeholderSetResourcesToAll = new FlowPanel();
 		placeholderSetResourcesToAll.setStyleName("resourceButtonPanel");
 		setResourcesToAll = new Button(
@@ -170,21 +169,30 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			}
 		});
 
-		this.dateList.setFirstWidget(true);
+		dateList.setFirstWidget(true);
 
+		//initializing the disclourePanel for the resources
 		addResources = new DisclosurePanel("Ressourcen hinzuf\u00FCgen");
 		addResources.setStyleName("dateInfoLineComplete");
 
 		buttonBar = new FlowPanel();
 		buttonBar.setHeight(height + "px");
 		buttonBar.setStyleName("datesButtonBar");
+		
+		buttonPlus = new Image(IMG_PLUS);
+		buttonPlus.setTitle("Termin erstellen");
+		buttonPlus.setStyleName("buttonsResourceDates");
+		
+		buttonPlus.addClickHandler(new ClickHandler() {
 
-		buttonNextGap = new Image(IMG_NEXT_GREY);
-		// buttonNextGap = new Label(">>");
-		buttonNextGap.setStyleName("buttonsResourceDates");
+			@Override
+			public void onClick(ClickEvent event) {
+				getPresenter().onButtonPlusClicked();
 
+			}
+		});
+		
 		buttonGarbageCan = new Image(IMG_CROSS_GREY);
-		// buttonGarbageCan = new Label("X");
 		buttonGarbageCan.setStyleName("buttonsResourceDates");
 		buttonGarbageCan.setTitle("Termin l\u00F6schen");
 		buttonGarbageCan.addClickHandler(new ClickHandler() {
@@ -192,15 +200,16 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 				getPresenter().onGarbageCanButtonClicked();
 			}
 		});
+		buttonNextGap = new Image(IMG_NEXT_GREY);
+		buttonNextGap.setStyleName("buttonsResourceDates");
 
-		buttonPlus = new Image(IMG_PLUS);
-		// buttonPlus = new Label("+");
-		buttonPlus.setTitle("Termin erstellen");
-		buttonPlus.setStyleName("buttonsResourceDates");
-
+		//
 		buttonBar.add(buttonPlus);
 		buttonBar.add(buttonGarbageCan);
 		buttonBar.add(buttonNextGap);
+		
+
+		
 
 		dateInfos = new FlowPanel();
 		dateInfos.setHeight(height + "px");
@@ -209,7 +218,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		DateTimeFormat dateFormat = DateTimeFormat
 				.getFormat(PredefinedFormat.DATE_MEDIUM);
 
-		// initialize and declarate Panel and Elements for Begin Time and Date
+		// initialize and declarate panel and elements for begin time and date
 		begin = new HorizontalPanel();
 		begin.setSpacing(5);
 		begin.setStyleName("dateInfoLineComplete");
@@ -270,6 +279,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		end.setCellWidth(timeEnd, "80px");
 		end.setCellWidth(endTimeText, "50px");
 
+		//creatin the checkbox for whole day and add a handler
 		cbWholeDay = new CheckBox("ganzt\u00E4gig");
 		begin.add(cbWholeDay);
 		cbWholeDay.addClickHandler(new ClickHandler() {
@@ -287,16 +297,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 		begin.setCellWidth(beginText, "50px");
 
-		// Add termin
-
-		buttonPlus.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				getPresenter().onButtonPlusClicked();
-
-			}
-		});
 
 		// Checkbox reccuring dates
 		repeat = new HorizontalPanel();
@@ -314,6 +314,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		noReccuring = new RadioButton("repeat", "keine Wiederholung");
 		noReccuring.addClickHandler(new RepeatClickHandler());
 
+		//Setting for reccuring dates
 		repeatType = new ListBox();
 		repeatType.addItem("Bis Datum");
 		repeatType.addItem("x Mal");
@@ -329,39 +330,16 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 		cbRepeatType.add(repeat);
 
+		//Panel that shows errors when a dates should created wrong
 		HorizontalPanel addDateWithLabel = new HorizontalPanel();
 		addDateInfo = new Label();
 		addDateWithLabel.add(addDateInfo);
 		addDateWithLabel.setCellVerticalAlignment(addDateInfo,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
-		// Ausgewählte Ressourcen laden
+		//load chosen resources
 		chosenResources = new FlowPanel();
 		chosenResources.setStyleName("dateInfoLineComplete");
-
-		// Ausgewählte Resourcen laden
-		// ArrayList<List<String>> testRessourcen = new
-		// ArrayList<List<String>>();
-		//
-		// List<String> rooms = new ArrayList<String>();
-		// rooms.add("Raeume");
-		// rooms.add("A 204");
-		//
-		// List<String> cources = new ArrayList<String>();
-		// cources.add("Kurse");
-		// cources.add("WWI12B1");
-		//
-		// List<String> profs = new ArrayList<String>();
-		// // profs.addAll(this.loadProfs());
-		// profs.add("Professoren");
-		// profs.add("Kuestermann");
-		//
-		// testRessourcen.add(rooms);
-		// testRessourcen.add(cources);
-		// testRessourcen.add(profs);
-		//
-		// loadChosenResources(testRessourcen);
-		//
 
 		Label headerChosenRes = new Label("Ausgew\u00E4hlte Ressourcen:");
 		headerChosenRes.setStyleName("beschriftung");
@@ -369,17 +347,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		chosenResources.setStyleName("dateInfoLineComplete");
 		chosenResources.add(headerChosenRes);
 		
-//		FlowPanel explainer2Panel = new FlowPanel();
-//		explainer2Panel.setStyleName("wildcardPanel");
-		
 		Label explainer2 = new Label("Es wurden bisher keine Ressourcen ausgewählt");
 		explainer2.setStyleName("wildcard");
-		
-//		explainer2Panel.add(explainer2);
-//		
-//		chosenResources.add(explainer2Panel);
-		
-		// -------
 
 		for (FlowPanel helpList : getPanelResourceContainer()) {
 			chosenResources.add(helpList);
@@ -782,6 +751,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 	}
 
 	@Override
+	//The method called when when the date and time input field are filled and the "add button" is clicked
 	public void addDateWidget() {
 
 		logger.warn("datelist widget countp1: " + dateList.getWidgetCount());
@@ -798,6 +768,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		} else {
 			addDateInfo.setStyleName("");
 			addDateInfo.setText("");
+			// check of a reccuring date should be created
 			if (daily.getValue() || weekly.getValue() || monthly.getValue()
 					|| year.getValue()) {
 				List<RaplaDate> tmp = new ArrayList<>();
@@ -815,6 +786,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 						dateEnd.getValue(), timeBegin.getTime() + 3600000,
 						timeEnd.getTime() + 3600000,
 						copyResourceArray(reservedResources), type);
+				
+				// create a reccuring RaplaDate out of the input fields
 				try {
 					tmp.add(new RaplaDate(beginTmp,
 							new Date(dateBegin.getValue().getTime()
@@ -834,6 +807,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 					e.printStackTrace();
 				}
 			} else {
+				//add a single date out of input fields
 				try {
 					addTermin = new RaplaDate(beginTmp, endTmp,
 							copyResourceArray(reservedResources), true);
@@ -854,6 +828,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		logger.warn("datelist widget countp2: " + dateList.getWidgetCount());
 	}
 
+	// reset the view / clear the date and time input fields if date created or changed
 	private void clearDateTimeInputFields() {
 		dateBegin.setValue(new Date(System.currentTimeMillis()));
 		dateEnd.setValue(new Date(System.currentTimeMillis()));
@@ -891,14 +866,13 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 	}
 
 	@Override
+	//extended reseting of the view (with button changes)
 	public void clearInputFields() {
-		// if(buttonGarbageCan.getStyleName().equals("buttonsResourceDatesClickable")){
 		dateList.removeDate(dateList.getActive());
 		clearDateTimeInputFields();
 		buttonGarbageCan.setResource(IMG_CROSS_GREY);
 		buttonPlus.setResource(IMG_PLUS);
 		buttonPlus.setTitle("Termin erstellen");
-		// }
 	}
 
 	// ClickHandler: Actions when clicking on a created Date
@@ -926,7 +900,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			setRepeatTypeSettings(daily);
 			}
 			
-
+			//change button img
 			buttonGarbageCan.setResource(IMG_CROSS);
 			buttonPlus.setResource(IMG_CHANGE);
 			buttonPlus.setTitle("Termin \u00FCberschreiben");
@@ -934,8 +908,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			logger.warn("1b ");
 			reservedResources.clear();
 			if (currentDate.getResources().size() > 0) {
-				// reservedResources = copyResourceArray(currentDate
-				// .getResources());
 				this.loadChosenResources(currentDate.getResources());
 			} else {
 				ArrayList<List<String>> res = new ArrayList<List<String>>();
@@ -970,6 +942,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 	}
 
 	@Override
+	//check if a date is load into the input fields and create a new date out the the input forms, first revision, 
+	//it finally should keep its position
 	public void openEditView() {
 		logger.warn("openEditView ");
 		logger.warn("datelist widget count: " + dateList.getWidgetCount());
@@ -996,6 +970,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 	}
 
 	@Override
+	//change the view if a radio button (repeating date) is clicked
 	public void setRepeatTypeSettings(Widget sender) {
 		// TODO Auto-generated method stub
 		if (sender != noReccuring) {
@@ -1019,7 +994,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			}
 		}
 		if (sender == noReccuring) {
-			// end.remove(1);
 			repeatSettings.remove(repeatText);
 			repeatSettings.remove(dateBegin);
 			repeatSettings.remove(repeatType);
@@ -1028,8 +1002,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			begin.insert(dateBegin, 1);
 			begin.setCellWidth(dateBegin, "180px");
 
-			// end.remove(repeatType);
-			// end.remove(dateEnd);
 			end.insert(dateEnd, 1);
 			end.setCellWidth(dateEnd, "180px");
 			noReccuring.setValue(true);
@@ -1040,10 +1012,12 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 	}
 
 	@Override
+	//action when Button "Ressourcen für alle übernehmen" is clicked
 	public void setResourcesToAllDates() {
 		// TODO Auto-generated method stub
 		// reset view
 		setRaplaDate(dateList.getDate(dateList.getActive()));
+		//get conflicting dates
 		final List<RaplaDate> errorListAll = dateList.checkConflict();
 		List<RaplaDate> errorList = new ArrayList<>();
 		HashSet<RaplaDate> errorSet = new HashSet<>();
@@ -1052,6 +1026,8 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		Collections.sort(errorList);
 		final HashMap<FlowPanel, RaplaDate> keyValueMap = new HashMap<>();
 		FlowPanel dateElement;
+		
+		//check if the the are problems and create the error panel (not perfecty functional)
 		if (!errorList.isEmpty()) {
 			errorPanel = new FlowPanel();
 			VerticalPanel top = new VerticalPanel();
@@ -1078,17 +1054,6 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 					// getPresenter().onErrorRaplaDateClick();
 					FlowPanel sender = (FlowPanel) event.getSource();
 					RaplaDate senderDate = keyValueMap.get(sender);
-					/*
-					 * Iterator<Entry<FlowPanel, RaplaDate>> it =
-					 * keyValueMap.entrySet().iterator(); while (it.hasNext()) {
-					 * HashMap.Entry<FlowPanel, RaplaDate> pair =
-					 * (HashMap.Entry<FlowPanel, RaplaDate>)it.next();
-					 * pair.getKey().removeStyleName("dateElementClicked");
-					 * it.remove(); // avoids a ConcurrentModificationException
-					 * }
-					 * 
-					 * sender.setStyleName("dateElementClicked");
-					 */
 					reservedResources.clear();
 					reservedResources = copyResourceArray(senderDate
 							.getResources());
