@@ -1,14 +1,14 @@
 package org.rapla.client.edit.reservation.history;
 
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TextBoxBase;
 
 public class TextBoxStep implements Step {
 	
-	TextBox textBox;
+	TextBoxBase textBox;
 	String previousValue;
 	String newValue;
 	
-	public TextBoxStep(TextBox textBox, Object previousValue) {
+	public TextBoxStep(TextBoxBase textBox, Object previousValue) {
 		this.textBox = textBox;
 		this.previousValue = (String) previousValue;
 		this.newValue = textBox.getValue();
@@ -27,7 +27,7 @@ public class TextBoxStep implements Step {
 	}
 
 	@Override
-	public TextBox getWidget() {
+	public TextBoxBase getWidget() {
 		return textBox;
 	}
 	

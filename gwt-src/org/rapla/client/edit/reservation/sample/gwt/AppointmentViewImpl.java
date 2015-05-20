@@ -6,6 +6,8 @@ import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.Column;
@@ -15,6 +17,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
@@ -23,6 +26,7 @@ import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import javax.inject.Inject;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -256,6 +260,14 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         HistoryManager.getInstance().trackWidget(startMinuteField);
         HistoryManager.getInstance().trackWidget(endHourField);
         HistoryManager.getInstance().trackWidget(endMinuteField);
+        
+        startDateField.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				DateBox startDateField = (DateBox) event.getSource();
+				endDateField.setValue(startDateField.getValue());
+			}
+        });
     }
 
     public void updateAppointmentList(List<Appointment> appointments, int focus) {
@@ -493,6 +505,5 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
             bookedResources.addItem(resource.getName(getRaplaLocale().getLocale()));
         }
     }
-
 
 }
