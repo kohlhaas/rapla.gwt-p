@@ -6,6 +6,7 @@ import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
+import org.rapla.entities.dynamictype.ConstraintIds;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.Conflict;
@@ -121,7 +122,6 @@ public class ReservationPresenter implements ReservationController, Presenter {
         Category superCategory = facade.getSuperCategory();
         Category[] categories = superCategory.getCategories();
         for (Category category : categories) {
-            logger.info("name: " + category.getName());
             if (category.getName(locale).equals(neededCategory)) {
                 courseCategory = category;
             }
@@ -184,18 +184,19 @@ public class ReservationPresenter implements ReservationController, Presenter {
             }
             list.add(attribute.getName() + " : " + valueAsString + " Typ: " + attribute.getType().name());
         }
-//        list.add("");
-//        for (Attribute attribute : type.getAttributes()) {
-//            list.add(attribute.getDynamicType().getKey());
-//        }
-//        list.add("");
-//
-//        Category superCategory = facade.getSuperCategory();
-//        Category[] categories = superCategory.getCategories();
-//        for (Category category : categories) {
-//            list.add(category.getKey()+" "+category.getName());
-//        }
-//        logger.info("all attributes length: " + list.size());
+        list.add("");
+        for (Attribute attribute : type.getAttributes()) {
+            Object constraint = attribute.getConstraint(ConstraintIds.KEY_ROOT_CATEGORY);
+            list.add(String.valueOf(constraint));
+        }
+
+        list.add("");
+        Category superCategory = facade.getSuperCategory();
+        Category[] categories = superCategory.getCategories();
+        for (Category category : categories) {
+            list.add(category.getKey());
+        }
+        logger.info("all attributes length: " + list.size());
         return list;
     }
 
