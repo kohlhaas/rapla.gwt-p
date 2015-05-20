@@ -6,7 +6,6 @@ import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.ClientFacade;
-import org.rapla.facade.Conflict;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
@@ -211,8 +210,10 @@ public class AppointmentPresenter implements Presenter {
 
 	@Override
 	public void removeResourceButtonPressed(int selectedIndex) {
-		// TODO Resource löschen, dann updateBookedResources aufrufen
-		
+        Allocatable allocatable = reservation.getAllocatables()[selectedIndex];
+        logger.info("removing Allocatable with id: " + reservation.getAllocatables()[selectedIndex].getId());
+        reservation.removeAllocatable(allocatable);
+        view.updateBookedResources(Arrays.asList(reservation.getAllocatables()));
 	}
 
 }

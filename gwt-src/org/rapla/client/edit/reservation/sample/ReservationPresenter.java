@@ -186,11 +186,16 @@ public class ReservationPresenter implements ReservationController, Presenter {
         }
 //        list.add("");
 //        for (Attribute attribute : type.getAttributes()) {
-//            list.add(attribute.getKey());
-//            list.add(attribute.getId());
+//            list.add(attribute.getDynamicType().getKey());
 //        }
-
-        logger.info("all attributes length: " + list.size());
+//        list.add("");
+//
+//        Category superCategory = facade.getSuperCategory();
+//        Category[] categories = superCategory.getCategories();
+//        for (Category category : categories) {
+//            list.add(category.getKey()+" "+category.getName());
+//        }
+//        logger.info("all attributes length: " + list.size());
         return list;
     }
 

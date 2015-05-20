@@ -147,6 +147,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         removeResourceBtn.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                String resourceType = resourceTypesList.getSelectedItemText();
                 getPresenter().removeResourceButtonPressed(bookedResources.getSelectedIndex());
             }
         });
