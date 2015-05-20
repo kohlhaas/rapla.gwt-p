@@ -19,7 +19,6 @@ import de.vksi.c4j.ContractReference;
 import javax.inject.Inject;
 
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Each Reservation has a classification, some resources(allocatable) and appointments
@@ -206,9 +205,10 @@ public class ReservationPresenter implements ReservationController, Presenter {
      * With the Map u can give each attribute a new value
      * overwrites current values
      *
-     * @param valuesToSave a Map with a name of the attribute and a value, IT OVERWRITES ALL CURRENT ATTRIBUTES, SO SAVE NAME TOO
+     * @param valuesToSave           a Map with the attribute and a value, IT OVERWRITES ALL CURRENT ATTRIBUTES, SO SAVE NAME TOO
+     * @param attributeCollectionMap a Map with the attribute and a ValueCollection (f.e. attribute: Studiengang has values Arztassitent, Wirtschaftsinformatij, Informatik)
      */
-    public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave) {
+    public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave, Map<Attribute, Collection<Object>> attributeCollectionMap) {
 
         Classification classification = reservation.getClassification();
         DynamicType type = classification.getType();
@@ -216,6 +216,11 @@ public class ReservationPresenter implements ReservationController, Presenter {
         logger.info("saving Map:" + valuesToSave.toString() + "and size:" + valuesToSave.size());
         for (Map.Entry<Attribute, Object> stringObjectEntry : valuesToSave.entrySet()) {
             newClassification.setValue(stringObjectEntry.getKey(), stringObjectEntry.getValue());
+        }
+        if (attributeCollectionMap != null) {
+            for (Map.Entry<Attribute, Collection<Object>> attributeCollectionEntry : attributeCollectionMap.entrySet()) {
+                newClassification.setValues(attributeCollectionEntry.getKey(), attributeCollectionEntry.getValue());
+            }
         }
         reservation.setClassification(newClassification);
         logger.info("new Classification" + Arrays.toString(newClassification.getAttributes()));
