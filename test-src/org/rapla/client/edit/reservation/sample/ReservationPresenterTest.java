@@ -130,6 +130,7 @@ public class ReservationPresenterTest  {
   @Test
   public void getCategoryTest(){
 	  Locale locale = raplaLocale.getLocale();
+<<<<<<< HEAD
 	  
 	  //WHEN
 	  try {
@@ -140,6 +141,10 @@ public class ReservationPresenterTest  {
 		 //The NullPointer occurs in the facade, so it's not part of the method to be tested.
 	  }
 	  
+=======
+	  //WHEN	
+	  presenter.getCategoryAttributes(locale, "Sprachen");
+>>>>>>> branch 'mwi14_2_Master' of https://code.google.com/p/rapla.gwt-p/
 	  //THEN
 	  //test if superCategory is get from facade
 	  verify(facade).getSuperCategory();
@@ -148,6 +153,7 @@ public class ReservationPresenterTest  {
   @Test
   public void changeAttributeTest(){
 	  Locale locale = raplaLocale.getLocale();
+<<<<<<< HEAD
 	  
 	  //BEFORE
 	  List<String> oldAttributes = presenter.getAllCurrentAttributesAsStrings(locale);
@@ -162,6 +168,10 @@ public class ReservationPresenterTest  {
 	  }
 	  
 
+=======
+	  //WHEN	
+	  presenter.changeAttributesOfCLassification((Map<String, Object>) presenter.getAllCurrentAttributesAsStrings(locale),locale);;
+>>>>>>> branch 'mwi14_2_Master' of https://code.google.com/p/rapla.gwt-p/
 	  //THEN
 	  //test that current attributes are changed
 	  Mockito.eq(!presenter.getAllCurrentAttributesAsStrings(locale).equals(oldAttributes));
