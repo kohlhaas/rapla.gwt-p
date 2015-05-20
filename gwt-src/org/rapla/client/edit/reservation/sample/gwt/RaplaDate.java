@@ -237,4 +237,12 @@ public class RaplaDate extends Composite implements Comparable<RaplaDate>, HasCl
 	public void setResources(ArrayList<List<String>> resources) {
 		this.resources = resources;
 	}
+
+	public int getReccuringType() {
+		return reccuringType;
+	}
+
+	public void setReccuringType(int reccuringType) {
+		this.reccuringType = reccuringType;
+	}
 }
