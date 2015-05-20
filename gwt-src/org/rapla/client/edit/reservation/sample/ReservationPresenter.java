@@ -207,6 +207,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
      *
      * @param valuesToSave           a Map with the attribute and a value, IT OVERWRITES ALL CURRENT ATTRIBUTES, SO SAVE NAME TOO
      * @param attributeCollectionMap a Map with the attribute and a ValueCollection (f.e. attribute: Studiengang has values Arztassitent, Wirtschaftsinformatij, Informatik)
+     * @param attributeCollectionMap give NULL if not needed, wont be saved then
      */
     public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave, Map<Attribute, Collection<Object>> attributeCollectionMap) {
 
