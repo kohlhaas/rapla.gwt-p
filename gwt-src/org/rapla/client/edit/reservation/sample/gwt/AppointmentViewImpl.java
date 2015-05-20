@@ -237,6 +237,8 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endHourField.setText(hoursFormat.format(selectedAppointment.getEnd()));
         endMinuteField.setText(minutesFormat.format(selectedAppointment.getEnd()));
 
+        HistoryManager.getInstance().trackWidget(startDateField);
+        HistoryManager.getInstance().trackWidget(endDateField);
         HistoryManager.getInstance().trackWidget(startHourField);
         HistoryManager.getInstance().trackWidget(startMinuteField);
         HistoryManager.getInstance().trackWidget(endHourField);
@@ -445,6 +447,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         for (RadioButton repeatButton : selectRepeat) {
             selectRepeatPanel.add(repeatButton);
         }
+        HistoryManager.getInstance().trackWidget(selectRepeatPanel);
     }
 
 
