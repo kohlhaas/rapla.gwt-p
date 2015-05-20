@@ -137,8 +137,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
        row1.add(allKeys);*/
 
 
-/**
- * about current attributes
 
         //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
         for (String s : getPresenter().getAllCurrentAttributesAsStrings(locale)) {
@@ -147,7 +145,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         Label labelCurrentAttributes = new Label("Current Attributes");
         row1.add(labelCurrentAttributes);
         row1.add(allCurrentAttributes);
- */
 
     }
 

@@ -65,16 +65,15 @@ public class ReservationPresenter implements ReservationController, Presenter {
     public void onSaveButtonClicked() {
         logger.info("save clicked");
         logger.info(getConflicts().length + " conflicts found.");
-        if(getConflicts().length > 0) {
-    		view.showConflicts(getConflicts());
-    	}
-        else {
-	        try {
-	            facade.store(reservation);
-	        } catch (RaplaException e1) {
-	            logger.error(e1.getMessage(), e1);
-	        }
-	        view.hide();
+        if (getConflicts().length > 0) {
+            view.showConflicts(getConflicts());
+        } else {
+            try {
+                facade.store(reservation);
+            } catch (RaplaException e1) {
+                logger.error(e1.getMessage(), e1);
+            }
+            view.hide();
         }
     }
 
@@ -122,6 +121,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
         Category superCategory = facade.getSuperCategory();
         Category[] categories = superCategory.getCategories();
         for (Category category : categories) {
+            logger.info("name: " + category.getName());
             if (category.getName(locale).equals(neededCategory)) {
                 courseCategory = category;
             }
@@ -166,7 +166,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     }
 
-    public Attribute[] getAllCurrentAttributes(){
+    public Attribute[] getAllCurrentAttributes() {
         return reservation.getClassification().getAttributes();
     }
 
@@ -182,20 +182,24 @@ public class ReservationPresenter implements ReservationController, Presenter {
             if (valueAsString == null || valueAsString.isEmpty()) {
                 valueAsString = "not defined yet";
             }
-            list.add(attribute.getName(locale) + " : " + valueAsString);
+            list.add(attribute.getName() + " : " + valueAsString + " Typ: " + attribute.getType().name());
         }
         list.add("");
-        for (Attribute attribute : classification.getAttributes()) {
-            list.add(attribute.toString());
-        }
+//        for (Attribute attribute : type.getAttributes()) {
+//            list.add(attribute.getKey());
+//            list.add(attribute.getId());
+//        }
+
         logger.info("all attributes length: " + list.size());
         return list;
     }
+
 
     /**
      * Each DynamicType (Lehrveranstaltung, Prüfung etc) has N Attributes (Titel, Sprache etc)
      * With the Map u can give each attribute a new value
      * overwrites current values
+     *
      * @param valuesToSave a Map with a name of the attribute and a value, IT OVERWRITES ALL CURRENT ATTRIBUTES, SO SAVE NAME TOO
      */
     public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave) {
@@ -203,12 +207,12 @@ public class ReservationPresenter implements ReservationController, Presenter {
         Classification classification = reservation.getClassification();
         DynamicType type = classification.getType();
         Classification newClassification = type.newClassification();
-        logger.info("saving Map:" + valuesToSave.toString() +"and size:" + valuesToSave.size());
+        logger.info("saving Map:" + valuesToSave.toString() + "and size:" + valuesToSave.size());
         for (Map.Entry<Attribute, Object> stringObjectEntry : valuesToSave.entrySet()) {
-            newClassification.setValue(stringObjectEntry.getKey(),stringObjectEntry.getValue());
+            newClassification.setValue(stringObjectEntry.getKey(), stringObjectEntry.getValue());
         }
         reservation.setClassification(newClassification);
-        logger.info("new Classification"+ Arrays.toString(newClassification.getAttributes()));
+        logger.info("new Classification" + Arrays.toString(newClassification.getAttributes()));
     }
 
     /**
@@ -238,7 +242,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
     public boolean isDeleteButtonEnabled() {
         return !isNew;
     }
-    
+
     /**
      * gets all conflicts for the existing reservation, if a new appButton has been pressed, a new app will be added to
      * the reservation.. conflicts in this reservation will be shown. Else it returns NULL
