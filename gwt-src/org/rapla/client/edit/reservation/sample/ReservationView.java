@@ -43,8 +43,6 @@ public interface ReservationView<W> extends View<Presenter> {
         void setAttributesOfReservation(Map<Attribute, Object> valuesToSave, Map<Attribute, Collection<Object>> attributeCollectionMap);
 
         Attribute[] getAllCurrentAttributes();
-        
-        Conflict[] getConflicts();
 
 		Category[] getCategories();
 

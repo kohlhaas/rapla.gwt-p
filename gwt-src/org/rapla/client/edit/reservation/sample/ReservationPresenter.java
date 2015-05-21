@@ -283,21 +283,6 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		return null;
 	}*/
 
-    /**
-     * gets all conflicts for the existing reservation, if a new appButton has been pressed, a new app will be added to
-     * the reservation.. conflicts in this reservation will be shown. Else it returns NULL
-     *
-     * @return NULL if error
-     */
-    public Conflict[] getConflicts() {
-        try {
-            return facade.getConflicts(this.reservation);
-        } catch (RaplaException e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
-    }
-
 	public Object getCategoryAttributes(Locale locale, String neededCategory) {
 		// TODO Auto-generated method stub
 		return null;
