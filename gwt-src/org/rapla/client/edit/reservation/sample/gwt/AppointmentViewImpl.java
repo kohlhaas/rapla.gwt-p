@@ -24,6 +24,7 @@ import org.rapla.client.edit.reservation.sample.AppointmentView;
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
+import org.rapla.facade.Conflict;
 
 import javax.inject.Inject;
 
@@ -203,11 +204,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         appointmentPanel.add(appointmentOptionsPanel);
 
         if (selectedAppointment == null) {
-            Logger.getGlobal().info("### null appointment selected");
             return;
-        } else {
-            Logger.getGlobal().info("### appointment selected: " + selectedAppointment.getStart()+" with repeatingType: "+ selectedAppointment.getRepeating());
-
         }
 
         // Repeat Radio Buttons
@@ -244,7 +241,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         // Fill in data from appointment object
         // Check the box according to selected appointment
         Repeating repeat = selectedAppointment.getRepeating();
-        RadioButton checked = getCheckedRadioButton(repeat);
+        RadioButton checked = getRadioButtonToCheck(repeat);
 
         checked.setValue(true);
         // Fill text fields
@@ -269,6 +266,31 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 				endDateField.setValue(startDateField.getValue());
 			}
         });
+        startHourField.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				TextBox startHourField = (TextBox) event.getSource();
+				endHourField.setText( "" + (Integer.parseInt(startHourField.getValue()) + 1) );
+			}
+        });
+        
+        ChangeHandler saveAppointment = new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				Conflict[] conflicts = getPresenter().saveAppointment(
+						(Appointment) ((SingleSelectionModel) appointmentList.getSelectionModel()).getSelectedObject(),
+						getStartDate(),
+						getEndDate(),
+						getSelectedRepeating()
+				);
+				if(conflicts.length<1) {
+					//success
+				}
+				else {
+					//show conflicts
+				}
+			}
+		};
     }
 
     public void updateAppointmentList(List<Appointment> appointments, int focus) {
@@ -434,7 +456,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endFields.add(endMinuteField);
     }
 
-    private RadioButton getCheckedRadioButton(Repeating repeat) {
+    private RadioButton getRadioButtonToCheck(Repeating repeat) {
         RadioButton checked = selectRepeat[0];
         if (repeat != null) {
             switch (repeat.getType()) {
@@ -474,6 +496,31 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
             selectRepeatPanel.add(repeatButton);
         }
         HistoryManager.getInstance().trackWidget(selectRepeatPanel);
+    }
+    
+    private RepeatingType getSelectedRepeating() {
+    	RepeatingType r = null;
+    	int checked = 0;
+    	for(int i = 1; i < selectRepeat.length; i++) {
+    		if( selectRepeat[i].getValue() ) {
+    			checked = i;
+    		}
+    	}
+    	switch(checked) {
+    		case 1:
+    			r = Repeating.DAILY;
+    			break;
+    		case 2:
+    			r = Repeating.WEEKLY;
+    			break;
+    		case 3:
+    			r = Repeating.MONTHLY;
+    			break;
+    		case 4:
+    			r = Repeating.YEARLY;
+    			break;
+    	}
+    	return r;
     }
 
 
