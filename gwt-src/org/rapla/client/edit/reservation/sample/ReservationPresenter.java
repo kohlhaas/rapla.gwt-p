@@ -17,6 +17,7 @@ import de.vksi.c4j.ContractReference;
 import javax.inject.Inject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -129,6 +130,19 @@ public class ReservationPresenter implements ReservationController, Presenter {
             return courseCategory.getCategories();
         } else return null;
     }
+    
+    //von Yvonne//
+    
+    public Category[] getCategories(){
+    	Category superCategory = facade.getSuperCategory();
+    	Category[] categories = superCategory.getCategories();
+    	
+    	if(categories == null){
+    		logger.error("there are no categories");	
+    	}
+    	
+		return categories;
+    }
 
 
     @Override
@@ -161,10 +175,14 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     }
 
+    public Attribute[] getAllCurrentAttributes(){
+        return reservation.getClassification().getAttributes();
+    }
+
     /**
      * @return all current Values as a String
      */
-    public List<String> getAllCurrentAttributes(Locale locale) {
+    public List<String> getAllCurrentAttributesAsStrings(Locale locale) {
         List<String> list = new ArrayList<>();
         Classification classification = reservation.getClassification();
         DynamicType type = classification.getType();
@@ -177,6 +195,25 @@ public class ReservationPresenter implements ReservationController, Presenter {
         }
         logger.info("all attributes length: " + list.size());
         return list;
+    }
+
+    /**
+     * Each DynamicType (Lehrveranstaltung, Prüfung etc) has N Attributes (Titel, Sprache etc)
+     * With the Map u can give each attribute a new value
+     * overwrites current values
+     * @param valuesToSave a Map with a name of the attribute and a value, IT OVERWRITES ALL CURRENT ATTRIBUTES, SO SAVE NAME TOO
+     */
+    public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave) {
+
+        Classification classification = reservation.getClassification();
+        DynamicType type = classification.getType();
+        Classification newClassification = type.newClassification();
+        logger.info("saving Map:" + valuesToSave.toString() +"and size:" + valuesToSave.size());
+        for (Map.Entry<Attribute, Object> stringObjectEntry : valuesToSave.entrySet()) {
+            newClassification.setValue(stringObjectEntry.getKey(),stringObjectEntry.getValue());
+        }
+        reservation.setClassification(newClassification);
+        logger.info("new Classification"+ Arrays.toString(newClassification.getAttributes()));
     }
 
     /**

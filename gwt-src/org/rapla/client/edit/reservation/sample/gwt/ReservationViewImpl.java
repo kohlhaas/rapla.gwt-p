@@ -15,10 +15,13 @@ import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
+import org.rapla.entities.dynamictype.ConstraintIds;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -58,6 +61,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     Button course = new Button("Studiengang auswählen");
     ListBox allCurrentAttributes = new ListBox();
     TextBox testSaving = new TextBox(); //TEST!!!
+    TextBox tbPlanhour;
+    TextBox lectureCourseTextBox;
+    TextArea taInfo;
 
     Button hideButton = null;
     Button deselectButton = null;
@@ -75,6 +81,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     boolean firstChange = true;
     
     Map<String, Object> attributeNames = new HashMap<String, Object>();
+    Map<Attribute, Object> valuesToSave = new HashMap<Attribute, Object>();
+    Map<Attribute, List<Object>> attributeCollectionMap = new HashMap<Attribute, List<Object>>();
+    List<Object> objectList = new LinkedList<Object>();
+    //Map<Category, Category> categoriesToSave = new HashMap<Category, Category>();
     
   
     
@@ -112,7 +122,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         initLabelInfo();
         initTextAreaInfo();
         
-        initTestButton(); //TEST!!!
+        //initTestButton(); //TEST!!!
         
         
     
@@ -158,12 +168,25 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         
 
         //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
-        for (String s : getPresenter().getAllCurrentAttributes(locale)) {
-            (allCurrentAttributes).addItem(s);
-        }
+
+/*        for (String s : getPresenter().getAllCurrentAttributes(locale)) {
+            (allCurrentAttributes).addItem(s);*/
+
+        //TEST!!
         Label labelCurrentAttributes = new Label("Current Attributes");
+        
         row1Panel.add(labelCurrentAttributes);
         row1Panel.add(allCurrentAttributes);
+
+    }
+    
+    //TEST!!
+    private void currentAttributes(){
+    	
+    	final Locale locale = getRaplaLocale().getLocale();
+    	for (String s : getPresenter().getAllCurrentAttributesAsStrings(locale)) {
+            allCurrentAttributes.addItem(s);
+        }
     }
     
     /*Init Panels*/
@@ -285,11 +308,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private void initCaptionLabel() {
     	
     	/*Header for Creating Reservations*/
-    	if(getPresenter().getIsNew()){
-    		captionLabel = new Label("Veranstaltung anlegen");
-    		captionLabel.setStyleName("captionCreationLabel");
-    	}
-    	
+        if (getPresenter().getIsNew()) {
+            captionLabel = new Label("Veranstaltung anlegen");
+            captionLabel.setStyleName("captionCreationLabel");
+        }
+
     	/*Header for Editing Reservations*/
     	else{
     		captionLabel = new Label("Veranstaltung bearbeiten");
@@ -341,11 +364,17 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
         
 /*        if(chosenEventType.equalsIgnoreCase("Prüfung")){
-        	initLectureCourseLabel();
+            initLectureCourseLabel();
         	initLectureCourseTextBox();
         }*/
+        
+        //TEST!!
+        currentAttributes();
 
         mapDynamicTypesToChangeHandler(eventTypes, locale, eventTypeLB);
+        
+        //TEST!!
+        
 
 
         //row1.add(eventTypeLB);
@@ -358,7 +387,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             @Override
             public void onChange(ChangeEvent event) {
                 //changedLehrveranstaltung = true;
-
+            	
+            	//TEST!!
+            	allCurrentAttributes.clear();
+            	currentAttributes();
                 language.clear();
 
                 if(chosenEventType.equalsIgnoreCase("Lehrveranstaltung")){
@@ -386,7 +418,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     if (dynamicType.getName(locale).equals(chosenEventType)) {
 
                         for (Attribute attribute : dynamicType.getAttributes()) {
-                            //language.addItem(attribute.getName(locale));
+                        	//test
+                           allCurrentAttributes.addItem(attribute.getName(locale));
+                          
                         }
                     }
                 }
@@ -634,7 +668,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     private void initTextBoxPlannedHoursInGrid() {
-        TextBox tbPlanhour = new TextBox();
+        tbPlanhour = new TextBox();
         tbPlanhour.setStyleName("tbPlanhour");
         grid.setWidget(1, 1, tbPlanhour);
     }
@@ -648,7 +682,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
      }
     
     private void initLectureCourseTextBoxInGrid() {
-    	TextBox lectureCourseTextBox = new TextBox(); 
+    	lectureCourseTextBox = new TextBox(); 
     	lectureCourseTextBox.setStyleName("textbox");
     	grid.setWidget(1,1, lectureCourseTextBox);
       
@@ -678,7 +712,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     private void initTextAreaInfo() {
-        TextArea taInfo = new TextArea();
+        taInfo = new TextArea();
         taInfo.setStyleName("taInfo");
         part2Panel.add(taInfo);
         part2Panel.add(testSaving); //TEST!!!!!!
@@ -727,30 +761,83 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 public void onClick(ClickEvent e) {
                 	
                 	
-                	
-/*                	DynamicType [] eventTypes = getPresenter().getAllEventTypes();
+        			DynamicType [] eventTypes = getPresenter().getAllEventTypes();
+                	final Category[] allCategories = getPresenter().getCategories();
+                	Category categoryForAttribute = null;
                 	
                 	for(DynamicType eventType : eventTypes){
                 		
                 		if(eventType.getName(locale).equalsIgnoreCase(eventTypeLB.getSelectedValue())){
                 			
-                			attributeNames.put(examinationTypeLB.getSelectedValue(),eventType.getAttribute("PrüfungsArt"));
-                			testSaving.setText(attributeNames.toString());
-                		}
+                			for(Attribute attribut : eventType.getAttributes()){
+                				
+                				categoryForAttribute = (Category) attribut.getConstraint(ConstraintIds.KEY_ROOT_CATEGORY);
+                				
+                				for(Category mainCategory : allCategories){
+                					
+                					if(mainCategory.getName(locale).equalsIgnoreCase(categoryForAttribute.getName(locale))){
+                						
+                						for(Category subCategory : mainCategory.getCategories()){
+                							
+                							if(subCategory.getName(locale).equalsIgnoreCase(examinationTypeLB.getSelectedValue())){
+                								
+                								valuesToSave.put(attribut, subCategory);
+                							}
+                							
+                							if(subCategory.getName(locale).equalsIgnoreCase(allLanguageLB.getSelectedValue())){
+                								valuesToSave.put(attribut, subCategory);
+                							}
+                							
+                							if(subCategory.getCategories().equals(null)){
+                								                							
+                								for(Category subSubCategory : subCategory.getCategories()){
+                								
+                									for(CheckBox categoryCB : cb){
+                										if(categoryCB.getValue()){
+                										
+                											if(categoryCB.getName().equalsIgnoreCase(subSubCategory.getName(locale))){
+                												objectList.add(subSubCategory);
+                											
+                											}
+                										}
+                									
+                									}
+                								}
+                								
+                								valuesToSave.put(attribut, subCategory);
+                								attributeCollectionMap.put(attribut, objectList);
+                								
+                							}
+                							
+                						}
+                						
+                						if(mainCategory.getName(locale).equalsIgnoreCase("Titel")){
+                							valuesToSave.put(attribut, eventNameTB.getText());
+                						}
+                						
+                						if(mainCategory.getName(locale).equalsIgnoreCase("Gepl. Vorlesungsstunden")){
+                							valuesToSave.put(attribut, tbPlanhour.getText());
+                						}
+                						
+                						if(mainCategory.getName(locale).equalsIgnoreCase("Planungsnotiz")){
+                							valuesToSave.put(attribut, taInfo.getText());
+                						}
+                						
+                						if(mainCategory.getName(locale).equalsIgnoreCase("Vorlesung")){
+                							valuesToSave.put(attribut, lectureCourseTextBox.getText());
+                						}
+                						
+                					}
+                					
+                				}
+                					
+                			}
                 			
-                			
-                		
-                			
-                		
-                	}*/
+                		}		
+                				
+                	}
                 	
                 	
-
-
-/*                	attributeNames.put("PrüfungsArt", examinationTypeLB.getSelectedValue());
-                    Attributes [] selectedAttributes = new Attributes();
-
-                    getPresenter().changeAttributesOfCLassification(selectedAttributes);*/
                 	
                
                     getPresenter().onSaveButtonClicked();
@@ -792,7 +879,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     }
 
     //TEST!!!
-    private void initTestButton() {
+   /* private void initTestButton() {
     	
     	Button testButton = new Button("Show Saving");
     	saveDeleteCancelHPanel.add(testButton);
@@ -802,25 +889,101 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     		@Override
     		public void onClick(ClickEvent event) {
     			DynamicType [] eventTypes = getPresenter().getAllEventTypes();
+            	final Category[] examinationTypesCategory = getPresenter().getCategory(locale, "Prüfungsart");
+            	//getPresenter().getCategoryAttributes(locale, "Prüfungsart");
+            	final Category[] allCategories = getPresenter().getCategories();
             	
             	for(DynamicType eventType : eventTypes){
             		
             		if(eventType.getName(locale).equalsIgnoreCase(eventTypeLB.getSelectedValue())){
             			
-            			attributeNames.put(examinationTypeLB.getSelectedValue(),eventType.getAttribute("PrüfungsArt"));
-            			testSaving.setText(attributeNames.toString());
-            			//testSaving.setText(attributeNames.values().toString());
-            		}
+            			for(Attribute attribut : eventType.getAttributes()){
+            				
+            				
+                        	for(Category mainCategory : allCategories){
+                        		
+                        		//testSaving.setText(attribut.getType().name());
+                        		
+                        		//if(attribut.getType().name().equalsIgnoreCase(mainCategory.getName(locale))){
+                        		
+                					//testSaving.setText(attribut.getName(locale));
+                        			
+                        			for(Category subCategory : mainCategory.getCategories()){
+                        				
+                        				if(attribut.getName(locale).equalsIgnoreCase("Art")){
+                        			
+                        					if(subCategory.getName(locale).equalsIgnoreCase(examinationTypeLB.getSelectedValue())){
+                        						//testSaving.setText(attribut.getKey());
+                        						
+                        						Category neu = (Category) attribut.getConstraint(ConstraintIds.KEY_ROOT_CATEGORY);
+                        						testSaving.setText(neu.getName(locale));
+                        						//testSaving.setText(mainCategory.getKey());
+                        						
+                        						//testSaving.setText((String)attribut.getConstraint(mainCategory.getKey()));
+                        						valuesToSave.put(attribut, subCategory);
+                        					}
+                        				
+                        				}
+                        				
+                        				
+                        			}
+                        		
+                        	}
+                				
+                		
             			
+            		
+            				
+            				
+            				
+            				//attribut.getName(locale);
+            			
+            			//attributeNames.put(examinationTypeLB.getSelectedValue(),eventType.getAttribute("Prüfungsart"));
+            				//testSaving.setText(attributeNames.toString());
+            				if(attribut.getName(locale).equalsIgnoreCase("Art")){
+            					//testSaving.setText(attribut.getName(locale));
+            				}
+            			
+            			valuesToSave.put(eventType.getAttribute("Titel"), examinationTypeLB.getSelectedValue());
+            				//testSaving.setText(valuesToSave.toString());
+            				
+            			//testSaving.setText(eventType.getAttribute("Prüfungsart").getName(locale));
+            				//testSaving.setText(attributeNames.values().toString());
+            				
+            				//testSaving.setText(attribut.getName(locale));
+            			
+
+                    	
+
+            			
+            		}
             			
             		
             	}
+            	
+
+            		
+            		
+            	
+            	
+            	for(Category art : examinationTypesCategory){
+            		
+            		if(art.getName(locale).equalsIgnoreCase(examinationTypeLB.getSelectedValue())){
+        
+            			//art.
+            			//valuesToSave.put(art, value)
+            			
+            		}
+            		
+            		
+            	}
+    		}
     		}
     	});
     	
     	
     	
-    }
+    }*/
     
     
     

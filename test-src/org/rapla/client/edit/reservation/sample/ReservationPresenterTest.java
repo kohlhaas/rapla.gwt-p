@@ -139,7 +139,7 @@ public class ReservationPresenterTest  {
   public void changeAttributeTest(){
 	  Locale locale = raplaLocale.getLocale();
 	  //WHEN	
-	  presenter.changeAttributesOfCLassification((Map<String, Object>) presenter.getAllCurrentAttributes(locale),locale);;
+	  presenter.changeAttributesOfCLassification((Map<String, Object>) presenter.getAllCurrentAttributesAsStrings(locale),locale);;
 	  //THEN
 	  
 	  
