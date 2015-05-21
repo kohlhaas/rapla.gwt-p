@@ -225,6 +225,13 @@ public class AppointmentPresenter implements Presenter {
 		return null;
 	}
 
+	@Override
+	public Conflict[] saveAppointment(Appointment appointment, Date startDate,
+			Date endDate, RepeatingType repeatingType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 
 }
