@@ -17,6 +17,7 @@ public class InfoViewContract extends InfoViewPresenter {
 
 	@Target
 	private ReservationPresenter target;
+	
 
 	public InfoViewContract(InfoView view) {
 		super(view);

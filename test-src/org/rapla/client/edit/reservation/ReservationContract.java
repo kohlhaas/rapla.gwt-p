@@ -2,11 +2,14 @@ package org.rapla.client.edit.reservation;
 
 import java.lang.annotation.*;
 
+import javax.inject.Inject;
+
 import org.rapla.client.edit.reservation.sample.InfoViewPresenter;
 import org.rapla.client.edit.reservation.sample.ReservationPresenter;
 import org.rapla.client.edit.reservation.sample.ReservationView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesViewPresenter;
 import org.rapla.entities.domain.Reservation;
+import org.rapla.facade.ClientFacade;
 
 import static de.vksi.c4j.Condition.ignored;
 import static de.vksi.c4j.Condition.postCondition;
@@ -20,6 +23,9 @@ public class ReservationContract extends ReservationPresenter {
 	@Target
 	private ReservationPresenter target;
 	private Reservation reservation = target.getTempReservation();
+	@Inject
+	ClientFacade facade;
+
 
 	public ReservationContract(ReservationView view,
 			InfoViewPresenter infoViewPresenter,
@@ -42,7 +48,7 @@ public class ReservationContract extends ReservationPresenter {
 	public void onSaveButtonClicked() {
 		if (preCondition()) {
 			assert reservation != null;
-				
+			assert reservation != facade.	
 		}
 		if (postCondition()) {
 			

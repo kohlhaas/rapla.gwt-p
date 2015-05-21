@@ -101,7 +101,6 @@ public class ReservationPresenterTest {
 	@Test 
 	  public void shouldCancelReservationCreation(Reservation event,ReservationView editView) throws RaplaException {
 	    boolean isNew = false;
-	 // WHEN
 	    // WHEN
 	    controller.edit(event, isNew);
 	    
@@ -119,8 +118,17 @@ public class ReservationPresenterTest {
 	  }
 	  
 	@Test 
-	  public void shouldSaveTemporaryChanges(Reservation event,ReservationView editView) throws RaplaException {
-	    
+	  public void shouldSaveTemporaryChanges(Reservation event,ReservationView editView) throws RaplaException, ParseException {
+		    // WHEN
+		
+			editView.setPresenter(controller);
+		   controller.onTabChanged(1);
+		    // THEN
+		    // test if presenter is called
+		  
+		    
+		   verify(controller).saveTemporaryChanges();
+		    
 	  }
 	  
 	@Test 
