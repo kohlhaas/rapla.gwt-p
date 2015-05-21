@@ -12,7 +12,6 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.ListDataProvider;
@@ -149,7 +148,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         removeResourceBtn.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                String resourceType = resourceTypesLB.getSelectedItemText();
                 getPresenter().removeResourceButtonPressed(bookedResourcesLB.getSelectedIndex());
             }
         });
@@ -305,7 +303,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     
     private void appointmentChanged(GwtEvent event) {
     	Conflict[] conflicts = getPresenter().saveAppointment(
-				(Appointment) ((SingleSelectionModel) appointmentCL.getSelectionModel()).getSelectedObject(),
+				((SingleSelectionModel<Appointment>) appointmentCL.getSelectionModel()).getSelectedObject(),
 				getStartDate(),
 				getEndDate(),
 				getSelectedRepeating()
