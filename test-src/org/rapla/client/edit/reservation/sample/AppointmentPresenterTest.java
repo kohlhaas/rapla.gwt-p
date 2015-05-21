@@ -95,9 +95,7 @@ public class AppointmentPresenterTest extends AbstractView<Presenter> {
   public void getConflictsTest () throws RaplaException{
   AppointmentView editView = presenter.getView();
     
-  // WHEN
-    presenter.getConflicts();
-    
+
     // THEN
     // test if getConflicts is called in facade
     verify(facade).getConflicts(presenter.getReservation());
