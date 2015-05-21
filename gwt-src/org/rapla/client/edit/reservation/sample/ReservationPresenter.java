@@ -79,7 +79,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
     @Override
     public void onSaveButtonClicked() {
         logger.info("save clicked");
-        logger.info(getConflicts().length + " conflicts found.");
+        //logger.info(getConflicts().length + " conflicts found.");
         try {
              facade.store(reservation);
         } catch (RaplaException e1) {
