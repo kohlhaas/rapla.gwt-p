@@ -46,6 +46,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     FlowPanel appointmentOptionsFP;
     Button convertToSingleEventsBtn;
     FlowPanel appointmentDatesFP;
+    Label conflictL;
     TextBox startHourTB, startMinuteTB, endHourTB, endMinuteTB;
     DateBox startDateDB, endDateDB;
     FlowPanel startFieldsFP, endFieldsFP;
@@ -217,6 +218,10 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         appointmentDatesFP = new FlowPanel();
         appointmentDatesFP.addStyleName("appointment-date-form");
         appointmentOptionsFP.add(appointmentDatesFP);
+        
+        conflictL = new Label();
+        conflictL.addStyleName("conflicts");
+        appointmentDatesFP.add(conflictL);
 
         initStartDateFields();
         initEndDateFields();
@@ -232,6 +237,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
                     setStartDate(dates[0]);
                     setEndDate(dates[1]);
                 }
+                DomEvent.fireNativeEvent(Document.get().createChangeEvent(), startDateDB);
             }
         });
 
@@ -302,17 +308,20 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     }
     
     private void appointmentChanged(GwtEvent event) {
+    	Logger.getGlobal().info("start "+ getStartDate() + " end "+ getEndDate() + " repeating "+ getSelectedRepeating());
     	Conflict[] conflicts = getPresenter().saveAppointment(
 				((SingleSelectionModel<Appointment>) appointmentCL.getSelectionModel()).getSelectedObject(),
 				getStartDate(),
 				getEndDate(),
 				getSelectedRepeating()
 		);
-		if(conflicts.length<1) {
-			//success
+		if(conflicts.length>0) {
+			for(Conflict conflict : conflicts) {
+				conflictL.setText("Konflikt besteht mit " + conflict.getReservation1Name());
+			}
 		}
 		else {
-			//show conflicts
+			conflictL.setText("");
 		}
     }
 

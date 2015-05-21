@@ -115,8 +115,12 @@ public class AppointmentPresenter implements Presenter {
     public Conflict[] saveAppointment(Appointment appointment, Date startDate, Date endDate, RepeatingType repeatingType) {
         Appointment currentAppointment = reservation.findAppointment(appointment);
         currentAppointment.move(startDate,endDate);
-        Repeating repeating = currentAppointment.getRepeating();
-        repeating.setType(repeatingType);
+        if(currentAppointment.getRepeating() != null) {
+	        Repeating repeating = currentAppointment.getRepeating();
+	        if(repeatingType!=null) {
+	        	repeating.setType(repeatingType);
+	        }
+        }
         try {
             return  facade.getConflicts(this.reservation);
         } catch (RaplaException e) {
