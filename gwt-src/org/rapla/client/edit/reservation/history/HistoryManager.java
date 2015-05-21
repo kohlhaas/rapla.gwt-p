@@ -15,6 +15,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -52,6 +53,13 @@ public class HistoryManager {
 	public void undo() {
 		Step lastStep = currentPosition.previous();
 		lastValue.put(lastStep.getWidget(), lastStep.down());
+		try {
+			FocusWidget target = (FocusWidget) lastStep.getWidget();
+			target.setFocus(true);
+		}
+		catch(ClassCastException e) {
+			//widget can't be focussed
+		}
 	}
 	
 	public boolean canRedo() {
@@ -61,6 +69,13 @@ public class HistoryManager {
 	public void redo() {
 		Step nextStep = currentPosition.next();
 		lastValue.put(nextStep.getWidget(), nextStep.up());
+		try {
+			FocusWidget target = (FocusWidget) nextStep.getWidget();
+			target.setFocus(true);
+		}
+		catch(ClassCastException e) {
+			//widget can't be focussed
+		}
 	}
 	
 	public void trackWidget(Widget widget) {
