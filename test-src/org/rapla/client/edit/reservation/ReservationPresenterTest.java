@@ -10,9 +10,12 @@ import static org.mockito.Mockito.when;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+
 import org.jukito.JukitoModule;
 import org.jukito.JukitoRunner;
 import org.junit.Before;
@@ -88,7 +91,6 @@ public class ReservationPresenterTest {
 	    // test if presenter is called
 	    verify(editView).setPresenter(controller);
 
-	    // test if event is shown
 	    verify(editView).show(event);
 	    controller.onDeleteButtonClicked();
 	    
@@ -120,24 +122,29 @@ public class ReservationPresenterTest {
 	@Test 
 	  public void shouldSaveTemporaryChanges(Reservation event,ReservationView editView) throws RaplaException, ParseException {
 		    // WHEN
-		
-			editView.setPresenter(controller);
+	
+			//editView.setPresenter(controller);
 		   controller.onTabChanged(1);
 		    // THEN
-		    // test if presenter is called
-		  
-		    
 		   verify(controller).saveTemporaryChanges();
 		    
 	  }
 	  
 	@Test 
-	  public void shouldloadDataFromReservationToView(Reservation event,ReservationView editView) throws RaplaException {
-	    
+	  public void shouldloadDataFromReservationToView(Reservation event,ReservationView editView,String input, Integer index, List<String> personsString, InfoView infoView) throws RaplaException {
+		
+		controller.loadPersonsIntoView(editView.getCurrentSubView());
+		verify(infoView).getItemTextOfListBoxStudiengang(index);
+		verify(infoView).setSelectedIndexOfListBoxStudiengang(index);
+		verify(infoView).setVorlesungsStundenInput(input);
+		
 	  }
 	
 	@Test 
-	  public void shouldloadPersonsIntoView(Reservation event,ReservationView editView) throws RaplaException {
+	  public void shouldloadPersonsIntoView(Reservation event,ReservationView editView, List<String> personsString, InfoView infoView) throws RaplaException {
+		
+		controller.loadPersonsIntoView(editView.getCurrentSubView());
+		verify(infoView).setContentOfListBoxStudiengang(personsString);
 	    
 	  }
 	  
@@ -161,7 +168,8 @@ public class ReservationPresenterTest {
 	  }
 	
 	@Test 
-	  public void shouldEnableDeleteButton(Reservation event,ReservationView editView) throws RaplaException {
+	  public void shouldEnableDeleteButton(Reservation event,ReservationView editView, boolean isNew) throws RaplaException {
+		assert isNew = false;
 	    
 	  }
 	

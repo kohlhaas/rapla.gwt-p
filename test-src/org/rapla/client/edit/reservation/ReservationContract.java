@@ -26,7 +26,6 @@ public class ReservationContract extends ReservationPresenter {
 	@Inject
 	ClientFacade facade;
 
-
 	public ReservationContract(ReservationView view,
 			InfoViewPresenter infoViewPresenter,
 			ResourceDatesViewPresenter resourceDatesPresenter) {
@@ -48,37 +47,73 @@ public class ReservationContract extends ReservationPresenter {
 	public void onSaveButtonClicked() {
 		if (preCondition()) {
 			assert reservation != null;
-			assert reservation != facade.	
+
+		}
+		if (postCondition()) {
+			assert !unchanged(reservation);
+		}
+	}
+
+	@Override
+	public void onDeleteButtonClicked() {
+		if (preCondition()) {
+			assert reservation != null;
+
 		}
 		if (postCondition()) {
 			
 		}
 	}
-	
+
+	@Override
+	public void onCancelButtonClicked() {
+		if (preCondition()) {
+			assert reservation != null;
+
+		}
+		if (postCondition()) {
+			assert unchanged(reservation);
+
+		}
+	}
+
 	@Override
 	public void onTabChanged(int selectedTab) {
 		if (preCondition()) {
-			//View ist anders als der View vorher 
-			// zahl zwischen 0 und 1 
 			
-			assert selectedTab <= 0; 
-			assert selectedTab >= 1; 
+			assert selectedTab <= 0;
+			assert selectedTab >= 1;
+		//	assert target.saveTemporaryChanges();
+			
 		}
 		if (postCondition()) {
 			
 		}
 	}
+
+	@Override
+	public boolean isDeleteButtonEnabled() {
+		if (preCondition()) {
+			assert reservation != null;
+			
+
+		}
+		if (postCondition()) {
+
+		}
+		return ignored();
+	}
+
+
+	public void loadDataFromReservationIntoView() {
+		if (preCondition()) {
+			assert reservation != null;
+
+		}
+		if (postCondition()) {
+
+		}
+	}
 	
-	
-	// @Override
-	// public void setHour(int hour) {
-	// if (preCondition()) {
-	// assert hour >= HOUR_MIN : "hour >= HOUR_MIN";
-	// assert hour <= HOUR_MAX : "hour <= HOUR_MAX";
-	// }
-	// if (postCondition()) {
-	// assert target.getHour() == hour : "hour set";
-	// assert unchanged(target.getMinute()) : "minute unchanged";
-	// assert unchanged(target.getSecond()) : "second unchanged";
-	// }
-	// }
+}
+

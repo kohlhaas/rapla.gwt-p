@@ -794,7 +794,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		loadPersonsIntoView(view.getCurrentSubView());
 	}
 
-	private void loadPersonsIntoView(ReservationEditSubView view) {
+	public void loadPersonsIntoView(ReservationEditSubView view) {
 
 		if (view instanceof InfoView) {
 			List<String> personsString;

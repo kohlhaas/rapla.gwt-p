@@ -4,10 +4,16 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.jukito.JukitoModule;
 import org.jukito.JukitoRunner;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.rapla.client.edit.reservation.sample.InfoView;
 import org.rapla.client.edit.reservation.sample.InfoViewPresenter;
 import org.rapla.client.edit.reservation.sample.ReservationPresenter;
 import org.rapla.entities.domain.Reservation;
@@ -39,7 +45,15 @@ public class InfoViewPresenterTest {
 		    }
 	  }
 	  
-
+	  @Test
+	  public void ShouldSetReservation(InfoView infoview, Reservation event){
+		  //when
+		  controller.newAppButtonPressed();
+		  verify(infoview).setPresenter(controller);
+		  
+		  controller.setReservation(event);
+		 
+	  }
 	
 	
 }

@@ -8,6 +8,8 @@ import org.rapla.client.edit.reservation.sample.InfoViewPresenter;
 import org.rapla.client.edit.reservation.sample.ReservationPresenter;
 import org.rapla.client.edit.reservation.sample.ResourceDatesView;
 import org.rapla.client.edit.reservation.sample.ResourceDatesViewPresenter;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import de.vksi.c4j.Target;
 
@@ -16,6 +18,7 @@ public class ResourceDatesContract  extends ResourceDatesViewPresenter {
 
 	@Target
 	private ReservationPresenter target;
+	
 
 	public ResourceDatesContract(ResourceDatesView view) {
 		super(view);
@@ -34,20 +37,76 @@ public class ResourceDatesContract  extends ResourceDatesViewPresenter {
 //			         assert target.getSecond() == second : "second set";
 			      }}
 			
-		     
-		   
+	
 
-//		   @Override
-//		   public void setHour(int hour) {
-//		      if (preCondition()) {
-//		         assert hour >= HOUR_MIN : "hour >= HOUR_MIN";
-//		         assert hour <= HOUR_MAX : "hour <= HOUR_MAX";
-//		      }
-//		      if (postCondition()) {
-//		         assert target.getHour() == hour : "hour set";
-//		         assert unchanged(target.getMinute()) : "minute unchanged";
-//		         assert unchanged(target.getSecond()) : "second unchanged";
-//		      }
-//		   }
+	public void onGarbageButtonClicked() {
+		if (preCondition()) {
 
+		}
+		if (postCondition()) {
+
+		}
+	}
+	
+
+	public void onWholeDaySelected() {
+		if (preCondition()) {
+			
+		}
+		if (postCondition()) {
+
+		}
+	}
+	public void onRewriteDateClicked() {
+		if (preCondition()) {
+			
+		}
+		if (postCondition()) {
+
+		}
+	}
+	
+	public void onAddDateClicked() {
+		if (preCondition()) {
+			
+		}
+		if (postCondition()) {
+
+		}
+	}
+	
+	public void onAddTerminButtonClicked() {
+		if (preCondition()) {
+			
+		}
+		if (postCondition()) {
+
+		}
+	}
+	
+	public void onRepeatTypeClicked() {
+		if (preCondition()) {
+			
+		}
+		if (postCondition()) {
+
+		}
+	}
+	
+	public void onFilterClicked() {
+		if (preCondition()) {
+			
+		}
+		if (postCondition()) {
+
+		}
+	}
+	
+	public void onSetResourcesToAll() {
+		if (preCondition()) {
+		}
+		if (postCondition()) {
+			
+		}
+	}
 }
