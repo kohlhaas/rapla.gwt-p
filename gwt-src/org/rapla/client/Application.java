@@ -21,6 +21,7 @@ import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
+import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.ModificationEvent;
@@ -153,6 +154,7 @@ public class Application implements DetailSelectEventHandler, ApplicationView.Pr
         {
             try {
                 final Reservation event = facade.newReservation();
+                
          
                 Date selectedDate =facade.today();
                 Date time = new Date (DateTools.MILLISECONDS_PER_MINUTE * calendarOptions.getWorktimeStartMinutes());

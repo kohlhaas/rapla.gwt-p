@@ -1,18 +1,24 @@
 package org.rapla.client.edit.reservation.sample;
 
 import org.rapla.client.edit.reservation.ReservationController;
+import org.rapla.client.edit.reservation.AttributeValue.AttributeValues;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
+import org.rapla.entities.dynamictype.AttributeType;
 import org.rapla.entities.dynamictype.Classification;
 import org.rapla.entities.dynamictype.ConstraintIds;
 import org.rapla.entities.dynamictype.DynamicType;
+import org.rapla.entities.dynamictype.DynamicTypeAnnotations;
 import org.rapla.facade.ClientFacade;
 import org.rapla.facade.Conflict;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
+
+import com.gargoylesoftware.htmlunit.javascript.host.Event;
+import com.google.gwt.user.client.ui.CheckBox;
 
 import de.vksi.c4j.ContractReference;
 
@@ -21,6 +27,8 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +57,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
     boolean isNew;
 
     String tabName = "Termin- und Ressourcenplanung";
+    
 
     @Inject
     public ReservationPresenter(ReservationView view, AppointmentPresenter appointmentPresenter) {
@@ -65,6 +74,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
         appointmentPresenter.setReservation(event);
         view.show(event);
     }
+    
 
     @Override
     public void onSaveButtonClicked() {
@@ -161,6 +171,8 @@ public class ReservationPresenter implements ReservationController, Presenter {
         Attribute attribute = classification.getType().getAttributes()[0];
         classification.setValue(attribute, newName);
     }
+    
+
 
     /**
      * for now you have to save the original type and not as string or smth similiar
@@ -218,7 +230,68 @@ public class ReservationPresenter implements ReservationController, Presenter {
         logger.info("all attributes length: " + list.size());
         return list;
     }
+    
+    
 
+    public AttributeValues getCurrentAttributesOfReservationWithValues() {
+    			
+               
+                Map<Attribute, Object> valuesToGet = new HashMap<Attribute, Object>();
+                Map<Attribute, Collection<Object>> attributeCollectionMap = new HashMap<Attribute, Collection<Object>>();
+                List<Object> objectList = new LinkedList<Object>();
+                
+    			DynamicType [] eventTypes = getAllEventTypes();
+            	final Category[] allCategories = getCategories();
+            	Category categoryForAttribute = null;
+            	
+            	for(DynamicType eventType : eventTypes){
+            		
+            			
+            			for(Attribute attribute : eventType.getAttributes()){
+            				
+            				if (attribute.getType().equals(AttributeType.CATEGORY)) {
+            				
+            					categoryForAttribute = (Category) attribute.getConstraint(ConstraintIds.KEY_ROOT_CATEGORY);
+            				
+            					for(Category mainCategory : allCategories){
+            					
+            					if(mainCategory.getName().equals(categoryForAttribute.getName())){
+            						
+            						if(mainCategory.getCategories() != null){
+            							
+            							for(Category subCategory : mainCategory.getCategories()){
+                								
+                								valuesToGet.put(attribute, subCategory);
+            							
+                								if(!subCategory.getCategories().equals(null)){
+            								                							
+                									for(Category subSubCategory : subCategory.getCategories()){
+            								
+            												objectList.add(subSubCategory);
+            											
+            										}
+            									
+                									attributeCollectionMap.put(attribute, objectList);
+            									
+            									}
+            								}
+            								
+            							}
+            							
+            						}
+            						
+            						
+            					}
+            					
+            				}
+            					
+            			}
+            			
+            		}		
+            	AttributeValues attributeValues = new AttributeValues(valuesToGet, attributeCollectionMap);
+            	return attributeValues;
+            				
+    }
 
     /**
      * Each DynamicType (Lehrveranstaltung, Prüfung etc) has N Attributes (Titel, Sprache etc)
@@ -259,6 +332,28 @@ public class ReservationPresenter implements ReservationController, Presenter {
         return "is new";
 
     }
+    
+    public void eventTypeChanged(DynamicType eventType) {
+    	try{
+    		Classification oldClassification = reservation.getClassification();
+    		Classification newClassification;
+    		DynamicType[] eventTypes = facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+    		
+    		for(DynamicType eventType_it : eventTypes){
+    			if(eventType_it.getKey().equalsIgnoreCase(eventType.getKey())){
+    				newClassification = eventType.newClassification(oldClassification);
+    				reservation.setClassification(newClassification);
+    			}
+    		}
+    		
+    		
+    	}
+    	catch (RaplaException e1) {
+    		logger.error( e1.getMessage(), e1);
+    	}
+    }
+    
+    
     
 
 

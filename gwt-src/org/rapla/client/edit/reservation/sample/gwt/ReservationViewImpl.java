@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.*;
 
 import org.apache.log4j.lf5.LogLevel;
 import org.rapla.client.base.AbstractView;
+import org.rapla.client.edit.reservation.AttributeValue.AttributeValues;
 import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
 import org.rapla.client.edit.reservation.sample.ReservationView;
@@ -16,17 +17,11 @@ import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
+import org.rapla.entities.dynamictype.Classification;
 import org.rapla.entities.dynamictype.ConstraintIds;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.Conflict;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,14 +82,27 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     
     Map<String, Object> attributeNames = new HashMap<String, Object>();
     Map<Attribute, Object> valuesToSave = new HashMap<Attribute, Object>();
-    Map<Attribute, List<Object>> attributeCollectionMap = new HashMap<Attribute, List<Object>>();
+    Map<Attribute, Collection<Object>> attributeCollectionMap = new HashMap<Attribute, Collection<Object>>();
     List<Object> objectList = new LinkedList<Object>();
     //Map<Category, Category> categoriesToSave = new HashMap<Category, Category>();
+    AttributeValues attributeValues;
+    Map<Attribute, Object> valuesToGet = new HashMap<Attribute, Object>();
+    Map<Attribute, Collection<Object>> attributeCollectionMapToGet = new HashMap<Attribute, Collection<Object>>();
+    
+
+    
+    
     
   
     
 
     public void show(Reservation event) {
+    	
+    	/*getSavedValues*/
+    	attributeValues = getPresenter().getCurrentAttributesOfReservationWithValues();
+    	valuesToGet = attributeValues.getvaluesToGet();
+    	attributeCollectionMapToGet = attributeValues.getattributeCollectionMap();
+    	
     	
 
     	/*Structuring GUI*/
@@ -345,6 +353,25 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             eventTypeLB.addItem(dynamicType.getName(locale));
         }
         row1Panel.add(eventTypeLB);
+        
+        String SavedEventType = getPresenter().getEventType(locale);
+        
+        for(int i = 0; i< eventTypeLB.getItemCount(); i++){
+        	if(eventTypeLB.getItemText(i).equalsIgnoreCase(SavedEventType)){
+        		
+        		eventTypeLB.setSelectedIndex(i);
+        	}
+        }
+        
+        
+      
+/*        if (getPresenter().getIsNew()) {
+        	
+        	getPresenter().getAllCurrentAttributesAsStrings(locale);
+        	eventTypeLB.setItemSelected(index, selected);
+        }*/
+        
+        
 
         chosenEventType = eventTypeLB.getSelectedValue();
         if (chosenEventType.equalsIgnoreCase(null)) {
@@ -390,6 +417,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             public void onChange(ChangeEvent event) {
                 //changedLehrveranstaltung = true;
             	
+            	
+            	
             	//TEST!!
             	allCurrentAttributes.clear();
             	currentAttributes();
@@ -418,6 +447,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     chosenEventType = eventTypeLB.getSelectedValue();
 
                     if (dynamicType.getName(locale).equals(chosenEventType)) {
+                    	getPresenter().eventTypeChanged(dynamicType);
 
                         for (Attribute attribute : dynamicType.getAttributes()) {
                         	//test
@@ -790,7 +820,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 								valuesToSave.put(attribut, subCategory);
                 							}
                 							
-                							if(subCategory.getCategories().equals(null)){
+                							if(!subCategory.getCategories().equals(null)){
                 								                							
                 								for(Category subSubCategory : subCategory.getCategories()){
                 								
@@ -841,7 +871,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                 	
                 	
                 	
-               
+                	getPresenter().setAttributesOfReservation(valuesToSave, attributeCollectionMap);
                     getPresenter().onSaveButtonClicked();
                 }
             });

@@ -1,6 +1,7 @@
 package org.rapla.client.edit.reservation.sample;
 
 import org.rapla.client.base.View;
+import org.rapla.client.edit.reservation.AttributeValue.AttributeValues;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
@@ -47,6 +48,10 @@ public interface ReservationView<W> extends View<Presenter> {
         Conflict[] getConflicts();
 
 		Category[] getCategories();
+
+		AttributeValues getCurrentAttributesOfReservationWithValues();
+
+		void eventTypeChanged(DynamicType dynamicType);
 
     }
 
