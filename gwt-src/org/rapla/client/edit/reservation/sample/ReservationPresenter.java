@@ -6,8 +6,10 @@ import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
+import org.rapla.entities.dynamictype.ConstraintIds;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.ClientFacade;
+import org.rapla.facade.Conflict;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
@@ -66,12 +68,18 @@ public class ReservationPresenter implements ReservationController, Presenter {
     @Override
     public void onSaveButtonClicked() {
         logger.info("save clicked");
-        try {
-            facade.store(reservation);
-        } catch (RaplaException e1) {
-            logger.error(e1.getMessage(), e1);
+        logger.info(getConflicts().length + " conflicts found.");
+        if (getConflicts().length > 0) {
+            view.showConflicts(getConflicts());
+        } else {
+            try {
+                facade.store(reservation);
+            } catch (RaplaException e1) {
+                logger.error(e1.getMessage(), e1);
+            }
+            view.hide();
+            //view.hide();
         }
-        view.hide();
     }
 
     public String getCurrentReservationName(Locale locale) {
@@ -175,7 +183,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     }
 
-    public Attribute[] getAllCurrentAttributes(){
+    public Attribute[] getAllCurrentAttributes() {
         return reservation.getClassification().getAttributes();
     }
 
@@ -191,29 +199,51 @@ public class ReservationPresenter implements ReservationController, Presenter {
             if (valueAsString == null || valueAsString.isEmpty()) {
                 valueAsString= "not defined yet";
             }
-            list.add(attribute.getName(locale) + " : " + valueAsString);
+
+            list.add(attribute.getName() + " : " + valueAsString + " Typ: " + attribute.getType().name());
+        }
+        list.add("");
+        for (Attribute attribute : type.getAttributes()) {
+            Object constraint = attribute.getConstraint(ConstraintIds.KEY_ROOT_CATEGORY);
+            list.add(String.valueOf(constraint));
+        }
+
+        list.add("");
+        Category superCategory = facade.getSuperCategory();
+        Category[] categories = superCategory.getCategories();
+        for (Category category : categories) {
+            list.add(category.getKey());
         }
         logger.info("all attributes length: " + list.size());
         return list;
     }
 
+
     /**
      * Each DynamicType (Lehrveranstaltung, Prüfung etc) has N Attributes (Titel, Sprache etc)
      * With the Map u can give each attribute a new value
      * overwrites current values
-     * @param valuesToSave a Map with a name of the attribute and a value, IT OVERWRITES ALL CURRENT ATTRIBUTES, SO SAVE NAME TOO
+     *
+     * @param valuesToSave           a Map with the attribute and a value, IT OVERWRITES ALL CURRENT ATTRIBUTES, SO SAVE NAME TOO
+     * @param attributeCollectionMap a Map with the attribute and a ValueCollection (f.e. attribute: Studiengang has values Arztassitent, Wirtschaftsinformatij, Informatik)
+     * @param attributeCollectionMap give NULL if not needed, wont be saved then
      */
-    public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave) {
+    public void setAttributesOfReservation(Map<Attribute, Object> valuesToSave, Map<Attribute, Collection<Object>> attributeCollectionMap) {
 
         Classification classification = reservation.getClassification();
         DynamicType type = classification.getType();
         Classification newClassification = type.newClassification();
-        logger.info("saving Map:" + valuesToSave.toString() +"and size:" + valuesToSave.size());
+        logger.info("saving Map:" + valuesToSave.toString() + "and size:" + valuesToSave.size());
         for (Map.Entry<Attribute, Object> stringObjectEntry : valuesToSave.entrySet()) {
-            newClassification.setValue(stringObjectEntry.getKey(),stringObjectEntry.getValue());
+            newClassification.setValue(stringObjectEntry.getKey(), stringObjectEntry.getValue());
+        }
+        if (attributeCollectionMap != null) {
+            for (Map.Entry<Attribute, Collection<Object>> attributeCollectionEntry : attributeCollectionMap.entrySet()) {
+                newClassification.setValues(attributeCollectionEntry.getKey(), attributeCollectionEntry.getValue());
+            }
         }
         reservation.setClassification(newClassification);
-        logger.info("new Classification"+ Arrays.toString(newClassification.getAttributes()));
+        logger.info("new Classification" + Arrays.toString(newClassification.getAttributes()));
     }
 
     /**
@@ -245,11 +275,31 @@ public class ReservationPresenter implements ReservationController, Presenter {
         return !isNew;
     }
 
-	@Override
+
+	/*@Override
 	public Category[] getCategoryAttributes(Locale locale, String neededCategory) {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 
+    /**
+     * gets all conflicts for the existing reservation, if a new appButton has been pressed, a new app will be added to
+     * the reservation.. conflicts in this reservation will be shown. Else it returns NULL
+     *
+     * @return NULL if error
+     */
+    public Conflict[] getConflicts() {
+        try {
+            return facade.getConflicts(this.reservation);
+        } catch (RaplaException e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+	public Object getCategoryAttributes(Locale locale, String neededCategory) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

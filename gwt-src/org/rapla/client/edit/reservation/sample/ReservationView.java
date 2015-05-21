@@ -6,7 +6,9 @@ import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.DynamicType;
+import org.rapla.facade.Conflict;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,15 +40,19 @@ public interface ReservationView<W> extends View<Presenter> {
 
         boolean getIsNew();
 
-		Category[] getCategoryAttributes(Locale locale, String neededCategory);
+        void setAttributesOfReservation(Map<Attribute, Object> valuesToSave, Map<Attribute, Collection<Object>> attributeCollectionMap);
 
         Attribute[] getAllCurrentAttributes();
+        
+        Conflict[] getConflicts();
 
 		Category[] getCategories();
 
     }
 
     void show(Reservation event);
+    
+    void showConflicts(Conflict[] conflicts);
 
     void hide();
 

@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
 
+import org.apache.log4j.lf5.LogLevel;
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.ReservationEditSubView;
@@ -17,6 +18,7 @@ import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.ConstraintIds;
 import org.rapla.entities.dynamictype.DynamicType;
+import org.rapla.facade.Conflict;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +27,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget> {
 
@@ -154,10 +159,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
        row1.add(allKeys);*/
 
 
-        /**
-         *
-         */
-        
 
 
 /**
@@ -187,6 +188,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     	for (String s : getPresenter().getAllCurrentAttributesAsStrings(locale)) {
             allCurrentAttributes.addItem(s);
         }
+
     }
     
     /*Init Panels*/
@@ -647,7 +649,7 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         //TextBox for insert eventname
         eventNameTB = new TextBox();
         Locale locale = getRaplaLocale().getLocale();
-        eventNameTB.setText(this.getPresenter().getCurrentReservationName(locale));
+		eventNameTB.setText(this.getPresenter().getCurrentReservationName(locale));
         eventNameTB.setStyleName("textbox");
         eventNameTB.addChangeHandler(new ChangeHandler() {
 
@@ -1006,5 +1008,11 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         TabPanelRapla aTab = new TabPanelRapla(tabName, flowPanel);
         tabs.add(aTab);
     }
+    
+    public void showConflicts(Conflict[] conflicts) {
+    	for(Conflict c : conflicts) {
+    		Logger.getGlobal().log(Level.INFO, c.getReservation1Name() + " konfligiert mit " + c.getReservation2Name() );
+    	}
+	}
 
 }

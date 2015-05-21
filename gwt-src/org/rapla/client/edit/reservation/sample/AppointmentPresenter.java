@@ -1,6 +1,7 @@
 package org.rapla.client.edit.reservation.sample;
 
 import de.vksi.c4j.ContractReference;
+
 import org.rapla.client.edit.reservation.sample.AppointmentView.Presenter;
 import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
@@ -13,6 +14,7 @@ import org.rapla.framework.logger.Logger;
 import org.rapla.rest.gwtjsonrpc.common.FutureResult;
 
 import javax.inject.Inject;
+
 import java.util.*;
 
 @ContractReference(AppointmentPresenterContract.class)
@@ -54,22 +56,6 @@ public class AppointmentPresenter implements Presenter {
             view.updateAppointmentList(appointmentList, appointmentList.size() - 1);
         } catch (RaplaException e) {
             logger.error(e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * gets all conflicts for the existing reservation, if a new appButton has been pressed, a new app will be added to
-     * the reservation.. conflicts in this reservation will be shown. Else it returns NULL
-     *
-     * @return NULL if error
-     */
-    public Conflict[] getConflicts() {
-        try {
-            return facade.getConflicts(this.reservation);
-        } catch (RaplaException e) {
-            logger.error(e.getMessage(), e);
-            return null;
         }
     }
 
@@ -224,6 +210,22 @@ public class AppointmentPresenter implements Presenter {
     public Reservation getReservation() {
         return reservation;
     }
+
+	@Override
+	public void removeResourceButtonPressed(int selectedIndex) {
+        Allocatable allocatable = reservation.getAllocatables()[selectedIndex];
+        logger.info("removing Allocatable with id: " + reservation.getAllocatables()[selectedIndex].getId());
+        reservation.removeAllocatable(allocatable);
+        view.updateBookedResources(Arrays.asList(reservation.getAllocatables()));
+	}
+
+	@Override
+	public Conflict[] getConflicts() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
 }
 

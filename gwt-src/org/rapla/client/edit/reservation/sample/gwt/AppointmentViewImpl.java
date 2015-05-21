@@ -6,6 +6,8 @@ import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.Column;
@@ -15,6 +17,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+
 import org.rapla.client.base.AbstractView;
 import org.rapla.client.edit.reservation.history.HistoryManager;
 import org.rapla.client.edit.reservation.sample.AppointmentView;
@@ -23,6 +26,7 @@ import org.rapla.entities.domain.*;
 import org.rapla.entities.dynamictype.DynamicType;
 
 import javax.inject.Inject;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -113,14 +117,21 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         resourceTypesList = new ListBox();
         resourceTypesList.addStyleName("resources-types");
         resourceToolbar.add(resourceTypesList);
-        Button addResource = new Button("Ressource hinzufügen");
-        addResource.addStyleName("add-resource");
-        resourceToolbar.add(addResource);
         resourcePanel.add(resourceToolbar);
+        
+        VerticalPanel addRemoveResourceVp = new VerticalPanel(); 
+        addRemoveResourceVp.addStyleName("resource-add-remove");
+        Button addResource = new Button(">>");
+        addResource.addStyleName("add-resource");
+        addRemoveResourceVp.add(addResource);
+        Button removeResourceBtn = new Button("<<");
+        removeResourceBtn.addStyleName("remove-resource");
+        addRemoveResourceVp.add(removeResourceBtn);
 
         resourceListsPanel = new FlowPanel();
         resourceListsPanel.addStyleName("resources-lists");
         resourcePanel.add(resourceListsPanel);
+        resourcePanel.add(addRemoveResourceVp);
         resourceLists = new HashMap<String, ListBox>();
         bookedResources.addStyleName("booked-resources");
         bookedResources.setVisibleItemCount(7);
@@ -131,6 +142,13 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
             public void onClick(ClickEvent event) {
                 String resourceType = resourceTypesList.getSelectedItemText();
                 getPresenter().addResourceButtonPressed(resourceLists.get(resourceType).getSelectedIndex(), resourceType, getRaplaLocale().getLocale());
+            }
+        });
+        removeResourceBtn.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                String resourceType = resourceTypesList.getSelectedItemText();
+                getPresenter().removeResourceButtonPressed(bookedResources.getSelectedIndex());
             }
         });
         updateResources(resources);
@@ -237,10 +255,20 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endHourField.setText(hoursFormat.format(selectedAppointment.getEnd()));
         endMinuteField.setText(minutesFormat.format(selectedAppointment.getEnd()));
 
+        HistoryManager.getInstance().trackWidget(startDateField);
+        HistoryManager.getInstance().trackWidget(endDateField);
         HistoryManager.getInstance().trackWidget(startHourField);
         HistoryManager.getInstance().trackWidget(startMinuteField);
         HistoryManager.getInstance().trackWidget(endHourField);
         HistoryManager.getInstance().trackWidget(endMinuteField);
+        
+        startDateField.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				DateBox startDateField = (DateBox) event.getSource();
+				endDateField.setValue(startDateField.getValue());
+			}
+        });
     }
 
     public void updateAppointmentList(List<Appointment> appointments, int focus) {
@@ -445,6 +473,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         for (RadioButton repeatButton : selectRepeat) {
             selectRepeatPanel.add(repeatButton);
         }
+        HistoryManager.getInstance().trackWidget(selectRepeatPanel);
     }
 
 
@@ -477,6 +506,5 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
             bookedResources.addItem(resource.getName(getRaplaLocale().getLocale()));
         }
     }
-
 
 }
