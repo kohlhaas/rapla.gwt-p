@@ -1039,10 +1039,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         tabs.add(aTab);
     }
     
-    public void showConflicts(Conflict[] conflicts) {
-    	for(Conflict c : conflicts) {
-    		Logger.getGlobal().log(Level.INFO, c.getReservation1Name() + " konfligiert mit " + c.getReservation2Name() );
-    	}
-	}
+
 
 }

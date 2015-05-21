@@ -55,7 +55,7 @@ public interface ReservationView<W> extends View<Presenter> {
 
     void show(Reservation event);
     
-    void showConflicts(Conflict[] conflicts);
+    
 
     void hide();
 
