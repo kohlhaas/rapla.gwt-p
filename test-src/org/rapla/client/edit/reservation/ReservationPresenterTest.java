@@ -44,12 +44,13 @@ public class ReservationPresenterTest {
 	  @Inject ReservationPresenter controller;
 	  @Inject InfoViewPresenter infoViewPresenter;
 	  
-	  ClientFacade facade;
+	  @Inject ClientFacade facade;
 	  Reservation event;
 	  
 	  @Before
 	  public void setupMocks(ClientFacade facade, Reservation event) {
 	      this.facade = facade;
+	      this.event = event;
 	  }
 	  
 	  public static class Module extends JukitoModule {
