@@ -160,7 +160,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
                 return radioButton.getFormValue();
             }
         }
-        return "NOTHING";
+        return "NONE";
     }
 
     private Date getStartDate() {
@@ -482,7 +482,7 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
     private void initRadioButtonRepeat() {
         selectRepeat[0] = new RadioButton("select-repeat", "Nicht wiederholen");
-        selectRepeat[0].setFormValue("NOTHING");
+        selectRepeat[0].setFormValue("NONE");
         selectRepeat[1] = new RadioButton("select-repeat", "Täglich");
         selectRepeat[1].setFormValue("daily");
         selectRepeat[2] = new RadioButton("select-repeat", "Wöchentlich");
