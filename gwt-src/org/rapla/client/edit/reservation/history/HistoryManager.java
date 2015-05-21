@@ -168,8 +168,6 @@ public class HistoryManager {
 			steps.remove(currentPosition.next());
 		}
 		currentPosition.add(step);
-		//if(steps.size()>0)
-		//currentPosition.next();
 		
 		lastValue.put(step.getWidget(), step.up());
 	}

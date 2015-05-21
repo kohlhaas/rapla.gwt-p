@@ -100,7 +100,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         appointmentFP.add(addAppointment);
 
         // Appointment List
-        //appointmentList = new CellList<>(null);
         appointmentListSP = new ScrollPanel();
         updateAppointmentList(appointments, appointments.size() - 1);
         appointmentListSP.addStyleName("appointment-list-scroll");
@@ -234,8 +233,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
                 if (dates != null) {
                     setStartDate(dates[0]);
                     setEndDate(dates[1]);
-                } else {
-                    // TODO: Show popup that no free appointment is available
                 }
             }
         });
@@ -370,7 +367,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
 
         if (focus >= 0) {
             selectionModel.setSelected(appointments.get(focus), true);
-            //Logger.getGlobal().info("### focus: " + selectionModel.isSelected(appointments.get(focus)));
         } else {
             selectionModel.setSelected(null, true);
         }
@@ -406,28 +402,9 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
                 resourceList.addItem(resource.getName(locale));
             }
         }
-        // TODO: Remove after demo; selects the second in list because looks nicer
-        if (sortedResources.keySet().size() > 1)
-            resourceTypesLB.setItemSelected(1, true);
         DomEvent.fireNativeEvent(Document.get().createChangeEvent(), resourceTypesLB);
     }
 
-//    public void mapFromReservation(Reservation event) {
-//        Locale locale = getRaplaLocale().getLocale();
-//        eventNameTB.setText(event.getName(locale));
-//        contentRes.clear();
-//        
-//        {
-//            StringBuilder builder = new StringBuilder();
-//            for (Allocatable res : resources) {
-//                builder.append(res.getName(locale));
-//            }
-//            contentRes.add(new Label("Ressourcen: " + builder.toString()));
-//
-//        }
-//    }
-
-    //TODO: startDate and EndDate is kind of redundant, maybe using a method for both ?
     private void initStartDateFields() {
         startFieldsFP = new FlowPanel();
         startFieldsFP.addStyleName("start-datetime");
@@ -460,7 +437,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
         endFieldsFP.addStyleName("end-datetime");
         appointmentDatesFP.add(endFieldsFP);
 
-        //endDateField = new TextBox();
         endDateDB = new DateBox();
         endDateDB.setFormat(new DateBox.DefaultFormat(dateTimeFormat));
         endDateDB.addStyleName("date-field");
@@ -550,24 +526,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     	}
     	return r;
     }
-
-
-//    public void update(List<Appointment> appointments) {
-//        appointmentContent.clear();
-//        StringBuilder builder = new StringBuilder();
-//        boolean isFirst = true;
-//        for (Appointment app : appointments) {
-//            String shortSummary = formatter.getShortSummary(app);
-//            if (!isFirst) {
-//                builder.append(", ");
-//            } else {
-//                isFirst = false;
-//            }
-//            builder.append(shortSummary);
-//
-//        }
-//        appointmentContent.add(new Label("Termine: " + builder.toString()));
-//    }
 
     @Override
     public IsWidget provideContent() {
