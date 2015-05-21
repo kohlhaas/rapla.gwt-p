@@ -16,6 +16,8 @@ import org.rapla.entities.User;
 import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.PermissionContainer;
+import org.rapla.entities.domain.Repeating;
+import org.rapla.entities.domain.RepeatingType;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
@@ -330,88 +332,128 @@ public class ReservationPresenter implements ReservationController, Presenter {
 			List<RaplaDate> dateList = ((ResourceDatesView) currentView)
 					.getDates();
 
+			Date startTime;
+			Date endTime;
+
 			for (RaplaDate raplaDate : dateList) {
-				if (raplaDate.getRaplaDateList().size() == 0) {
+				ArrayList<List<String>> resources;
 
-					appointment = facade.newAppointment(
-							raplaDate.getBeginTime(), raplaDate.getEndTime());
-					ArrayList<List<String>> resources = raplaDate
+				if (raplaDate.getRaplaDateList().size() > 0) {
+					startTime = raplaDate.getRaplaDateList().get(0)
+							.getBeginTime();
+					endTime = raplaDate.getRaplaDateList().get(0).getEndTime();
+					Date recurringEndTime = raplaDate.getRaplaDateList()
+							.get(raplaDate.getRaplaDateList().size() - 1)
+							.getEndTime();
+
+					appointment = facade.newAppointment(startTime, endTime);
+
+					appointment.setRepeatingEnabled(true);
+					Repeating repeating = appointment.getRepeating();
+					repeating.setEnd(recurringEndTime);
+					raplaDate.getRaplaDateList();
+
+					RepeatingType repeatingType;
+					switch (raplaDate.getReccuringType()) {
+					case 1:
+						repeatingType = Repeating.DAILY;
+						break;
+					case 2:
+						repeatingType = Repeating.WEEKLY;
+						break;
+					case 3:
+						repeatingType = Repeating.MONTHLY;
+						break;
+					case 4:
+						repeatingType = Repeating.YEARLY;
+						break;
+					default:
+						repeatingType = Repeating.DAILY;
+						break;
+					}
+					repeating.setType(repeatingType);
+
+					resources = raplaDate.getRaplaDateList().get(0)
 							.getResources();
-					// Allocatable allocatable = null;
-
-					List<Allocatable> tempAllocatables = new ArrayList<Allocatable>();
-
-					for (List<String> resouceList : resources) {
-
-						logger.warn("1..");
-						ClassificationFilter[] filters = new ClassificationFilter[1];
-
-						if (resouceList.get(0).toString()
-								.equalsIgnoreCase("Professoren")) {
-							logger.warn("1a..");
-							filters[0] = getProfFilter();
-						} else if (resouceList.get(0).toString()
-								.equalsIgnoreCase("Kurse")) {
-							logger.warn("1b..");
-							filters[0] = getCourseFilter();
-						} else {
-
-							logger.warn("1c..");
-							filters[0] = getRoomFilter();
-						}
-
-						logger.warn("2..");
-						Allocatable[] allocatables = facade
-								.getAllocatables(filters);
-
-						logger.warn("2a..");
-						logger.warn("2a.. resouceList.size(): "
-								+ resouceList.size());
-						// if (resouceList.size() > 1) {
-						for (int i = 1; i < resouceList.size(); i++) { // TODO
-																		// maybe
-																		// change
-
-							logger.warn("2b..");
-							for (Allocatable tempAllocatable : allocatables) {
-
-								logger.warn("2c..");
-								if (resouceList
-										.get(i)
-										.toString()
-										.equalsIgnoreCase(
-												tempAllocatable
-														.getName(this.raplaLocale
-																.getLocale()))) {
-
-									logger.warn("2d..");
-									tempAllocatables.add(tempAllocatable);
-								}
-							}
-
-						}
-						// }
-
-					}
-
-					logger.warn("3..");
-					Allocatable[] tmpAllocatables = new Allocatable[tempAllocatables
-							.size()];
-					Allocatable[] restrictedAllocatables = (Allocatable[]) tempAllocatables
-							.toArray(tmpAllocatables);
-					logger.warn("3a..");
-					tempReservation.addAppointment(appointment);
-					logger.warn("3b..");
-					for (Allocatable allocatable : restrictedAllocatables) {
-						tempReservation.addAllocatable(allocatable);
-					}
-					 tempReservation.setRestriction(appointment,
-					 restrictedAllocatables);
-					logger.warn("fin..");
-
 				} else {
+					startTime = raplaDate.getBeginTime();
+					endTime = raplaDate.getEndTime();
+					appointment = facade.newAppointment(startTime, endTime);
+					resources = raplaDate.getResources();
+				}
+
+				// Allocatable allocatable = null;
+
+				List<Allocatable> tempAllocatables = new ArrayList<Allocatable>();
+
+				for (List<String> resouceList : resources) {
+
+					logger.warn("1..");
+					ClassificationFilter[] filters = new ClassificationFilter[1];
+
+					if (resouceList.get(0).toString()
+							.equalsIgnoreCase("Professoren")) {
+						logger.warn("1a..");
+						filters[0] = getProfFilter();
+					} else if (resouceList.get(0).toString()
+							.equalsIgnoreCase("Kurse")) {
+						logger.warn("1b..");
+						filters[0] = getCourseFilter();
+					} else {
+
+						logger.warn("1c..");
+						filters[0] = getRoomFilter();
+					}
+
+					logger.warn("2..");
+					Allocatable[] allocatables = facade
+							.getAllocatables(filters);
+
+					logger.warn("2a..");
+					logger.warn("2a.. resouceList.size(): "
+							+ resouceList.size());
+					// if (resouceList.size() > 1) {
+					for (int i = 1; i < resouceList.size(); i++) { // TODO
+																	// maybe
+																	// change
+
+						logger.warn("2b..");
+						for (Allocatable tempAllocatable : allocatables) {
+
+							logger.warn("2c..");
+							if (resouceList
+									.get(i)
+									.toString()
+									.equalsIgnoreCase(
+											tempAllocatable
+													.getName(this.raplaLocale
+															.getLocale()))) {
+
+								logger.warn("2d..");
+								tempAllocatables.add(tempAllocatable);
+							}
+						}
+
+					}
+					// }
 
 				}
+
+				logger.warn("3..");
+				Allocatable[] tmpAllocatables = new Allocatable[tempAllocatables
+						.size()];
+				Allocatable[] restrictedAllocatables = (Allocatable[]) tempAllocatables
+						.toArray(tmpAllocatables);
+				logger.warn("3a..");
+				tempReservation.addAppointment(appointment);
+				logger.warn("3b..");
+				for (Allocatable allocatable : restrictedAllocatables) {
+					tempReservation.addAllocatable(allocatable);
+				}
+				tempReservation.setRestriction(appointment,
+						restrictedAllocatables);
+				logger.warn("fin..");
+
 			}
 
 			// tempReservation.setRestriction(appointment,
@@ -928,8 +970,43 @@ public class ReservationPresenter implements ReservationController, Presenter {
 					logger.warn("2..");
 					boolean calculateLectureHours = true;
 
-					raplaDate = new RaplaDate(appointment.getStart(),
-							appointment.getEnd(), res, calculateLectureHours);
+					if (appointment.isRepeatingEnabled() == true) {
+
+						int reccuringType;
+
+						if (appointment.getRepeating().getType() == Repeating.DAILY) {
+							reccuringType = 1;
+						} else if (appointment.getRepeating().getType() == Repeating.WEEKLY) {
+							reccuringType = 2;
+						} else if (appointment.getRepeating().getType() == Repeating.MONTHLY) {
+							reccuringType = 3;
+						} else if (appointment.getRepeating().getType() == Repeating.YEARLY) {
+							reccuringType = 4;
+						} else {
+							reccuringType = 1;
+
+						}
+						// raplaDate.setReccuringType(reccuringType);
+
+						List<RaplaDate> repeatingRaplaDates = RaplaDate
+								.recurringDates(appointment.getStart(),
+										appointment.getRepeating().getEnd(), 0,
+										appointment.getEnd().getTime()
+												- appointment.getStart()
+														.getTime(), res,
+										reccuringType);
+						repeatingRaplaDates.add(new RaplaDate(appointment
+								.getStart(), appointment.getEnd(), res,
+								calculateLectureHours));
+
+						raplaDate = new RaplaDate(repeatingRaplaDates,
+								reccuringType);
+					} else {
+						raplaDate = new RaplaDate(appointment.getStart(),
+								appointment.getEnd(), res,
+								calculateLectureHours);
+					}
+
 					dateList.add(raplaDate);
 				}
 			}

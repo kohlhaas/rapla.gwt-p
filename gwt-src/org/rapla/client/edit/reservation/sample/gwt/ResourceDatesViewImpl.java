@@ -346,9 +346,11 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 		chosenResources.setStyleName("dateInfoLineComplete");
 		chosenResources.add(headerChosenRes);
-		
-		Label explainer2 = new Label("Es wurden bisher keine Ressourcen ausgewählt");
+	
+		Label explainer2 = new Label("Es wurden bisher keine Ressourcen ausgewählt");	
 		explainer2.setStyleName("wildcard");
+
+		
 
 		for (FlowPanel helpList : getPanelResourceContainer()) {
 			chosenResources.add(helpList);
@@ -392,7 +394,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		filterEintr.setStyleName("filterWindow");
 		filterEintr.setMultipleSelect(true);
 		filterEintr.setVisible(false);
-		
+
 		// Suchfeld
 		suche = new HorizontalPanel();
 		suche.setStyleName("suchfeld");
@@ -427,13 +429,13 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		dateContentWrapper.add(addDateWithLabel);
 		dateContentWrapper.add(repeatSettings);
 		dateContentWrapper.setBorderWidth(0);
-//		dateDisclosurePanel = new DisclosurePanel();
-//		dateDisclosurePanel.add(dateContentWrapper);
-//		dateDisclosurePanel.setOpen(true);
-			
+		// dateDisclosurePanel = new DisclosurePanel();
+		// dateDisclosurePanel.add(dateContentWrapper);
+		// dateDisclosurePanel.setOpen(true);
+
 		dateInfos.add(dateContentWrapper);
 
-	//	dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
+		// dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
 		dateInfos.add(chosenResources);
 		dateInfos.add(addResources);
 
@@ -896,10 +898,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 			timeBegin.setValue((long) -3600000
 					+ currentDate.getStartHourMinute());
 			timeEnd.setValue((long) -3600000 + currentDate.getEndHourMinute());
-			if(currentDate.isReccuringDate()){
-			setRepeatTypeSettings(daily);
+			if (currentDate.isReccuringDate()) {
+				setRepeatTypeSettings(daily);
 			}
-			
 			//change button img
 			buttonGarbageCan.setResource(IMG_CROSS);
 			buttonPlus.setResource(IMG_CHANGE);
@@ -907,8 +908,15 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 			logger.warn("1b ");
 			reservedResources.clear();
-			if (currentDate.getResources().size() > 0) {
-				this.loadChosenResources(currentDate.getResources());
+			ArrayList<List<String>> resources;
+			if (currentDate.getRaplaDateList().size() > 0) {
+				resources = currentDate.getRaplaDateList().get(0)
+						.getResources();
+			} else {
+				resources = currentDate.getResources();
+			}
+			if (resources.size() > 0) {
+				this.loadChosenResources(resources);
 			} else {
 				ArrayList<List<String>> res = new ArrayList<List<String>>();
 				this.loadChosenResources(res);
@@ -988,7 +996,7 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 					HasVerticalAlignment.ALIGN_MIDDLE);
 			repeatSettings.setCellVerticalAlignment(repeatText,
 					HasVerticalAlignment.ALIGN_MIDDLE);
-			if(sender == daily){
+			if (sender == daily) {
 				daily.setValue(true);
 				cbRepeatType.setOpen(true);
 			}
@@ -1253,9 +1261,9 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 		List<RaplaDate> dateList2 = this.dateList.getDates();
 		logger.warn("Dates list 1: " + this.dateList.getDates().size());
 
-//		for (RaplaDate raplaDate : dateList2) {
-//			raplaDate.setResources(this.reservedResources);
-//		}
+		// for (RaplaDate raplaDate : dateList2) {
+		// raplaDate.setResources(this.reservedResources);
+		// }
 
 		if (this.dateList.getDates().size() > 0) {
 			logger.warn("Resource list 1a: "
@@ -1316,13 +1324,19 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 			this.dateList.setDates(dateList);
 			// this.deleteResourceContainer();
-			this.loadChosenResources(dateList.get(0).getResources());
+			ArrayList<List<String>> resources;
+			if (dateList.get(0).getRaplaDateList().size() == 0) {
+				resources = dateList.get(0).getResources();
+			} else {
+				resources = dateList.get(0).getRaplaDateList().get(0).getResources();
+			}
+			this.loadChosenResources(resources);
 			logger.warn("Dates list 1: " + this.dateList.getDates().size());
-			if (this.dateList.getDates().get(0).getResources() != null) {
+			if ( resources != null) {
 				logger.warn("Resource list: "
-						+ this.dateList.getDates().get(0).getResources().size());
+						+  resources.size());
 				logger.warn("Resource 1 list: "
-						+ this.dateList.getDates().get(0).getResources().get(0)
+						+  resources.get(0)
 								.size());
 
 				// refreshResourceContainer();
@@ -1330,7 +1344,10 @@ public class ResourceDatesViewImpl extends AbstractView<Presenter> implements
 
 				logger.warn("Resource list: empty ");
 			}
+
 			refreshResourceContainer();
+			this.setRaplaDate(dateList.get(0));
+			
 		} else {
 			// this.dateList = new TerminList();
 			for (int i = 0; i < this.dateList.getWidgetCount(); i++) {

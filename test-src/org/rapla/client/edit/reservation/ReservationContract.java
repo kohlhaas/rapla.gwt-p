@@ -82,5 +82,3 @@ public class ReservationContract extends ReservationPresenter {
 	// assert unchanged(target.getSecond()) : "second unchanged";
 	// }
 	// }
-
-}
