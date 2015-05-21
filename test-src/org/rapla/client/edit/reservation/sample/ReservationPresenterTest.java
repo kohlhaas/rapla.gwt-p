@@ -128,28 +128,6 @@ public class ReservationPresenterTest  {
 	  verify(facade).getDynamicTypes("reservation");
 
   }
-  
-  @Test
-  public void getCategoryTest(){
-	  Locale locale = raplaLocale.getLocale();
-
-
-	  //WHEN
-	  try {
-		presenter.getCategoryAttributes(locale, "Sprachen");  
-	  } 
-	  catch (NullPointerException e){
-		 //Test can return NullPointerException, if Code-Server is unreachable. 
-		 //The NullPointer occurs in the facade, so it's not part of the method to be tested.
-	  }
-	  
-	  //WHEN
-	  presenter.getCategoryAttributes(locale, "Sprachen");
-	  //THEN
-	  //test if superCategory is get from facade
-	  verify(facade).getSuperCategory();
-  }
-  
   @Test
   public void changeAttributeTest(){
 	  Locale locale = raplaLocale.getLocale();

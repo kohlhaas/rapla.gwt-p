@@ -24,14 +24,7 @@ import de.vksi.c4j.ContractReference;
 
 import javax.inject.Inject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Each Reservation has a classification, some resources(allocatable) and appointments
@@ -57,7 +50,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
     boolean isNew;
 
     String tabName = "Termin- und Ressourcenplanung";
-    
+
 
     @Inject
     public ReservationPresenter(ReservationView view, AppointmentPresenter appointmentPresenter) {
@@ -74,7 +67,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
         appointmentPresenter.setReservation(event);
         view.show(event);
     }
-    
+
 
     @Override
     public void onSaveButtonClicked() {
@@ -89,6 +82,10 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
     public String getCurrentReservationName(Locale locale) {
         return reservation.getName(locale);
+    }
+
+    public Classification getCurrentClassification(){
+        return reservation.getClassification();
     }
 
     @Override
@@ -143,18 +140,18 @@ public class ReservationPresenter implements ReservationController, Presenter {
             return courseCategory.getCategories();
         } else return null;
     }
-    
+
     //von Yvonne//
-    
-    public Category[] getCategories(){
-    	Category superCategory = facade.getSuperCategory();
-    	Category[] categories = superCategory.getCategories();
-    	
-    	if(categories == null){
-    		logger.error("there are no categories");	
-    	}
-    	
-		return categories;
+
+    public Category[] getCategories() {
+        Category superCategory = facade.getSuperCategory();
+        Category[] categories = superCategory.getCategories();
+
+        if (categories == null) {
+            logger.error("there are no categories");
+        }
+
+        return categories;
     }
 
 
@@ -165,14 +162,13 @@ public class ReservationPresenter implements ReservationController, Presenter {
         Attribute attribute = classification.getType().getAttributes()[0];
         classification.setValue(attribute, newName);
     }
-    
 
 
     /**
      * for now you have to save the original type and not as string or smth similiar
      * TODO: need a way to get the type and only save the specific type etc.., for now its only objects and that's not save
-     * @param attributeNames input a map of string and the corresponding object --> searching for the object in the attributes and change the value
      *
+     * @param attributeNames input a map of string and the corresponding object --> searching for the object in the attributes and change the value
      */
     public void changeAttributesOfCLassification(Map<String, Object> attributeNames, Locale locale) {
         logger.info("adding number of attributes: " + attributeNames.size());
@@ -204,7 +200,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
         for (Attribute attribute : type.getAttributes()) {
             String valueAsString = classification.getValueAsString(attribute, locale);
             if (valueAsString == null || valueAsString.isEmpty()) {
-                valueAsString= "not defined yet";
+                valueAsString = "not defined yet";
             }
 
             list.add(attribute.getName() + " : " + valueAsString + " Typ: " + attribute.getType().name());
@@ -224,67 +220,49 @@ public class ReservationPresenter implements ReservationController, Presenter {
         logger.info("all attributes length: " + list.size());
         return list;
     }
-    
-    
+
 
     public AttributeValues getCurrentAttributesOfReservationWithValues() {
-    			
-               
-                Map<Attribute, Object> valuesToGet = new HashMap<Attribute, Object>();
-                Map<Attribute, Collection<Object>> attributeCollectionMap = new HashMap<Attribute, Collection<Object>>();
-                List<Object> objectList = new LinkedList<Object>();
-                
-    			DynamicType [] eventTypes = getAllEventTypes();
-            	final Category[] allCategories = getCategories();
-            	Category categoryForAttribute = null;
-            	
-            	for(DynamicType eventType : eventTypes){
-            		
-            			
-            			for(Attribute attribute : eventType.getAttributes()){
-            				
-            				if (attribute.getType().equals(AttributeType.CATEGORY)) {
-            				
-            					categoryForAttribute = (Category) attribute.getConstraint(ConstraintIds.KEY_ROOT_CATEGORY);
-            				
-            					for(Category mainCategory : allCategories){
-            					
-            					if(mainCategory.getName().equals(categoryForAttribute.getName())){
-            						
-            						if(mainCategory.getCategories() != null){
-            							
-            							for(Category subCategory : mainCategory.getCategories()){
-                								
-                								valuesToGet.put(attribute, subCategory);
-            							
-                								if(!subCategory.getCategories().equals(null)){
-            								                							
-                									for(Category subSubCategory : subCategory.getCategories()){
-            								
-            												objectList.add(subSubCategory);
-            											
-            										}
-            									
-                									attributeCollectionMap.put(attribute, objectList);
-            									
-            									}
-            								}
-            								
-            							}
-            							
-            						}
-            						
-            						
-            					}
-            					
-            				}
-            					
-            			}
-            			
-            		}		
-            	AttributeValues attributeValues = new AttributeValues(valuesToGet, attributeCollectionMap);
-            	return attributeValues;
-            				
+
+
+        Map<Attribute, Object> valuesToGet = new HashMap<Attribute, Object>();
+        Map<Attribute, Collection<Object>> attributeCollectionMap = new HashMap<Attribute, Collection<Object>>();
+        List<Object> objectList = new LinkedList<Object>();
+
+        DynamicType[] eventTypes = getAllEventTypes();
+        final Category[] allCategories = getCategories();
+        Category categoryForAttribute;
+
+        for (DynamicType eventType : eventTypes) {
+            for (Attribute attribute : eventType.getAttributes()) {
+                if (attribute.getType().equals(AttributeType.CATEGORY)) {
+                    categoryForAttribute = (Category) attribute.getConstraint(ConstraintIds.KEY_ROOT_CATEGORY);
+                    for (Category mainCategory : allCategories) {
+                        if (mainCategory.getName().equals(categoryForAttribute.getName())) {
+                            if (mainCategory.getCategories() != null) {
+                                for (Category subCategory : mainCategory.getCategories()) {
+                                    valuesToGet.put(attribute, subCategory);
+                                    if (!subCategory.getCategories().equals(null)) {
+                                        Collections.addAll(objectList, subCategory.getCategories());
+                                        attributeCollectionMap.put(attribute, objectList);
+
+                                    }
+                                }
+
+                            }
+
+                        }
+
+
+                    }
+
+                }
+
+            }
+
+        }
+        return new AttributeValues(valuesToGet, attributeCollectionMap);
+
     }
 
     /**
@@ -326,37 +304,34 @@ public class ReservationPresenter implements ReservationController, Presenter {
         return "is new";
 
     }
-    
+
     public void eventTypeChanged(DynamicType eventType) {
-    	try{
-    		Classification oldClassification = reservation.getClassification();
-    		Classification newClassification;
-    		DynamicType[] eventTypes = facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
-    		
-    		for(DynamicType eventType_it : eventTypes){
-    			if(eventType_it.getKey().equalsIgnoreCase(eventType.getKey())){
-    				newClassification = eventType.newClassification(oldClassification);
-    				reservation.setClassification(newClassification);
-    			}
-    		}
-    		
-    		
-    	}
-    	catch (RaplaException e1) {
-    		logger.error( e1.getMessage(), e1);
-    	}
+        try {
+            Classification oldClassification = reservation.getClassification();
+            Classification newClassification;
+            DynamicType[] eventTypes = facade.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESERVATION);
+
+            for (DynamicType eventType_it : eventTypes) {
+                if (eventType_it.getKey().equalsIgnoreCase(eventType.getKey())) {
+                    newClassification = eventType.newClassification(oldClassification);
+                    reservation.setClassification(newClassification);
+                }
+            }
+
+
+        } catch (RaplaException e1) {
+            logger.error(e1.getMessage(), e1);
+        }
     }
-    
-    
-    
 
 
     /**
      * returns true if the user clicked on the "+" button
+     *
      * @return if the event is new or not
      */
 
-    public boolean getIsNew(){
+    public boolean getIsNew() {
         return isNew;
     }
 
@@ -367,14 +342,14 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
 
 	/*@Override
-	public Category[] getCategoryAttributes(Locale locale, String neededCategory) {
+    public Category[] getCategoryAttributes(Locale locale, String neededCategory) {
 		// TODO Auto-generated method stub
 		return null;
 	}*/
 
-	public Object getCategoryAttributes(Locale locale, String neededCategory) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Object getCategoryAttributes(Locale locale, String neededCategory) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

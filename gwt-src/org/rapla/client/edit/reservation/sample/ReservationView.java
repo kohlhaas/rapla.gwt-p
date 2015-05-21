@@ -6,6 +6,7 @@ import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.entities.Category;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
+import org.rapla.entities.dynamictype.Classification;
 import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.facade.Conflict;
 
@@ -40,6 +41,8 @@ public interface ReservationView<W> extends View<Presenter> {
         List<String> getAllCurrentAttributesAsStrings(Locale locale);
 
         boolean getIsNew();
+
+        Classification getCurrentClassification();
 
         void setAttributesOfReservation(Map<Attribute, Object> valuesToSave, Map<Attribute, Collection<Object>> attributeCollectionMap);
 
