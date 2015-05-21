@@ -108,6 +108,24 @@ public class AppointmentPresenter implements Presenter {
     }
 
     /**
+     *
+     * @return empty conflict if error
+     */
+    @Override
+    public Conflict[] saveAppointment(Appointment appointment, Date startDate, Date endDate, RepeatingType repeatingType) {
+        Appointment currentAppointment = reservation.findAppointment(appointment);
+        currentAppointment.move(startDate,endDate);
+        Repeating repeating = currentAppointment.getRepeating();
+        repeating.setType(repeatingType);
+        try {
+            return  facade.getConflicts(this.reservation);
+        } catch (RaplaException e) {
+            logger.error("error while using facade: ", e);
+        }
+        return new Conflict[0];
+    }
+
+    /**
      * removes the Appointment, chosen by the given index
      */
     @Override
@@ -177,36 +195,6 @@ public class AppointmentPresenter implements Presenter {
         return null;
     }
 
-    @Override
-    /**
-     * @return all "Veranslatungstypen" eventTypes
-     */
-    public DynamicType[] getEventTypes() {
-        return getDynamicTypes("reservation");
-    }
-
-    @Override
-    /**
-     * @return all "Ressourcen Typen" resourcestypes
-     */
-    public DynamicType[] getResourceTypes() {
-        return getDynamicTypes("resource");
-    }
-
-    /**
-     * possible keys are reservation(Veranstaltungstyp), person(..) and resource(ressourcetypes), returns null if an error has happened
-     * Obergruppen(TYPEN = REssourcenTypen, VeranstaltungsTypen..)
-     * example : resourceTypes: rooms, persons, objects|things ||| resources: rooms = chairs,tables... ; persons = age,semestre...; things: pen,beamer...
-     */
-    private DynamicType[] getDynamicTypes(String name) {
-        try {
-            return facade.getDynamicTypes(name);
-        } catch (RaplaException e) {
-            logger.error("error while using facade: ", e);
-        }
-        return null;
-    }
-
     public Reservation getReservation() {
         return reservation;
     }
@@ -219,18 +207,7 @@ public class AppointmentPresenter implements Presenter {
         view.updateBookedResources(Arrays.asList(reservation.getAllocatables()));
 	}
 
-	@Override
-	public Conflict[] getConflicts() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public Conflict[] saveAppointment(Appointment appointment, Date startDate,
-			Date endDate, RepeatingType repeatingType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 

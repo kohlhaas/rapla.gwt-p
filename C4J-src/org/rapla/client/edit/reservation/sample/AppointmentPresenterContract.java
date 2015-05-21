@@ -47,18 +47,6 @@ public class AppointmentPresenterContract extends AppointmentPresenter {
 	}
 
 	@Override
-	public Conflict[] getConflicts() {
-		if (preCondition()) {
-			// TODO: write preconditions if required
-		}
-		if (postCondition()) {
-			// TODO: write postconditions if required
-			
-		}
-		return ignored();
-	}
-
-	@Override
 	public Date[] nextFreeDateButtonPressed(Date startDate, Date endDate) {
 		if (preCondition()) {
 			assert startDate != null : "startDate != null";
@@ -144,28 +132,6 @@ public class AppointmentPresenterContract extends AppointmentPresenter {
 
 	@Override
 	public Allocatable[] getAllocatables() {
-		if (preCondition()) {
-			// TODO: write preconditions if required
-		}
-		if (postCondition()) {
-			// TODO: write postconditions if required
-		}
-		return ignored();
-	}
-
-	@Override
-	public DynamicType[] getEventTypes() {
-		if (preCondition()) {
-			// TODO: write preconditions if required
-		}
-		if (postCondition()) {
-			// TODO: write postconditions if required
-		}
-		return ignored();
-	}
-
-	@Override
-	public DynamicType[] getResourceTypes() {
 		if (preCondition()) {
 			// TODO: write preconditions if required
 		}

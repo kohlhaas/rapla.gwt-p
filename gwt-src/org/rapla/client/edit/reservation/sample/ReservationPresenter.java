@@ -79,15 +79,12 @@ public class ReservationPresenter implements ReservationController, Presenter {
     @Override
     public void onSaveButtonClicked() {
         logger.info("save clicked");
-        //logger.info(getConflicts().length + " conflicts found.");
         try {
-             facade.store(reservation);
+            facade.store(reservation);
         } catch (RaplaException e1) {
-                logger.error(e1.getMessage(), e1);
+            logger.error(e1.getMessage(), e1);
         }
-            view.hide();
-            //view.hide();
-        
+        view.hide();
     }
 
     public String getCurrentReservationName(Locale locale) {
