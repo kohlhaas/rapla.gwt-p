@@ -30,7 +30,6 @@ import org.rapla.facade.Conflict;
 import javax.inject.Inject;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public class AppointmentViewImpl extends AbstractView<Presenter> implements AppointmentView<IsWidget> {
 
@@ -93,7 +92,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
             @Override
             public void onClick(ClickEvent event) {
                 String selectedRepeatRB = getSelectedRepeatRB(selectRepeat);
-                Logger.getGlobal().info("selectedRepeat:" + selectedRepeatRB);
                 getPresenter().newAppointmentButtonPressed(getStartDate(), getEndDate(),RepeatingType.findForString(selectedRepeatRB));
             }
         });
@@ -308,7 +306,6 @@ public class AppointmentViewImpl extends AbstractView<Presenter> implements Appo
     }
     
     private void appointmentChanged(GwtEvent event) {
-    	Logger.getGlobal().info("start "+ getStartDate() + " end "+ getEndDate() + " repeating "+ getSelectedRepeating());
     	Conflict[] conflicts = getPresenter().saveAppointment(
 				((SingleSelectionModel<Appointment>) appointmentCL.getSelectionModel()).getSelectedObject(),
 				getStartDate(),
