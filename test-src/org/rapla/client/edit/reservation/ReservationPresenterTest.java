@@ -44,13 +44,14 @@ public class ReservationPresenterTest {
 	
 	  @Inject ReservationPresenter controller;
 	  @Inject InfoViewPresenter infoViewPresenter;
-	  ClientFacade facade;
-	  Reservation event;
 	  
+	  @Inject ClientFacade facade;
+	  Reservation event;
 	  
 	  @Before
 	  public void setupMocks(ClientFacade facade, Reservation event) {
 	      this.facade = facade;
+	      this.event = event;
 	  }
 	  
 	  public static class Module extends JukitoModule {
@@ -99,7 +100,7 @@ public class ReservationPresenterTest {
 	    // test if store is called
 	    verify(facade).remove( event );
 	  }
-	
+
 	  
 	@Test 
 	  public void shouldCancelReservationCreation(Reservation event,ReservationView editView) throws RaplaException {

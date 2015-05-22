@@ -570,10 +570,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
 		filters[0] = getCourseFilter();
 		Allocatable[] allocatables = facade.getAllocatables(filters);
-		// logger.warn("Load course data into resourcesDates");
 		for (Allocatable allocatable : allocatables) {
-			// logger.warn("Course: " +
-			// allocatable.getName(raplaLocale.getLocale()));
 			course.add(allocatable.getName(raplaLocale.getLocale()));
 		}
 
@@ -583,11 +580,8 @@ public class ReservationPresenter implements ReservationController, Presenter {
 	private ClassificationFilter getCourseFilter() throws RaplaException {
 		DynamicType[] types = facade
 				.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
-
-		// logger.warn("Load data into resourcesDates");
 		ClassificationFilter filter = null;
 		for (DynamicType type : types) {
-			// logger.warn(type.toString());
 
 			if (type.getName(this.raplaLocale.getLocale()).toString()
 					.equalsIgnoreCase("kurs")) {
@@ -602,10 +596,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		ClassificationFilter[] filters = new ClassificationFilter[1];
 		filters[0] = getProfFilter();
 		Allocatable[] allocatables = facade.getAllocatables(filters);
-		// logger.warn("Load person data into resourcesDates");
 		for (Allocatable allocatable : allocatables) {
-			// logger.warn("Person: " +
-			// allocatable.getName(raplaLocale.getLocale()));
 			persons.add(allocatable.getName(raplaLocale.getLocale()));
 		}
 
@@ -616,19 +607,11 @@ public class ReservationPresenter implements ReservationController, Presenter {
 		DynamicType[] types = facade
 				.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_PERSON);
 
-		// logger.warn("Load data into resourcesDates");
 		ClassificationFilter filter = null;
 		for (DynamicType type : types) {
-			// logger.warn(type.toString());
-
 			if (type.getKey().toString().equalsIgnoreCase("professor")) {
-				// logger.warn(type.getName().toString());
 				filter = type.newClassificationFilter();
 			}
-			// if(type.getKey().toString().equalsIgnoreCase("honorarkraft")){
-			// logger.warn(type.getName().toString());
-			// filters[1] = type.newClassificationFilter();
-			// }
 		}
 
 		return filter;
@@ -652,10 +635,8 @@ public class ReservationPresenter implements ReservationController, Presenter {
 	private ClassificationFilter getRoomFilter() throws RaplaException {
 		DynamicType[] types = facade
 				.getDynamicTypes(DynamicTypeAnnotations.VALUE_CLASSIFICATION_TYPE_RESOURCE);
-		// logger.warn("Load data into resourcesDates");
 		ClassificationFilter filter = null;
 		for (DynamicType type : types) {
-			// logger.warn(type.toString());
 
 			if (type.getName(this.raplaLocale.getLocale()).toString()
 					.equalsIgnoreCase("raum")) {
@@ -830,15 +811,7 @@ public class ReservationPresenter implements ReservationController, Presenter {
 
 		Allocatable[] allocatables = tempReservation.getAllocatables();
 
-		Allocatable[] resources = tempReservation.getAllocatables();
-		// Appointment[] appointments = tempReservation.getAppointments();
-
-		Allocatable[] persons = tempReservation.getPersons();
-
 		Attribute[] attributes = classificationTmp.getAttributes();
-
-		// I just want to see all
-		// this.logAllElements();
 
 		logger.warn("All Attributes - ");
 		for (Attribute a : classificationTmp.getType().getAttributes()) {
@@ -1064,8 +1037,8 @@ public class ReservationPresenter implements ReservationController, Presenter {
 				+ ((InfoView) infoViewPresenter.getView()).getTitelInput());
 
 	}
-	
-	public Reservation getTempReservation(){
+
+	public Reservation getTempReservation() {
 		return tempReservation;
 	}
 
