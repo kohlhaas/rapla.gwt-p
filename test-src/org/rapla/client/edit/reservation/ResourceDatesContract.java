@@ -15,7 +15,7 @@ import de.vksi.c4j.Target;
 
 public class ResourceDatesContract  extends ResourceDatesViewPresenter {
 
-
+//für diesen contract sind Zugriffe auf alle GWT-Elemente nötig
 	@Target
 	private ReservationPresenter target;
 	
@@ -41,7 +41,8 @@ public class ResourceDatesContract  extends ResourceDatesViewPresenter {
 
 	public void onGarbageButtonClicked() {
 		if (preCondition()) {
-
+			//Wenn Zugriff auf die GWT-Elemente bestehen würde, dann könnte man abfragen, ob der Termin in der Liste überhaupt exisitiert,
+			//der durch den Buttondruck gelöscht werden soll. 
 		}
 		if (postCondition()) {
 
@@ -51,18 +52,21 @@ public class ResourceDatesContract  extends ResourceDatesViewPresenter {
 
 	public void onWholeDaySelected() {
 		if (preCondition()) {
+			//Wenn Zugriff auf die GWT-Elemente bestehen würde, dann könnte man abfragen, ob vorher nicht ganztägig ausgewählt ist
+			//
 			
 		}
 		if (postCondition()) {
-
+			
 		}
 	}
 	public void onRewriteDateClicked() {
 		if (preCondition()) {
-			
+			//Gab es den Termin vorher schon?
 		}
 		if (postCondition()) {
-
+			//Termin wirklich in Liste übernommen? 
+			//Ist der Termin anders als vorher?
 		}
 	}
 	
@@ -71,7 +75,7 @@ public class ResourceDatesContract  extends ResourceDatesViewPresenter {
 			
 		}
 		if (postCondition()) {
-
+			//weiterer Termin in der Liste enthalten
 		}
 	}
 	
@@ -80,7 +84,7 @@ public class ResourceDatesContract  extends ResourceDatesViewPresenter {
 			
 		}
 		if (postCondition()) {
-
+			//neuer Termin hinzugegfügt
 		}
 	}
 	
@@ -104,9 +108,10 @@ public class ResourceDatesContract  extends ResourceDatesViewPresenter {
 	
 	public void onSetResourcesToAll() {
 		if (preCondition()) {
+			//Ausgewählter Termin besitzt überhaupt Ressourcen, die für die weiteren Termine übernommen werden können.
 		}
 		if (postCondition()) {
-			
+			//alle Termine haben die gleichen Ressourcen
 		}
 	}
 }

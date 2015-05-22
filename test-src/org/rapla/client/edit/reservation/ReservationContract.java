@@ -47,10 +47,17 @@ public class ReservationContract extends ReservationPresenter {
 	public void onSaveButtonClicked() {
 		if (preCondition()) {
 			assert reservation != null;
+			//Bei Zugriff auf die tatsächlichen Termine in der Datenbank, könnte zusätzlich abgefragt werden, ob
+			//die Veranstaltung (bei Hinzufügen eines neuen Termins) vorher noch nicht vorhanden ist
+			//oder (bei Änderung eines Termins) der Termin bereits vorhanden war
+			//Weitere Precondition: Hat Veranstaltung mindestens einen Termin?
 
+			
 		}
 		if (postCondition()) {
 			assert !unchanged(reservation);
+			//Zusätzlich: Gab es eine Änderung in der Datenbank?
+			
 		}
 	}
 
@@ -58,10 +65,10 @@ public class ReservationContract extends ReservationPresenter {
 	public void onDeleteButtonClicked() {
 		if (preCondition()) {
 			assert reservation != null;
-
+			//Zusätzlich bei vollem Zugriff: Gibt es die Veranstaltung in der Datenbank?
 		}
 		if (postCondition()) {
-			
+			//Veranstaltung existiert im Backend nicht mehr
 		}
 	}
 
@@ -72,7 +79,7 @@ public class ReservationContract extends ReservationPresenter {
 
 		}
 		if (postCondition()) {
-			assert unchanged(reservation);
+			assert unchanged(reservation); //nichts passiert
 
 		}
 	}
@@ -87,7 +94,7 @@ public class ReservationContract extends ReservationPresenter {
 			
 		}
 		if (postCondition()) {
-			
+			//alle Daten wie vorher vorhanden
 		}
 	}
 
@@ -95,7 +102,7 @@ public class ReservationContract extends ReservationPresenter {
 	public boolean isDeleteButtonEnabled() {
 		if (preCondition()) {
 			assert reservation != null;
-			
+			//ist deleteButton vorher disabled
 
 		}
 		if (postCondition()) {
@@ -108,10 +115,10 @@ public class ReservationContract extends ReservationPresenter {
 	public void loadDataFromReservationIntoView() {
 		if (preCondition()) {
 			assert reservation != null;
-
+			
 		}
 		if (postCondition()) {
-
+			//alle Daten vorhanden?
 		}
 	}
 	
