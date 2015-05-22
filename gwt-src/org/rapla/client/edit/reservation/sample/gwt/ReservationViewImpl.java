@@ -57,7 +57,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     ListBox allKeys = new ListBox();
     ListBox allKeys2 = new ListBox();
     Button course = new Button("Studiengang auswählen");
-    ListBox allCurrentAttributes = new ListBox();
     TextBox testSaving = new TextBox(); //TEST!!!
     TextBox tbPlanhour;
     TextBox lectureCourseTextBox;
@@ -144,49 +143,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         initSaveDeleteCancelButtons(event);
         final Locale locale = getRaplaLocale().getLocale();
 
-        //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
-        // List<String> allCurrentAttributes = this.getPresenter().getAllCurrentAttributes(locale);
-
-        /**
-         * das sind die Namen für getCategory Werte (Methode von unten), Theorethisch koentest du die beiden listboxen voneinander abhaengig machen
-         */
-/*        List<String> keys = getPresenter().getCategoryNames(locale);
-        for (String key : keys) {
-            allKeys.addItem(key);
-        }
-
-       row1.add(allKeys);*/
-
-
-/**
- * about current attributes
- */
-
-        //für Präsentation ausblenden
-
-
-        //TODO: hier bekommst du alle aktuellen attribute, welche die reservierung hat. Du bekommst eine Liste<String> von der Methode wieder, wenn ein Attribut nicht ausgefüllt ist, ist es : not defined
-
-/*        for (String s : getPresenter().getAllCurrentAttributes(locale)) {
-            (allCurrentAttributes).addItem(s);*/
-
-        //TEST!!
-        Label labelCurrentAttributes = new Label("Current Attributes");
-
-        row1Panel.add(labelCurrentAttributes);
-        row1Panel.add(allCurrentAttributes);
-
     }
 
-    //TEST!!
-    private void currentAttributes() {
-
-        final Locale locale = getRaplaLocale().getLocale();
-        for (String s : getPresenter().getAllCurrentAttributesAsStrings(locale)) {
-            allCurrentAttributes.addItem(s);
-        }
-
-    }
+   
     
     /*Init Panels*/
 
@@ -266,7 +225,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         contentRessourcesPanel.clear();
         allKeys.clear();
         allLanguageLB.clear();
-        allCurrentAttributes.clear();
 
     }
 
@@ -381,15 +339,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         	initLectureCourseTextBox();
         }*/
 
-        //TEST!!
-        currentAttributes();
-
-        mapDynamicTypesToChangeHandler(eventTypes, locale, eventTypeLB);
-
-        //TEST!!
-
-
-        //row1.add(eventTypeLB);
 
     }
 
@@ -400,10 +349,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             public void onChange(ChangeEvent event) {
                 //changedLehrveranstaltung = true;
 
-
-                //TEST!!
-                allCurrentAttributes.clear();
-                currentAttributes();
                 language.clear();
 
                 if (chosenEventType.equalsIgnoreCase("Lehrveranstaltung")) {
@@ -431,11 +376,6 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     if (dynamicType.getName(locale).equals(chosenEventType)) {
                         getPresenter().eventTypeChanged(dynamicType);
 
-                        for (Attribute attribute : dynamicType.getAttributes()) {
-                            //test
-                            allCurrentAttributes.addItem(attribute.getName(locale));
-
-                        }
                     }
                 }
 
