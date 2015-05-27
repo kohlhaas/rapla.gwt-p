@@ -102,7 +102,10 @@ public class Application implements ApplicationView.Presenter {
            List<String> calendarNames = new ArrayList<String>();
            final Preferences preferences = facade.getPreferences();
            Map<String, CalendarModelConfiguration> exportMap = preferences.getEntry(CalendarModelConfiguration.EXPORT_ENTRY);
-           calendarNames.addAll(exportMap.keySet());
+           if(exportMap != null)
+           {
+               calendarNames.addAll(exportMap.keySet());
+           }
            Collections.sort(calendarNames);
            calendarNames.add(0, i18n.getString("default"));
            mainView.show( names, calendarNames );
