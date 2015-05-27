@@ -295,7 +295,7 @@ public class WeekviewGWT extends FlexTable
                     final Position newPosition = calcPosition(tc);
                     logger.info("from: " + originSupport.point);
                     logger.info("to: " + newPosition);
-                    clearAllDayMarks(spanCells);
+                    clearAllDayMarks(spanCells, originSupport.point);
                     mark(originSupport.point, newPosition);
                 }
             }
@@ -305,21 +305,40 @@ public class WeekviewGWT extends FlexTable
         {
             final int column1Normalized = normalize(spanCells, p1.row, p1.column);
             final int column2Normalized = normalize(spanCells, p2.row, p2.column);
-            logger.info("orig " + p1.column + ":" + p2.column);
-            logger.info("comparing " + column1Normalized + ":" + column2Normalized);
             if (column1Normalized == column2Normalized)
             {
+                final int indexOfCurrentExtraDay = Collections.binarySearch(extraDayColumns, column1Normalized);
+                final int startColumn;
+                if (indexOfCurrentExtraDay > 0)
+                {
+                    startColumn = extraDayColumns.get(indexOfCurrentExtraDay - 1) + 1;
+                }
+                else
+                {
+                    startColumn = 1;
+                }
                 final int startRow = Math.max(1, Math.min(p1.row, p2.row));
                 final int endRow = Math.max(p1.row, p2.row);
                 for (int aRow = startRow; aRow <= endRow; aRow++)
                 {
-                    if (!spanCells[aRow][column2Normalized])
+                    for (int aColumn = startColumn; aColumn <= column2Normalized; aColumn++)
                     {
-                        final int column = calcColumn(spanCells, aRow, column2Normalized);
-                        logger.info("marking " + aRow + ":" + column);
-                        getCellFormatter().getElement(aRow, column).getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                        if (!spanCells[aRow][aColumn])
+                        {
+                            final int column = calcColumn(spanCells, aRow, aColumn);
+                            final Element element = getCellFormatter().getElement(aRow, column);
+                            if (!element.hasChildNodes() || !events.containsKey(element.getFirstChildElement()))
+                            {
+                                logger.info("marking " + aRow + ":" + column);
+                                element.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                            }
+                        }
                     }
                 }
+            }
+            else
+            {
+                // TODO: marking over more than one day
             }
         }
 
@@ -404,7 +423,7 @@ public class WeekviewGWT extends FlexTable
             }
             else if (originSupport.point != null)
             {
-                clearAllDayMarks(spanCells);
+                clearAllDayMarks(spanCells, originSupport.point);
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element targetCell = WeekviewGWT.this.getEventTargetCell(event2);
                 logger.info("dropping on " + targetCell);
@@ -736,17 +755,32 @@ public class WeekviewGWT extends FlexTable
         getCellFormatter().getElement(row, column).setClassName(styleName);
     }
 
-    private void clearAllDayMarks(final boolean[][] spanCells)
+    private void clearAllDayMarks(final boolean[][] spanCells, Position p1)
     {
         final int rows = spanCells.length;
-        for (final Integer dayColumn : extraDayColumns)
+        final int column1Normalized = normalize(spanCells, p1.row, p1.column);
+        final int indexOfCurrentExtraDay = Collections.binarySearch(extraDayColumns, column1Normalized);
+        final int startColumn;
+        if (indexOfCurrentExtraDay > 0)
         {
-            for (int row = 1; row < rows; row++)
+            startColumn = extraDayColumns.get(indexOfCurrentExtraDay - 1) + 1;
+        }
+        else
+        {
+            startColumn = 1;
+        }
+        for (int row = 1; row < rows; row++)
+        {
+            for (int dayColumn = startColumn; dayColumn <= column1Normalized; dayColumn++)
             {
                 if (!spanCells[row][dayColumn])
                 {
                     final int column = calcColumn(spanCells, row, dayColumn);
-                    getCellFormatter().getElement(row, column).getStyle().clearBackgroundColor();
+                    final Element element = getCellFormatter().getElement(row, column);
+                    if (!element.hasChildNodes() || !events.containsKey(element.getFirstChildElement()))
+                    {
+                        element.getStyle().clearBackgroundColor();
+                    }
                 }
             }
         }
