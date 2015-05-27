@@ -287,6 +287,8 @@ public class WeekviewGWT extends FlexTable
                 {
                     if (!events.containsKey(tc.getFirstChildElement()))
                     {
+                        final Position position = calcPosition(tc);
+                        mark(position, position);
                         tc.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
                     }
                 }
@@ -301,7 +303,19 @@ public class WeekviewGWT extends FlexTable
             }
         }
 
+        private void unmark(Position p1, Position p2)
+        {
+            logger.info("unmarking from "+p1+" to "+p2);
+            changeBackgroundColor(p1, p2, false);
+        }
+        
         private void mark(Position p1, Position p2)
+        {
+            logger.info("marking from "+p1+" to "+p2);
+            changeBackgroundColor(p1, p2, true);
+        }
+        
+        private void changeBackgroundColor(Position p1, Position p2, boolean add)
         {
             final int column1Normalized = normalize(spanCells, p1.row, p1.column);
             final int column2Normalized = normalize(spanCells, p2.row, p2.column);
@@ -329,8 +343,14 @@ public class WeekviewGWT extends FlexTable
                             final Element element = getCellFormatter().getElement(aRow, column);
                             if (!element.hasChildNodes() || !events.containsKey(element.getFirstChildElement()))
                             {
-                                logger.info("marking " + aRow + ":" + column);
-                                element.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                                if(add)
+                                {
+                                    element.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
+                                }
+                                else
+                                {
+                                    element.getStyle().clearBackgroundColor();
+                                }
                             }
                         }
                     }
@@ -339,6 +359,7 @@ public class WeekviewGWT extends FlexTable
             else
             {
                 // TODO: marking over more than one day
+                // clear also think about
             }
         }
 
@@ -349,9 +370,10 @@ public class WeekviewGWT extends FlexTable
             {
                 com.google.gwt.user.client.Event event2 = (com.google.gwt.user.client.Event) event.getNativeEvent();
                 final Element tc = WeekviewGWT.this.getEventTargetCell(event2);
-                if (tc != null && !events.containsKey(tc.getFirstChildElement()))
+                if (tc != null)
                 {
-                    tc.getStyle().clearBackgroundColor();
+                    final Position position = calcPosition(tc);
+                    unmark(position, position);
                 }
             }
             event.stopPropagation();
@@ -412,8 +434,8 @@ public class WeekviewGWT extends FlexTable
                 final Element targetCell = WeekviewGWT.this.getEventTargetCell(event2);
                 if (!isDroppedOnStart(targetCell))
                 {
-                    targetCell.getStyle().clearBackgroundColor();
                     Position p = calcPosition(targetCell);
+                    unmark(p, p);
                     final int column = normalize(spanCells, p.row, p.column);
                     final HTMLDaySlot daySlot = findDaySlot(column);
                     final Integer start = findRowSlot(p.row);
