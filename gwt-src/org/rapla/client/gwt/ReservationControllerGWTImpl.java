@@ -36,7 +36,7 @@ public class ReservationControllerGWTImpl extends ReservationControllerImpl
     @Override
     protected PopupContext getPopupContext()
     {
-        return new GWTPopupContext();
+        return new GWTPopupContext(null);
     }
 
     @Override

@@ -55,7 +55,7 @@ public class ActivityManagerImpl extends ActivityManager {
 				final Collection<Entity> values = entities.values();
 				for (Entity entity : values) {
 					if (entity != null) {
-						detailsRequested(new DetailSelectEvent(entity));
+						detailsRequested(new DetailSelectEvent(entity, null));
 					}
 				}
 			}

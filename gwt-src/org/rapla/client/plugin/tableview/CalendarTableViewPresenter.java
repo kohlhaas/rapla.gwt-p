@@ -47,7 +47,7 @@ public class CalendarTableViewPresenter<W> implements Presenter, CalendarPlugin 
     
     @Override
     public void selectReservation(Reservation selectedObject){
-        DetailSelectEvent event2 = new DetailSelectEvent(selectedObject);
+        DetailSelectEvent event2 = new DetailSelectEvent(selectedObject, null);
         eventBus.fireEvent(event2);
         logger.info("selection changed");
 

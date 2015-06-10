@@ -10,12 +10,14 @@ import org.rapla.client.gwt.view.NavigatorView;
 import org.rapla.client.gwt.view.NavigatorView.NavigatorAction;
 import org.rapla.client.gwt.view.WeekviewGWT;
 import org.rapla.client.gwt.view.WeekviewGWT.Callback;
+import org.rapla.client.menu.gwt.context.ContextCreator;
 import org.rapla.client.plugin.weekview.CalendarWeekView;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
+import org.rapla.gui.PopupContext;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -30,10 +32,10 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     Logger logger;
 
     @Inject
-    public CalendarWeekViewImpl(Logger logger, RaplaLocale locale)
+    public CalendarWeekViewImpl(Logger logger, RaplaLocale locale, ContextCreator contextCreator)
     {
         navigatorView = new NavigatorView("week", this, locale);
-        calendar = new WeekviewGWT("week", logger, this);
+        calendar = new WeekviewGWT("week", logger, this, contextCreator);
         this.logger = logger;
     }
 
@@ -72,11 +74,11 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     }
 
     @Override
-    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot)
+    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot, PopupContext context)
     {
         try
         {
-            getPresenter().updateReservation(block, daySlot, rowSlot);
+            getPresenter().updateReservation(block, daySlot, rowSlot, context);
         }
         catch (RaplaException e)
         {
@@ -85,17 +87,17 @@ public class CalendarWeekViewImpl extends AbstractView<org.rapla.client.plugin.w
     }
 
     @Override
-    public void selectReservation(HTMLRaplaBlock block)
+    public void selectReservation(HTMLRaplaBlock block, PopupContext context)
     {
-        getPresenter().selectReservation(block);
+        getPresenter().selectReservation(block, context);
     }
 
     @Override
-    public void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay)
+    public void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay, final PopupContext context)
     {
         try
         {
-            getPresenter().newReservation(daySlot, fromMinuteOfDay, tillMinuteOfDay);
+            getPresenter().newReservation(daySlot, fromMinuteOfDay, tillMinuteOfDay, context);
         }
         catch (RaplaException e)
         {

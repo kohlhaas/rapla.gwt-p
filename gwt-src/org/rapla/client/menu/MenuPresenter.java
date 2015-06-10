@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.rapla.client.gwt.GWTPopupContext;
 import org.rapla.client.menu.MenuView.Presenter;
 import org.rapla.client.menu.data.MenuCallback;
 import org.rapla.client.menu.data.MenuEntry;
@@ -33,13 +33,11 @@ import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
-import org.rapla.gui.MenuContext;
 import org.rapla.gui.PopupContext;
 import org.rapla.gui.ReservationController;
 import org.rapla.gui.ReservationEdit;
 import org.rapla.gui.internal.common.RaplaClipboard;
 import org.rapla.plugin.abstractcalendar.AbstractRaplaBlock;
-import org.rapla.plugin.abstractcalendar.SwingRaplaBlock;
 
 public class MenuPresenter extends RaplaComponent implements Presenter
 {
@@ -55,7 +53,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
     //    private final MenuFactory menuFactory;
 
     @Inject
-    public MenuPresenter(ClientFacade facade, I18nBundle i18n, RaplaLocale raplaLocale, Logger logger, CalendarSelectionModel model,
+    public MenuPresenter(ClientFacade facade, @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n, RaplaLocale raplaLocale, Logger logger, CalendarSelectionModel model,
             ReservationController reservationController, RaplaClipboard clipboard, /*InfoFactory infoFactory, MenuFactory menuFactory,*/
             @SuppressWarnings("rawtypes") MenuView view)
     {
@@ -74,7 +72,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
     }
 
     /** override this method if you want to implement a custom time selection */
-    public void selectionChanged(Date start, Date end)
+    public void selectionChanged(final Date start, final Date end)
     {
         TimeInterval interval = new TimeInterval(start, end);
         model.setMarkedIntervals(Collections.singleton(interval), !keepTime);
@@ -82,14 +80,14 @@ public class MenuPresenter extends RaplaComponent implements Presenter
         model.setMarkedAllocatables(markedAllocatables);
     }
 
-    public void selectionPopup(Point p)
+    public void selectionPopup(final PopupContext popupContext)
     {
         try
         {
-            Map<MenuEntry, Runnable> mapping = new HashMap<MenuEntry, Runnable>();
-            List<MenuEntry> menu = new ArrayList<MenuEntry>();
-            Object focusedObject = null;
-            MenuContext context = new MenuContext(getContext(), focusedObject);
+            final Map<MenuEntry, Runnable> mapping = new HashMap<MenuEntry, Runnable>();
+            final List<MenuEntry> menu = new ArrayList<MenuEntry>();
+            // Object focusedObject = null;
+            // MenuContext context = new MenuContext(getContext(), focusedObject);
             // TODO
             //            menuFactory.addReservationWizards(null, context, null);
             if (canCreateReservation())
@@ -155,7 +153,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
                             boolean keepTime = !model.isMarkedIntervalTimeEnabled();
                             try
                             {
-                                reservationController.pasteAppointment(start, createPopupContext(p), false, keepTime);
+                                reservationController.pasteAppointment(start, popupContext, false, keepTime);
                             }
                             catch (RaplaException e)
                             {
@@ -179,7 +177,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
                         boolean keepTime = !model.isMarkedIntervalTimeEnabled();
                         try
                         {
-                            reservationController.pasteAppointment(start, createPopupContext(p), true, keepTime);
+                            reservationController.pasteAppointment(start, popupContext, true, keepTime);
                         }
                         catch (RaplaException e)
                         {
@@ -188,7 +186,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
                     }
                 });
             }
-            view.showMenuPopup(menu, p, new MenuCallback()
+            view.showMenuPopup(menu, popupContext, new MenuCallback()
             {
                 @Override
                 public void selectEntry(MenuEntry entry)
@@ -207,17 +205,17 @@ public class MenuPresenter extends RaplaComponent implements Presenter
         }
     }
 
-    public void blockPopup(Block block, Point p)
+    public void blockPopup(final Block block, final PopupContext popupContext)
     {
         AbstractRaplaBlock b = (AbstractRaplaBlock) block;
         if (!b.isBlockSelected())
         {
             return;
         }
-        showPopupMenu(b, p);
+        showPopupMenu(b, popupContext);
     }
 
-    public void blockEdit(Block block, Point p)
+    public void blockEdit(final Block block, final Point p)
     {
         // double click on block in view.
         AbstractRaplaBlock b = (AbstractRaplaBlock) block;
@@ -238,30 +236,24 @@ public class MenuPresenter extends RaplaComponent implements Presenter
         }
     }
 
-    public void moved(Block block, Point p, Date newStart, int slotNr)
+    public void moved(final Block block, Date newStart, int slotNr, final PopupContext popupContext)
     {
-        moved(block, p, newStart);
+        moved(block, newStart, popupContext);
     }
 
-    protected void moved(Block block, Point p, Date newStart)
+    protected void moved(Block block, Date newStart, final PopupContext popupContext)
     {
-        SwingRaplaBlock b = (SwingRaplaBlock) block;
+        AbstractRaplaBlock b = (AbstractRaplaBlock) block;
         try
         {
             long offset = newStart.getTime() - b.getStart().getTime();
             Date newStartWithOffset = new Date(b.getAppointmentBlock().getStart() + offset);
-            reservationController.moveAppointment(b.getAppointmentBlock(), newStartWithOffset, createPopupContext(p), keepTime);
+            reservationController.moveAppointment(b.getAppointmentBlock(), newStartWithOffset, popupContext, keepTime);
         }
         catch (RaplaException ex)
         {
             view.showException(ex);
         }
-    }
-
-    // Verstehe ich nicht....
-    private PopupContext createPopupContext(Point p)
-    {
-        return new GWTPopupContext();
     }
 
     public boolean isKeepTime()
@@ -274,12 +266,12 @@ public class MenuPresenter extends RaplaComponent implements Presenter
         this.keepTime = keepTime;
     }
 
-    public void resized(Block block, Point p, Date newStart, Date newEnd, int slotNr)
+    public void resized(Block block, Point p, Date newStart, Date newEnd, int slotNr, final PopupContext popupContext)
     {
-        SwingRaplaBlock b = (SwingRaplaBlock) block;
+        AbstractRaplaBlock b = (AbstractRaplaBlock) block;
         try
         {
-            reservationController.resizeAppointment(b.getAppointmentBlock(), newStart, newEnd, createPopupContext(p), keepTime);
+            reservationController.resizeAppointment(b.getAppointmentBlock(), newStart, newEnd, popupContext, keepTime);
         }
         catch (RaplaException ex)
         {
@@ -315,7 +307,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
         return Collections.emptyList();
     }
 
-    protected void showPopupMenu(AbstractRaplaBlock b, Point p)
+    protected void showPopupMenu(final AbstractRaplaBlock b, final PopupContext popupContext)
     {
         final Map<MenuEntry, Runnable> mapping = new HashMap<MenuEntry, Runnable>();
         final AppointmentBlock appointmentBlock = b.getAppointmentBlock();
@@ -346,7 +338,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
                 {
                     try
                     {
-                        reservationController.copyAppointment(appointmentBlock, createPopupContext(p), copyContextAllocatables);
+                        reservationController.copyAppointment(appointmentBlock, popupContext, copyContextAllocatables);
                     }
                     catch (RaplaException e)
                     {
@@ -367,7 +359,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
                 {
                     try
                     {
-                        reservationController.cutAppointment(appointmentBlock, createPopupContext(p), copyContextAllocatables);
+                        reservationController.cutAppointment(appointmentBlock, popupContext, copyContextAllocatables);
                     }
                     catch (RaplaException e)
                     {
@@ -412,7 +404,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
                 {
                     try
                     {
-                        reservationController.deleteAppointment(appointmentBlock, createPopupContext(p));
+                        reservationController.deleteAppointment(appointmentBlock, popupContext);
                     }
                     catch (RaplaException e)
                     {
@@ -468,7 +460,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
         //                }
         //            }
 
-        view.showMenuPopup(menu, p, new MenuCallback()
+        view.showMenuPopup(menu, popupContext, new MenuCallback()
         {
             @Override
             public void selectEntry(MenuEntry entry)

@@ -166,7 +166,7 @@ public class Application implements ApplicationView.Presenter {
             newEvent.addAppointment( newAppointment);
             final Allocatable[] resources = facade.getAllocatables();
             newEvent.addAllocatable( resources[0]);
-            eventBus.fireEvent(new DetailSelectEvent(newEvent));
+            eventBus.fireEvent(new DetailSelectEvent(newEvent, null));
         } catch (RaplaException e1) {
             logger.error( e1.getMessage(), e1);
         } 

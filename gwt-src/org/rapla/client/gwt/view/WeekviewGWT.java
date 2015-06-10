@@ -7,12 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.rapla.client.menu.gwt.context.ContextCreator;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.Slot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.SpanAndMinute;
 import org.rapla.components.calendarview.Block;
 import org.rapla.framework.logger.Logger;
+import org.rapla.gui.PopupContext;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
 import com.google.gwt.dom.client.Document;
@@ -52,26 +54,28 @@ public class WeekviewGWT extends FlexTable
 
     public static interface Callback
     {
-        void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot);
+        void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer rowSlot, PopupContext context);
 
-        void selectReservation(HTMLRaplaBlock block);
+        void selectReservation(HTMLRaplaBlock block, PopupContext context);
 
-        void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay);
+        void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay, PopupContext context);
 
     }
 
-    private static final String BACKGROUND_COLOR_TARGET = "#ffa";
+    private static final String BACKGROUND_COLOR_TARGET = "#54FFE5";//"#ffa";
     private final Map<Element, Event> events = new HashMap<Element, Event>();
     private final Logger logger;
     private final List<Integer> extraDayColumns = new ArrayList<Integer>();
     private final Callback callback;
     List<HandlerRegistration> currentDomHandlers = new ArrayList<HandlerRegistration>();
+    private final ContextCreator contextCreator;
 
-    public WeekviewGWT(String tableStylePrefix, Logger logger, Callback callback)
+    public WeekviewGWT(String tableStylePrefix, Logger logger, Callback callback, ContextCreator contextCreator)
     {
         super();
         this.logger = logger;
         this.callback = callback;
+        this.contextCreator = contextCreator;
         setStyleName(tableStylePrefix);
         addStyleName("table");
         this.sinkEvents(com.google.gwt.user.client.Event.getTypeInt(ContextMenuEvent.getType().getName()));
@@ -270,7 +274,8 @@ public class WeekviewGWT extends FlexTable
             if (tc != null && tc.hasChildNodes() && events.containsKey(tc.getFirstChildElement()))
             {
                 final HTMLRaplaBlock htmlBlock = events.get(tc.getFirstChildElement()).getHtmlBlock();
-                callback.selectReservation(htmlBlock);
+                final PopupContext context = contextCreator.createContext(event);
+                callback.selectReservation(htmlBlock, context);
                 event.stopPropagation();
             }
         }
@@ -305,16 +310,16 @@ public class WeekviewGWT extends FlexTable
 
         private void unmark(Position p1, Position p2)
         {
-            logger.info("unmarking from "+p1+" to "+p2);
+            logger.info("unmarking from " + p1 + " to " + p2);
             changeBackgroundColor(p1, p2, false);
         }
-        
+
         private void mark(Position p1, Position p2)
         {
-            logger.info("marking from "+p1+" to "+p2);
+            logger.info("marking from " + p1 + " to " + p2);
             changeBackgroundColor(p1, p2, true);
         }
-        
+
         private void changeBackgroundColor(Position p1, Position p2, boolean add)
         {
             final int column1Normalized = normalize(spanCells, p1.row, p1.column);
@@ -343,7 +348,7 @@ public class WeekviewGWT extends FlexTable
                             final Element element = getCellFormatter().getElement(aRow, column);
                             if (!element.hasChildNodes() || !events.containsKey(element.getFirstChildElement()))
                             {
-                                if(add)
+                                if (add)
                                 {
                                     element.getStyle().setBackgroundColor(BACKGROUND_COLOR_TARGET);
                                 }
@@ -440,7 +445,8 @@ public class WeekviewGWT extends FlexTable
                     final HTMLDaySlot daySlot = findDaySlot(column);
                     final Integer start = findRowSlot(p.row);
                     logger.info("day" + daySlot.getHeader() + " - " + start);
-                    callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, start);
+                    final PopupContext context = contextCreator.createContext(event);
+                    callback.updateReservation(originSupport.event.getHtmlBlock(), daySlot, start, context);
                 }
             }
             else if (originSupport.point != null)
@@ -454,7 +460,9 @@ public class WeekviewGWT extends FlexTable
                 final HTMLDaySlot daySlot = findDaySlot(column);
                 final Integer from = findRowSlot(Math.min(originSupport.point.row, p.row));
                 final Integer till = findRowSlot(Math.max(originSupport.point.row, p.row));
-                callback.newReservation(daySlot, from, till);
+
+                final PopupContext context = contextCreator.createContext(event);
+                callback.newReservation(daySlot, from, till, context);
             }
             originSupport.event = null;
             originSupport.point = null;

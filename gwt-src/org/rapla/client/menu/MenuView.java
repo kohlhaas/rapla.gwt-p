@@ -8,6 +8,7 @@ import org.rapla.client.menu.data.MenuCallback;
 import org.rapla.client.menu.data.MenuEntry;
 import org.rapla.client.menu.data.Point;
 import org.rapla.framework.RaplaException;
+import org.rapla.gui.PopupContext;
 
 public interface MenuView<W> extends View<Presenter>
 {
@@ -18,6 +19,6 @@ public interface MenuView<W> extends View<Presenter>
 
     void showException(RaplaException ex);
 
-    void showMenuPopup(List<MenuEntry> menu, Point p, MenuCallback menuCallback);
+    void showMenuPopup(List<MenuEntry> menu, PopupContext popupContext, MenuCallback menuCallback);
 
 }

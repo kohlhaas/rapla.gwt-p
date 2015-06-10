@@ -7,6 +7,10 @@ import javax.inject.Singleton;
 import org.rapla.AppointmentFormaterImpl;
 import org.rapla.client.ActivityManager;
 import org.rapla.client.ApplicationView;
+import org.rapla.client.menu.MenuPresenter;
+import org.rapla.client.menu.MenuView;
+import org.rapla.client.menu.gwt.MenuViewImpl;
+import org.rapla.client.menu.gwt.context.ContextCreator;
 import org.rapla.components.util.CommandScheduler;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.User;
@@ -54,6 +58,10 @@ public class RaplaGWTModule implements GinModule{
         binder.bind( ReservationController.class).to(ReservationControllerGWTImpl.class).in(Singleton.class);
         binder.bind( ReservationEditFactory.class).to(ReservationEditFactoryGWT.class).in(Singleton.class);;
         //binder.bind( CalendarSelectionModel.class).toProvider(provider)(CalendarModelImpl.class).in(Singleton.class);
+
+        binder.bind(ContextCreator.class).in(Singleton.class);
+        binder.bind(MenuPresenter.class).in(Singleton.class);
+        binder.bind(MenuView.class).to(MenuViewImpl.class).in(Singleton.class);
     }
     
     @Provides

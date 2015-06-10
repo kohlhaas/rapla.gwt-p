@@ -4,10 +4,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.rapla.client.base.View;
+import org.rapla.client.menu.data.MenuCallback;
+import org.rapla.client.menu.data.MenuEntry;
+import org.rapla.client.menu.data.Point;
 import org.rapla.client.plugin.weekview.CalendarWeekView.Presenter;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;
 import org.rapla.framework.RaplaException;
+import org.rapla.gui.PopupContext;
 import org.rapla.plugin.abstractcalendar.server.HTMLRaplaBlock;
 
 public interface CalendarWeekView<W> extends View<Presenter>
@@ -16,9 +20,9 @@ public interface CalendarWeekView<W> extends View<Presenter>
     public interface Presenter
     {
         
-        void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer minuteOfDay) throws RaplaException;
+        void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer minuteOfDay, PopupContext context) throws RaplaException;
 
-        void selectReservation(HTMLRaplaBlock block);
+        void selectReservation(HTMLRaplaBlock block, PopupContext context);
         
         void selectDate(Date newDate);
 
@@ -26,7 +30,7 @@ public interface CalendarWeekView<W> extends View<Presenter>
 
         void previous();
 
-        void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay) throws RaplaException;
+        void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay, PopupContext context) throws RaplaException;
     }
 
     W provideContent();

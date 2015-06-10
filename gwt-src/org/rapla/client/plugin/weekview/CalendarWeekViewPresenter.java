@@ -18,7 +18,7 @@ import javax.inject.Singleton;
 
 import org.rapla.client.base.CalendarPlugin;
 import org.rapla.client.event.DetailSelectEvent;
-import org.rapla.client.gwt.GWTPopupContext;
+import org.rapla.client.menu.MenuPresenter;
 import org.rapla.client.plugin.weekview.CalendarWeekView.Presenter;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.components.calendarview.Block;
@@ -27,12 +27,8 @@ import org.rapla.components.calendarview.Builder.PreperationResult;
 import org.rapla.components.calendarview.html.AbstractHTMLView;
 import org.rapla.components.util.DateTools;
 import org.rapla.components.xmlbundle.I18nBundle;
-import org.rapla.entities.domain.Allocatable;
 import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.AppointmentBlock;
-import org.rapla.entities.domain.Reservation;
-import org.rapla.entities.dynamictype.Attribute;
-import org.rapla.entities.dynamictype.Classification;
 import org.rapla.facade.CalendarOptions;
 import org.rapla.facade.CalendarSelectionModel;
 import org.rapla.facade.ClientFacade;
@@ -75,7 +71,16 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin<W
 
     @Inject
     private @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n;
+    
+    @Inject
+    private MenuPresenter presenter;
 
+//    @Inject
+//    private MenuFactory menuFactory;
+//    @Inject
+//    private MenuView menuView;
+
+    
     @SuppressWarnings("unchecked")
     @Inject
     public CalendarWeekViewPresenter(CalendarWeekView view)
@@ -97,41 +102,26 @@ public class CalendarWeekViewPresenter<W> implements Presenter, CalendarPlugin<W
     }
 
     @Override
-    public void selectReservation(HTMLRaplaBlock block)
+    public void selectReservation(HTMLRaplaBlock block, PopupContext context)
     {
         final AppointmentBlock appointmentBlock = block.getAppointmentBlock();
         final Appointment appointment = appointmentBlock.getAppointment();
-        eventBus.fireEvent(new DetailSelectEvent(appointment.getReservation()));
+        eventBus.fireEvent(new DetailSelectEvent(appointment.getReservation(), context));
     }
 
     @Override
-    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer minuteOfDay) throws RaplaException
+    public void updateReservation(HTMLRaplaBlock block, HTMLDaySlot daySlot, Integer minuteOfDay, PopupContext context) throws RaplaException
     {
         AppointmentBlock appointmentBlock = block.getAppointmentBlock();
         Date newStart = calcDate(daySlot, minuteOfDay);
         boolean keepTime = false;
-        PopupContext context = new GWTPopupContext();
         reservationController.moveAppointment(appointmentBlock, newStart, context, keepTime);
     }
-
+    
     @Override
-    public void newReservation(HTMLDaySlot daySlot, Integer fromMinuteOfDay, Integer tillMinuteOfDay) throws RaplaException
+    public void newReservation(final HTMLDaySlot daySlot, final Integer fromMinuteOfDay, final Integer tillMinuteOfDay, PopupContext context) throws RaplaException
     {
-        // TODO: change
-        CalendarOptions opt = getCalendarOptions();
-        final int rowsPerHour = opt.getRowsPerHour();
-        final Date startDate = calcDate(daySlot, fromMinuteOfDay);
-        final Date endDate = calcDate(daySlot, Math.min(tillMinuteOfDay + 60 / rowsPerHour, 24*60));
-        Reservation newEvent = facade.newReservation();
-        final Classification classification = newEvent.getClassification();
-        final Attribute first = classification.getType().getAttributes()[0];
-        classification.setValue(first, "Test");
-
-        final Appointment newAppointment = facade.newAppointment(startDate, endDate);
-        newEvent.addAppointment(newAppointment);
-        final Allocatable[] resources = facade.getAllocatables();
-        newEvent.addAllocatable(resources[0]);
-        eventBus.fireEvent(new DetailSelectEvent(newEvent));
+        presenter.selectionPopup(context);
     }
 
     private Date calcDate(HTMLDaySlot daySlot, Integer minuteOfDay)
