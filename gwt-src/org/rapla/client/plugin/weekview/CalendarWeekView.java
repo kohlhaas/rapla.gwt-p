@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.rapla.client.base.View;
-import org.rapla.client.menu.data.MenuCallback;
-import org.rapla.client.menu.data.MenuEntry;
-import org.rapla.client.menu.data.Point;
+import org.rapla.client.gui.menu.data.MenuCallback;
+import org.rapla.client.gui.menu.data.MenuEntry;
+import org.rapla.client.gui.menu.data.Point;
 import org.rapla.client.plugin.weekview.CalendarWeekView.Presenter;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;

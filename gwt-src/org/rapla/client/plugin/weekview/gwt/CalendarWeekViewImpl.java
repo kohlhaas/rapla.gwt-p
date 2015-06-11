@@ -6,11 +6,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.rapla.client.base.AbstractView;
+import org.rapla.client.gui.menu.gwt.context.ContextCreator;
 import org.rapla.client.gwt.view.NavigatorView;
 import org.rapla.client.gwt.view.NavigatorView.NavigatorAction;
 import org.rapla.client.gwt.view.WeekviewGWT;
 import org.rapla.client.gwt.view.WeekviewGWT.Callback;
-import org.rapla.client.menu.gwt.context.ContextCreator;
 import org.rapla.client.plugin.weekview.CalendarWeekView;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.RowSlot;

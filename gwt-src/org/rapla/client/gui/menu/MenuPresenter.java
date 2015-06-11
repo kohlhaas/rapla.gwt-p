@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.rapla.client.menu;
+package org.rapla.client.gui.menu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +15,10 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.rapla.client.menu.MenuView.Presenter;
-import org.rapla.client.menu.data.MenuCallback;
-import org.rapla.client.menu.data.MenuEntry;
-import org.rapla.client.menu.data.Point;
+import org.rapla.client.gui.menu.MenuView.Presenter;
+import org.rapla.client.gui.menu.data.MenuCallback;
+import org.rapla.client.gui.menu.data.MenuEntry;
+import org.rapla.client.gui.menu.data.Point;
 import org.rapla.components.calendarview.Block;
 import org.rapla.components.util.TimeInterval;
 import org.rapla.components.xmlbundle.I18nBundle;
@@ -33,6 +33,7 @@ import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
+import org.rapla.gui.MenuFactory;
 import org.rapla.gui.PopupContext;
 import org.rapla.gui.ReservationController;
 import org.rapla.gui.ReservationEdit;
@@ -50,12 +51,12 @@ public class MenuPresenter extends RaplaComponent implements Presenter
 
     //    private final InfoFactory infoFactory;
 
-    //    private final MenuFactory menuFactory;
+    private final MenuFactory menuFactory;
 
     @Inject
-    public MenuPresenter(ClientFacade facade, @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n, RaplaLocale raplaLocale, Logger logger, CalendarSelectionModel model,
-            ReservationController reservationController, RaplaClipboard clipboard, /*InfoFactory infoFactory, MenuFactory menuFactory,*/
-            @SuppressWarnings("rawtypes") MenuView view)
+    public MenuPresenter(ClientFacade facade, @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n, RaplaLocale raplaLocale, Logger logger,
+            CalendarSelectionModel model, ReservationController reservationController, RaplaClipboard clipboard, /* InfoFactory infoFactory,*/
+            MenuFactory menuFactory, @SuppressWarnings("rawtypes") MenuView view)
     {
         super(facade, i18n, raplaLocale, logger);
         this.model = model;
@@ -63,7 +64,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
         this.view = view;
         this.clipboard = clipboard;
         //        this.infoFactory = infoFactory;
-        //        this.menuFactory = menuFactory;
+        this.menuFactory = menuFactory;
     }
 
     protected final CalendarSelectionModel getModel()
@@ -87,9 +88,53 @@ public class MenuPresenter extends RaplaComponent implements Presenter
             final Map<MenuEntry, Runnable> mapping = new HashMap<MenuEntry, Runnable>();
             final List<MenuEntry> menu = new ArrayList<MenuEntry>();
             // Object focusedObject = null;
-            // MenuContext context = new MenuContext(getContext(), focusedObject);
-            // TODO
-            //            menuFactory.addReservationWizards(null, context, null);
+//             MenuContext context = new MenuContext(getContext(), focusedObject);
+//            // TODO
+//             menuFactory.addReservationWizards(new MenuInterface()
+//            {
+//                
+//                @Override
+//                public void removeAllBetween(String startId, String endId)
+//                {
+//                    
+//                }
+//                
+//                @Override
+//                public void removeAll()
+//                {
+//                    menu.clear();
+//                }
+//                
+//                @Override
+//                public void remove(RaplaAction item)
+//                {
+//                    
+//                }
+//                
+//                @Override
+//                public void insertBeforeId(JComponent component, String id)
+//                {
+//                    
+//                }
+//                
+//                @Override
+//                public void insertAfterId(Component component, String id)
+//                {
+//                    
+//                }
+//                
+//                @Override
+//                public void addSeparator()
+//                {
+//                    
+//                }
+//                
+//                @Override
+//                public void add(RaplaAction item)
+//                {
+//                    
+//                }
+//            }, context, null);
             if (canCreateReservation())
             {
                 if (canUserAllocateSomething(getUser()))

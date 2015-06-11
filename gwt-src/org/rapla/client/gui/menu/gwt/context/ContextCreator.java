@@ -1,7 +1,7 @@
-package org.rapla.client.menu.gwt.context;
+package org.rapla.client.gui.menu.gwt.context;
 
+import org.rapla.client.gui.menu.data.Point;
 import org.rapla.client.gwt.GWTPopupContext;
-import org.rapla.client.menu.data.Point;
 import org.rapla.gui.PopupContext;
 
 import com.google.gwt.dom.client.NativeEvent;

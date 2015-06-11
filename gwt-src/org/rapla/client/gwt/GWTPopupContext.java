@@ -1,6 +1,6 @@
 package org.rapla.client.gwt;
 
-import org.rapla.client.menu.data.Point;
+import org.rapla.client.gui.menu.data.Point;
 import org.rapla.gui.PopupContext;
 
 public class GWTPopupContext implements PopupContext

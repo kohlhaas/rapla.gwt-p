@@ -18,7 +18,7 @@ import javax.inject.Singleton;
 
 import org.rapla.client.base.CalendarPlugin;
 import org.rapla.client.event.DetailSelectEvent;
-import org.rapla.client.menu.MenuPresenter;
+import org.rapla.client.gui.menu.MenuPresenter;
 import org.rapla.client.plugin.weekview.CalendarWeekView.Presenter;
 import org.rapla.client.plugin.weekview.CalendarWeekViewPresenter.HTMLWeekViewPresenter.HTMLDaySlot;
 import org.rapla.components.calendarview.Block;

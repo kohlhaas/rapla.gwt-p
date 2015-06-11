@@ -1,12 +1,11 @@
-package org.rapla.client.menu;
+package org.rapla.client.gui.menu;
 
 import java.util.List;
 
 import org.rapla.client.base.View;
-import org.rapla.client.menu.MenuView.Presenter;
-import org.rapla.client.menu.data.MenuCallback;
-import org.rapla.client.menu.data.MenuEntry;
-import org.rapla.client.menu.data.Point;
+import org.rapla.client.gui.menu.MenuView.Presenter;
+import org.rapla.client.gui.menu.data.MenuCallback;
+import org.rapla.client.gui.menu.data.MenuEntry;
 import org.rapla.framework.RaplaException;
 import org.rapla.gui.PopupContext;
 

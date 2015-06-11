@@ -1,14 +1,14 @@
-package org.rapla.client.menu.gwt;
+package org.rapla.client.gui.menu.gwt;
 
 import java.util.List;
 
 import org.rapla.client.base.AbstractView;
+import org.rapla.client.gui.menu.MenuView;
+import org.rapla.client.gui.menu.data.MenuCallback;
+import org.rapla.client.gui.menu.data.MenuEntry;
+import org.rapla.client.gui.menu.data.Point;
 import org.rapla.client.gwt.GWTPopupContext;
 import org.rapla.client.gwt.components.MenuPopup;
-import org.rapla.client.menu.MenuView;
-import org.rapla.client.menu.data.MenuCallback;
-import org.rapla.client.menu.data.MenuEntry;
-import org.rapla.client.menu.data.Point;
 import org.rapla.framework.RaplaException;
 import org.rapla.gui.PopupContext;
 
@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.PopupPanel;
 
-public class MenuViewImpl extends AbstractView<org.rapla.client.menu.MenuView.Presenter> implements MenuView<IsWidget>
+public class MenuViewImpl extends AbstractView<org.rapla.client.gui.menu.MenuView.Presenter> implements MenuView<IsWidget>
 {
 
     @Override

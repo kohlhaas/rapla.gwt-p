@@ -1,4 +1,4 @@
-package org.rapla.client.menu.data;
+package org.rapla.client.gui.menu.data;
 
 public class Point
 {
