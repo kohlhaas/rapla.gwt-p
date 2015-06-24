@@ -1,6 +1,5 @@
 package org.rapla.client.gwt;
 
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -14,60 +13,82 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 
 @Singleton
-final class GWTCommandScheduler implements CommandScheduler {
+final class GWTCommandScheduler implements CommandScheduler
+{
     private final Logger gwtLogger;
 
     @Inject
-    GWTCommandScheduler(Logger gwtLogger) {
+    GWTCommandScheduler(Logger gwtLogger)
+    {
         this.gwtLogger = gwtLogger;
     }
 
     @Override
-    public Cancelable schedule(final Command command, long delay, final long period) {
-        if ( period > 0)
-    	{
-            RepeatingCommand cmd = new RepeatingCommand() {
-    	        
+    public Cancelable schedule(final Command command, long delay, final long period)
+    {
+        if (period > 0)
+        {
+            RepeatingCommand cmd = new RepeatingCommand()
+            {
+
                 @Override
-                public boolean execute() {
-                    try {
+                public boolean execute()
+                {
+                    try
+                    {
                         //gwtLogger.info("Refreshing client with period " + period);
                         command.execute();
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e)
+                    {
                         gwtLogger.warn(e.getMessage(), e);
                     }
                     return true;
                 }
             };
-    	Scheduler.get().scheduleFixedPeriod(cmd, (int)period);
-    	}
-    	else
-    	{
-    	    ScheduledCommand entry = new ScheduledCommand() {
-                
+            Scheduler.get().scheduleFixedPeriod(cmd, (int) period);
+        }
+        else
+        {
+            ScheduledCommand entry = new ScheduledCommand()
+            {
+
                 @Override
-                public void execute() {
-                    try {
+                public void execute()
+                {
+                    try
+                    {
                         //gwtLogger.info("Refreshing client without period ");
                         command.execute();
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e)
+                    {
                         gwtLogger.warn(e.getMessage(), e);
                     }
-                    
+
                 }
             };
-            Scheduler.get().scheduleEntry( entry);
-    	}
-    	
-    	return new Cancelable() {
-    		
-    		public void cancel() {
-    		}
-    	};
+            Scheduler.get().scheduleEntry(entry);
+        }
+
+        return new Cancelable()
+        {
+
+            public void cancel()
+            {
+            }
+        };
     }
 
     @Override
-    public Cancelable schedule(Command command, long delay) {
-    	return schedule(command, delay, -1);
+    public Cancelable schedule(Command command, long delay)
+    {
+        return schedule(command, delay, -1);
+    }
+
+    @Override
+    public Cancelable scheduleSynchronized(Object synchronizationObject, Command command, long delay)
+    {
+        return schedule(command, delay);
     }
 }

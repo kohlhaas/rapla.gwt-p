@@ -54,7 +54,7 @@ public class Application implements ApplicationView.Presenter {
     private @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n;
 	EventBus eventBus;
 	ApplicationView mainView;
-	
+
 	private List<CalendarPlugin> viewPluginPresenter;
 	CalendarPlugin selectedView;
 
@@ -73,7 +73,7 @@ public class Application implements ApplicationView.Presenter {
         this.eventBus = eventBus;
 		mainView.setPresenter( this);
 	}
-	
+
 	@Override
 	public void setSelectedViewIndex(int index) {
 	    if ( index >=0)

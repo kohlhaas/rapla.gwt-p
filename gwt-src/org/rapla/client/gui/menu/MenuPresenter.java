@@ -33,7 +33,6 @@ import org.rapla.facade.RaplaComponent;
 import org.rapla.framework.RaplaException;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
-import org.rapla.gui.MenuFactory;
 import org.rapla.gui.PopupContext;
 import org.rapla.gui.ReservationController;
 import org.rapla.gui.ReservationEdit;
@@ -51,12 +50,12 @@ public class MenuPresenter extends RaplaComponent implements Presenter
 
     //    private final InfoFactory infoFactory;
 
-    private final MenuFactory menuFactory;
+    //private final MenuFactory menuFactory;
 
     @Inject
     public MenuPresenter(ClientFacade facade, @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n, RaplaLocale raplaLocale, Logger logger,
-            CalendarSelectionModel model, ReservationController reservationController, RaplaClipboard clipboard, /* InfoFactory infoFactory,*/
-            MenuFactory menuFactory, @SuppressWarnings("rawtypes") MenuView view)
+            CalendarSelectionModel model, ReservationController reservationController, RaplaClipboard clipboard/*,  InfoFactory infoFactory,
+            MenuFactory menuFactory*/, @SuppressWarnings("rawtypes") MenuView view)
     {
         super(facade, i18n, raplaLocale, logger);
         this.model = model;
@@ -64,7 +63,7 @@ public class MenuPresenter extends RaplaComponent implements Presenter
         this.view = view;
         this.clipboard = clipboard;
         //        this.infoFactory = infoFactory;
-        this.menuFactory = menuFactory;
+      //  this.menuFactory = menuFactory;
     }
 
     protected final CalendarSelectionModel getModel()

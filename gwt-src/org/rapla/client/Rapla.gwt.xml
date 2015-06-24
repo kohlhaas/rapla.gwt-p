@@ -11,6 +11,10 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name="com.google.gwt.http.HTTP"/>
   <inherits name='com.google.gwt.logging.Logging'/>
+  <inherits name="com.google.gwt.i18n.CldrLocales" />
+  <inherits name="com.google.gwt.i18n.I18N" />
+<!--   <inherits name="com.blogspot.ctasada.gwt.eureka.Eureka"/> -->
+<!--   <inherits name="com.blogspot.ctasada.gwt.eureka.theme.standard.Standard"/> -->
   
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
@@ -29,7 +33,8 @@
  
   <set-property name="user.agent" value="safari" />
   
-  
+  <extend-property name="locale" values="de" />
+  <set-property name="locale" value="de" />
   <!-- English language, independent of country -->
   <!-- 
   <extend-property name="locale" values="en"/>
@@ -44,7 +49,7 @@
   
   <define-configuration-property name="extra.ginModules" is-multi-valued="true" />
   <!--  Replace with your ReservationGWTModule -->
-  <extend-configuration-property name="extra.ginModules" value="org.rapla.client.edit.reservation.sample.gwt.SampleReservationEditModule" />
+  <extend-configuration-property name="extra.ginModules" value="org.rapla.client.edit.reservation.sample.gwt.ReservationEditModule" />
 
   
 </module>
