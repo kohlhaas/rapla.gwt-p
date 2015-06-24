@@ -2,7 +2,6 @@ package org.rapla.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,13 +14,10 @@ import javax.inject.Singleton;
 import org.rapla.client.base.CalendarPlugin;
 import org.rapla.client.edit.reservation.ReservationController;
 import org.rapla.client.event.DetailSelectEvent;
-import org.rapla.components.util.DateTools;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.entities.Entity;
 import org.rapla.entities.configuration.CalendarModelConfiguration;
 import org.rapla.entities.configuration.Preferences;
-import org.rapla.entities.domain.Allocatable;
-import org.rapla.entities.domain.Appointment;
 import org.rapla.entities.domain.Reservation;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.Classification;
@@ -54,7 +50,7 @@ public class Application implements ApplicationView.Presenter {
     private @Named(RaplaComponent.RaplaResourcesId) I18nBundle i18n;
 	EventBus eventBus;
 	ApplicationView mainView;
-	
+
 	private List<CalendarPlugin> viewPluginPresenter;
 	CalendarPlugin selectedView;
 
@@ -73,7 +69,7 @@ public class Application implements ApplicationView.Presenter {
         this.eventBus = eventBus;
 		mainView.setPresenter( this);
 	}
-	
+
 	@Override
 	public void setSelectedViewIndex(int index) {
 	    if ( index >=0)
@@ -154,18 +150,18 @@ public class Application implements ApplicationView.Presenter {
 	    logger.info( "Add clicked");
         try {
             Reservation newEvent = facade.newReservation();
-            final Date selectedDate =facade.today();
-            final Date time = new Date (DateTools.MILLISECONDS_PER_MINUTE * calendarOptions.getWorktimeStartMinutes());
-            final Date startDate = raplaLocale.toDate(selectedDate,time);
+//            final Date selectedDate =facade.today();
+//            final Date time = new Date (DateTools.MILLISECONDS_PER_MINUTE * calendarOptions.getWorktimeStartMinutes());
+//            final Date startDate = raplaLocale.toDate(selectedDate,time);
             final Classification classification = newEvent.getClassification();
             final Attribute first = classification.getType().getAttributes()[0];
             classification.setValue(first, "Test");
             
-            final Date endDate = new Date( startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
-            final Appointment newAppointment = facade.newAppointment( startDate, endDate);
-            newEvent.addAppointment( newAppointment);
-            final Allocatable[] resources = facade.getAllocatables();
-            newEvent.addAllocatable( resources[0]);
+//            final Date endDate = new Date( startDate.getTime() + DateTools.MILLISECONDS_PER_HOUR);
+//            final Appointment newAppointment = facade.newAppointment( startDate, endDate);
+//            newEvent.addAppointment( newAppointment);
+//            final Allocatable[] resources = facade.getAllocatables();
+//            newEvent.addAllocatable( resources[0]);
             eventBus.fireEvent(new DetailSelectEvent(newEvent));
         } catch (RaplaException e1) {
             logger.error( e1.getMessage(), e1);

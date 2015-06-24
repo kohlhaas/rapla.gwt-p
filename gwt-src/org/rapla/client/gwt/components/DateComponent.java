@@ -9,30 +9,35 @@ import org.rapla.framework.RaplaLocale;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
-public class DateComponent extends SimplePanel implements ValueChangeHandler<String>, HasValueChangeHandlers<Date>
+public class DateComponent extends SimplePanel implements ValueChangeHandler<String>
 {
+    public interface DateValueChanged
+    {
+        void valueChanged(Date newValue);
+    }
+
     private final TextBox tb = new TextBox();
     private final RaplaLocale locale;
     private final DatePicker datePicker;
+    private final DateValueChanged changeHandler;
 
-    public DateComponent(Date initDate, RaplaLocale locale)
+    public DateComponent(Date initDate, RaplaLocale locale, DateValueChanged changeHandler)
     {
         super();
         this.locale = locale;
+        this.changeHandler = changeHandler;
         tb.setStyleName("dateComponent");
         add(tb);
         tb.setValue(locale.formatDate(initDate), false);
-        if (!isHtml5DateInputSupported())
+        if (!InputUtils.isHtml5DateInputSupported())
         {
             datePicker = new DatePicker();
             final PopupPanel popupPanel = new PopupPanel(true, true);
@@ -90,17 +95,6 @@ public class DateComponent extends SimplePanel implements ValueChangeHandler<Str
         }
     }
 
-    private native boolean isHtml5DateInputSupported()/*-{
-		var datefield = document.createElement("input")
-		datefield.setAttribute("type", "date")
-		return datefield.type == "date"
-    }-*/;
-
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<Date> handler)
-    {
-        return addHandler(handler, ValueChangeEvent.getType());
-    }
-
     @Override
     public void onValueChange(ValueChangeEvent<String> event)
     {
@@ -108,7 +102,7 @@ public class DateComponent extends SimplePanel implements ValueChangeHandler<Str
         try
         {
             final Date newValue = SerializableDateTimeFormat.INSTANCE.parseDate(dateInIso, false);
-            ValueChangeEvent.fire(this, newValue);
+            changeHandler.valueChanged(newValue);
         }
         catch (ParseDateException e)
         {

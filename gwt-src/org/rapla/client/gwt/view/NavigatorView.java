@@ -3,13 +3,12 @@ package org.rapla.client.gwt.view;
 import java.util.Date;
 
 import org.rapla.client.gwt.components.DateComponent;
+import org.rapla.client.gwt.components.DateComponent.DateValueChanged;
 import org.rapla.components.util.DateTools;
 import org.rapla.framework.RaplaLocale;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -31,14 +30,12 @@ public class NavigatorView extends FlowPanel
         super();
         setStyleName(parentStyle);
         addStyleName("navigator");
-        dateComponent = new DateComponent(new Date(), raplaLocale);
-        dateComponent.addValueChangeHandler(new ValueChangeHandler<Date>()
+        dateComponent = new DateComponent(new Date(), raplaLocale, new DateValueChanged()
         {
             @Override
-            public void onValueChange(ValueChangeEvent<Date> event)
+            public void valueChanged(Date newValue)
             {
-                final Date date = event.getValue();
-                navigatorAction.selectedDate(date);
+                navigatorAction.selectedDate(newValue);
             }
         });
         this.add(dateComponent);
