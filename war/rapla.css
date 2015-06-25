@@ -48,6 +48,10 @@ h1 {
 	z-index: 150;
 }
 
+.navigator{
+	width: 200px;	
+}
+
 /* ADD BUTTON for new event */
 .addButton {
 	float: right;
@@ -80,8 +84,14 @@ h1 {
 	padding-left: 10px;
 }
 
-.label, .input {
+.inputWrapper .label{
 	margin-top: 10px;
+	color: #000;
+	font-size: 90%;
+	text-align: left;
+}
+ .input {
+	margin-top: 8px;
 }
 
 .dateInput {
@@ -99,6 +109,7 @@ h1 {
 	padding-top: 20px;
 	border-spacing: 0;
 	border-bottom: 1px solid #000000;
+	border-collapse: inherit;
 }
 
 .week.table td, .week.table tr {
@@ -176,7 +187,8 @@ h1 {
 /* START RESERVATIONVIEW */
 /* ACTION BAR */
 .tabbar {
-	width: 100%
+	width: 100%;
+	height: 35px;
 }
 
 .tabbarWrapper {

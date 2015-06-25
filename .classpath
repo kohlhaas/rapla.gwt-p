@@ -12,6 +12,10 @@
 	<classpathentry exported="true" kind="lib" path="lib/javax.inject.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mockito-all-1.10.17.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jukito-1.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/gwtbootstrap3-0.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/gwtbootstrap3-extras-0.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/gwtbootstrap3-0.9.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/gwtbootstrap3-extras-0.9.1-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="eclipse-build"/>

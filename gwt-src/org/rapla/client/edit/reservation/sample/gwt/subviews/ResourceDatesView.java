@@ -10,7 +10,6 @@ import org.rapla.framework.RaplaLocale;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -26,12 +25,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ResourceDatesView
 {
-
-    private static final ImageResource IMG_PLUS = ImageImport.INSTANCE.plusIcon();
-    private static final ImageResource IMG_LOUPE = ImageImport.INSTANCE.loupeIcon();
-    private static final ImageResource IMG_FILTER = ImageImport.INSTANCE.filterIcon();
-    private static final ImageResource IMG_CROSS_GREY = ImageImport.INSTANCE.crossGreyIcon();
-    private static final ImageResource IMG_NEXT_GREY = ImageImport.INSTANCE.nextGreyIcon();
 
     private FlowPanel contentPanel;
     private FlowPanel buttonBar;
@@ -78,7 +71,7 @@ public class ResourceDatesView
         buttonBar = new FlowPanel();
         buttonBar.setStyleName("datesButtonBar");
 
-        final Image buttonPlus = new Image(IMG_PLUS);
+        final Image buttonPlus = new Image(ImageImport.INSTANCE.plusIcon());
         buttonPlus.setTitle("Termin erstellen");
         buttonPlus.setStyleName("buttonsResourceDates");
 
@@ -91,7 +84,7 @@ public class ResourceDatesView
             }
         });
 
-        final Image buttonGarbageCan = new Image(IMG_CROSS_GREY);
+        final Image buttonGarbageCan = new Image(ImageImport.INSTANCE.crossGreyIcon());
         buttonGarbageCan.setStyleName("buttonsResourceDates");
         buttonGarbageCan.setTitle("Termin l\u00F6schen");
         buttonGarbageCan.addClickHandler(new ClickHandler()
@@ -101,7 +94,7 @@ public class ResourceDatesView
                 //                getPresenter().onGarbageCanButtonClicked();
             }
         });
-        final Image buttonNextGap = new Image(IMG_NEXT_GREY);
+        final Image buttonNextGap = new Image(ImageImport.INSTANCE.nextGreyIcon());
         buttonNextGap.setStyleName("buttonsResourceDates");
 
         //
@@ -190,7 +183,7 @@ public class ResourceDatesView
         resourceTree = new Tree();
 
         // Filter
-        final Image filter = new Image(IMG_FILTER);
+        final Image filter = new Image(ImageImport.INSTANCE.filterIcon());
         filter.setStyleName("buttonFilter");
         filter.addClickHandler(new ClickHandler()
         {
@@ -225,7 +218,7 @@ public class ResourceDatesView
         searchField.setWidth("300px");
         searchField.setStyleName("searchInput");
 
-        Image loupe = new Image(IMG_LOUPE);
+        Image loupe = new Image(ImageImport.INSTANCE.loupeIcon());
         loupe.setStyleName("buttonLoupe");
 
         suche.add(searchField);

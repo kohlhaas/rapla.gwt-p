@@ -22,6 +22,8 @@
   <inherits name='com.google.gwt.user.theme.clean.Clean'/>
   <inherits name="com.google.gwt.inject.Inject"/>
   <inherits name='org.rapla.Rapla_main_module'/>
+  <inherits name="org.gwtbootstrap3.GwtBootstrap3Theme"/>
+  <inherits name="org.gwtbootstrap3.extras.datepicker.DatePicker"/>
   <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->

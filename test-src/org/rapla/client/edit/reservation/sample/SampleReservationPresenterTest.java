@@ -54,7 +54,7 @@ public class SampleReservationPresenterTest {
     verify(editView).show(event, user);
     
     // WHEN
-    controller.onSaveButtonClicked();
+    controller.onSaveButtonClicked(event);
     
     // THEN
     // test if store is called
@@ -68,7 +68,7 @@ public class SampleReservationPresenterTest {
     controller.edit(event, isNew);
     
     // WHEN
-    controller.onDeleteButtonClicked();
+    controller.onDeleteButtonClicked(event);
     
     // THEN
     // test if remove is called

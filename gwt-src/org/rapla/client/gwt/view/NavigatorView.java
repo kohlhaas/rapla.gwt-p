@@ -2,6 +2,8 @@ package org.rapla.client.gwt.view;
 
 import java.util.Date;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.rapla.client.gwt.components.DateComponent;
 import org.rapla.client.gwt.components.DateComponent.DateValueChanged;
 import org.rapla.components.util.DateTools;
@@ -9,7 +11,6 @@ import org.rapla.framework.RaplaLocale;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class NavigatorView extends FlowPanel
@@ -40,7 +41,7 @@ public class NavigatorView extends FlowPanel
         });
         this.add(dateComponent);
         final Button today = new Button("today");
-        today.setStyleName("button now");
+        today.setType(ButtonType.PRIMARY);
         today.addClickHandler(new ClickHandler()
         {
             @Override
@@ -52,7 +53,6 @@ public class NavigatorView extends FlowPanel
         });
         this.add(today);
         final Button previousButton = new Button("previous");
-        previousButton.setStyleName("button prev");
         previousButton.addClickHandler(new ClickHandler()
         {
             @Override
@@ -63,7 +63,6 @@ public class NavigatorView extends FlowPanel
         });
         this.add(previousButton);
         final Button nextButton = new Button("next");
-        nextButton.setStyleName("button next");
         nextButton.addClickHandler(new ClickHandler()
         {
             @Override

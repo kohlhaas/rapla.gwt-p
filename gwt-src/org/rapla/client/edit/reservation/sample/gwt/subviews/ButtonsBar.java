@@ -6,25 +6,17 @@ import org.rapla.entities.domain.Reservation;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.sun.prism.Presentable;
 
 public class ButtonsBar extends FlowPanel
 {
-    private static final ImageResource IMG_ICON_SAVE = ImageImport.INSTANCE.saveIcon();
-    private static final ImageResource IMG_ICON_CANCEL = ImageImport.INSTANCE.cancelIcon();
-    private static final ImageResource IMG_ICON_DELETE = ImageImport.INSTANCE.deleteIcon();
-    private static final ImageResource IMG_ICON_UNDO = ImageImport.INSTANCE.undoIcon();
-    private static final ImageResource IMG_ICON_REDO = ImageImport.INSTANCE.redoIcon();
-
     private Presenter presenter;
     private Reservation reservation;
 
     public ButtonsBar()
     {
-        final Image cancel = new Image(IMG_ICON_CANCEL);
+        final Image cancel = new Image(ImageImport.INSTANCE.cancelIcon());
         cancel.setStyleName("cancelButton");
         cancel.setTitle("Abbrechen");
         cancel.addClickHandler(new ClickHandler()
@@ -36,7 +28,7 @@ public class ButtonsBar extends FlowPanel
             }
         });
 
-        final Image save = new Image(IMG_ICON_SAVE);
+        final Image save = new Image(ImageImport.INSTANCE.saveIcon());
         //save = new Button("speichern");
         save.setStyleName("saveButton");
         save.setTitle("Veranstaltung speichern");
@@ -49,7 +41,7 @@ public class ButtonsBar extends FlowPanel
             }
         });
 
-        final Image delete = new Image(IMG_ICON_DELETE);
+        final Image delete = new Image(ImageImport.INSTANCE.deleteIcon());
         //delete = new Button("l\u00F6schen");
         delete.setStyleName("deleteButton");
         delete.setTitle("Veranstaltung l\u00F6schen");
@@ -62,11 +54,11 @@ public class ButtonsBar extends FlowPanel
             }
         });
 
-        final Image undo = new Image(IMG_ICON_UNDO);
+        final Image undo = new Image(ImageImport.INSTANCE.undoIcon());
         undo.setStyleName("undoButton");
         undo.setTitle("R\u00FCckg\u00E4ngig");
 
-        final Image redo = new Image(IMG_ICON_REDO);
+        final Image redo = new Image(ImageImport.INSTANCE.redoIcon());
         redo.setStyleName("redoButton");
         redo.setTitle("Wiederholen");
 
