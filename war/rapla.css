@@ -179,6 +179,10 @@ h1 {
 	width: 100%
 }
 
+.tabbarWrapper {
+	clear: both;
+}
+
 .cancelButton, .deleteButton, .saveButton, .redoButton, .undoButton {
 	float: left;
 	width: auto;

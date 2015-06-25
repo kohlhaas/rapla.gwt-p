@@ -46,7 +46,9 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         super();
         this.logger = logger;
         this.raplaLocale = raplaLocale;
+        content.setStyleName("content");
         tabBarPanel = new FlowPanel();
+        tabBarPanel.setStyleName("tabbarWrapper");
         bar = new TabBar();
         bar.addStyleName("tabbar");
         bar.addTab("Veranstaltungsinformationen");
