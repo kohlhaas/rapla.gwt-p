@@ -2,8 +2,6 @@ package org.rapla.client.edit.reservation.sample.gwt;
 
 import java.util.Locale;
 
-import javafx.scene.control.Tab;
-
 import javax.inject.Inject;
 
 import org.rapla.client.base.AbstractView;
@@ -33,19 +31,20 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     private final Logger logger;
 
-    private final RaplaLocale raplaLocale;
     private final FlowPanel content = new FlowPanel();
     private final FlowPanel tabBarPanel;
     private final ButtonsBar buttonsPanel;
     private final TabBar bar;
     private HandlerRegistration selectionHandler;
+    private Reservation actuallShownReservation = null;
+    private InfoView infoView;
+    private ResourceDatesView resourcesView;
 
     @Inject
-    public ReservationViewImpl(Logger logger, RaplaLocale raplaLocale)
+    public ReservationViewImpl(Logger logger)
     {
         super();
         this.logger = logger;
-        this.raplaLocale = raplaLocale;
         content.setStyleName("content");
         tabBarPanel = new FlowPanel();
         tabBarPanel.setStyleName("tabbarWrapper");
@@ -74,56 +73,76 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
 
     public void show(final Reservation reservation, final User user)
     {
-        final Panel popup = RaplaPopups.getPopupPanel();
-        popup.clear();
-        popup.setVisible(true);
-        popup.setHeight("90%");
-        popup.setWidth("90%");
-        final InfoView infoView = new InfoView(getPresenter(), raplaLocale, user);
-        final ResourceDatesView resourcesView = new ResourceDatesView(getPresenter(), raplaLocale);
-        if (selectionHandler != null)
+        if (actuallShownReservation != null && actuallShownReservation.getId().equals(reservation.getId()))
         {
-            selectionHandler.removeHandler();
-        }
-        selectionHandler = bar.addSelectionHandler(new SelectionHandler<Integer>()
-        {
-            public void onSelection(SelectionEvent<Integer> event)
+            // update existing
+            final int selectedTab = bar.getSelectedTab();
+            if (selectedTab == 0)
             {
-                final Integer index = event.getSelectedItem();
-                updateContent(reservation, infoView, resourcesView, index);
+                infoView.update(reservation);
             }
-        });
-        updateContent(reservation, infoView, resourcesView, bar.getSelectedTab());
-        final FlowPanel layout = new FlowPanel();
-        layout.add(buttonsPanel);
-        layout.add(tabBarPanel);
-        layout.add(content);
-        popup.add(layout);
-    }
-
-    private void updateContent(final Reservation reservation, final InfoView infoView, final ResourceDatesView resourcesView, final Integer index)
-    {
-        for (int i = 0; i < bar.getTabCount(); i++)
-        {
-            bar.setTabEnabled(i, true);
-        }
-        bar.setTabEnabled(index, false);
-        content.clear();
-        infoView.clearContent();
-        resourcesView.clearContent();
-        if (index == 0)
-        {
-            infoView.createContent(reservation);
-            content.add(infoView.provideContent());
-        }
-        else if (index == 1)
-        {
-            resourcesView.createContent(reservation);
-            content.add(resourcesView.provideContent());
+            else if (selectedTab == 1)
+            {
+                resourcesView.update(reservation);
+            }
         }
         else
         {
-            RaplaPopups.showWarning("Navigation error", "Unknown View at index " + index);
+            // kill the old one
+            if (actuallShownReservation != null)
+            {
+                getPresenter().onCancelButtonClicked(actuallShownReservation);
+            }
+            actuallShownReservation = reservation;
+            buttonsPanel.setReservation(reservation);
+            // create new one
+            final Panel popup = RaplaPopups.getPopupPanel();
+            popup.clear();
+            popup.setVisible(true);
+            popup.setHeight("90%");
+            popup.setWidth("90%");
+            final RaplaLocale raplaLocale = getRaplaLocale();
+            infoView = new InfoView(getPresenter(), raplaLocale, user);
+            resourcesView = new ResourceDatesView(getPresenter(), raplaLocale);
+            if (selectionHandler != null)
+            {
+                selectionHandler.removeHandler();
+            }
+            selectionHandler = bar.addSelectionHandler(new SelectionHandler<Integer>()
+            {
+                public void onSelection(SelectionEvent<Integer> event)
+                {
+                    final Integer index = event.getSelectedItem();
+                    for (int i = 0; i < bar.getTabCount(); i++)
+                    {
+                        bar.setTabEnabled(i, true);
+                    }
+                    bar.setTabEnabled(index, false);
+                    content.clear();
+                    infoView.clearContent();
+                    resourcesView.clearContent();
+                    if (index == 0)
+                    {
+                        infoView.createContent(reservation);
+                        content.add(infoView.provideContent());
+                    }
+                    else if (index == 1)
+                    {
+                        resourcesView.createContent(reservation);
+                        content.add(resourcesView.provideContent());
+                    }
+                    else
+                    {
+                        RaplaPopups.showWarning("Navigation error", "Unknown View at index " + index);
+                    }
+                }
+            });
+            bar.selectTab(0);
+            final FlowPanel layout = new FlowPanel();
+            layout.add(buttonsPanel);
+            layout.add(tabBarPanel);
+            layout.add(content);
+            popup.add(layout);
         }
     }
 
@@ -140,8 +159,12 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         }
     }
 
-    public void hide()
+    public void hide(final Reservation reservation)
     {
+        actuallShownReservation = null;
+        bar.selectTab(0, false);
+        resourcesView = null;
+        infoView = null;
         final RootPanel popup = RaplaPopups.getPopupPanel();
         popup.setVisible(false);
         popup.clear();

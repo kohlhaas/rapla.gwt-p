@@ -70,27 +70,28 @@ public class InfoView
         contentRight.setStyleName("content right");
 
         final Locale locale = raplaLocale.getLocale();
+        final Classification classification = reservation.getClassification();
         {
             final Collection<DynamicType> dynamicTypes = getPresenter().getChangeableReservationDynamicTypes();
-            final Map<String, DynamicType> idToClassification = new HashMap<String, DynamicType>();
+            final Map<String, DynamicType> idToDynamicType = new HashMap<String, DynamicType>();
             final Collection<DropDownItem> values = new ArrayList<DropDownInputField.DropDownItem>(dynamicTypes.size());
+            String selectedId = classification.getType().getId();
             for (final DynamicType dynamicType : dynamicTypes)
             {
                 values.add(new DropDownItem(dynamicType.getName(locale), dynamicType.getId()));
-                idToClassification.put(dynamicType.getId(), dynamicType);
+                idToDynamicType.put(dynamicType.getId(), dynamicType);
             }
             contentLeft.add(new DropDownInputField("Veranstaltungsart", new DropDownValueChanged()
             {
                 @Override
                 public void valueChanged(String newValue)
                 {
-                    DynamicType newDynamicType = idToClassification.get(newValue);
+                    DynamicType newDynamicType = idToDynamicType.get(newValue);
                     getPresenter().changeClassification(reservation, newDynamicType);
                 }
-            }, values));
+            }, values, selectedId));
         }
         boolean fillLeft = false;
-        final Classification classification = reservation.getClassification();
         final Attribute[] attributes = classification.getAttributes();
         for (final Attribute attribute : attributes)
         {
@@ -105,7 +106,7 @@ public class InfoView
                     @Override
                     public void valueChanged(Long newValue)
                     {
-                        getPresenter().changeAttribute(attribute, newValue);
+                        getPresenter().changeAttribute(reservation, attribute, newValue);
                     }
                 }));
             }
@@ -116,7 +117,7 @@ public class InfoView
                     @Override
                     public void valueChanged(String newValue)
                     {
-                        getPresenter().changeAttribute(attribute, newValue);
+                        getPresenter().changeAttribute(reservation, attribute, newValue);
                     }
                 }));
             }
@@ -127,7 +128,7 @@ public class InfoView
                     @Override
                     public void valueChanged(Date newValue)
                     {
-                        getPresenter().changeAttribute(attribute, newValue);
+                        getPresenter().changeAttribute(reservation, attribute, newValue);
                     }
                 }));
             }
@@ -138,7 +139,7 @@ public class InfoView
                     @Override
                     public void valueChanged(Boolean newValue)
                     {
-                        getPresenter().changeAttribute(attribute, newValue);
+                        getPresenter().changeAttribute(reservation, attribute, newValue);
                     }
                 }));
             }
@@ -148,15 +149,23 @@ public class InfoView
                 Boolean multipleSelectionPossible = (Boolean) attribute.getConstraint(ConstraintIds.KEY_MULTI_SELECT);
                 final Map<String, Category> idToCategory = InputUtils.createIdMap(rootCategory);
                 final Collection<DropDownItem> values = InputUtils.createDropDownItems(idToCategory, locale);
+                final Collection<Object> categories = classification.getValues(attribute);
+                final String[] selectedIds = new String[categories.size()];
+                int i = 0;
+                for (Object cat : categories)
+                {
+                    selectedIds[i] = ((Category) cat).getId();
+                    i++;
+                }
                 toAdd.add(new DropDownInputField(attributeName, new DropDownValueChanged()
                 {
                     @Override
                     public void valueChanged(String newValue)
                     {
                         final Category newCategory = idToCategory.get(newValue);
-                        getPresenter().changeAttribute(attribute, newCategory);
+                        getPresenter().changeAttribute(reservation, attribute, newCategory);
                     }
-                }, values, multipleSelectionPossible));
+                }, values, multipleSelectionPossible, selectedIds));
             }
             else if (InputUtils.isAllocatable(attribute))
             {
@@ -171,5 +180,10 @@ public class InfoView
     public void clearContent()
     {
         contentPanel.clear();
+    }
+
+    public void update(Reservation reservation)
+    {
+        createContent(reservation);
     }
 }

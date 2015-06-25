@@ -1,7 +1,8 @@
 package org.rapla.client.gwt.components;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map.Entry;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -39,34 +40,63 @@ public class DropDownInputField extends FlowPanel
 
     }
 
-    public DropDownInputField(final String label, final DropDownValueChanged changeHandler, Collection<DropDownItem> values)
+    public DropDownInputField(final String label, final DropDownValueChanged changeHandler, Collection<DropDownItem> values, String selectedId)
     {
-        this(label, changeHandler, values, false);
+        this(label, changeHandler, values, false, selectedId);
     }
 
-    public DropDownInputField(final String label, final DropDownValueChanged changeHandler, Collection<DropDownItem> values, boolean multiSelect)
+    public DropDownInputField(final String label, final DropDownValueChanged changeHandler, Collection<DropDownItem> values, boolean multiSelect,
+            final String... selectedId)
     {
         super();
         setStyleName("dropDownInput inputWrapper");
-        final Label title = new Label(label);
-        title.setStyleName("label");
-        final ListBox titleInput = new ListBox();
-        titleInput.setMultipleSelect(multiSelect);
+        final Label htmlLabel = new Label(label);
+        htmlLabel.setStyleName("label");
+        final ListBox dropDown = new ListBox();
+        dropDown.setMultipleSelect(multiSelect);
+        int index[] = new int[selectedId.length];
+        int currentIndex = 0;
+        String[] sorted = filterAndSort(selectedId);
         for (DropDownItem dropDownItem : values)
         {
-            titleInput.addItem(dropDownItem.getName(), dropDownItem.getId());
+            final String id = dropDownItem.getId();
+            dropDown.addItem(dropDownItem.getName(), id);
+            final int foundIndex = Arrays.binarySearch(sorted, id);
+            index[foundIndex] = currentIndex;
+            currentIndex++;
         }
-        titleInput.setStyleName("input");
-        titleInput.addChangeHandler(new ChangeHandler()
+        for (int ind : index)
+        {
+            dropDown.setSelectedIndex(ind);
+        }
+        dropDown.setStyleName("input");
+        dropDown.addChangeHandler(new ChangeHandler()
         {
             @Override
             public void onChange(ChangeEvent event)
             {
-                changeHandler.valueChanged(titleInput.getSelectedValue());
+                changeHandler.valueChanged(dropDown.getSelectedValue());
             }
         });
-        add(title);
-        add(titleInput);
+        add(htmlLabel);
+        add(dropDown);
+    }
+
+    private String[] filterAndSort(String[] selectedId)
+    {
+        if (selectedId == null)
+        {
+            return new String[0];
+        }
+        final ArrayList<String> result = new ArrayList<String>(selectedId.length);
+        for (String string : selectedId)
+        {
+            if (string != null)
+            {
+                result.add(string);
+            }
+        }
+        return result.toArray(new String[result.size()]);
     }
 
 }

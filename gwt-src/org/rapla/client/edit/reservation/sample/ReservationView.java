@@ -12,15 +12,15 @@ import org.rapla.entities.dynamictype.DynamicType;
 public interface ReservationView<W> extends View<Presenter> {
 
 	public interface Presenter {
-		void onSaveButtonClicked();
+		void onSaveButtonClicked(Reservation reservation);
 
-		void onDeleteButtonClicked();
+		void onDeleteButtonClicked(Reservation reservation);
 
-		boolean isDeleteButtonEnabled();
+		boolean isDeleteButtonEnabled(Reservation reservation);
 
-		void onCancelButtonClicked();
+		void onCancelButtonClicked(Reservation reservation);
 		
-		void changeAttribute(Attribute attribute, Object newValue);
+		void changeAttribute(Reservation reservation, Attribute attribute, Object newValue);
 
         Collection<DynamicType> getChangeableReservationDynamicTypes();
 
@@ -29,7 +29,7 @@ public interface ReservationView<W> extends View<Presenter> {
 
 	void show(Reservation event, User user);
 
-	void hide();
+	void hide(Reservation reservation);
 
     void showWarning(String string, String string2);
 }

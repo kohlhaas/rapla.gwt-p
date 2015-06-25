@@ -68,7 +68,7 @@ public class ReservationPresenter implements ReservationController, Presenter
     }
 
     @Override
-    public void onSaveButtonClicked()
+    public void onSaveButtonClicked(Reservation reservation)
     {
         logger.info("save clicked");
         try
@@ -79,11 +79,11 @@ public class ReservationPresenter implements ReservationController, Presenter
         {
             logger.error(e1.getMessage(), e1);
         }
-        fireEventAndCloseView();
+        fireEventAndCloseView(reservation);
     }
 
     @Override
-    public void onDeleteButtonClicked()
+    public void onDeleteButtonClicked(final Reservation reservation)
     {
         logger.info("delete clicked");
         try
@@ -94,24 +94,24 @@ public class ReservationPresenter implements ReservationController, Presenter
         {
             logger.error(e1.getMessage(), e1);
         }
-        fireEventAndCloseView();
+        fireEventAndCloseView(reservation);
     }
 
     @Override
-    public void onCancelButtonClicked()
+    public void onCancelButtonClicked(final Reservation reservation)
     {
         logger.info("cancel clicked");
-        fireEventAndCloseView();
+        fireEventAndCloseView(reservation);
     }
 
-    private void fireEventAndCloseView()
+    private void fireEventAndCloseView(final Reservation reservation)
     {
         eventBus.fireEvent(new DetailEndEvent(event));
-        view.hide();
+        view.hide(reservation);
     }
 
     @Override
-    public void changeAttribute(Attribute attribute, Object newValue)
+    public void changeAttribute(Reservation reservation, Attribute attribute, Object newValue)
     {
         final Classification classification = tempReservation.getClassification();
         if (isAllowedToWrite(attribute, classification))
@@ -121,6 +121,15 @@ public class ReservationPresenter implements ReservationController, Presenter
         else
         {
             view.showWarning("Not allowed!", "Editing value for " + attribute.getName(raplaLocale.getLocale()));
+            try
+            {
+                final User user = facade.getUser();
+                view.show(tempReservation, user);
+            }
+            catch (RaplaException e)
+            {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 
@@ -132,7 +141,7 @@ public class ReservationPresenter implements ReservationController, Presenter
     }
 
     @Override
-    public boolean isDeleteButtonEnabled()
+    public boolean isDeleteButtonEnabled(final Reservation reservation)
     {
         return !isNew;
     }

@@ -2,12 +2,14 @@ package org.rapla.client.edit.reservation.sample.gwt.subviews;
 
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.client.edit.reservation.sample.gwt.gfx.ImageImport;
+import org.rapla.entities.domain.Reservation;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.sun.prism.Presentable;
 
 public class ButtonsBar extends FlowPanel
 {
@@ -18,6 +20,7 @@ public class ButtonsBar extends FlowPanel
     private static final ImageResource IMG_ICON_REDO = ImageImport.INSTANCE.redoIcon();
 
     private Presenter presenter;
+    private Reservation reservation;
 
     public ButtonsBar()
     {
@@ -29,7 +32,7 @@ public class ButtonsBar extends FlowPanel
             @Override
             public void onClick(ClickEvent e)
             {
-                presenter.onCancelButtonClicked();
+                presenter.onCancelButtonClicked(reservation);
             }
         });
 
@@ -42,7 +45,7 @@ public class ButtonsBar extends FlowPanel
             @Override
             public void onClick(ClickEvent e)
             {
-                presenter.onSaveButtonClicked();
+                presenter.onSaveButtonClicked(reservation);
             }
         });
 
@@ -55,7 +58,7 @@ public class ButtonsBar extends FlowPanel
             @Override
             public void onClick(ClickEvent e)
             {
-                presenter.onDeleteButtonClicked();
+                presenter.onDeleteButtonClicked(reservation);
             }
         });
 
@@ -81,4 +84,8 @@ public class ButtonsBar extends FlowPanel
         this.presenter = presenter;
     }
 
+    public void setReservation(Reservation reservation)
+    {
+        this.reservation = reservation;
+    }
 }

@@ -52,7 +52,6 @@ public class ResourceDatesView
 
     private FlowPanel repeatSettings = new FlowPanel();
 
-
     private ListBox filterEintr;
     private final Presenter presenter;
 
@@ -297,6 +296,11 @@ public class ResourceDatesView
     public void clearContent()
     {
         contentPanel.clear();
+    }
+
+    public void update(Reservation reservation)
+    {
+        createContent(reservation);
     }
 
 }
