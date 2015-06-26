@@ -13,11 +13,6 @@ h1 {
 	font-size: 16pt;
 }
 
-/** Most GWT widgets already have a style name defined */
-.gwt-DialogBox {
-	width: 400px;
-}
-
 .dialogVPanel {
 	margin: 5px;
 }
@@ -68,35 +63,8 @@ h1 {
 
 /* INPUT FIELDS */
 .inputWrapper {
-	border: 1px solid #DDD;
-	background: -moz-linear-gradient(top, #EEE, #FFF);
-	background: -webkit-linear-gradient(top, #eee, #fff);
-	background: -ms-linear-gradient(top, #eee, #fff);
-	background: -o-linear-gradient(top, #eee, #fff);
-	box-shadow: 1px 2px 4px rgba(0, 0, 0, .2);
 	height: 40px;
 	margin: 5px;
-}
-
-.label {
-	float: left;
-	width: 150px;
-	padding-left: 10px;
-}
-
-.inputWrapper .label{
-	margin-top: 10px;
-	color: #000;
-	font-size: 90%;
-	text-align: left;
-}
- .input {
-	margin-top: 8px;
-}
-
-.dateInput {
-	float: left;
-	margin-top: 10px;
 }
 
 /* TABLE */
@@ -186,6 +154,9 @@ h1 {
 }
 /* START RESERVATIONVIEW */
 /* ACTION BAR */
+.mainButtonsBar{
+	min-width: 300px;
+}
 .tabbar {
 	width: 100%;
 	height: 35px;
@@ -213,10 +184,6 @@ h1 {
 }
 
 /* INFO VIEW */
-.appointmentInfo .content {
-	float: left;
-	width: 50%;
-}
 
 /* RESOURCES DATES VIEW */
 .dateList {

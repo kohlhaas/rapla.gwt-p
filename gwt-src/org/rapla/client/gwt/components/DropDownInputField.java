@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.gwtbootstrap3.client.ui.InputGroup;
+import org.gwtbootstrap3.client.ui.InputGroupAddon;
+import org.gwtbootstrap3.client.ui.constants.Styles;
+
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class DropDownInputField extends FlowPanel
@@ -50,9 +53,12 @@ public class DropDownInputField extends FlowPanel
     {
         super();
         setStyleName("dropDownInput inputWrapper");
-        final Label htmlLabel = new Label(label);
-        htmlLabel.setStyleName("label");
+        final InputGroup inputGroup = new InputGroup();
+        final InputGroupAddon addon = new InputGroupAddon();
+        inputGroup.add(addon);
+        addon.setText(label);
         final ListBox dropDown = new ListBox();
+        dropDown.setStyleName(Styles.FORM_CONTROL);
         dropDown.setMultipleSelect(multiSelect);
         int index[] = new int[selectedId.length];
         int currentIndex = 0;
@@ -69,7 +75,6 @@ public class DropDownInputField extends FlowPanel
         {
             dropDown.setSelectedIndex(ind);
         }
-        dropDown.setStyleName("input");
         dropDown.addChangeHandler(new ChangeHandler()
         {
             @Override
@@ -78,8 +83,8 @@ public class DropDownInputField extends FlowPanel
                 changeHandler.valueChanged(dropDown.getSelectedValue());
             }
         });
-        add(htmlLabel);
-        add(dropDown);
+        inputGroup.add(dropDown);
+        add(inputGroup);
     }
 
     private String[] filterAndSort(String[] selectedId)

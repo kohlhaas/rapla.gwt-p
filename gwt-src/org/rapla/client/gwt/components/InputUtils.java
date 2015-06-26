@@ -12,6 +12,12 @@ import org.rapla.entities.Category;
 import org.rapla.entities.dynamictype.Attribute;
 import org.rapla.entities.dynamictype.AttributeType;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.SelectElement;
+
 public class InputUtils
 {
     public static native boolean isHtml5DateInputSupported()/*-{
@@ -106,4 +112,34 @@ public class InputUtils
         }
         return result;
     }
+    
+    public static boolean focusOnFirstInput(NodeList<Node> childNodes)
+    {
+        final int length = childNodes.getLength();
+        for (int i = 0; i < length; i++)
+        {
+            final Node item = childNodes.getItem(i);
+            if (Element.is(item) && !"hidden".equals(Element.as(item).getStyle().getOverflow()))
+            {
+                if (InputElement.is(item))
+                {
+                    InputElement.as(item).focus();
+                    return true;
+                }
+                if (SelectElement.is(item))
+                {
+                    SelectElement.as(item).focus();
+                    return true;
+                }
+            }
+            final NodeList<Node> subChildNodes = item.getChildNodes();
+            if (focusOnFirstInput(subChildNodes))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }

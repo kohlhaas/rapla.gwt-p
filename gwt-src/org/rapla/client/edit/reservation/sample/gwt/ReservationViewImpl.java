@@ -1,6 +1,8 @@
 package org.rapla.client.edit.reservation.sample.gwt;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -10,6 +12,7 @@ import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.client.edit.reservation.sample.gwt.subviews.ButtonsBar;
 import org.rapla.client.edit.reservation.sample.gwt.subviews.InfoView;
 import org.rapla.client.edit.reservation.sample.gwt.subviews.ResourceDatesView;
+import org.rapla.client.gwt.components.InputUtils;
 import org.rapla.client.gwt.view.RaplaPopups;
 import org.rapla.entities.User;
 import org.rapla.entities.domain.Allocatable;
@@ -17,13 +20,15 @@ import org.rapla.entities.domain.Reservation;
 import org.rapla.framework.RaplaLocale;
 import org.rapla.framework.logger.Logger;
 
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PopupPanel.AnimationType;
 import com.google.gwt.user.client.ui.TabBar;
 
 public class ReservationViewImpl extends AbstractView<Presenter> implements ReservationView<IsWidget>
@@ -39,6 +44,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
     private Reservation actuallShownReservation = null;
     private InfoView infoView;
     private ResourceDatesView resourcesView;
+
+    private Map<String, PopupPanel> popups = new HashMap<String, PopupPanel>();
 
     @Inject
     public ReservationViewImpl(Logger logger)
@@ -96,11 +103,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             actuallShownReservation = reservation;
             buttonsPanel.setReservation(reservation);
             // create new one
-            final Panel popup = RaplaPopups.getPopupPanel();
-            popup.clear();
-            popup.setVisible(true);
-            popup.setHeight("90%");
-            popup.setWidth("90%");
+            final PopupPanel popup = RaplaPopups.createNewPopupPanel();
+            popup.setAnimationEnabled(true);
+            popup.setAnimationType(AnimationType.ROLL_DOWN);
+            popups.put(reservation.getId(), popup);
             final RaplaLocale raplaLocale = getRaplaLocale();
             infoView = new InfoView(getPresenter(), raplaLocale, user);
             resourcesView = new ResourceDatesView(getPresenter(), raplaLocale);
@@ -125,6 +131,8 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
                     {
                         infoView.createContent(reservation);
                         content.add(infoView.provideContent());
+                        final NodeList<Node> childNodes = content.getElement().getChildNodes();
+                        InputUtils.focusOnFirstInput(childNodes);
                     }
                     else if (index == 1)
                     {
@@ -143,6 +151,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
             layout.add(tabBarPanel);
             layout.add(content);
             popup.add(layout);
+            popup.center();
+            // find first input and focus on element
+            final NodeList<Node> childNodes = content.getElement().getChildNodes();
+            InputUtils.focusOnFirstInput(childNodes);
         }
     }
 
@@ -165,8 +177,10 @@ public class ReservationViewImpl extends AbstractView<Presenter> implements Rese
         bar.selectTab(0, false);
         resourcesView = null;
         infoView = null;
-        final RootPanel popup = RaplaPopups.getPopupPanel();
-        popup.setVisible(false);
-        popup.clear();
+        final PopupPanel popup = popups.get(reservation.getId());
+        if (popup != null)
+        {
+            popup.hide();
+        }
     }
 }

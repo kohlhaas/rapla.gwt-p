@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Container;
+import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.rapla.client.edit.reservation.sample.ReservationView.Presenter;
 import org.rapla.client.gwt.components.BooleanInputField;
 import org.rapla.client.gwt.components.BooleanInputField.BooleanValueChange;
@@ -30,13 +34,14 @@ import org.rapla.entities.dynamictype.DynamicType;
 import org.rapla.framework.RaplaLocale;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class InfoView
 {
+    private static final int MAX_COLUMNS_PER_ROW = 2;
+    private static final String COLUMN_SIZE = ColumnSize.MD_6 + " " + ColumnSize.LG_6 + " " + ColumnSize.SM_6 + " " + ColumnSize.XS_6;
 
-    private final Panel contentPanel;
+    private final FlowPanel contentPanel;
     private final Presenter presenter;
     private final RaplaLocale raplaLocale;
     private final User user;
@@ -63,13 +68,13 @@ public class InfoView
     public void createContent(final Reservation reservation)
     {
         contentPanel.clear();
-
-        final FlowPanel contentLeft = new FlowPanel();
-        contentLeft.setStyleName("content left");
-        final FlowPanel contentRight = new FlowPanel();
-        contentRight.setStyleName("content right");
-
+        final Container container = new Container();
+        contentPanel.add(container);
+        container.setFluid(true);
         final Locale locale = raplaLocale.getLocale();
+        int actualColumnsPerRow = 0;
+        Row row = new Row();
+        container.add(row);
         final Classification classification = reservation.getClassification();
         {
             final Collection<DynamicType> dynamicTypes = getPresenter().getChangeableReservationDynamicTypes();
@@ -81,7 +86,7 @@ public class InfoView
                 values.add(new DropDownItem(dynamicType.getName(locale), dynamicType.getId()));
                 idToDynamicType.put(dynamicType.getId(), dynamicType);
             }
-            contentLeft.add(new DropDownInputField("Veranstaltungsart", new DropDownValueChanged()
+            final DropDownInputField input = new DropDownInputField("Veranstaltungsart", new DropDownValueChanged()
             {
                 @Override
                 public void valueChanged(String newValue)
@@ -89,59 +94,82 @@ public class InfoView
                     DynamicType newDynamicType = idToDynamicType.get(newValue);
                     getPresenter().changeClassification(reservation, newDynamicType);
                 }
-            }, values, selectedId));
+            }, values, selectedId);
+            final Column column = new Column(COLUMN_SIZE);
+            column.add(input);
+            row.add(column);
+            actualColumnsPerRow++;
         }
-        boolean fillLeft = false;
         final Attribute[] attributes = classification.getAttributes();
         for (final Attribute attribute : attributes)
         {
+            if (actualColumnsPerRow % MAX_COLUMNS_PER_ROW == 0)
+            {
+                actualColumnsPerRow = 0;
+                row = new Row();
+                container.add(row);
+            }
             final String attributeName = attribute.getName(locale);
             final Object value = classification.getValue(attribute);
-            final FlowPanel toAdd = fillLeft ? contentLeft : contentRight;
-            fillLeft = !fillLeft;
             if (InputUtils.isAttributeInt(attribute))
             {
-                toAdd.add(new LongInputField(attributeName, (Long) value, new LongValueChange()
+                final LongInputField input = new LongInputField(attributeName, (Long) value, new LongValueChange()
                 {
                     @Override
                     public void valueChanged(Long newValue)
                     {
                         getPresenter().changeAttribute(reservation, attribute, newValue);
                     }
-                }));
+                });
+                final Column column = new Column(COLUMN_SIZE);
+                column.add(input);
+                row.add(column);
+                actualColumnsPerRow++;
             }
             else if (InputUtils.isAttributeString(attribute))
             {
-                toAdd.add(new TextInputField(attributeName, (String) value, new TextValueChanged()
+                final TextInputField input = new TextInputField(attributeName, (String) value, new TextValueChanged()
                 {
                     @Override
                     public void valueChanged(String newValue)
                     {
                         getPresenter().changeAttribute(reservation, attribute, newValue);
                     }
-                }));
+                });
+                final Column column = new Column(COLUMN_SIZE);
+                column.add(input);
+                row.add(column);
+                actualColumnsPerRow++;
             }
             else if (InputUtils.isAttributeDate(attribute))
             {
-                toAdd.add(new DateComponent((Date) value, raplaLocale, new DateValueChanged()
+                final DateComponent input = new DateComponent((Date) value, raplaLocale, new DateValueChanged()
                 {
                     @Override
                     public void valueChanged(Date newValue)
                     {
                         getPresenter().changeAttribute(reservation, attribute, newValue);
                     }
-                }));
+                });
+                final Column column = new Column(COLUMN_SIZE);
+                column.add(input);
+                row.add(column);
+                actualColumnsPerRow++;
             }
             else if (InputUtils.isAttributeBoolean(attribute))
             {
-                toAdd.add(new BooleanInputField(attributeName, (Boolean) value, new BooleanValueChange()
+                final BooleanInputField input = new BooleanInputField(attributeName, (Boolean) value, new BooleanValueChange()
                 {
                     @Override
                     public void valueChanged(Boolean newValue)
                     {
                         getPresenter().changeAttribute(reservation, attribute, newValue);
                     }
-                }));
+                });
+                final Column column = new Column(COLUMN_SIZE);
+                column.add(input);
+                row.add(column);
+                actualColumnsPerRow++;
             }
             else if (InputUtils.isCategory(attribute))
             {
@@ -157,7 +185,7 @@ public class InfoView
                     selectedIds[i] = ((Category) cat).getId();
                     i++;
                 }
-                toAdd.add(new DropDownInputField(attributeName, new DropDownValueChanged()
+                final DropDownInputField input = new DropDownInputField(attributeName, new DropDownValueChanged()
                 {
                     @Override
                     public void valueChanged(String newValue)
@@ -165,16 +193,17 @@ public class InfoView
                         final Category newCategory = idToCategory.get(newValue);
                         getPresenter().changeAttribute(reservation, attribute, newCategory);
                     }
-                }, values, multipleSelectionPossible, selectedIds));
+                }, values, multipleSelectionPossible, selectedIds);
+                final Column column = new Column(COLUMN_SIZE);
+                column.add(input);
+                row.add(column);
+                actualColumnsPerRow++;
             }
             else if (InputUtils.isAllocatable(attribute))
             {
 
             }
         }
-
-        contentPanel.add(contentLeft);
-        contentPanel.add(contentRight);
     }
 
     public void clearContent()

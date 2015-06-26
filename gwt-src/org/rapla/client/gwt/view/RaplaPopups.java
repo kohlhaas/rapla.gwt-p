@@ -1,7 +1,6 @@
 package org.rapla.client.gwt.view;
 
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -27,8 +26,10 @@ public class RaplaPopups
 
     public static PopupPanel createNewPopupPanel()
     {
-        final PopupPanel raplaPopup = new PopupPanel(true, true);
-        raplaPopup.setStyleName("raplaPopup");
+        final WindowBox raplaPopup = new WindowBox(false, false);
+        raplaPopup.setResizable(true);
+        raplaPopup.setAutoHideOnHistoryEventsEnabled(false);
+        raplaPopup.addStyleName("raplaPopup");
         return raplaPopup;
     }
 

@@ -27,25 +27,7 @@ public class ResourceDatesView
 {
 
     private FlowPanel contentPanel;
-    private FlowPanel buttonBar;
 
-    private DisclosurePanel addResources;
-    private Tree resourceTree;
-
-    private FlowPanel chosenResources;
-
-    private FlowPanel dateInfos;
-    //    private Label addDateInfo;
-
-    private RadioButton daily;
-    private RadioButton weekly;
-    private RadioButton monthly;
-    private RadioButton year;
-    private RadioButton noReccuring;
-
-    private FlowPanel repeatSettings = new FlowPanel();
-
-    private ListBox filterEintr;
     private final Presenter presenter;
 
     public ResourceDatesView(Presenter presenter, RaplaLocale raplaLocale)
@@ -68,7 +50,7 @@ public class ResourceDatesView
     {
         contentPanel.clear();
 
-        buttonBar = new FlowPanel();
+        final FlowPanel buttonBar = new FlowPanel();
         buttonBar.setStyleName("datesButtonBar");
 
         final Image buttonPlus = new Image(ImageImport.INSTANCE.plusIcon());
@@ -102,7 +84,7 @@ public class ResourceDatesView
         buttonBar.add(buttonGarbageCan);
         buttonBar.add(buttonNextGap);
 
-        dateInfos = new FlowPanel();
+        final FlowPanel dateInfos = new FlowPanel();
         dateInfos.setStyleName("dateInfos");
 
         final DateTimeComponent begin = new DateTimeComponent("Beginn:");
@@ -129,15 +111,15 @@ public class ResourceDatesView
         final DisclosurePanel cbRepeatType = new DisclosurePanel("Wiederholen");
         cbRepeatType.setStyleName("dateInfoLineLeft");
 
-        daily = new RadioButton("repeat", "t\u00E4glich");
+        final RadioButton daily = new RadioButton("repeat", "t\u00E4glich");
         daily.addClickHandler(new RepeatClickHandler());
-        weekly = new RadioButton("repeat", "w\u00F6chentlich");
+        final RadioButton weekly = new RadioButton("repeat", "w\u00F6chentlich");
         weekly.addClickHandler(new RepeatClickHandler());
-        monthly = new RadioButton("repeat", "monatlich");
+        final RadioButton monthly = new RadioButton("repeat", "monatlich");
         monthly.addClickHandler(new RepeatClickHandler());
-        year = new RadioButton("repeat", "j\u00E4hrlich");
+        final RadioButton year = new RadioButton("repeat", "j\u00E4hrlich");
         year.addClickHandler(new RepeatClickHandler());
-        noReccuring = new RadioButton("repeat", "keine Wiederholung");
+        final RadioButton noReccuring = new RadioButton("repeat", "keine Wiederholung");
         noReccuring.addClickHandler(new RepeatClickHandler());
 
         //Setting for reccuring dates
@@ -157,11 +139,11 @@ public class ResourceDatesView
         cbRepeatType.add(repeat);
 
         //initializing the disclourePanel for the resources
-        addResources = new DisclosurePanel("Ressourcen hinzuf\u00FCgen");
+        final DisclosurePanel addResources = new DisclosurePanel("Ressourcen hinzuf\u00FCgen");
         addResources.setStyleName("dateInfoLineComplete");
 
         //load chosen resources
-        chosenResources = new FlowPanel();
+        final FlowPanel chosenResources = new FlowPanel();
         chosenResources.setStyleName("dateInfoLineComplete");
 
         Label headerChosenRes = new Label("Ausgew\u00E4hlte Ressourcen:");
@@ -173,14 +155,11 @@ public class ResourceDatesView
         Label explainer2 = new Label("Es wurden bisher keine Ressourcen ausgewählt");
         explainer2.setStyleName("wildcard");
 
-        addResources = new DisclosurePanel("Ressourcen hinzuf\u00FCgen");
-        addResources.setStyleName("dateInfoLineComplete");
-
         FlowPanel chooseContainer = new FlowPanel();
         chooseContainer.setStyleName("chooseContainer");
 
         // Baumstruktur f\u00FCr verf\u00FCgbare Resourcen
-        resourceTree = new Tree();
+        final Tree resourceTree = new Tree();
 
         // Filter
         final Image filter = new Image(ImageImport.INSTANCE.filterIcon());
@@ -195,7 +174,7 @@ public class ResourceDatesView
 
         });
 
-        filterEintr = new ListBox();
+        final ListBox filterEintr = new ListBox();
         filterEintr.addItem("Verf\u00FCgbare Ressourcen");
         filterEintr.addItem("Nicht Verf\u00FCgbare Ressourcen");
         filterEintr.addItem("Kurse");
@@ -238,7 +217,6 @@ public class ResourceDatesView
         dateContentWrapper.add(end);
         dateContentWrapper.add(cbRepeatType);
         //        dateContentWrapper.add(addDateWithLabel);
-        dateContentWrapper.add(repeatSettings);
         dateInfos.add(dateContentWrapper);
 
         // dateInfos.add(new HTML("<hr  style=\"width:90%;\" />"));
@@ -274,7 +252,6 @@ public class ResourceDatesView
         contentPanel.add(dateList);
         contentPanel.add(buttonBar);
         contentPanel.add(dateInfos);
-
     }
 
     private class RepeatClickHandler implements ClickHandler
