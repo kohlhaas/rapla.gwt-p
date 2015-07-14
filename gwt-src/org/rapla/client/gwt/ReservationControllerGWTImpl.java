@@ -46,8 +46,8 @@ public class ReservationControllerGWTImpl extends ReservationControllerImpl
     }
 
     @Override
-    protected int showDialog(String action, PopupContext context, List<String> optionList, List<ImageIcon> iconList, String title, String content,
-            ImageIcon dialogIcon) throws RaplaException
+    protected int showDialog(String action, PopupContext context, List<String> optionList, List<String> iconList, String title, String content,
+            String dialogIcon) throws RaplaException
     {
         return 0;
     }

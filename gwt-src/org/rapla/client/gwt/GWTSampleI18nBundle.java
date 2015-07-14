@@ -24,12 +24,6 @@ final class GWTSampleI18nBundle implements I18nBundle {
     }
 
     @Override
-    public ImageIcon getIcon(String key) throws MissingResourceException {
-    	// TODO Auto-generated method stub
-    	return null;
-    }
-
-    @Override
     public String format(String key, Object... obj)
     		throws MissingResourceException {
     	StringBuilder buf = new StringBuilder();
